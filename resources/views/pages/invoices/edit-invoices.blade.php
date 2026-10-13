@@ -104,8 +104,8 @@
                                    <input id="profile-img-file-input" type="file" class="profile-img-file-input"/>
                                    <label for="profile-img-file-input" class="d-block" tabindex="0">
                                     <span class="overflow-hidden border border-dashed d-flex align-items-center justify-content-center rounded" style="height: 60px; width: 256px;">
-                                      <img src="{{asset('images/logo-ib-black.png')}}" class="card-logo card-logo-dark user-profile-image img-fluid" alt="logo dark">
-                                      <img src="{{asset('images/logo-ib-white.png')}}" class="card-logo card-logo-light user-profile-image img-fluid" alt="logo light">
+                                      <img src="{{ asset('storage/images/perusahaan/698c05828c9a6.png') }}" onerror="this.onerror=null;this.src='{{ asset('images/perusahaan/698c05828c9a6.png') }}';" class="card-logo user-profile-image img-fluid" alt="Logo Ibekami" style="max-height: 50px; object-fit: contain;">
+
                                     </span>
                                    </label>
                                   </div>
@@ -386,7 +386,7 @@
                                     </select>
                                    </td>
                                    <td>
-                                    <input type="text" class="form-control product-price bg-light border-0" id="productRate-{{$index+1}}" name="hrg[{{$index}}]" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' placeholder="Rp. 0.000" onchange="autoCalc(this)" value="{{$jual->hargaBarang}}" required/>
+                                    <input type="text" class="form-control product-price bg-light border-0" id="productRate-{{$index+1}}" name="hrg[{{$index}}]" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' placeholder="0" onchange="autoCalc(this)" value="{{ number_format($jual->hargaBarang, 0, ',', '.') }}" required/>
                                     </td>
                                     <td>
                                      <div class="input-step">
@@ -395,7 +395,7 @@
                                     </td>
                                     <td class="text-end">
                                      <div>
-                                      <input type="text" class="form-control bg-light border-0 product-line-price" id="productPrice-{{$index+1}}" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="jlh_hrg[{{$index}}]" placeholder="Rp.0.000" value="{{$jual->jumlah_harga}}" onchange="autoCalc(this)"readonly/>
+                                      <input type="text" class="form-control bg-light border-0 product-line-price" id="productPrice-{{$index+1}}" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="jlh_hrg[{{$index}}]" placeholder="0" value="{{ number_format($jual->jumlah_harga, 0, ',', '.') }}" onchange="autoCalc(this)" readonly/>
                                      </div>
                                     </td>
                                     <td class="product-removal"><a href="javascript:void(0)" class="btn btn-success">Delete</a>
@@ -456,7 +456,7 @@
                                     <label for="total-harga" class="form-label col-form-label col-form-label-md">Jumlah Harga</label>
                                     </div>
                                       <div class="col-lg-6">
-                                        <input type="text" class="form-control bg-light border-0" rows="1" naplaceholder="" id="total-harga" name ="tot_harga" value="{{ $inv->total_harga }}"readonly >
+                                        <input type="text" class="form-control bg-light border-0" rows="1" naplaceholder="" id="total-harga" name ="tot_harga" value="{{ number_format($inv->total_harga, 0, ',', '.') }}" readonly>
                                       </div>
                                     </div>
                                     {{-- Input untuk Dp --}}
@@ -466,9 +466,9 @@
                                       </div>
                                       <div class="col-lg-6" id="dp" style="display: block;">
                                         @if (!empty($inv->dp))
-                                          <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }'  class="form-control bg-light border-0" rows="1" placeholder="Rp. 0,000" value="{{ $inv->dp }}">
+                                          <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }'  class="form-control bg-light border-0" rows="1" placeholder="0" value="{{ number_format($inv->dp, 0, ',', '.') }}">
                                         @else
-                                          <input id="input-dp" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="dp" type="text" class="form-control bg-light border-0" rows="1" placeholder="Rp. 0,000">
+                                          <input id="input-dp" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="dp" type="text" class="form-control bg-light border-0" rows="1" placeholder="0" value="0">
                                         @endif
                                       </div>
 
@@ -499,7 +499,7 @@
                                     <label for="totalPembayaran" class="form-label col-form-label col-form-label-md">Total Pembayaran</label>
                                     </div>
                                       <div class="col-lg-6">
-                                        <input type="text" class="form-control bg-light border-0" rows="1" placeholder="Total Pembayaran" id="total-pembelian" name="tot_pem" value="{{ old('tot_pem', number_format($inv->total_pembayaran)) }}" readonly>
+                                        <input type="text" class="form-control bg-light border-0" rows="1" placeholder="Total Pembayaran" id="total-pembelian" name="tot_pem" value="{{ old('tot_pem', number_format($inv->total_pembayaran, 0, ',', '.')) }}" readonly>
                                       </div>
                                     </div>
                                     <div class="row mb-1">
@@ -507,7 +507,7 @@
                                     <label for="sisaPembayaran" class="form-label col-form-label col-form-label-md">Sisa Pembayaran</label>
                                     </div>
                                       <div class="col-lg-6">
-                                        <input type="text" class="form-control bg-light border-0" rows="1" placeholder="Sisa Pembayaran" id="sisa-pembayaran" name="sisa_pem" value="{{$inv->sisa_pembayaran}}" readonly>
+                                        <input type="text" class="form-control bg-light border-0" rows="1" placeholder="Sisa Pembayaran" id="sisa-pembayaran" name="sisa_pem" value="{{ ($inv->status == 'Lunas' || $inv->jenis_pembayaran == 'Cash Lunas' || $inv->jenis_pembayaran == 'Transfer Lunas') ? '0' : number_format($inv->sisa_pembayaran, 0, ',', '.') }}" readonly>
                                       </div>
                                     </div>
                                 </div>

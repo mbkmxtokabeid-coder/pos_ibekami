@@ -109,7 +109,21 @@
           </td>
           
           <td>{{$jual->formatted_total_harga}}</td>
-          <td>{{$jual->status}}</td>
+          <td>
+              @if(!empty($jual->deleted_at))
+                  <span style="color: #dc3545; font-weight: bold;">Dihapus</span>
+                  @if(!empty($jual->alasan_hapus))
+                      <br><small style="color: #c71f16;">({{ $jual->alasan_hapus }})</small>
+                  @endif
+              @elseif($jual->status == 'Batal')
+                  <span style="color: #e0a800; font-weight: bold;">Batal</span>
+                  @if(!empty($jual->alasan_batal))
+                      <br><small style="color: #666;">({{ $jual->alasan_batal }})</small>
+                  @endif
+              @else
+                  {{ $jual->status }}
+              @endif
+          </td>
           <td>{{$jual->lain}}</td>
           <td>{{$jual->formatted_total_pembayaran}}</td>
          </tr>

@@ -62,11 +62,7 @@ body{
   font-style: normal;
   font-weight: 900;
   color: #000000;">
-    @if($spb->nama_spb == 1)
     IBEKAMI
-    @else
-    Total Karya Berkah (Tokabe.id)
-    @endif
     </b><br>
   <!--color: #000000;">Total Karya Berkah</b><br>-->
    <div style="text-align:left; font-size: 12px;">
@@ -121,7 +117,7 @@ Dokumen-dokumen / barang-barang tersebut telah diterima dengan baik.</div>
 @if($spb->nama_spb == 1)
 <div style="position: absolute; width: width: 240mm; left: 0; right: 0; margin-left: auto; margin-right: auto; bottom:5px; font-size: 10px"><center>kunjungi website Kami, ikhtiarberkah.com | Ikhtiar Berkah, member of KADIN SUMUT</center></div>
 @else
-<div style="position: absolute; width: width: 240mm; left: 0; right: 0; margin-left: auto; margin-right: auto; bottom:5px; font-size: 10px"><center>kunjungi website Kami, tokabe.id | Total Karya Berkah, member of KADIN INDONESIA </center></div>
+<div style="position: absolute; width: 240mm; left: 0; right: 0; margin-left: auto; margin-right: auto; bottom:5px; font-size: 10px"><center><i>Terima Kasih telah mendukung UMKM kami, dengan senang hati melayani.</i></center></div>
 @endif
 
 <div class="row">

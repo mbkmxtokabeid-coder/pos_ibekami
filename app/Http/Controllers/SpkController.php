@@ -499,12 +499,30 @@ class SpkController extends Controller
     function spkChartPerMonth() {
         $datas = Spk::select('nomor_invoice', 'timeline_design', 'timeline_produksi', 'timeline')
             ->whereBetween('tgl_mulai', [now()->startOfMonth(), now()->endOfMonth()])->get();
+        if ($datas->isEmpty()) {
+            $datas = Spk::select('nomor_invoice', 'timeline_design', 'timeline_produksi', 'timeline')
+                ->whereNotNull('timeline_design')
+                ->where('status_kerja', 'Selesai')
+                ->orderByDesc('id')
+                ->take(15)
+                ->get()
+                ->reverse();
+        }
         return $this->parseChartData($datas);
     }
 
     function spkChartPerWeek() {
         $datas = Spk::select('nomor_invoice', 'timeline_design', 'timeline_produksi', 'timeline')
             ->whereBetween('tgl_mulai', [now()->startOfWeek(), now()->endOfWeek()])->get();
+        if ($datas->isEmpty()) {
+            $datas = Spk::select('nomor_invoice', 'timeline_design', 'timeline_produksi', 'timeline')
+                ->whereNotNull('timeline_design')
+                ->where('status_kerja', 'Selesai')
+                ->orderByDesc('id')
+                ->take(7)
+                ->get()
+                ->reverse();
+        }
         return $this->parseChartData($datas);
     }
 

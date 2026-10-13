@@ -37,7 +37,11 @@ class PenjualanController extends Controller
         $day = $tanggal->format('d');
         $formatJam = $tanggal->format('H:i'); 
         $hariIni = sprintf('%s-%s-%s', $year, $month, $day);
-        $kontak = Penjualan::select('customer', 'no_telepon', 'perusahaan')->get();
+        $kontak = Penjualan::select('customer', 'no_telepon', 'perusahaan')
+            ->whereNotNull('customer')
+            ->where('customer', '!=', '')
+            ->distinct()
+            ->get();
          
         $jenisBarang = Barang::with('kategori_item')->where('is_active', 1)->get();
         return view('pages.invoices.invoice', compact('invoice', 'admin', 'order', 'no_invoice', 'jenisBarang', 'hariIni', 'formatJam','kontak','materials'));
@@ -45,11 +49,17 @@ class PenjualanController extends Controller
 
     public function generateNoInvoice()
     {
-        // Generate the unique code
-        $invoice = preg_replace('/\D/', '', Penjualan::pluck('nomor_invoice')->toArray());
+        // Ambil transaksi terakhir termasuk yang dibatalkan maupun dihapus (withTrashed)
+        // agar penomoran invoice selalu berlanjut dan tidak menduplikasi nomor yang telah dihapus/dibatalkan
+        $recentInvoices = Penjualan::withTrashed()
+            ->orderByDesc('id')
+            ->limit(200)
+            ->pluck('nomor_invoice')
+            ->toArray();
+
+        $invoiceNumbers = array_filter(preg_replace('/\D/', '', $recentInvoices));
         
-        // Memastikan tidak error jika $invoice kosong (database awal)
-        $urutan = empty($invoice) ? 1 : intval(max($invoice)) + 1;
+        $urutan = empty($invoiceNumbers) ? 1 : intval(max($invoiceNumbers)) + 1;
 
         $uniqueCode = sprintf('%05d', $urutan);
 
@@ -88,18 +98,41 @@ class PenjualanController extends Controller
         // --- END VALIDASI ---
 
         $invoice = Invoice::where('nama_invoice', $request->inv)->first();
+        $isTanpaHarga = ($invoice && $invoice->tipe_harga === 'tanpa_harga');
         $nmr_inv = $request->kode . $request->kodeUnik;
 
-        $status = ($request->jns_pem == 'Cash Lunas' || $request->jns_pem == 'Transfer Lunas') ? 'Lunas' : 'Belum Lunas';
+        $jns_pem = $request->jns_pem;
+        if (empty($jns_pem)) {
+            $jns_pem = 'Cash Lunas';
+        }
+
+        $status = $isTanpaHarga ? 'Lunas' : (($jns_pem == 'Cash Lunas' || $jns_pem == 'Transfer Lunas') ? 'Lunas' : 'Belum Lunas');
         $tanggalPenjualan = $request->tgl_jual . ":" . $request->jam;
         $item = (!empty($request->barang_id)) ? count($request->barang_id) : 0;
 
-        $tot_harga = intval(str_replace(',', '', $request->tot_harga));
-        $tot_pem = ceil(floatval(str_replace(',', '', $request->tot_pem)));
-        $sisa_pem = ceil(floatval(str_replace(',', '', $request->sisa_pem)));
+        $cleanNominal = function($val) {
+            if ($val === null || $val === '') return 0;
+            $digits = preg_replace('/[^0-9]/', '', (string)$val);
+            return !empty($digits) ? intval($digits) : 0;
+        };
 
-        $dp = intval(str_replace(',', '', $request->dp));
-        $potongan = intval(str_replace(',', '', $request->ptg));
+        $tot_harga = $cleanNominal($request->tot_harga);
+        $tot_pem = $cleanNominal($request->tot_pem);
+        if ($tot_pem === 0 && $tot_harga > 0) {
+            $tot_pem = $tot_harga;
+        }
+
+        $dp = $cleanNominal($request->dp);
+        $potongan = $cleanNominal($request->ptg);
+
+        if ($jns_pem == 'Cash Lunas' || $jns_pem == 'Transfer Lunas' || $isTanpaHarga) {
+            $sisa_pem = 0;
+        } else {
+            $sisa_pem = $cleanNominal($request->sisa_pem);
+            if ($sisa_pem === 0 && $tot_pem > $dp) {
+                $sisa_pem = max(0, $tot_pem - $dp);
+            }
+        }
         
         $norek = '';
         if (!$request->norek) {
@@ -124,7 +157,7 @@ class PenjualanController extends Controller
             $existingPenjualan->jumlah_item = $item;
             $existingPenjualan->dp = $dp;
             $existingPenjualan->potongan = $potongan;
-            $existingPenjualan->jenis_pembayaran = $request->jns_pem;
+            $existingPenjualan->jenis_pembayaran = $jns_pem;
             $existingPenjualan->no_rek = $norek;
             $existingPenjualan->total_harga = $tot_harga;
             $existingPenjualan->status = $status;
@@ -161,8 +194,8 @@ class PenjualanController extends Controller
                         $existingPenjualanBarang->deskripsi_item = $request->deskripsi_item[$key];
                         $existingPenjualanBarang->qty = $request->qty[$key];
                         $existingPenjualanBarang->satuan = $request->satuan[$key];
-                        $existingPenjualanBarang->hargaBarang = intval(str_replace(',', '', $request->hrg[$key]));
-                        $existingPenjualanBarang->jumlah_harga = intval(str_replace(',', '', $request->jlh_hrg[$key]));
+                        $existingPenjualanBarang->hargaBarang = $cleanNominal($request->hrg[$key]);
+                        $existingPenjualanBarang->jumlah_harga = $cleanNominal($request->jlh_hrg[$key]);
                         
                         // Update data material menggunakan JSON
                         $existingPenjualanBarang->material_id = !empty($matIds) ? json_encode(array_values($matIds)) : null;
@@ -179,8 +212,8 @@ class PenjualanController extends Controller
                             'deskripsi_item' => $request->deskripsi_item[$key],
                             'qty' => $request->qty[$key],
                             'satuan' => $request->satuan[$key],
-                            'hargaBarang' => intval(str_replace(',', '', $request->hrg[$key])),
-                            'jumlah_harga' => intval(str_replace(',', '', $request->jlh_hrg[$key])),
+                            'hargaBarang' => $cleanNominal($request->hrg[$key] ?? 0),
+                            'jumlah_harga' => $cleanNominal($request->jlh_hrg[$key] ?? 0),
                             
                             // Simpan sebagai JSON
                             'material_id' => !empty($matIds) ? json_encode(array_values($matIds)) : null,
@@ -225,7 +258,7 @@ class PenjualanController extends Controller
                 'jumlah_item' => $item,
                 'dp' => $dp,
                 'potongan' => $potongan,
-                'jenis_pembayaran' => $request->jns_pem,
+                'jenis_pembayaran' => $jns_pem,
                 'no_rek' => $norek,
                 'total_harga' => $tot_harga,
                 'status' => $status,
@@ -237,7 +270,7 @@ class PenjualanController extends Controller
 
             foreach ($request->barang_id as $key => $value) {
                 $barang = Barang::find($value);
-                if ($barang != null || $request->deskripsi_item[$key] != null || $request->qty[$key] || $request->satuan[$key] || $request->hrg[$key] || $request->jlh_hrg[$key]) {
+                if ($barang != null || $request->deskripsi_item[$key] != null || $request->qty[$key] || $request->satuan[$key] || !empty($request->hrg[$key]) || !empty($request->jlh_hrg[$key])) {
                     
                     // Jika barang non-material (is_material_required == 1), kosongkan material
                     if ($barang && $barang->is_material_required == 1) {
@@ -259,8 +292,8 @@ class PenjualanController extends Controller
                         'deskripsi_item' => $request->deskripsi_item[$key],
                         'qty' => $request->qty[$key],
                         'satuan' => $request->satuan[$key],
-                        'hargaBarang' => intval(str_replace(',', '', $request->hrg[$key])),
-                        'jumlah_harga' => intval(str_replace(',', '', $request->jlh_hrg[$key])),
+                        'hargaBarang' => $cleanNominal($request->hrg[$key] ?? 0),
+                        'jumlah_harga' => $cleanNominal($request->jlh_hrg[$key] ?? 0),
                         
                         // Simpan sebagai JSON
                         'material_id' => !empty($matIds) ? json_encode(array_values($matIds)) : null,
@@ -310,12 +343,17 @@ class PenjualanController extends Controller
         return response()->json($jenisBarang);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $penjualan = Penjualan::find($id);
         if (!$penjualan) {
             Alert::error('Data tidak ditemukan');
             return redirect('list-invoice');
+        }
+
+        if ($request->filled('alasan_hapus')) {
+            $penjualan->alasan_hapus = $request->input('alasan_hapus');
+            $penjualan->save();
         }
 
         // --- 1. PROSES HAPUS SPK TERKAIT ---

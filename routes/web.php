@@ -5,13 +5,11 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\InventarisController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\HomeTKBController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LaporanPembelianController;
 use App\Http\Controllers\PenjualanController;
-use App\Http\Controllers\PenjualanTokabeController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\SpbController;
 use App\Http\Controllers\SpkController;
@@ -69,8 +67,10 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/tambah-kategori', [kategoryController::class, 'tambahKategori'])->name('tambah.kategori');
             Route::post('/tambah-kategori', [kategoryController::class, 'storeKategori'])->name('store.kategori');
             Route::delete('/delete-kategori/{id}', [kategoryController::class, 'deleteKategori'])->name('destroy.kategori');
-            Route::get('/edit-kategori/{id}', [kategoryController::class, 'editKategori']);
+            Route::get('/edit-kategori/{id}', [kategoryController::class, 'editKategori'])->name('edit.kategori');
+            Route::get('/invoice/edit-kategori/{id}', [kategoryController::class, 'editKategori']);
             Route::put('/edit-kategori/{id}', [kategoryController::class, 'updateKategori'])->name('put.kategori');
+            Route::put('/invoice/edit-kategori/{id}', [kategoryController::class, 'updateKategori']);
             
             // ROUTE PERUSAHAAN
             Route::get('/daftar-perusahaan', [PerusahaanController::class, 'index'])->name('perusahaan.list');
@@ -87,6 +87,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::group(['middleware' => ['admin']], function () {
             
             Route::get('/', [HomeController::class, 'index']);
+            Route::get('/dashboard/data-barang-dibeli', [HomeController::class, 'getDataBarangDibeli'])->name('dashboard.data-barang-dibeli');
+            Route::get('/dashboard/data-payment-activity', [HomeController::class, 'getDataPaymentActivity'])->name('dashboard.data-payment-activity');
             
             // ROUTE INVOICE
             Route::get('/addInvoice', [PenjualanController::class, 'loadInvoice']);
@@ -97,12 +99,20 @@ Route::group(['middleware' => ['auth']], function () {
             Route::put('updateInvoice/{id}', [InvoiceController::class, 'updateInvoice'])->name('update-invoice');
             Route::delete('invoice/deleteInvoice/{id}', [PenjualanController::class, 'destroy'])->name('delete.invoice');
             
-            Route::get('/ubah-status-batal/{id}', [InvoiceController::class, 'statusBatal']);
-            Route::post('/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal']);
-            Route::post('/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas']);
+            // ROUTE UBAH STATUS INVOICE (Mendukung dengan/tanpa prefix /invoice/ dan spasi)
+            Route::match(['get', 'post'], '/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->name('invoice.batal');
+            Route::match(['get', 'post'], '/invoice/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal']);
+            Route::match(['get', 'post'], '/invoice/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal']);
+            Route::match(['get', 'post'], '/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal']);
             
-            Route::post('/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->name('invoice.unlock');
-            Route::get('/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->name('invoice.lock');
+            Route::match(['get', 'post'], '/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas'])->name('invoice.lunas');
+            Route::match(['get', 'post'], '/invoice/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas']);
+            
+            Route::match(['get', 'post'], '/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->name('invoice.unlock');
+            Route::match(['get', 'post'], '/invoice/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock']);
+            
+            Route::match(['get', 'post'], '/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->name('invoice.lock');
+            Route::match(['get', 'post'], '/invoice/ubah-status-lock/{id}', [InvoiceController::class, 'lock']);
             
             Route::get('/invoice-approval/{id}', [InvoiceController::class, 'approvalPage'])
             ->middleware('auth', 'role:Pemilik') 
@@ -114,25 +124,9 @@ Route::group(['middleware' => ['auth']], function () {
             
             Route::get('/invoice/update-log/{id}', [InvoiceController::class, 'getUpdateLog']);
             Route::get('/list-invoice', [InvoiceController::class, 'loadListInvoice'])->name('daftar_invoice');
+            Route::get('/list-invoice-tokabe', [InvoiceController::class, 'loadListInvoice'])->name('list_invoice_tokabe');
+            Route::get('/list-invoice/cards-data', [InvoiceController::class, 'getCardsData'])->name('invoice.cards_data');
 
-            // TOKABE
-            Route::get('/list-invoice/tokabe', [PenjualanTokabeController::class, 'listInvoiceTokabe'])->name('list_invoice_tokabe');
-            Route::get('/addInvoiceTokabe', [PenjualanTokabeController::class, 'addInvoice'])->name('add.inv.tkb');
-            Route::post('/addInvoiceTokabe', [PenjualanTokabeController::class, 'storeInvoiceTokabe'])->name('storeInvoice.Tokabe');
-            Route::delete('/deleteInvoiceTokabe/{id}', [PenjualanTokabeController::class, 'delete'])->name('delete.invoiceTokabe');
-            Route::get('editInvoiceTokabe/{id}/edit', [PenjualanTokabeController::class, 'editInvoice'])->name('edit.inv.tkb');
-            Route::put('update-InvoiceTokabe/{id}', [PenjualanTokabeController::class, 'updateInvoice'])->name('update-invoiceTokabe');
-            Route::get('/ubah-status/{status}/{id}', [PenjualanTokabeController::class, 'ubahStatus'])->name('ubahStatus.tkb');
-            Route::get('/cetakTKB/{id}', [PenjualanTokabeController::class, 'cetakInvoiceTKB'])->name('cetak.inv.tkb');
-            Route::get('/get-invoice-number', [PenjualanTokabeController::class, 'getUpdatedInvoiceNumber']);
-
-            // TOKABE APPROVAL & PELUNASAN
-            Route::post('/ubah-status-unlock-tokabe/{id}', [PenjualanTokabeController::class, 'unlock'])->name('tokabe.unlock');
-            Route::get('/ubah-status-lock-tokabe/{id}', [PenjualanTokabeController::class, 'lock'])->name('tokabe.lock');
-            Route::get('/tokabe-approval/{id}', [PenjualanTokabeController::class, 'approvalPage'])->middleware('role:Pemilik')->name('tokabe.approval.page');
-            Route::get('/tokabe-pelunasan/{id}', [PenjualanTokabeController::class, 'pelunasanPage'])->middleware('role:Pemilik')->name('tokabe.pelunasan.page');
-            Route::post('/ubah-status-batal-tokabe/{id}', [PenjualanTokabeController::class, 'storeStatusBatal'])->name('tokabe.status.batal');
-            Route::post('/ubah-status-lunas-tokabe/{id}', [PenjualanTokabeController::class, 'statusLunas'])->name('tokabe.status.lunas');
 
             Route::get('/getInvoices/{id}', [CustomerController::class, 'getInvoices']);
 
@@ -151,7 +145,6 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/tambah-spk', [SpkController::class, 'addSPK']);
             Route::post('/store-spk', [SpkController::class, 'storeSPK']);
             Route::post('/store-spk-dari-invoice', [SpkController::class, 'storeDariInvoice'])->name('spk.store_dari_invoice');
-            Route::post('/store-spk-tokabe', [PenjualanTokabeController::class, 'storeDariInvoiceTokabe'])->name('storeSpk.Tokabe');            
             Route::get('/edit-spk/{id}', [SpkController::class, 'editSPK']);
             Route::put('/update-spk/{id}', [SpkController::class, 'updateSPK']);
             Route::delete('/delete-spk/{id}', [SpkController::class, 'destroySPK']);
@@ -211,7 +204,11 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/edit-pembelian/{uid}', [PembelianController::class, 'edit'])->name('pembelian.edit');
             Route::put('/update-pembelian/{uid}', [PembelianController::class, 'update'])->name('pembelian.update');
             Route::delete('/delete-pembelian/{uid}', [PembelianController::class, 'destroy'])->name('pembelian.delete');
+            Route::delete('/pembelian/{uid}', [PembelianController::class, 'destroy'])->name('pembelian.destroy');
             Route::get('/lunas-pembelian/{uid}', [PembelianController::class, 'lunas'])->name('pembelian.lunas');
+            Route::post('/pembelian/unlock/{id}', [PembelianController::class, 'unlock'])->name('pembelian.unlock');
+            Route::get('/pembelian/lock/{id}', [PembelianController::class, 'lock'])->name('pembelian.lock');
+            Route::get('/pembelian-approval/{id}', [PembelianController::class, 'approvalPage'])->name('pembelian.approval.page');
 
             // ROUTE DAFTAR CUSTOMER
             Route::get('/daftar-pelanggan', [CustomerController::class, 'index'])->name('daftar.pelanggan');
@@ -281,10 +278,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('invoice/get-barang-data/{kategoriId}', [BarangController::class, 'dataBarang']);
         Route::get('invoice/get-potensi-profit/{kategoriId}', [BarangController::class, 'potensiProfit']);
 
-        // ROUTE TOKABE DASHBOARD
-        Route::group(['middleware' => ['adminTKB']], function () {
-            Route::get('/welcomeTKB', [HomeTKBController::class, 'index']);
-        });
+
     
     });
     
@@ -309,15 +303,8 @@ Route::get('/login', function () {
 
 // ROUTE PUBLIC DOWNLOAD (tanpa login)
 Route::get('/view/download/{id}', [InvoiceController::class, 'viewDownloadInvoice'])->name('download.inv');
-Route::get('/view/download/invoiceTKB/{id}', [PenjualanTokabeController::class, 'viewDownloadInvoiceTKB'])->name('download.inv.tkb');
-
 Route::get('/invoice/public-download/{id}', [InvoiceController::class, 'publicDownload'])
     ->name('invoice.public_download')
-    ->middleware('signed');
-    
-// ROUTE PUBLIC DOWNLOAD TOKABE (BERLAKU 7 HARI)
-Route::get('/invoice-tkb/public-download/{id}', [PenjualanTokabeController::class, 'publicDownloadTokabe'])
-    ->name('invoice_tkb.public_download')
     ->middleware('signed');
  
 // TEST ROUTE

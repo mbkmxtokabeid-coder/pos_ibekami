@@ -6,7 +6,6 @@ use App\Exports\LaporanExport;
 use App\Exports\LaporanBarangExport;
 use App\Models\Invoice;
 use App\Models\Penjualan;
-use App\Models\PenjualanTokabe;
 use App\Models\PenjualanBarang;
 use App\Models\Perusahaan;
 use Carbon\Carbon;
@@ -27,7 +26,7 @@ class LaporanController extends Controller
 
         Carbon::setLocale('id');
         $katInv = Invoice::pluck('nama_invoice', 'id');
-        $perusahaan = Perusahaan::pluck('nama_perusahaan', 'id');
+        $perusahaan = Perusahaan::where('nama_perusahaan', 'like', '%Ibekami%')->pluck('nama_perusahaan', 'id');
         $distinctPenjualan = Penjualan::distinct()->pluck('tgl_penjualan');
         $namaBulan = [];
         $daftarTahun = [];
@@ -85,16 +84,11 @@ class LaporanController extends Controller
 
             // --- INJEKSI KODE RELASI ITEM ---
             if (isset($inv->id)) {
-                $isTokabe = $inv instanceof \App\Models\PenjualanTokabe;
-                $tableRelasi = $isTokabe ? 'penjualan_tokabe_barang' : 'penjualan_barang';
-                $fkColumn = $isTokabe ? 'penjualan_tokabe_id' : 'penjualan_id';
-
                 try {
-                    $inv->items = DB::table($tableRelasi)
-                        ->join('barang', $tableRelasi . '.barang_id', '=', 'barang.id')
-                        ->where($tableRelasi . '.' . $fkColumn, $inv->id)
-                        ->whereNull($tableRelasi . '.deleted_at')
-                        ->select('barang.jenis_barang', $tableRelasi . '.deskripsi_item', $tableRelasi . '.qty', $tableRelasi . '.satuan')
+                    $inv->items = DB::table('penjualan_barang')
+                        ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
+                        ->where('penjualan_barang.penjualan_id', $inv->id)
+                        ->select('barang.jenis_barang', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.satuan')
                         ->get();
                 } catch (\Exception $e) {
                     $inv->items = collect([]);
@@ -132,39 +126,21 @@ class LaporanController extends Controller
             $tglMulai = date('Y-m-d', strtotime(trim($tgl_custom)));
         }
 
-        if ($namaPerusahaan == 'Total Karya Berkah') {
-            $query = PenjualanTokabe::query();
-            if (is_null($tglAkhir)) {
-                $query->whereDate('tgl_penjualan', $tglMulai);
-                $tglMulaiFormat = Carbon::parse($tglMulai)->isoFormat('DD MMMM YYYY');
-            } else {
-                $query->whereBetween('tgl_penjualan', [$tglMulai . ' 00:00:00', $tglAkhir . ' 23:59:59']);
-                $tglMulaiFormat = Carbon::parse($tglMulai)->isoFormat('DD MMMM YYYY');
-                $tglAkhirFormat = Carbon::parse($tglAkhir)->isoFormat('DD MMMM YYYY');
-            }
-
-            if ($request->invoice != 'semua' && !empty($request->invoice)) {
-                $query->where('invoice', $request->invoice);
-            }
-            $penjualans = $query->get();
-            $grandTotal = $penjualans->sum('total_pembayaran');
+        $query = Penjualan::withTrashed();
+        if (is_null($tglAkhir)) {
+            $query->whereDate('tgl_penjualan', $tglMulai);
+            $tglMulaiFormat = Carbon::parse($tglMulai)->isoFormat('DD MMMM YYYY');
         } else {
-            $query = Penjualan::query()->where('status', '<>', 'Batal');
-            if (is_null($tglAkhir)) {
-                $query->whereDate('tgl_penjualan', $tglMulai);
-                $tglMulaiFormat = Carbon::parse($tglMulai)->isoFormat('DD MMMM YYYY');
-            } else {
-                $query->whereBetween('tgl_penjualan', [$tglMulai . ' 00:00:00', $tglAkhir . ' 23:59:59']);
-                $tglMulaiFormat = Carbon::parse($tglMulai)->isoFormat('DD MMMM YYYY');
-                $tglAkhirFormat = Carbon::parse($tglAkhir)->isoFormat('DD MMMM YYYY');
-            }
-
-            if ($request->invoice != 'semua' && !empty($request->invoice)) {
-                $query->where('invoice', $request->invoice);
-            }
-            $penjualans = $query->get();
-            $grandTotal = $penjualans->sum('total_pembayaran');
+            $query->whereBetween('tgl_penjualan', [$tglMulai . ' 00:00:00', $tglAkhir . ' 23:59:59']);
+            $tglMulaiFormat = Carbon::parse($tglMulai)->isoFormat('DD MMMM YYYY');
+            $tglAkhirFormat = Carbon::parse($tglAkhir)->isoFormat('DD MMMM YYYY');
         }
+
+        if ($request->invoice != 'semua' && !empty($request->invoice)) {
+            $query->where('invoice', $request->invoice);
+        }
+        $penjualans = $query->get();
+        $grandTotal = $penjualans->sum('total_pembayaran');
 
         $periode = $tglAkhirFormat != null ? 'Tanggal ' . $tglMulaiFormat . ' - ' . $tglAkhirFormat : 'Tanggal ' . $tglMulaiFormat;
 
@@ -199,25 +175,18 @@ class LaporanController extends Controller
         $invoice = Invoice::find($request->invoice); // Mengambil data invoice berdasarkan ID
         $namaInvoice = $invoice ? $invoice->nama_invoice : 'Semua Invoice';
 
-        if ($namaPerusahaan == 'Total Karya Berkah') {
-            $query = PenjualanTokabe::orderByDesc('created_at');
-            if ($request->invoice != 'semua' && !empty($request->invoice)) {
-                $query->where('invoice', $request->invoice);
-            }
-            if ($status_invoice != 'semua' && !empty($status_invoice)) {
-                $query->where('status', $status_invoice);
-            }
-            $penjualans = $query->get();
-        } else {
-            $query = Penjualan::orderByDesc('created_at');
-            if ($request->invoice != 'semua' && !empty($request->invoice)) {
-                $query->where('invoice', $request->invoice);
-            }
-            if ($status_invoice != 'semua' && !empty($status_invoice)) {
-                $query->where('status', $status_invoice);
-            }
-            $penjualans = $query->get();
+        $query = Penjualan::withTrashed()->orderByDesc('created_at');
+        if ($request->invoice != 'semua' && !empty($request->invoice)) {
+            $query->where('invoice', $request->invoice);
         }
+        if ($status_invoice == 'Dihapus') {
+            $query->onlyTrashed();
+        } elseif ($status_invoice == 'Batal') {
+            $query->where('status', 'Batal');
+        } elseif ($status_invoice != 'semua' && !empty($status_invoice)) {
+            $query->where('status', $status_invoice)->whereNull('deleted_at');
+        }
+        $penjualans = $query->get();
 
         $grandTotal = $penjualans->sum('total_pembayaran');
         if ($status_invoice == 'semua' || empty($status_invoice)) {
@@ -299,29 +268,15 @@ class LaporanController extends Controller
         // Mengonversi nama bulan dalam bahasa Inggris menjadi format angka bulan (misalnya, 'May' menjadi '05')
         $bulan = date('m', strtotime($bulanInggris));
         $tahun = date('Y');
-        if ($namaPerusahaan == 'Total Karya Berkah') {
-            if ($request->invoice == 'semua') {
-                $penjualans = PenjualanTokabe::whereMonth('tgl_penjualan', $bulan)
-                    ->whereYear('tgl_penjualan', $tahun)->get();
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            } else {
-                $penjualans = PenjualanTokabe::whereMonth('tgl_penjualan', $bulan)
-                    ->where('invoice', $request->invoice)
-                    ->whereYear('tgl_penjualan', $tahun)->get();
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            }
+        if ($request->invoice == 'semua') {
+            $penjualans = Penjualan::withTrashed()->whereMonth('tgl_penjualan', $bulan)
+                ->whereYear('tgl_penjualan', $tahun)->get();
+            $grandTotal = $penjualans->sum('total_pembayaran');
         } else {
-            if ($request->invoice == 'semua') {
-                $penjualans = Penjualan::whereMonth('tgl_penjualan', $bulan)
-                    ->whereYear('tgl_penjualan', $tahun)->where('status', '<>', 'Batal')->get();
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            } else {
-                $penjualans = Penjualan::whereMonth('tgl_penjualan', $bulan)
-                    ->where('invoice', $request->invoice)
-                    ->where('status', '<>', 'Batal')
-                    ->whereYear('tgl_penjualan', $tahun)->get();
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            }
+            $penjualans = Penjualan::withTrashed()->whereMonth('tgl_penjualan', $bulan)
+                ->where('invoice', $request->invoice)
+                ->whereYear('tgl_penjualan', $tahun)->get();
+            $grandTotal = $penjualans->sum('total_pembayaran');
         }
 
         if ($penjualans->isEmpty()) {
@@ -353,25 +308,13 @@ class LaporanController extends Controller
         }
         $namaPerusahaan = Perusahaan::where('id', $request->perusahaan)->first()->nama_perusahaan;
 
-        if ($namaPerusahaan == 'Total Karya Berkah') {
-            if ($request->invoice == 'semua') {
-                $penjualans = PenjualanTokabe::whereYear('tgl_penjualan', $tahun)->get();
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            } else {
-                $penjualans = PenjualanTokabe::whereYear('tgl_penjualan', $tahun)->where('invoice', $request->invoice)->get();
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            }
+        if ($request->invoice == 'semua') {
+            $penjualans = Penjualan::withTrashed()->whereYear('tgl_penjualan', $tahun)->get();
+            $grandTotal = $penjualans->sum('total_pembayaran');
         } else {
-            if ($request->invoice == 'semua') {
-                $penjualans = Penjualan::whereYear('tgl_penjualan', $tahun)
-                    ->where('status', '<>', 'Batal')->get();
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            } else {
-                $penjualans = Penjualan::whereYear('tgl_penjualan', $tahun)->where('invoice', $request->invoice)
-                    ->where('status', '<>', 'Batal')->get();
+            $penjualans = Penjualan::withTrashed()->whereYear('tgl_penjualan', $tahun)->where('invoice', $request->invoice)->get();
 
-                $grandTotal = $penjualans->sum('total_pembayaran');
-            }
+            $grandTotal = $penjualans->sum('total_pembayaran');
         }
 
         if ($penjualans->isEmpty()) {
@@ -418,10 +361,8 @@ class LaporanController extends Controller
                     ->whereDate('tgl_penjualan', $tglMulai)
                     ->join('penjualan_barang', 'penjualan.id', '=', 'penjualan_barang.penjualan_id')
                     ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
-                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
-                    ->whereNull('penjualan_barang.deleted_at')
-                    // ->where('deleted_at','<>','Null')
-                    ->where('status', '<>', 'Batal')
+                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan.deleted_at', 'penjualan.alasan_batal', 'penjualan.alasan_hapus', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
+                    
                     ->orderBy('penjualan.tgl_penjualan', 'asc')
                     ->get();
 
@@ -437,10 +378,9 @@ class LaporanController extends Controller
                     ->whereBetween('tgl_penjualan', [$tglMulai, $tglAkhir])
                     ->join('penjualan_barang', 'penjualan.id', '=', 'penjualan_barang.penjualan_id')
                     ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
-                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
+                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan.deleted_at', 'penjualan.alasan_batal', 'penjualan.alasan_hapus', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
                     // ->whereNull('penjualan_barang.deleted_at')
-                    ->whereNull('penjualan_barang.deleted_at')
-                    ->where('status', '<>', 'Batal')
+                    
                     ->orderBy('penjualan.tgl_penjualan', 'asc')
                     ->get();
 
@@ -458,10 +398,9 @@ class LaporanController extends Controller
                     ->whereDate('tgl_penjualan', $tglMulai)
                     ->join('penjualan_barang', 'penjualan.id', '=', 'penjualan_barang.penjualan_id')
                     ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
-                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
+                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan.deleted_at', 'penjualan.alasan_batal', 'penjualan.alasan_hapus', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
                     ->where('invoice', $request->invoice)
-                    ->whereNull('penjualan_barang.deleted_at')
-                    ->where('status', '<>', 'Batal')
+                    
                     ->orderBy('penjualan.tgl_penjualan', 'asc')
                     ->get();
                 $tglMulaiFormat = Carbon::parse($tglMulai)->isoFormat('DD MMMM YYYY');
@@ -473,10 +412,9 @@ class LaporanController extends Controller
                     ->whereBetween('tgl_penjualan', [$tglMulai, $tglAkhir])
                     ->join('penjualan_barang', 'penjualan.id', '=', 'penjualan_barang.penjualan_id')
                     ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
-                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
+                    ->select('penjualan.nomor_invoice', 'penjualan.tgl_penjualan', 'penjualan.customer', 'penjualan.perusahaan', 'penjualan.no_telepon', 'penjualan.status', 'penjualan.deleted_at', 'penjualan.alasan_batal', 'penjualan.alasan_hapus', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.hargaBarang', 'penjualan_barang.jumlah_harga', 'barang.jenis_barang')
                     ->where('invoice', $request->invoice)
-                    ->whereNull('penjualan_barang.deleted_at')
-                    ->where('status', '<>', 'Batal')
+                    
                     ->orderBy('penjualan.tgl_penjualan', 'asc')
                     ->get();
                     

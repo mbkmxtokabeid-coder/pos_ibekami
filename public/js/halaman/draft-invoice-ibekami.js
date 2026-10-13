@@ -119,14 +119,27 @@
         if (header.inv) $('[name="inv"]').val(header.inv).trigger('change');
         if (header.pelanggan) $('[name="pelanggan"]').val(header.pelanggan).trigger('change');
         if (header.perusahaan) $('[name="perusahaan"]').val(header.perusahaan);
-        if (header.tlp) $('[name="tlp"]').val(header.tlp);
-        if (header.adm) $('[name="adm"]').val(header.adm).trigger('change');
-        if (header.order) $('[name="order"]').val(header.order).trigger('change');
+        if (header.adm) {
+            var $admSelect = $('[name="adm"]');
+            $admSelect.val(header.adm);
+            if (!$admSelect.val()) {
+                $admSelect.find('option').filter(function() {
+                    return $(this).text().trim() === header.adm;
+                }).prop('selected', true);
+            }
+            $admSelect.trigger('change');
+        }
         if (header.sales) {
             $('[name="sales"]').val(header.sales);
             if ($('#divSales').length) $('#divSales').show();
         }
-        if (header.tgl_selesai) $('[name="tgl_selesai"]').val(header.tgl_selesai);
+        if (header.tgl_selesai) {
+            var $tglSelesai = $('[name="tgl_selesai"]');
+            $tglSelesai.val(header.tgl_selesai);
+            if ($tglSelesai.length && $tglSelesai[0]._flatpickr) {
+                $tglSelesai[0]._flatpickr.setDate(header.tgl_selesai, false);
+            }
+        }
         if (header.jns_pem) $('[name="jns_pem"]').val(header.jns_pem).trigger('change');
         if (header.norek) $('[name="norek"][value="' + header.norek + '"]').prop('checked', true);
 
@@ -193,6 +206,10 @@
                     });
                 }
             });
+        }
+
+        if (typeof window.resetRowNumbers === 'function') {
+            window.resetRowNumbers();
         }
 
         // Trigger Calculations

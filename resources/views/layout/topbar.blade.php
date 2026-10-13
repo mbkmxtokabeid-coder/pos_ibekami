@@ -35,7 +35,7 @@
               <!-- App Search-->
               <form class="app-search d-none d-md-block me-2">
                   <div class="position-relative">
-                      <input type="text" class="form-control" placeholder="Search..." autocomplete="off" id="search-options" value="">
+                      <input type="text" class="form-control" placeholder="Cari..." autocomplete="off" id="search-options" value="">
                       <span class="las la-search search-widget-icon"></span>
                       <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none" id="search-close-options"></span>
                   </div>
@@ -132,7 +132,7 @@
                       <form class="p-3">
                           <div class="form-group m-0">
                               <div class="input-group">
-                                  <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                  <input type="text" class="form-control" placeholder="Cari..." aria-label="Recipient's username">
                                   <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
                               </div>
                           </div>
@@ -349,12 +349,12 @@
                   </button>
                   <div class="dropdown-menu dropdown-menu-end">
                       <!-- item-->
-                      <a class="dropdown-item" href="#"><i class="bx bx-user fs-15 align-middle me-1"></i> <span key="t-profile">Profile</span></a>
+                      <a class="dropdown-item" href="#"><i class="bx bx-user fs-15 align-middle me-1"></i> <span key="t-profile">Profil Saya</span></a>
                       <a class="dropdown-item" href="#"><i class="bx bx-wallet fs-15 align-middle me-1"></i> <span key="t-my-wallet">My Wallet</span></a>
                       <a class="dropdown-item d-block" href="#"><span class="badge bg-success float-end">11</span><i class="bx bx-wrench fs-15 align-middle me-1"></i> <span key="t-settings">Settings</span></a>
                       <a class="dropdown-item" href="auth-lockscreen.html"><i class="bx bx-lock-open fs-15 align-middle me-1"></i> <span key="t-lock-screen">Lock screen</span></a>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item text-danger" href="#"><i class="bx bx-power-off fs-15 align-middle me-1 text-danger"></i> <span key="t-logout">Logout</span></a>
+                      <a class="dropdown-item text-danger" href="#"><i class="bx bx-power-off fs-15 align-middle me-1 text-danger"></i> <span key="t-logout">Keluar</span></a>
                   </div>
               </div>
           </div>

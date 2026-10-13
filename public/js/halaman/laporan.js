@@ -2,13 +2,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var selectPerusahaan = document.getElementById('perusahaanChoice');
   var changePerusahaan = document.getElementById('changePerusahaan');
 
-  selectPerusahaan.addEventListener('change', function () {
-    var selectedOption = selectPerusahaan.options[selectPerusahaan.selectedIndex].text;
-    changePerusahaan.textContent = 'Laporan Penjualan  ' + selectedOption
-    // var selectedOption = selectPerusahaan.value;
-
-   
-  });
+  if (selectPerusahaan && changePerusahaan) {
+    selectPerusahaan.addEventListener('change', function () {
+      var selectedOption = selectPerusahaan.options[selectPerusahaan.selectedIndex].text;
+      changePerusahaan.textContent = 'Laporan Penjualan  ' + selectedOption;
+    });
+  }
 });
 
 // document.addEventListener('DOMContentLoaded', function () {

@@ -40,6 +40,7 @@ class BarangController extends Controller
             'barang' => $barang,
             'kategori' => $kategori,
             'kategoriBrg' => $kategori_brg,
+            'allKategori' => KategoriBarang::all(),
         ]);
     }
 

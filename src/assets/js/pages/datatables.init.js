@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 document.addEventListener('DOMContentLoaded', function () {
   let table = new DataTable('#scroll-horizontal', {
-      "scrollX": true
+      "scrollX": true,
+      "ordering": false
     });
 });
 

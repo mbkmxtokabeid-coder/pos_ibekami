@@ -16,7 +16,7 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
-        $allowedRoles = ['admin', 'pemilik', 'magang', 'stockist', 'produksi', 'admintkb'];
+        $allowedRoles = ['admin', 'pemilik', 'magang', 'stockist', 'produksi'];
         if (in_array(strtolower(auth()->user()->role), $allowedRoles)) {
             return $next($request);
         }

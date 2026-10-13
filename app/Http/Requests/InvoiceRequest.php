@@ -21,7 +21,11 @@ class InvoiceRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $invName = $this->input('inv');
+        $invoice = !empty($invName) ? \App\Models\Invoice::where('nama_invoice', $invName)->first() : null;
+        $isTanpaHarga = ($invoice && $invoice->tipe_harga === 'tanpa_harga');
+
+        $rules = [
             'inv' => 'required',
             'kode' => 'required',
             'tgl_jual' => 'required',
@@ -31,14 +35,21 @@ class InvoiceRequest extends FormRequest
             'adm' => 'required',
             'order' => 'required',
             'tgl_selesai' => 'required',
-            'jns_pem' => 'required',
             'barang_id[]' => 'required',
             'deskripsi_item[]' => 'required',
             'satuan[]' => 'required',
-            'hrg[]' => 'required',
             'qty[]' => 'required',
         ];
-        
+
+        if ($isTanpaHarga) {
+            $rules['jns_pem'] = 'nullable';
+            $rules['hrg[]'] = 'nullable';
+        } else {
+            $rules['jns_pem'] = 'required';
+            $rules['hrg[]'] = 'required';
+        }
+
+        return $rules;
     }
     
     public function messages()

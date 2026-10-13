@@ -70,9 +70,6 @@
   font-weight: 900;
   color: #000000;">{{ $toko }}</b><br>
       <div style="text-align:left; font-size: 12px;">
-        @if ($toko == 'Total Karya Berkah')
-        JL GARUDA NO 27B KOTA MEDAN 20122<br>
-        @endif
         JL SETIA BUDI KOMP. SETIA BUDI POINT NO D-10<br>KOTA MEDAN 20132<br>
         Wa: 08112272727
       </div><br>
@@ -151,11 +148,7 @@
     </div>
 
     <div style="position: absolute; width: 240mm; left: 0; right: 0; margin-left: auto; margin-right: auto; bottom:5px; font-size: 10px">
-      @if($toko == 'Total Karya Berkah')
-      <center><i>Kunjungi website Kami, tokabe.id | Total Karya Berkah, member of KADIN INDONESIA.</i></center>
-      @else
       <center><i>Terima Kasih telah mendukung UMKM kami, dengan senang hati melayani.</i></center>
-      @endif
     </div>
 
     <div class="row">
@@ -184,11 +177,7 @@
             <p><br><br><br><br><br><br></p>
           @endif
 
-          @if($toko == 'Total Karya Berkah')
-          <h4>Oky Irawan</h4>
-          @else
           <h4>{{$admin}}</h4>
-          @endif
         </div>
       </div>
     </div>

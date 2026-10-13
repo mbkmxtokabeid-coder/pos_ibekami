@@ -35,6 +35,7 @@
         "gulp-sourcemaps": "^3.0.0",
         "gulp-uglify": "3.0.2",
         "gulp-useref-plus": "0.0.8",
+        "html2canvas": "^1.4.1",
         "laravel-vite-plugin": "^0.7.2",
         "sass": "^1.56.1",
         "vite": "^4.0.0"

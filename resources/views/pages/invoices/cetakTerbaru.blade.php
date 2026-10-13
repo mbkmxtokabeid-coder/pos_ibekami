@@ -10,9 +10,9 @@
     <meta content="Ikhtiar Berkah" name="author" />
     <!-- App favicon -->
 
-      <link rel="shortcut icon" href="{{asset('images/ikhtiarberkah.png')}}">
+      <link rel="shortcut icon" href="{{asset('images/Ibekami.png')}}">
 
-      <title>Ikhtiar Berkah</title>
+      <title>Ibekami</title>
 
       {{-- HEAD CSS  --}}
 
@@ -267,11 +267,7 @@
                                                     <!--end table-->
                                                 </div>
                                                 <div style="position: absolute; width: 240mm; left: 0; right: 0; margin-left: auto; margin-right: auto; bottom:5px; font-size: 10px">
-                                                  @if($toko == 'Total Karya Berkah')
-                                                  <center><i>Kunjungi website Kami, tokabe.id | Total Karya Berkah, member of KADIN INDONESIA.</i></center>
-                                                  @else
                                                   <center><i>Terima Kasih telah mendukung UMKM kami, dengan senang hati melayani.</i></center>
-                                                  @endif
                                                 </div>
                                             
                                                 <div class="row">
@@ -288,11 +284,7 @@
                                             
                                                       <h6 class="fw-normal">Medan,{{$formatTanggal}}</h6>
                                                       <p><br><br><br><br><br><br></p>
-                                                      @if($toko == 'Total Karya Berkah')
-                                                      <h6 class="fw-normal">Oky Irawan</h6>
-                                                      @else
                                                       <h6 class="fw-normal">{{$admin}}</h6>
-                                                      @endif
                                                     </div>
                                                   </div>
                                                 </div>

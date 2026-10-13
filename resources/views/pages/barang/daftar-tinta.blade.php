@@ -60,7 +60,7 @@
                                 <th>Terakhir Update</th>
                                 <th>Stok</th>
 
-                                <th class="text-center">Action</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

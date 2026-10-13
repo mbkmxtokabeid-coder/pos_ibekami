@@ -76,6 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
   let table = new DataTable("#scroll-horizontal", {
     scrollX: true,
+    ordering: false,
+    autoWidth: false,
     //  pageLength: 100,
     dom: "lBfrtip",
     buttons: ["copy", "csv", "excel", "print", "pdf"],

@@ -38,6 +38,8 @@ class Penjualan extends Model
         'ppn',
         'total_pembayaran',
         'sisa_pembayaran',
+        'alasan_batal',
+        'alasan_hapus',
 
     ];
     public function invoice()
@@ -63,14 +65,6 @@ class Penjualan extends Model
 
     public function getNorekTextAttribute()
     {
-        // Selection for Tokabe invoices
-        if (strpos($this->nomor_invoice, 'T') === 0) {
-            if ($this->no_rek == "BNI" || $this->no_rek == "TKBBNI") {
-                return "BNI | A/N : PT. Total Karya Berkah | No. Rek : 3528289999";
-            }
-            return "BSI | A/N : PT. Total Karya Berkah | No. Rek : 3557999999";
-        }
-
         // If stored no_rek is already a full text string
         if (!empty($this->no_rek) && strlen($this->no_rek) > 10 && strpos($this->no_rek, '|') !== false) {
             return $this->no_rek;

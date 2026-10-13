@@ -61,37 +61,32 @@ function brg(kategoriId) {
 
   if (kategoriId !== 0) {
 
-    fetch(`invoice/get-barang-data/${kategoriId}`)
+    var baseUrl = window.location.origin;
+    fetch(`${baseUrl}/invoice/get-barang-data/${kategoriId}`)
       .then(response => response.json())
       .then(data => {
-        // Data telah diambil, Anda dapat menggunakannya dalam JavaScript di sini
-        
-
-        // Misalnya, jika Anda ingin menampilkan data dalam elemen dengan class "counter-value"
         var counterValue = document.querySelector('.penjualan');
-        var stok = document.querySelectorAll('.stok')
-        if (counterValue) {
-          counterValue.textContent = data.total_potensi_penjualan.toLocaleString()
+        var stok = document.querySelectorAll('.stok');
+        if (counterValue && data) {
+          var val = data.total_potensi_penjualan !== undefined ? Number(data.total_potensi_penjualan).toLocaleString('id-ID') : '0';
+          counterValue.textContent = val;
+          var totalStok = data.total_stok !== undefined ? Number(data.total_stok).toLocaleString('id-ID') : '0';
           stok.forEach(function (element) {
-            element.textContent = data.total_stok.toLocaleString()
-          })
+            element.textContent = totalStok;
+          });
         }
       })
       .catch(error => {
         console.error('Terjadi kesalahan saat mengambil data:', error);
       });
     // fetch untuk potensi profit
-    fetch(`invoice/get-potensi-profit/${kategoriId}`)
+    fetch(`${baseUrl}/invoice/get-potensi-profit/${kategoriId}`)
       .then(response => response.json())
       .then(data => {
-        // Data telah diambil, Anda dapat menggunakannya dalam JavaScript di sini
-        console.log(data.total_profit);
-
-        // Misalnya, jika Anda ingin menampilkan data dalam elemen dengan class "counter-value"
         var counterValue = document.querySelector('.profit');
-        
-        if (counterValue) {
-          counterValue.textContent = data.total_profit.toLocaleString();
+        if (counterValue && data) {
+          var valProfit = data.total_profit !== undefined ? Number(data.total_profit).toLocaleString('id-ID') : '0';
+          counterValue.textContent = valProfit;
         }
       })
       .catch(error => {

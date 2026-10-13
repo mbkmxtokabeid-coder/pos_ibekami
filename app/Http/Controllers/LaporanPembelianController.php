@@ -18,7 +18,6 @@ use App\Models\PenjualanBarang;
 
 use Illuminate\Support\Facades\DB;
 use App\Exports\LaporanBarangExport;
-use App\Models\PenjualanTokabe;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;

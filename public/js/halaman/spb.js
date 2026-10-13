@@ -38,13 +38,13 @@ function new_link() {
       });
 
       t +=
-        '</select></div><textarea class="form-control bg-light border-0" id="productDetails-' +
+        '</select></div><textarea class="form-control form-control-modern" id="productDetails-' +
         count +
-        '" name="deskripsi_item[]" rows="2" placeholder="Deskripsi Item"></textarea></td><td><select class="form-select bg-light border-0" id="satuan-' + count + '" name="satuan[]" required><option value="">Pilih</option><option value="Set">Set</option><option value="Pcs">Pcs</option><option value="Kotak">Kotak</option><option value="Blok">Blok</option><option value="Lbr">Lbr</option></select></td><td><div class="input-step"><input type="number" class="text-center" id="product-qty-' +
+        '" name="deskripsi_item[]" rows="2" placeholder="Deskripsi Item"></textarea></td><td><select class="form-select form-select-modern" id="satuan-' + count + '" name="satuan[]" required><option value="">Pilih</option><option value="Set">Set</option><option value="Pcs">Pcs</option><option value="Kotak">Kotak</option><option value="Blok">Blok</option><option value="Lbr">Lbr</option></select></td><td><div class="input-step"><input type="number" class="form-control form-control-modern text-center num" id="product-qty-' +
         count +
-        '" name="qty[]" value="0"></div></td><td class="text-end"><div><textarea id="productKeterangan-'
+        '" name="qty[]" value="1" min="1"></div></td><td><div><textarea id="productKeterangan-'
         + count +
-        '"class="form-control bg-light border-0" name="keterangan[]" cols="2" placeholder="Keterangan"></textarea></div></td><td class="product-removal"><a href="javascript:void(0)" class="btn btn-success">Delete</a></td>';
+        '" class="form-control form-control-modern" name="keterangan[]" rows="2" placeholder="Keterangan"></textarea></div></td><td class="product-removal text-center"><button type="button" class="btn-row-delete" aria-label="Hapus baris item"><i class="las la-trash fs-18"></i></button></td>';
 
       e.innerHTML = t;
       document.getElementById("newlink").appendChild(e);
@@ -68,7 +68,7 @@ function new_link() {
 
 // Batas
 function remove() {
-  Array.from(document.querySelectorAll(".product-removal a")).forEach(function (e) {
+  Array.from(document.querySelectorAll(".product-removal a, .product-removal button")).forEach(function (e) {
     e.addEventListener("click", function (e) {
       removeItem(e);
     });

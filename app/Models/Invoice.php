@@ -14,6 +14,7 @@ class Invoice extends Model
         'nama_invoice',
         'kode_invoice',
         'perusahaan_id',
+        'tipe_harga',
     ];
     public function penjualan()
     {

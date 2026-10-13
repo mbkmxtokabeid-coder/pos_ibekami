@@ -77,7 +77,7 @@ class LaporanBarangExport implements FromArray, ShouldAutoSize, WithHeadings, Wi
                 $penjualan->perusahaan,
                 $penjualan->no_telepon ?? '-',
                 $deskripsi,
-                $penjualan->status,
+                (!empty($penjualan->deleted_at) ? ('Dihapus' . (!empty($penjualan->alasan_hapus) ? ' (' . $penjualan->alasan_hapus . ')' : '')) : ($penjualan->status === 'Batal' && !empty($penjualan->alasan_batal) ? 'Batal (' . $penjualan->alasan_batal . ')' : $penjualan->status)),
                 $qty,
                 $hargaBarang,
                 $jumlah_harga,

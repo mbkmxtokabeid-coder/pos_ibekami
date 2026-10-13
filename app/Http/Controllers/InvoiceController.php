@@ -37,84 +37,427 @@ class InvoiceController extends Controller
         
         $yearNow = Carbon::now()->year;
         $monthNow = Carbon::now()->month;
-        $totalPerBulan = Penjualan::whereMonth('tgl_penjualan', $monthNow)->whereYear('tgl_penjualan', $yearNow)->sum('total_pembayaran') / 1000000;
-        if ($totalPerBulan >= 1000) {
-            $jumlahPerBulan = intval($totalPerBulan);
-        } else {
-            $jumlahPerBulan = number_format($totalPerBulan, 2);
-        }
-        $totalPerTahun = Penjualan::whereYear('tgl_penjualan', $yearNow)->where('jenis_pembayaran', '<>', 'PO')->sum('total_pembayaran') / 1000000;
-        if ($totalPerTahun >= 1000) {
-            $jumlahPerTahun = intval($totalPerTahun);
-        } else {
-            $jumlahPerTahun = number_format($totalPerTahun, 2);
-        }
-        $jumlahBBPerTahun = number_format((Penjualan::whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->where('jenis_pembayaran', '<>', 'PO')->sum('sisa_pembayaran') / 1000000), 2);
-        $jumlahBBPerBulan = number_format((Penjualan::whereMonth('tgl_penjualan', $monthNow)->whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->where('jenis_pembayaran', '<>', 'PO')->sum('sisa_pembayaran') / 1000000), 2);
 
+        // =========================================================================
+        // 1. KONSOLIDASI CARD STATUS PEMBAYARAN (semua jenis transaksi)
+        // =========================================================================
+        $stats = DB::table('penjualan')
+            ->whereNull('deleted_at')
+            ->selectRaw("
+                COUNT(CASE WHEN YEAR(tgl_penjualan) = ? THEN 1 END) as jlh_invoice,
+                COALESCE(SUM(CASE WHEN YEAR(tgl_penjualan) = ? THEN total_pembayaran ELSE 0 END), 0) as total_per_tahun,
+                COALESCE(SUM(CASE WHEN YEAR(tgl_penjualan) = ? AND status = 'Lunas' THEN total_pembayaran ELSE 0 END), 0) as total_lunas,
+                COUNT(CASE WHEN YEAR(tgl_penjualan) = ? AND status = 'Lunas' THEN 1 END) as lunas,
+                COALESCE(SUM(CASE WHEN YEAR(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN dp ELSE 0 END), 0) as tot_dp_tahun,
+                COALESCE(SUM(CASE WHEN YEAR(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as jumlah_bb_per_tahun,
+                COUNT(CASE WHEN YEAR(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN 1 END) as belum_lunas,
+                COALESCE(SUM(CASE WHEN YEAR(tgl_penjualan) = ? AND MONTH(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as jumlah_bb_per_bulan,
+                COUNT(CASE WHEN YEAR(tgl_penjualan) = ? AND MONTH(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN 1 END) as belum_lunas_month,
+                COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status <> 'Batal' THEN total_pembayaran ELSE 0 END), 0) as jumlah_po,
+                COUNT(CASE WHEN jenis_pembayaran = 'PO' AND status <> 'Batal' THEN 1 END) as count_all_inv_po,
+                COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND YEAR(tgl_penjualan) = ? AND status = 'Lunas' THEN total_pembayaran ELSE 0 END), 0) as jumlah_po_lunas,
+                COUNT(CASE WHEN jenis_pembayaran = 'PO' AND YEAR(tgl_penjualan) = ? AND status = 'Lunas' THEN 1 END) as count_all_settled_po,
+                COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND YEAR(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN total_pembayaran ELSE 0 END), 0) as jumlah_po_blm_lunas,
+                COUNT(CASE WHEN jenis_pembayaran = 'PO' AND YEAR(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN 1 END) as count_all_outstanding_po,
+                COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND YEAR(tgl_penjualan) = ? AND MONTH(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as jumlah_bb_per_bulan_po,
+                COUNT(CASE WHEN jenis_pembayaran = 'PO' AND YEAR(tgl_penjualan) = ? AND MONTH(tgl_penjualan) = ? AND status = 'Belum Lunas' THEN 1 END) as blm_lunas_po,
+                COUNT(CASE WHEN status = 'Batal' AND YEAR(tgl_penjualan) = ? THEN 1 END) as batal,
+                COALESCE(SUM(CASE WHEN status = 'Batal' AND YEAR(tgl_penjualan) = ? THEN total_pembayaran ELSE 0 END), 0) as jumlah_batal,
+                COALESCE(SUM(CASE WHEN YEAR(tgl_penjualan) = ? AND MONTH(tgl_penjualan) = ? THEN total_pembayaran ELSE 0 END), 0) as total_per_bulan,
+                COALESCE(SUM(total_pembayaran), 0) as jumlah_invoice
+            ", [
+                $yearNow, $yearNow, $yearNow, $yearNow, $yearNow, $yearNow, $yearNow,
+                $yearNow, $monthNow, $yearNow, $monthNow,
+                $yearNow, $yearNow, $yearNow, $yearNow, $yearNow, $monthNow, $yearNow, $monthNow,
+                $yearNow, $yearNow, $yearNow, $monthNow
+            ])
+            ->first();
 
+        $jlhInvoice = $stats->jlh_invoice ?? 0;
+        $totalPerTahun = $stats->total_per_tahun ?? 0;
+        $jumlahPerTahun = number_format($totalPerTahun, 0, ',', '.');
+        $lunas = $stats->lunas ?? 0;
+        $totalLunasThn = number_format(($stats->total_lunas ?? 0) + ($stats->tot_dp_tahun ?? 0), 0, ',', '.');
+        $belumLunas = $stats->belum_lunas ?? 0;
+        $jumlahBBPerTahun = number_format($stats->jumlah_bb_per_tahun ?? 0, 0, ',', '.');
+        $belumLunasMonth = $stats->belum_lunas_month ?? 0;
+        $jumlahBBPerBulan = number_format($stats->jumlah_bb_per_bulan ?? 0, 0, ',', '.');
 
-        $penjualan = Penjualan::with('user')->orderByDesc('tgl_penjualan')->get();
-        // Modify
-        
-        $jlhInvoice = Penjualan::whereYear('tgl_penjualan', $yearNow)->where('jenis_pembayaran', '<>', 'PO')->count();
-        $dataLunas = Penjualan::where('status', 'Lunas')->where('jenis_pembayaran', '<>', 'PO')->whereYear('tgl_penjualan', $yearNow);
-        $jumlahInvoice = number_format((Penjualan::sum('total_pembayaran') / 1000000), 2);
-        $dataBlmLunas = Penjualan::where('status', 'Belum Lunas')->where('jenis_pembayaran', '<>', 'PO')->whereYear('tgl_penjualan', $yearNow);
-        $totDpTahun = $dataBlmLunas->sum('dp') / 1000000;
+        $jumlahPO = number_format($stats->jumlah_po ?? 0, 0, ',', '.');
+        $countAllInvPO = $stats->count_all_inv_po ?? 0;
+        $jumlahPOLunas = number_format($stats->jumlah_po_lunas ?? 0, 0, ',', '.');
+        $countAllSettledPO = $stats->count_all_settled_po ?? 0;
+        $jumlahPOBlmLunas = number_format($stats->jumlah_po_blm_lunas ?? 0, 0, ',', '.');
+        $countAllOutstandingPO = $stats->count_all_outstanding_po ?? 0;
+        $jumlahBBPerBulanPO = number_format($stats->jumlah_bb_per_bulan_po ?? 0, 0, ',', '.');
+        $blmLunasPO = $stats->blm_lunas_po ?? 0;
 
-        $dataBatal = Penjualan::where('status', 'Batal')->whereYear('tgl_penjualan', $yearNow);
-        $lunas = $dataLunas->count();
-        $belumLunas = $dataBlmLunas->count();
-        $belumLunasMonth = Penjualan::where('status', 'Belum Lunas')->whereMonth('tgl_penjualan', $monthNow)->count();
-        $batal = $dataBatal->count();
-        $totalLunas = $dataLunas->sum('total_pembayaran') / 1000000;
+        $batal = $stats->batal ?? 0;
+        $jumlahBatal = number_format($stats->jumlah_batal ?? 0, 0, ',', '.');
+        $totalPerBulan = $stats->total_per_bulan ?? 0;
+        $jumlahPerBulan = number_format($totalPerBulan, 0, ',', '.');
+        $jumlahInvoice = number_format($stats->jumlah_invoice ?? 0, 0, ',', '.');
 
-        if ($totalLunas >= 1000 || $totDpTahun >= 1000) {
-            $jumlahLunas = intval($totalLunas);
-            $dpTahun = intval($totDpTahun);
-        } else {
-            $jumlahLunas = number_format($totalLunas, 2);
-            $dpTahun = number_format($totDpTahun);
-        }
-        $jumlahBlmLunas = number_format(($dataBlmLunas->sum('total_pembayaran') / 1000000), 2);
-        $jumlahBatal = number_format(($dataBatal->sum('total_pembayaran') / 1000000), 2);
-        $totalLunasThn = $jumlahLunas + $dpTahun;
+        // Card Hapus (Invoice yang Dihapus / Soft Deleted)
+        $statsHapus = DB::table('penjualan')
+            ->whereNotNull('deleted_at')
+            ->whereYear('tgl_penjualan', $yearNow)
+            ->selectRaw('COUNT(*) as count_hapus, COALESCE(SUM(total_pembayaran), 0) as total_hapus')
+            ->first();
+        $hapusCount = $statsHapus->count_hapus ?? 0;
+        $jumlahHapus = number_format($statsHapus->total_hapus ?? 0, 0, ',', '.');
+
+        // =========================================================================
+        // 4. DATA INVOICE (Eager load user & penjualanBarang)
+        // =========================================================================
+        $jenisInvoiceList = Invoice::orderBy('nama_invoice')->get();
+        $invoiceMap = $jenisInvoiceList->keyBy('id');
+        $materialsMap = Material::all()->keyBy('id');
+
+        $penjualan = Penjualan::with(['user', 'penjualanBarang'])->orderByDesc('tgl_penjualan')->get();
+
         foreach ($penjualan as $inv) {
+            $invType = $invoiceMap->get($inv->invoice);
+            $inv->jenis_invoice_nama = $invType ? $invType->nama_invoice : '-';
+            $inv->jenis_invoice_kode = $invType ? $invType->kode_invoice : '-';
             $inv->formatted_tgl_penjualan = Carbon::parse($inv->tgl_penjualan)->format('d M Y');
             $inv->formatted_tgl_update = Carbon::parse($inv->updated_at)->addHour(7)->format('d M Y H:i');
-            $inv->formatted_total_pembayaran = number_format($inv->total_pembayaran, 0, ',', ',');
-            $inv->formatted_dp = number_format($inv->dp, 0, ',', ',');
+            $inv->formatted_total_pembayaran = number_format($inv->total_pembayaran, 0, ',', '.');
+            $inv->formatted_dp = number_format($inv->dp ?? 0, 0, ',', '.');
             if ($inv->dp == null) {
                 $inv->dp = 0;
             }
         }
-        //Data For PO
 
-        // PO Card
-        $jumlahBBPerTahunPO = number_format((Penjualan::whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->where('jenis_pembayaran', 'PO')->sum('sisa_pembayaran') / 1000000), 2);
-        $jumlahBBPerBulanPO = number_format((Penjualan::whereMonth('tgl_penjualan', $monthNow)->whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->where('jenis_pembayaran', 'PO')->sum('sisa_pembayaran') / 1000000), 2);
+        // =========================================================================
+        // 5. PERHITUNGAN PPN & PPH TAHUN INI
+        // =========================================================================
+        $dataPajak = DB::table('penjualan')
+            ->whereNull('deleted_at')
+            ->whereYear('tgl_penjualan', $yearNow)
+            ->where('status', '!=', 'Batal')
+            ->select('ppn', 'diskon', 'potongan', 'total_pembayaran', 'total_harga')
+            ->get();
 
+        $ppnTotal = 0;
+        $ppnTotalCount = 0;
+        $ppn01 = 0;
+        $ppn01Count = 0;
+        $ppn02 = 0;
+        $ppn02Count = 0;
+        $ppn03 = 0;
+        $ppn03Count = 0;
+        $ppn04 = 0;
+        $ppn04Count = 0;
+        $pphTotal = 0;
+        $pphTotalCount = 0;
 
-        $dataBlmLunasPO = Penjualan::where('status', 'Belum Lunas')->where('jenis_pembayaran', 'PO')->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
-        $blmLunasPO = $dataBlmLunasPO->count();
-        $totalLunasPOThn = $dataBlmLunasPO->sum('total_pembayaran') / 1000000;
+        foreach ($dataPajak as $inv) {
+            $hasPpn = !empty($inv->ppn) && (float)$inv->ppn > 0;
+            $hasDiskon = !empty($inv->diskon) && (float)$inv->diskon > 0;
+            $hasPotongan = !empty($inv->potongan) && (float)$inv->potongan > 0;
+            $nominalPpn = 0;
 
-        if ($totalLunasPOThn >= 1000) {
-            $jumlahLunasPOThn = intval($totalLunasPOThn);
-        } else {
-            $jumlahLunasPOThn = number_format($totalLunasPOThn, 2);
+            if ($hasPpn) {
+                $nominalPpn = ($inv->ppn / 100) * ($inv->total_harga ?? 0);
+            } elseif (!$hasDiskon && !$hasPotongan && $inv->total_pembayaran > $inv->total_harga && $inv->total_harga > 0) {
+                $nominalPpn = $inv->total_pembayaran - $inv->total_harga;
+                $hasPpn = true;
+            }
+
+            if ($hasPpn && $nominalPpn > 0) {
+                $ppnTotal += $nominalPpn;
+                $ppnTotalCount++;
+
+                $kode = $inv->kode_ppn ?? '01';
+                if ($kode == '01') {
+                    $ppn01 += $nominalPpn;
+                    $ppn01Count++;
+                } elseif ($kode == '02') {
+                    $ppn02 += $nominalPpn;
+                    $ppn02Count++;
+                } elseif ($kode == '03') {
+                    $ppn03 += $nominalPpn;
+                    $ppn03Count++;
+                } elseif ($kode == '04') {
+                    $ppn04 += $nominalPpn;
+                    $ppn04Count++;
+                }
+            }
         }
 
-        $jumlahPO = number_format((Penjualan::where('jenis_pembayaran', 'PO')->where('status','<>','Batal')->sum('total_pembayaran') / 1000000), 2);
-        $jumlahPOLunas = number_format((Penjualan::whereYear('tgl_penjualan', $yearNow)->where('jenis_pembayaran', '=', 'PO')->where('status',  'Lunas')->sum('total_pembayaran') / 1000000), 2);
-        
-        $jumlahPOBlmLunas = number_format((Penjualan::whereYear('tgl_penjualan', $yearNow)->where('jenis_pembayaran', '=', 'PO')->where('status', 'Belum Lunas')->sum('total_pembayaran') / 1000000), 2);
-        
-        $countAllInvPO = Penjualan::where('jenis_pembayaran', 'PO')->where('status','<>','Batal')->count();
-        $countAllOutstandingPO = Penjualan::whereYear('tgl_penjualan', $yearNow)->where('jenis_pembayaran', 'PO')->where('status', 'Belum Lunas')->count();
-        $countAllSettledPO = Penjualan::whereYear('tgl_penjualan', $yearNow)->where('jenis_pembayaran', 'PO')->where('status', 'Lunas')->count();
-        return  view('pages.invoices.daftar-invoice', compact('penjualan', 'jlhInvoice', 'lunas', 'belumLunas', 'batal', 'totalLunasThn',  'jumlahBatal', 'jumlahInvoice', 'jumlahBBPerTahun', 'jumlahBBPerBulan', 'jumlahPerBulan', 'jumlahPerTahun', 'belumLunasMonth', 'jumlahPO', 'jumlahPOLunas', 'jumlahPOBlmLunas', 'countAllInvPO', 'blmLunasPO', 'countAllOutstandingPO', 'countAllSettledPO', 'jumlahBBPerBulanPO'));
+        $availableYears = DB::table('penjualan')
+            ->whereNull('deleted_at')
+            ->selectRaw('DISTINCT YEAR(tgl_penjualan) as year')
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->toArray();
+        if (empty($availableYears)) {
+            $availableYears = [$yearNow, $yearNow - 1];
+        } else {
+            if (!in_array($yearNow, $availableYears)) {
+                array_unshift($availableYears, $yearNow);
+            }
+            rsort($availableYears);
+        }
+
+        return view('pages.invoices.daftar-invoice', compact(
+            'penjualan', 'jlhInvoice', 'lunas', 'belumLunas', 'batal', 'totalLunasThn',
+            'jumlahBatal', 'jumlahInvoice', 'jumlahBBPerTahun', 'jumlahBBPerBulan',
+            'jumlahPerBulan', 'jumlahPerTahun', 'belumLunasMonth', 'jumlahPO', 'jumlahPOLunas',
+            'jumlahPOBlmLunas', 'countAllInvPO', 'blmLunasPO', 'countAllOutstandingPO',
+            'countAllSettledPO', 'jumlahBBPerBulanPO',
+            'ppnTotal', 'ppnTotalCount', 'ppn01', 'ppn01Count', 'ppn02', 'ppn02Count',
+            'ppn03', 'ppn03Count', 'ppn04', 'ppn04Count', 'pphTotal', 'pphTotalCount', 'availableYears',
+            'jenisInvoiceList', 'materialsMap', 'hapusCount', 'jumlahHapus'
+        ));
+    }
+
+    public function getCardsData(Request $request)
+    {
+        $timeframe = $request->query('timeframe', 'year');
+        $mode = $request->query('mode');
+        $date = $request->query('date');
+        $month = $request->query('month');
+        $year = $request->query('year');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        Carbon::setLocale('id');
+        $now = Carbon::now(new \DateTimeZone('Asia/Jakarta'));
+        $yearNow = $now->year;
+        $monthNow = $now->month;
+
+        $query = Penjualan::query();
+        $card4Query = Penjualan::query();
+        $queryHapus = Penjualan::onlyTrashed();
+
+        $periodLabel = '';
+        $card4MonthName = '';
+
+        if ($timeframe === 'today') {
+            $today = $now->toDateString();
+            $query->whereDate('tgl_penjualan', $today);
+            $queryHapus->whereDate('tgl_penjualan', $today);
+            $periodLabel = 'HARI INI';
+            
+            $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
+            $card4MonthName = strtoupper($now->translatedFormat('F Y'));
+        } elseif ($timeframe === 'week') {
+            $startOfWeek = $now->copy()->startOfWeek()->format('Y-m-d 00:00:00');
+            $endOfWeek = $now->copy()->endOfWeek()->format('Y-m-d 23:59:59');
+            $query->whereBetween('tgl_penjualan', [$startOfWeek, $endOfWeek]);
+            $queryHapus->whereBetween('tgl_penjualan', [$startOfWeek, $endOfWeek]);
+            $periodLabel = 'MINGGU INI';
+
+            $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
+            $card4MonthName = strtoupper($now->translatedFormat('F Y'));
+        } elseif ($timeframe === 'month') {
+            $query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
+            $queryHapus->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
+            $periodLabel = 'BULAN ' . strtoupper($now->translatedFormat('F Y'));
+
+            $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
+            $card4MonthName = strtoupper($now->translatedFormat('F Y'));
+        } elseif ($timeframe === 'year') {
+            $query->whereYear('tgl_penjualan', $yearNow);
+            $queryHapus->whereYear('tgl_penjualan', $yearNow);
+            $periodLabel = 'TAHUN ' . $yearNow;
+
+            $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
+            $card4MonthName = strtoupper($now->translatedFormat('F'));
+        } elseif ($timeframe === 'last_year') {
+            $lastYear = $yearNow - 1;
+            $query->whereYear('tgl_penjualan', $lastYear);
+            $queryHapus->whereYear('tgl_penjualan', $lastYear);
+            $periodLabel = 'TAHUN ' . $lastYear;
+
+            $card4Query->whereYear('tgl_penjualan', $lastYear)->whereMonth('tgl_penjualan', 12);
+            $card4MonthName = 'DESEMBER ' . $lastYear;
+        } elseif ($timeframe === 'custom') {
+            if ($mode === 'date' && $date) {
+                $parsedDate = Carbon::parse($date);
+                $query->whereDate('tgl_penjualan', $parsedDate->toDateString());
+                $queryHapus->whereDate('tgl_penjualan', $parsedDate->toDateString());
+                $periodLabel = 'TANGGAL ' . $parsedDate->format('d/m/Y');
+
+                $card4Query->whereYear('tgl_penjualan', $parsedDate->year)->whereMonth('tgl_penjualan', $parsedDate->month);
+                $card4MonthName = strtoupper($parsedDate->translatedFormat('F Y'));
+            } elseif ($mode === 'month' && $month && $year) {
+                $query->whereYear('tgl_penjualan', $year)->whereMonth('tgl_penjualan', $month);
+                $queryHapus->whereYear('tgl_penjualan', $year)->whereMonth('tgl_penjualan', $month);
+                $parsedDate = Carbon::createFromDate($year, $month, 1);
+                $periodLabel = 'BULAN ' . strtoupper($parsedDate->translatedFormat('F Y'));
+
+                $card4Query->whereYear('tgl_penjualan', $year)->whereMonth('tgl_penjualan', $month);
+                $card4MonthName = strtoupper($parsedDate->translatedFormat('F Y'));
+            } elseif ($mode === 'year' && $year) {
+                $query->whereYear('tgl_penjualan', $year);
+                $queryHapus->whereYear('tgl_penjualan', $year);
+                $periodLabel = 'TAHUN ' . $year;
+
+                $card4Month = ($year == $yearNow) ? $monthNow : 12;
+                $card4Query->whereYear('tgl_penjualan', $year)->whereMonth('tgl_penjualan', $card4Month);
+                $parsedDate = Carbon::createFromDate($year, $card4Month, 1);
+                $card4MonthName = strtoupper($parsedDate->translatedFormat('F') . ($year != $yearNow ? ' ' . $year : ''));
+            } elseif ($mode === 'range' && $startDate && $endDate) {
+                $start = Carbon::parse($startDate)->startOfDay();
+                $end = Carbon::parse($endDate)->endOfDay();
+                $query->whereBetween('tgl_penjualan', [$start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')]);
+                $queryHapus->whereBetween('tgl_penjualan', [$start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')]);
+                $periodLabel = $start->format('d/m/Y') . ' - ' . $end->format('d/m/Y');
+
+                $card4Query->whereYear('tgl_penjualan', $end->year)->whereMonth('tgl_penjualan', $end->month);
+                $card4MonthName = strtoupper($end->translatedFormat('F Y'));
+            }
+        }
+
+        // =========================================================================
+        // KARTU STATUS PEMBAYARAN SEMUA INVOICE
+        // =========================================================================
+        // Semua transaksi mengikuti status pembayaran yang sama, termasuk histori PO.
+        $queryNonPo = clone $query;
+        $card4QueryNonPo = clone $card4Query;
+
+        // Kartu 1: Total invoice
+        $totalNominalNonPo = (clone $queryNonPo)->sum('total_pembayaran');
+        $jlhInvoiceNonPo = (clone $queryNonPo)->count();
+        $valCard1 = number_format($totalNominalNonPo, 0, ',', '.');
+
+        // Kartu 2: Invoice terbayar
+        $dataLunasNonPo = (clone $queryNonPo)->where('status', 'Lunas');
+        $dataBlmLunasNonPo = (clone $queryNonPo)->where('status', 'Belum Lunas');
+        $totLunasNonPo = (clone $dataLunasNonPo)->sum('total_pembayaran');
+        $totDpNonPo = (clone $dataBlmLunasNonPo)->sum('dp');
+        $lunasNonPo = (clone $dataLunasNonPo)->count();
+        $totalLunasThnVal = $totLunasNonPo + $totDpNonPo;
+        $valCard2 = number_format($totalLunasThnVal, 0, ',', '.');
+
+        // Non-PO Card 3: Belum Terbayar Non-PO Periode
+        $belumLunasNonPo = (clone $dataBlmLunasNonPo)->count();
+        $totalBBNonPo = (clone $dataBlmLunasNonPo)->sum('sisa_pembayaran');
+        $valCard3 = number_format($totalBBNonPo, 0, ',', '.');
+
+        // Non-PO Card 4: Belum Terbayar Non-PO Bulan
+        $dataBlmLunasMonthNonPo = (clone $card4QueryNonPo)->where('status', 'Belum Lunas');
+        $belumLunasMonthNonPo = (clone $dataBlmLunasMonthNonPo)->count();
+        $totalBBMonthNonPo = (clone $dataBlmLunasMonthNonPo)->sum('sisa_pembayaran');
+        $valCard4 = number_format($totalBBMonthNonPo, 0, ',', '.');
+
+        // =========================================================================
+        // CARD PO (Purchase Order - jenis_pembayaran == 'PO')
+        // =========================================================================
+        $queryPo = (clone $query)->where('jenis_pembayaran', 'PO');
+        $card4QueryPo = (clone $card4Query)->where('jenis_pembayaran', 'PO');
+
+        // PO Card 1: Jumlah Seluruh PO
+        if ($timeframe === 'year' || empty($timeframe)) {
+            $totalNominalPo = Penjualan::where('jenis_pembayaran', 'PO')->where('status', '<>', 'Batal')->sum('total_pembayaran');
+            $countInvPo = Penjualan::where('jenis_pembayaran', 'PO')->where('status', '<>', 'Batal')->count();
+        } else {
+            $totalNominalPo = (clone $queryPo)->where('status', '<>', 'Batal')->sum('total_pembayaran');
+            $countInvPo = (clone $queryPo)->where('status', '<>', 'Batal')->count();
+        }
+        $valPo1 = number_format($totalNominalPo, 0, ',', '.');
+
+        // PO Card 2: PO Lunas Periode
+        $dataLunasPo = (clone $queryPo)->where('status', 'Lunas');
+        $valPo2 = number_format((clone $dataLunasPo)->sum('total_pembayaran'), 0, ',', '.');
+        $countPo2 = (clone $dataLunasPo)->count();
+
+        // PO Card 3: PO Belum Lunas Periode
+        $dataBlmLunasPo = (clone $queryPo)->where('status', 'Belum Lunas');
+        $valPo3 = number_format((clone $dataBlmLunasPo)->sum('total_pembayaran'), 0, ',', '.');
+        $countPo3 = (clone $dataBlmLunasPo)->count();
+
+        // PO Card 4: PO Belum Lunas Bulan
+        $dataBlmLunasMonthPo = (clone $card4QueryPo)->where('status', 'Belum Lunas');
+        $valPo4 = number_format((clone $dataBlmLunasMonthPo)->sum('sisa_pembayaran'), 0, ',', '.');
+        $countPo4 = (clone $dataBlmLunasMonthPo)->count();
+
+        // Card 5: Batal
+        $dataBatal = (clone $query)->where('status', 'Batal');
+        $batal = (clone $dataBatal)->count();
+        $totalBatal = (clone $dataBatal)->sum('total_pembayaran');
+        $valCard5 = number_format($totalBatal, 0, ',', '.');
+
+        // Card Hapus: Invoice Dihapus (Soft Deleted)
+        $hapusCount = (clone $queryHapus)->count();
+        $totalHapus = (clone $queryHapus)->sum('total_pembayaran');
+        $valCardHapus = number_format($totalHapus, 0, ',', '.');
+
+        // Pajak PPN & PPh
+        $dataPajak = (clone $query)->where('status', '!=', 'Batal')
+            ->select('ppn', 'diskon', 'potongan', 'total_pembayaran', 'total_harga')
+            ->get();
+        $ppnTotal = 0;
+        $ppnTotalCount = 0;
+        $ppn01 = 0;
+        $ppn01Count = 0;
+        $ppn02 = 0;
+        $ppn02Count = 0;
+        $ppn03 = 0;
+        $ppn03Count = 0;
+        $ppn04 = 0;
+        $ppn04Count = 0;
+        $pphTotal = 0;
+        $pphTotalCount = 0;
+
+        foreach ($dataPajak as $inv) {
+            $hasPpn = !empty($inv->ppn) && (float)$inv->ppn > 0;
+            $hasDiskon = !empty($inv->diskon) && (float)$inv->diskon > 0;
+            $hasPotongan = !empty($inv->potongan) && (float)$inv->potongan > 0;
+            $nominalPpn = 0;
+
+            if ($hasPpn) {
+                $nominalPpn = ($inv->ppn / 100) * ($inv->total_harga ?? 0);
+            } elseif (!$hasDiskon && !$hasPotongan && $inv->total_pembayaran > $inv->total_harga && $inv->total_harga > 0) {
+                $nominalPpn = $inv->total_pembayaran - $inv->total_harga;
+                $hasPpn = true;
+            }
+
+            if ($hasPpn && $nominalPpn > 0) {
+                $ppnTotal += $nominalPpn;
+                $ppnTotalCount++;
+
+                $kode = $inv->kode_ppn ?? '01';
+                if ($kode == '01') {
+                    $ppn01 += $nominalPpn;
+                    $ppn01Count++;
+                } elseif ($kode == '02') {
+                    $ppn02 += $nominalPpn;
+                    $ppn02Count++;
+                } elseif ($kode == '03') {
+                    $ppn03 += $nominalPpn;
+                    $ppn03Count++;
+                } elseif ($kode == '04') {
+                    $ppn04 += $nominalPpn;
+                    $ppn04Count++;
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'periodLabel' => $periodLabel,
+            'card4MonthName' => $card4MonthName,
+            'card1' => ['nominal' => $valCard1, 'count' => $jlhInvoiceNonPo],
+            'card2' => ['nominal' => $valCard2, 'count' => $lunasNonPo],
+            'card3' => ['nominal' => $valCard3, 'count' => $belumLunasNonPo],
+            'card4' => ['nominal' => $valCard4, 'count' => $belumLunasMonthNonPo],
+            'cardPo1' => ['nominal' => $valPo1, 'count' => $countInvPo],
+            'cardPo2' => ['nominal' => $valPo2, 'count' => $countPo2],
+            'cardPo3' => ['nominal' => $valPo3, 'count' => $countPo3],
+            'cardPo4' => ['nominal' => $valPo4, 'count' => $countPo4],
+            'card5' => ['nominal' => $valCard5, 'count' => $batal],
+            'cardHapus' => ['nominal' => $valCardHapus, 'count' => $hapusCount],
+            'card6' => ['nominal' => number_format($ppnTotal, 0, ',', '.'), 'count' => $ppnTotalCount],
+            'card7' => ['nominal' => number_format($pphTotal, 0, ',', '.'), 'count' => $pphTotalCount],
+            'card8' => ['nominal' => number_format($ppn01, 0, ',', '.'), 'count' => $ppn01Count],
+            'card9' => ['nominal' => number_format($ppn02, 0, ',', '.'), 'count' => $ppn02Count],
+            'card10' => ['nominal' => number_format($ppn03, 0, ',', '.'), 'count' => $ppn03Count],
+            'card11' => ['nominal' => number_format($ppn04, 0, ',', '.'), 'count' => $ppn04Count],
+        ]);
     }
 
     // Selected Invoice Code
@@ -125,7 +468,10 @@ class InvoiceController extends Controller
 
         // Return the invoice or appropriate response
         if ($invoice) {
-            return response()->json(['kode_invoice' => $invoice->kode_invoice]);
+            return response()->json([
+                'kode_invoice' => $invoice->kode_invoice,
+                'tipe_harga' => $invoice->tipe_harga ?? 'dengan_harga'
+            ]);
         } else {
             return response()->json(['error' => 'Invoice not found'], 404);
         }
@@ -155,10 +501,12 @@ class InvoiceController extends Controller
             $sales = '-';
         }
 
+        $barangIds = $penjualan_barang->pluck('barang_id')->unique();
+        $barangMap = Barang::whereIn('id', $barangIds)->get()->keyBy('id');
         $barang = [];
         foreach ($penjualan_barang as $item) {
-            $barangItem = Barang::where('id', $item->barang_id)->get();
-            $barang[] = $barangItem;
+            $b = $barangMap->get($item->barang_id);
+            $barang[] = $b ? collect([$b]) : collect([]);
         }
 
         return view('pages.invoices.edit-invoices', compact('inv', 'jam', 'nomor_unik', 'perusahaan', 'admin', 'order', 'sales', 'materials', 'jenisBarang', 'nama_adm', 'barang', 'invoice', 'kode', 'penjualan_barang'));
@@ -174,15 +522,20 @@ class InvoiceController extends Controller
         $tanggalPenjualan = $request->tgl_jual . ":" . $request->jam;
         $item = (!empty($request->barang_id)) ? count($request->barang_id) : 0;
 
-        $tot_harga = intval(str_replace(',', '', $request->tot_harga));
-        $tot_pem = intval(str_replace(',', '', $request->tot_pem));
-        $dp = intval(str_replace(',', '', $request->dp));
-        // $potongan = intval(str_replace(',', '', $request->ptg));
-        
-        $sisa_pemb = ceil(floatval(str_replace(',', '', $request->sisa_pem)));
+        $cleanNominal = function($val) {
+            if ($val === null || $val === '') return 0;
+            $digits = preg_replace('/[^0-9]/', '', (string)$val);
+            return !empty($digits) ? intval($digits) : 0;
+        };
 
+        $tot_harga = $cleanNominal($request->tot_harga);
+        $tot_pem = $cleanNominal($request->tot_pem);
+        $dp = $cleanNominal($request->dp);
+        
         if ($request->jns_pem == 'Cash Lunas' || $request->jns_pem == 'Transfer Lunas') {
-            $sisa_pemb =  0;
+            $sisa_pemb = 0;
+        } else {
+            $sisa_pemb = $cleanNominal($request->sisa_pem);
         }
        
         if(!$request->norek){
@@ -342,8 +695,8 @@ class InvoiceController extends Controller
             $item->deskripsi_item = $request->deskripsi_item[$key];
             $item->qty = $request->qty[$key];
             $item->satuan = $request->satuan[$key];
-            $item->hargaBarang = intval(str_replace(',', '', $request->hrg[$key]));
-            $item->jumlah_harga = intval(str_replace(',', '', $request->jlh_hrg[$key]));
+            $item->hargaBarang = $cleanNominal($request->hrg[$key] ?? 0);
+            $item->jumlah_harga = $cleanNominal($request->jlh_hrg[$key] ?? 0);
             
             // Simpan Material, Qty, P x L sebagai JSON String
             $item->material_id = !empty($matIds) ? json_encode(array_values($matIds)) : null;
@@ -427,12 +780,7 @@ class InvoiceController extends Controller
             $biayaLain = 0;
         }
         
-        // SELEKSI NAMA PERUSAHAAN
-        if (strpos($penjualan->nomor_invoice, "T") === 0) {
-            $toko = "Total Karya Berkah";
-        } else {
-            $toko = "Ibekami.id";
-        }
+        $toko = "Ibekami.id";
         
 
         foreach ($penjualan_barang as $item) {
@@ -504,17 +852,7 @@ class InvoiceController extends Controller
             $hargaMod[] = number_format($item->hargaBarang, 0, ',', '.');
             $jumlahHarga[] = number_format($item->jumlah_harga, 0, ',', '.');
         }
-        // SELEKSI NAMA PERUSAHAAN
-        if (strpos($penjualan->nomor_invoice, "T") === 0) {
-            $toko = "Total Karya Berkah";
-        } else {
-            $toko = "Ibekami.id";
-        }
-        
-       
-       if ($penjualan->invoice === 5) {
-            return view('pages.invoices.download-tokabe', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko'));
-        }
+        $toko = "Ibekami.id";
         return view('pages.invoices.download', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod','totalHarga', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko'));
     }
     
@@ -589,17 +927,7 @@ class InvoiceController extends Controller
             $jumlahHarga[] = number_format($item->jumlah_harga, 0, ',', '.');
         }
         
-        // SELEKSI NAMA PERUSAHAAN
-        if (strpos($penjualan->nomor_invoice, "T") === 0) {
-            $toko = "Total Karya Berkah";
-        } else {
-            $toko = "Ibekami.id";
-        }
-        
-        // 3. RETURN VIEW (Sesuai kode asli Anda)
-        if ($penjualan->invoice === 5) {
-            return view('pages.invoices.download-tokabe', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko'));
-        }
+        $toko = "Ibekami.id";
         return view('pages.invoices.public-download-view', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod','totalHarga', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko'));
     }
     
@@ -665,17 +993,7 @@ class InvoiceController extends Controller
             $hargaMod[] = number_format($item->hargaBarang, 0, ',', '.');
             $jumlahHarga[] = number_format($item->jumlah_harga, 0, ',', '.');
         }
-        // SELEKSI NAMA PERUSAHAAN
-        if (strpos($penjualan->nomor_invoice, "T") === 0) {
-            $toko = "Total Karya Berkah";
-        } else {
-            $toko = "Ikhtiar Berkah";
-        }
-        
-       
-       if ($penjualan->invoice === 5) {
-            return view('pages.invoices.download-tokabe', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko', 'type'));
-        }
+        $toko = "Ikhtiar Berkah";
         return view('pages.invoices.cetakTerbaru', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod','totalHarga', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko', 'type'));
     }
 
@@ -691,16 +1009,15 @@ class InvoiceController extends Controller
         $inv = Penjualan::find($id);
         if (!$inv) {
             Alert::error('Data tidak ditemukan');
-            return redirect()->back();
+            return redirect()->route('daftar_invoice');
         }
         $inv->status = 'Batal';
         $inv->save();
-         InvoiceUpdateLog::create([
-        'invoice_id' => $inv->id,
-        
+        InvoiceUpdateLog::create([
+            'invoice_id' => $inv->id,
         ]);
-        Alert::warning('Invoice Dibatalkan');
-        return redirect()->back();
+        Alert::warning('Invoice Dibatalkan', 'Invoice #' . $inv->nomor_invoice . ' berhasil dibatalkan.');
+        return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dibatalkan.');
     }
     function statusLunas($id)
     {
@@ -794,12 +1111,23 @@ class InvoiceController extends Controller
 
         public function storeStatusBatal (Request $request, $id)
         {
-            $invoice = Penjualan::findOrFail($id);
+            $invoice = Penjualan::find($id);
+            if (!$invoice) {
+                Alert::error('Data tidak ditemukan');
+                return redirect()->route('daftar_invoice');
+            }
             $invoice->status = 'Batal';
-            $invoice->alasan_batal = $request->alasan_batal; // Simpan alasan dari SweetAlert
+            if ($request->has('alasan_batal') && !empty($request->alasan_batal)) {
+                $invoice->alasan_batal = $request->alasan_batal; // Simpan alasan dari SweetAlert
+            }
             $invoice->save();
-        
-            return redirect()->back()->with('success', 'Invoice berhasil dibatalkan.');
+            
+            InvoiceUpdateLog::create([
+                'invoice_id' => $invoice->id,
+            ]);
+
+            Alert::warning('Invoice Dibatalkan', 'Invoice #' . $invoice->nomor_invoice . ' berhasil dibatalkan.');
+            return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dibatalkan.');
         }
     
      public function getUpdateLog($id)
@@ -816,8 +1144,4 @@ class InvoiceController extends Controller
         })
     ]);
 }
-    
-    // ====================================================BATAS UNTUK INVOICE TOKABE======================================================
-    
-    
 }

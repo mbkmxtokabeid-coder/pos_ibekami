@@ -73,16 +73,12 @@ class LaporanExport implements FromArray, ShouldAutoSize, WithHeadings, WithEven
 
             // --- AMBIL DATA BARANG SAMA SEPERTI PDF ---
             if (isset($penjualan->id)) {
-                $isTokabe = $penjualan instanceof \App\Models\PenjualanTokabe;
-                $tableRelasi = $isTokabe ? 'penjualan_tokabe_barang' : 'penjualan_barang';
-                $fkColumn = $isTokabe ? 'penjualan_tokabe_id' : 'penjualan_id';
-
                 try {
-                    $items = DB::table($tableRelasi)
-                        ->join('barang', $tableRelasi . '.barang_id', '=', 'barang.id')
-                        ->where($tableRelasi . '.' . $fkColumn, $penjualan->id)
-                        ->whereNull($tableRelasi . '.deleted_at')
-                        ->select('barang.jenis_barang', $tableRelasi . '.deskripsi_item', $tableRelasi . '.qty', $tableRelasi . '.satuan')
+                    $items = DB::table('penjualan_barang')
+                        ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
+                        ->where('penjualan_barang.penjualan_id', $penjualan->id)
+                        
+                        ->select('barang.jenis_barang', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.satuan')
                         ->get();
                 } catch (\Exception $e) {
                     $items = collect([]);
@@ -149,7 +145,7 @@ class LaporanExport implements FromArray, ShouldAutoSize, WithHeadings, WithEven
                 $deskripsiGabungan,    // Ditampilkan di Excel (Wrap Text)
                 $jumlahGabungan,       // Ditampilkan di Excel (Wrap Text)
                 $penjualan->total_harga,
-                $penjualan->status,
+                (!empty($penjualan->deleted_at) ? ('Dihapus' . (!empty($penjualan->alasan_hapus) ? ' (' . $penjualan->alasan_hapus . ')' : '')) : ($penjualan->status === 'Batal' && !empty($penjualan->alasan_batal) ? 'Batal (' . $penjualan->alasan_batal . ')' : $penjualan->status)),
                 $penjualan->lain,
                 $penjualan->total_pembayaran,
             ];

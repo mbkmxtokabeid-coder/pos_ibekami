@@ -67,7 +67,6 @@ class LoginController extends Controller
     return match($role) {
         'Admin', 'Pemilik' => '/',
         'Stockist','Magang' => '/listBarang',
-        'AdminTKB' => '/welcomeTKB',
         default => '/',
     };
     }

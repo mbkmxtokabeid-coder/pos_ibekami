@@ -37,7 +37,10 @@ class SpbController extends Controller
     }
     public function tambahSPB()
     {
-        $namaPerusahaan = Perusahaan::all();
+        $namaPerusahaan = Perusahaan::where('nama_perusahaan', 'like', '%Ibekami%')->get();
+        if ($namaPerusahaan->isEmpty()) {
+            $namaPerusahaan = Perusahaan::where('id', 1)->get();
+        }
         $customer = Penjualan::pluck('customer');
         $perusahaan = Penjualan::pluck('perusahaan');
         $barang = KategoriBarang::all();
@@ -128,7 +131,10 @@ class SpbController extends Controller
 
     public function editSPB($id)
     {
-        $namaPerusahaan = Perusahaan::all();
+        $namaPerusahaan = Perusahaan::where('nama_perusahaan', 'like', '%Ibekami%')->get();
+        if ($namaPerusahaan->isEmpty()) {
+            $namaPerusahaan = Perusahaan::where('id', 1)->get();
+        }
         $spb = Spb::where('id', $id)->first();
         $customer = Penjualan::pluck('customer');
         $perusahaan = Penjualan::pluck('perusahaan');

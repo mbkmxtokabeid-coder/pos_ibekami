@@ -45,7 +45,6 @@
                         <div class="col-lg-9 input-light mb-2">
                           <select class="form-select bg-light" data-choices data-choices-search-false  required>
                             <option value="Ikhtiar Berkah">Ikhtiar Berkah</option>
-                             <option value="Total Karya Berkah">Total Karya Berkah</option>
                           </select>
                          </div>
                         </div>

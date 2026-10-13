@@ -11,7 +11,7 @@
     <meta content="Ikhtiar Berkah" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{asset('images/ikhtiarberkah.png')}}">
+    <link rel="shortcut icon" href="{{asset('images/Ibekami.png')}}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
     <!-- Layout config Js -->
@@ -36,7 +36,7 @@
                                     <div class="text-center mb-3">
                                         <a href="index.html">
                                             <span class="logo-lg">
-                                                <img src="{{asset('images/ikhtiarberkah.png')}}" alt="" height="100">
+                                                <img src="{{ asset('storage/images/perusahaan/698c05828c9a6.png') }}" onerror="this.onerror=null;this.src='{{ asset('images/perusahaan/698c05828c9a6.png') }}';" alt="Logo Ibekami" height="80">
                                             </span>
                                         </a>
                                     </div>
