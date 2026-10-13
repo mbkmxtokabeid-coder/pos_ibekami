@@ -1278,10 +1278,6 @@ input.payment-ctrl.active, input.barang-ctrl.active {
     <script src="{{asset('libs/apexcharts/apexcharts.min.js')}}"></script>
 
 
-    <!-- Vector map-->
-    <script src="{{asset('libs/jsvectormap/js/jsvectormap.min.js')}}"></script>
-    <script src="{{asset('libs/jsvectormap/maps/world-merc.js')}}"></script>
-
     <!-- Dashboard init -->
     <script>
         const hourArrayJS = {!! json_encode($hourArray) !!};

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -33,238 +34,271 @@ class HomeController extends Controller
      */
     public function index()
     {
-        Carbon::setLocale('id');
+        $viewData = Cache::remember('dashboard_page_data_cache', 60, function () {
+            Carbon::setLocale('id');
 
-        // $penjualan = Penjualan::orderByDesc('tgl_penjualan')->take(10)->get();
-        $yearNow = Carbon::now()->year;
-        $monthNow = Carbon::now()->month;
+            $yearNow = Carbon::now()->year;
+            $monthNow = Carbon::now()->month;
 
-        $dataPerjam = $this->getPenjualan();
-        $dataPenjualan = $this->getDataPenjualan();
-        $dataPenjualanLastYear = $this->getDataPenjualanLastYear();
-        $dataPerminggu = $this->getPerminggu();
-        $dataPerbulan = $this->getPerbulan();
-        $dataPerbulanLastYear = $this->getPerbulanLastYear();
-        $totalPerminggu = $this->getTotalPerMinggu();
-        $totalPerbulan = $this->getTotalPerBulan();
-        $totalPertahun = $this->getTotalPerTahun();
-        
-        // ✅ 1. PANGGIL FUNGSI TOTAL PER TAHUN LALU
-        $totalPertahunLalu = $this->getTotalPerTahunLalu();
-        
-        $vendor = $this->vendor();
-        
-        $hourArray = $dataPerjam['jamPenjualan'];
-        $dateArray = $dataPenjualan['tanggalPenjualan'];
-        $dateArrayLastYear = $dataPenjualanLastYear['tanggalPenjualanLastYear'];
-        $weekArray = $dataPerminggu['tanggalPenjualan'];
-        $monthArray = $dataPerbulan['bulanPenjualan'];
-        $monthArrayLastYear = $dataPerbulanLastYear['bulanPenjualanLastYear'];
-        $totalJamArray = $dataPerjam['totalPerjam'];
-        $totalHarianArray = $dataPenjualan['totalHarian'];
-        $totalHarianArrayLastYear = $dataPenjualanLastYear['totalHarianLastYear'];
-        $totalMingguanArray = $dataPerminggu['totalHarian'];
-        $totalBulananArray = $dataPerbulan['totalBulanan'];
-        $totalBulananArrayLastYear = $dataPerbulanLastYear['totalBulananLastYear'];
-        $jumlahPerHari = number_format(array_sum($dataPerjam['totalPerjam']), 0, ',', ',');
-        $jumlahPerMinggu = number_format(array_sum($dataPerminggu['totalHarian']), 0, ',', ',');
+            $dataPerjam = $this->getPenjualan();
+            $dataPenjualan = $this->getDataPenjualan();
+            $dataPenjualanLastYear = $this->getDataPenjualanLastYear();
+            $dataPerminggu = $this->getPerminggu();
+            $dataPerbulan = $this->getPerbulan();
+            $dataPerbulanLastYear = $this->getPerbulanLastYear();
+            $totalPerminggu = $this->getTotalPerMinggu();
+            $totalPerbulan = $this->getTotalPerBulan();
+            $totalPertahun = $this->getTotalPerTahun();
+            
+            // 1. PANGGIL FUNGSI TOTAL PER TAHUN LALU
+            $totalPertahunLalu = $this->getTotalPerTahunLalu();
+            
+            $vendor = $this->vendor();
+            
+            $hourArray = $dataPerjam['jamPenjualan'];
+            $dateArray = $dataPenjualan['tanggalPenjualan'];
+            $dateArrayLastYear = $dataPenjualanLastYear['tanggalPenjualanLastYear'];
+            $weekArray = $dataPerminggu['tanggalPenjualan'];
+            $monthArray = $dataPerbulan['bulanPenjualan'];
+            $monthArrayLastYear = $dataPerbulanLastYear['bulanPenjualanLastYear'];
+            $totalJamArray = $dataPerjam['totalPerjam'];
+            $totalHarianArray = $dataPenjualan['totalHarian'];
+            $totalHarianArrayLastYear = $dataPenjualanLastYear['totalHarianLastYear'];
+            $totalMingguanArray = $dataPerminggu['totalHarian'];
+            $totalBulananArray = $dataPerbulan['totalBulanan'];
+            $totalBulananArrayLastYear = $dataPerbulanLastYear['totalBulananLastYear'];
+            $jumlahPerHari = number_format(array_sum($dataPerjam['totalPerjam']), 0, ',', ',');
+            $jumlahPerMinggu = number_format(array_sum($dataPerminggu['totalHarian']), 0, ',', ',');
 
-        // Week For Donut Chart
-        $datasInWeek = $totalPerminggu['weekDatas'];
-        $percentageInWeek = $totalPerminggu['weekIn'];
-        $percentageNotPaidWeek = $totalPerminggu['weekNotPaid'];
-        $percentageCanceledWeek = $totalPerminggu['weekCanceled'];
-        // Month For Donut Chart
-        $datasInMonth = $totalPerbulan['monthDatas'];
-        $percentageInMonth = $totalPerbulan['monthIn'];
-        $percentageNotPaidMonth = $totalPerbulan['monthNotPaid'];
-        $percentageCanceledMonth = $totalPerbulan['monthCanceled'];
-        // Year For Donut Chart
-        $datasInYear = $totalPertahun['yearDatas'];
-        $percentageInYear = $totalPertahun['yearIn'];
-        $percentageNotPaidYear = $totalPertahun['yearNotPaid'];
-        $percentageCanceledYear = $totalPertahun['yearCanceled'];
+            // Week For Donut Chart
+            $datasInWeek = $totalPerminggu['weekDatas'];
+            $percentageInWeek = $totalPerminggu['weekIn'];
+            $percentageNotPaidWeek = $totalPerminggu['weekNotPaid'];
+            $percentageCanceledWeek = $totalPerminggu['weekCanceled'];
+            // Month For Donut Chart
+            $datasInMonth = $totalPerbulan['monthDatas'];
+            $percentageInMonth = $totalPerbulan['monthIn'];
+            $percentageNotPaidMonth = $totalPerbulan['monthNotPaid'];
+            $percentageCanceledMonth = $totalPerbulan['monthCanceled'];
+            // Year For Donut Chart
+            $datasInYear = $totalPertahun['yearDatas'];
+            $percentageInYear = $totalPertahun['yearIn'];
+            $percentageNotPaidYear = $totalPertahun['yearNotPaid'];
+            $percentageCanceledYear = $totalPertahun['yearCanceled'];
 
-        // ✅ 2. AMBIL VARIABEL UNTUK DONUT CHART (LAST YEAR)
-        $datasInLastYear = $totalPertahunLalu['lastYearDatas'];
-        $percentageInLastYear = $totalPertahunLalu['lastYearIn'];
-        $percentageNotPaidLastYear = $totalPertahunLalu['lastYearNotPaid'];
-        $percentageCanceledLastYear = $totalPertahunLalu['lastYearCanceled'];
+            // 2. AMBIL VARIABEL UNTUK DONUT CHART (LAST YEAR)
+            $datasInLastYear = $totalPertahunLalu['lastYearDatas'];
+            $percentageInLastYear = $totalPertahunLalu['lastYearIn'];
+            $percentageNotPaidLastYear = $totalPertahunLalu['lastYearNotPaid'];
+            $percentageCanceledLastYear = $totalPertahunLalu['lastYearCanceled'];
 
-        //data for vendorchart
-        $datavendor = $vendor['vendor'];
-        $datasisa = $vendor['sisa'];
-        
-        // dd($datasInYear, $percentageInYear, $percentageNotPaidYear, $percentageCanceledYear);
-        $jumlahPerBulan = number_format(Penjualan::where('jenis_pembayaran', '<>', 'PO')->whereMonth('tgl_penjualan', $monthNow)->whereYear('tgl_penjualan', $yearNow)->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPerTahun = number_format(Penjualan::where('jenis_pembayaran', '<>', 'PO')->whereYear('tgl_penjualan', $yearNow)->sum('total_pembayaran'), 0, ',', '.');
+            //data for vendorchart
+            $datavendor = $vendor['vendor'];
+            $datasisa = $vendor['sisa'];
+            
+            // Optimized consolidated scalar query (replaces 19 separate table scans with 1 single query)
+            $today = Carbon::now()->format('Y-m-d');
+            $startOfWeek = Carbon::now()->startOfWeek()->format('Y-m-d 00:00:00');
+            $endOfWeek = Carbon::now()->endOfWeek()->format('Y-m-d 23:59:59');
+            $startOfMonth = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+            $endOfMonth = Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+            $startOfYear = Carbon::now()->startOfYear()->format('Y-m-d 00:00:00');
+            $endOfYear = Carbon::now()->endOfYear()->format('Y-m-d 23:59:59');
 
-        $jumlahBBPerTahun = number_format(Penjualan::where('jenis_pembayaran', '<>', 'PO')->whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->sum('sisa_pembayaran'), 0, ',', '.');
-        $jumlahBBPerBulan = number_format(Penjualan::where('jenis_pembayaran', '<>', 'PO')->whereMonth('tgl_penjualan', $monthNow)->whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->sum('sisa_pembayaran'), 0, ',', '.');
+            $scalars = DB::table('penjualan')
+                ->whereNull('deleted_at')
+                ->selectRaw("
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPerBulan,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPerTahun,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as s_jumlahBBPerTahun,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as s_jumlahBBPerBulan,
 
-        // Data PO
-        $dataPerjamPO = $this->POController->getPenjualanPO();
-        $dataPenjualanPO = $this->POController->getDataPenjualanPO();
-        $dataPermingguPO = $this->POController->getPermingguPO();
-        $dataPerbulanPO = $this->POController->getPerbulanPO();
-        $hourArrayPO = $dataPerjamPO['jamPenjualan'];
-        $dateArrayPO = $dataPenjualanPO['tanggalPenjualan'];
-        $weekArrayPO = $dataPermingguPO['tanggalPenjualan'];
-        $monthArrayPO = $dataPerbulanPO['bulanPenjualan'];
-        $totalJamArrayPO = $dataPerjamPO['totalPerjam'];
-        $totalHarianArrayPO = $dataPenjualanPO['totalHarian'];
-        $totalMingguanArrayPO = $dataPermingguPO['totalHarian'];
-        $totalBulananArrayPO = $dataPerbulanPO['totalBulanan'];
-        $jumlahPerHariPO = number_format(array_sum($dataPerjamPO['totalPerjam']), 0, ',', '.');
-        $jumlahPerMingguPO = number_format(array_sum($dataPermingguPO['totalHarian']), 0, ',', '.');
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPO,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Lunas' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOLunas,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Belum Lunas' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOBlmLunas,
 
-        //Total PO
-        $jumlahPO = number_format(Penjualan::where('jenis_pembayaran', '=', 'PO')->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPOLunas = number_format(Penjualan::where('jenis_pembayaran', '=', 'PO')->where('status', '=', 'Lunas')->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPOBlmLunas = number_format(Penjualan::where('jenis_pembayaran', '=', 'PO')->where('status', '=', 'Belum Lunas')->sum('total_pembayaran'), 0, ',', '.');
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Lunas' AND tgl_penjualan >= '{$today} 00:00:00' AND tgl_penjualan <= '{$today} 23:59:59' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOLunasToday,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Belum Lunas' AND tgl_penjualan >= '{$today} 00:00:00' AND tgl_penjualan <= '{$today} 23:59:59' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOBlmLunasToday,
 
-        // PO Day
-        $today = now()->format('Y-m-d');
-        $jumlahPOLunasToday = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Lunas')->whereDate('tgl_penjualan', $today)->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPOBlmLunasToday = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Belum Lunas')->whereDate('tgl_penjualan', $today)->sum('total_pembayaran'), 0, ',', '.');
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Lunas' AND tgl_penjualan BETWEEN '{$startOfWeek}' AND '{$endOfWeek}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOLunasWeek,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Belum Lunas' AND tgl_penjualan BETWEEN '{$startOfWeek}' AND '{$endOfWeek}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOBlmLunasWeek,
 
-        // PO Week
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
-        $jumlahPOLunasWeek = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Lunas')->whereBetween('tgl_penjualan', [$startOfWeek, $endOfWeek])->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPOBlmLunasWeek = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Belum Lunas')->whereBetween('tgl_penjualan', [$startOfWeek, $endOfWeek])->sum('total_pembayaran'), 0, ',', '.');
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Lunas' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOLunasMonth,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Belum Lunas' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOBlmLunasMonth,
 
-        // PO Month
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth = Carbon::now()->endOfMonth();
-        $jumlahPOLunasMonth = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Lunas')->whereBetween('tgl_penjualan', [$startOfMonth, $endOfMonth])->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPOBlmLunasMonth = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Belum Lunas')->whereBetween('tgl_penjualan', [$startOfMonth, $endOfMonth])->sum('total_pembayaran'), 0, ',', '.');
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Lunas' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOLunasYear,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Belum Lunas' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOBlmLunasYear,
 
-        // PO Year
-        $startOfYear = Carbon::now()->startOfYear();
-        $endOfYear = Carbon::now()->endOfYear();
-        $jumlahPOLunasYear = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Lunas')->whereBetween('tgl_penjualan', [$startOfYear, $endOfYear])->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPOBlmLunasYear = number_format(Penjualan::where('jenis_pembayaran', 'PO')->where('status', 'Belum Lunas')->whereBetween('tgl_penjualan', [$startOfYear, $endOfYear])->sum('total_pembayaran'), 0, ',', '.');
-        
-        
-        $jumlahPerBulanPO = number_format(Penjualan::where('jenis_pembayaran', 'PO')->whereMonth('tgl_penjualan', $monthNow)->whereYear('tgl_penjualan', $yearNow)->sum('total_pembayaran'), 0, ',', '.');
-        $jumlahPerTahunPO = number_format(Penjualan::where('jenis_pembayaran', 'PO')->whereYear('tgl_penjualan', $yearNow)->sum('total_pembayaran'), 0, ',', '.');
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPerBulanPO,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPerTahunPO,
 
-        $jumlahBBPerTahunPO = number_format(Penjualan::where('jenis_pembayaran', 'PO')->whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->sum('sisa_pembayaran'), 0, ',', '.');
-        $jumlahBBPerBulanPO = number_format(Penjualan::where('jenis_pembayaran', 'PO')->whereMonth('tgl_penjualan', $monthNow)->whereYear('tgl_penjualan', $yearNow)->where('status', 'Belum Lunas')->sum('sisa_pembayaran'), 0, ',', '.');
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as s_jumlahBBPerTahunPO,
+                    COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as s_jumlahBBPerBulanPO
+                ")
+                ->first();
 
+            $jumlahPerBulan = number_format($scalars->s_jumlahPerBulan ?? 0, 0, ',', '.');
+            $jumlahPerTahun = number_format($scalars->s_jumlahPerTahun ?? 0, 0, ',', '.');
 
-        $invoicePO = DB::select("SELECT customer, tgl_penjualan, status
-        FROM penjualan
-        WHERE jenis_pembayaran = 'PO'
-            AND deleted_at IS NULL
-        ORDER BY tgl_penjualan DESC
-        LIMIT 7");
-        foreach ($invoicePO as $inv) {
-            $inv->formatted_tgl = Carbon::parse($inv->tgl_penjualan)->format('d M Y');
-        }
-        
-        $vendorList = DB::select("SELECT nama_vendor, total_pembelian, pembelian_sisa, pembelian_terbayar
-        FROM vendor
-        ORDER BY pembelian_sisa DESC
-        ");
-        foreach ($vendorList as $vendor) {
-            $vendor->formattedTotal = number_format($vendor->total_pembelian, 0, ',', '.');
-            $vendor->formattedBayar = number_format($vendor->pembelian_terbayar, 0, ',', '.');
-            $vendor->formattedSisa = number_format($vendor->pembelian_sisa, 0, ',', '.');
-        }
+            $jumlahBBPerTahun = number_format($scalars->s_jumlahBBPerTahun ?? 0, 0, ',', '.');
+            $jumlahBBPerBulan = number_format($scalars->s_jumlahBBPerBulan ?? 0, 0, ',', '.');
 
-        $dataPembelianInvoice = collect();
-        if (Schema::hasTable('pembelian') && Schema::hasTable('vendor')) {
-            $dataPembelianInvoice = Pembelian::query()
-                ->join('vendor', 'pembelian.id_vendor', '=', 'vendor.id')
-                ->where('pembelian.sisa', '>', 0)
-                ->where('pembelian.status', '<>', 'Batal')
-                ->selectRaw('COALESCE(jenis_invoice, "Tanpa Pajak") as label, vendor.nama_vendor as vendor, tanggal, COUNT(*) as total_transaksi, SUM(pembelian.sisa) as total_nominal, COALESCE(SUM(pembelian.jumlah_harga), 0) as total_pembelian, COALESCE(SUM(pembelian.terbayar), 0) as terbayar, COALESCE(SUM(ppn_nominal), 0) as total_ppn, COALESCE(SUM(pph_nominal), 0) as total_pph')
-                ->groupBy('jenis_invoice', 'vendor.nama_vendor', 'tanggal')
-                ->orderBy('jenis_invoice')
-                ->get()
-                ->map(fn ($row) => [
-                    'label' => $row->label ?: 'Tanpa Pajak',
-                    'vendor' => $row->vendor,
-                    'tanggal' => \Carbon\Carbon::parse($row->tanggal)->format('Y-m-d'),
-                    'total_transaksi' => (int) $row->total_transaksi,
-                    'total_nominal' => (float) $row->total_nominal,
-                    'total_pembelian' => (float) $row->total_pembelian,
-                    'terbayar' => (float) $row->terbayar,
-                    'total_ppn' => (float) $row->total_ppn,
-                    'total_pph' => (float) $row->total_pph,
-                ])->values();
-        }
+            // Data PO
+            $dataPerjamPO = $this->POController->getPenjualanPO();
+            $dataPenjualanPO = $this->POController->getDataPenjualanPO();
+            $dataPermingguPO = $this->POController->getPermingguPO();
+            $dataPerbulanPO = $this->POController->getPerbulanPO();
+            $hourArrayPO = $dataPerjamPO['jamPenjualan'];
+            $dateArrayPO = $dataPenjualanPO['tanggalPenjualan'];
+            $weekArrayPO = $dataPermingguPO['tanggalPenjualan'];
+            $monthArrayPO = $dataPerbulanPO['bulanPenjualan'];
+            $totalJamArrayPO = $dataPerjamPO['totalPerjam'];
+            $totalHarianArrayPO = $dataPenjualanPO['totalHarian'];
+            $totalMingguanArrayPO = $dataPermingguPO['totalHarian'];
+            $totalBulananArrayPO = $dataPerbulanPO['totalBulanan'];
+            $jumlahPerHariPO = number_format(array_sum($dataPerjamPO['totalPerjam']), 0, ',', '.');
+            $jumlahPerMingguPO = number_format(array_sum($dataPermingguPO['totalHarian']), 0, ',', '.');
 
-        $daftarTagihanVendor = collect();
-        if (Schema::hasTable('pembelian') && Schema::hasTable('vendor')) {
-            $daftarTagihanVendor = Pembelian::query()
-                ->join('vendor', 'pembelian.id_vendor', '=', 'vendor.id')
-                ->where('pembelian.status', '<>', 'Batal')
-                ->selectRaw('vendor.nama_vendor, sum(pembelian.jumlah_harga) as total_pembelian, sum(pembelian.terbayar) as terbayar, sum(pembelian.sisa) as sisa_tagihan')
-                ->groupBy('vendor.id', 'vendor.nama_vendor')
-                ->orderByDesc('sisa_tagihan')
-                ->orderByDesc('total_pembelian')
-                ->get()
-                ->map(fn ($item) => [
-                    'nama_vendor' => $item->nama_vendor,
-                    'total_pembelian' => (float) $item->total_pembelian,
-                    'terbayar' => (float) ($item->terbayar ?? ($item->total_pembelian - $item->sisa_tagihan)),
-                    'sisa_tagihan' => (float) $item->sisa_tagihan,
-                ])->values();
-        }
+            //Total PO
+            $jumlahPO = number_format($scalars->s_jumlahPO ?? 0, 0, ',', '.');
+            $jumlahPOLunas = number_format($scalars->s_jumlahPOLunas ?? 0, 0, ',', '.');
+            $jumlahPOBlmLunas = number_format($scalars->s_jumlahPOBlmLunas ?? 0, 0, ',', '.');
 
-        $existingVendorNames = $daftarTagihanVendor->pluck('nama_vendor')->toArray();
-        foreach ($vendorList as $vRow) {
-            $sisaVal = (float) $vRow->pembelian_sisa;
-            if ($sisaVal > 0 && !in_array($vRow->nama_vendor, $existingVendorNames)) {
-                $totVal = (float) $vRow->total_pembelian;
-                $byrVal = (float) $vRow->pembelian_terbayar;
-                $daftarTagihanVendor->push([
-                    'nama_vendor' => $vRow->nama_vendor,
-                    'total_pembelian' => $totVal,
-                    'terbayar' => $byrVal,
-                    'sisa_tagihan' => $sisaVal,
-                ]);
-                $dataPembelianInvoice->push([
-                    'label' => 'Tanpa Pajak',
-                    'vendor' => $vRow->nama_vendor,
-                    'tanggal' => now()->format('Y-m-d'),
-                    'total_transaksi' => 1,
-                    'total_nominal' => $sisaVal,
-                    'total_pembelian' => $totVal,
-                    'terbayar' => $byrVal,
-                    'total_ppn' => 0.0,
-                    'total_pph' => 0.0,
-                ]);
+            // PO Day
+            $jumlahPOLunasToday = number_format($scalars->s_jumlahPOLunasToday ?? 0, 0, ',', '.');
+            $jumlahPOBlmLunasToday = number_format($scalars->s_jumlahPOBlmLunasToday ?? 0, 0, ',', '.');
+
+            // PO Week
+            $jumlahPOLunasWeek = number_format($scalars->s_jumlahPOLunasWeek ?? 0, 0, ',', '.');
+            $jumlahPOBlmLunasWeek = number_format($scalars->s_jumlahPOBlmLunasWeek ?? 0, 0, ',', '.');
+
+            // PO Month
+            $jumlahPOLunasMonth = number_format($scalars->s_jumlahPOLunasMonth ?? 0, 0, ',', '.');
+            $jumlahPOBlmLunasMonth = number_format($scalars->s_jumlahPOBlmLunasMonth ?? 0, 0, ',', '.');
+
+            // PO Year
+            $jumlahPOLunasYear = number_format($scalars->s_jumlahPOLunasYear ?? 0, 0, ',', '.');
+            $jumlahPOBlmLunasYear = number_format($scalars->s_jumlahPOBlmLunasYear ?? 0, 0, ',', '.');
+
+            $jumlahPerBulanPO = number_format($scalars->s_jumlahPerBulanPO ?? 0, 0, ',', '.');
+            $jumlahPerTahunPO = number_format($scalars->s_jumlahPerTahunPO ?? 0, 0, ',', '.');
+
+            $jumlahBBPerTahunPO = number_format($scalars->s_jumlahBBPerTahunPO ?? 0, 0, ',', '.');
+            $jumlahBBPerBulanPO = number_format($scalars->s_jumlahBBPerBulanPO ?? 0, 0, ',', '.');
+
+            $invoicePO = DB::select("SELECT customer, tgl_penjualan, status
+            FROM penjualan
+            WHERE jenis_pembayaran = 'PO'
+                AND deleted_at IS NULL
+            ORDER BY tgl_penjualan DESC
+            LIMIT 7");
+            foreach ($invoicePO as $inv) {
+                $inv->formatted_tgl = Carbon::parse($inv->tgl_penjualan)->format('d M Y');
             }
-        }
-        
-        // ✅ 3. TAMBAHKAN VARIABEL LAST YEAR KE DALAM COMPACT()
-        return view('pages.welcome', compact(
-            'jumlahPerBulan', 'jumlahPerTahun', 
-            'dateArray','dateArrayLastYear', 
-            'monthArray','monthArrayLastYear', 
-            'totalHarianArray','totalHarianArrayLastYear', 
-            'totalBulananArray','totalBulananArrayLastYear', 
-            'hourArray', 'totalJamArray', 
-            'weekArray', 'totalMingguanArray', 
-            'jumlahPerHari', 'jumlahPerMinggu', 
-            'datasInWeek', 'percentageInWeek', 'percentageNotPaidWeek', 'percentageCanceledWeek', 
-            'datasInMonth', 'percentageInMonth', 'percentageNotPaidMonth', 'percentageCanceledMonth', 
-            'datasInYear', 'percentageInYear', 'percentageNotPaidYear', 'percentageCanceledYear', 
-            'datasInLastYear', 'percentageInLastYear', 'percentageNotPaidLastYear', 'percentageCanceledLastYear', // << VARIABEL BARU
-            'jumlahBBPerBulan', 'jumlahBBPerTahun', 
-            'jumlahPerBulanPO', 'jumlahPerTahunPO', 
-            'dateArrayPO', 'monthArrayPO', 'totalHarianArrayPO', 'totalBulananArrayPO', 
-            'hourArrayPO', 'totalJamArrayPO', 'weekArrayPO', 'totalMingguanArrayPO', 
-            'jumlahPerHariPO', 'jumlahPerMingguPO', 'jumlahBBPerBulanPO', 'jumlahBBPerTahunPO', 
-            'invoicePO','jumlahPO', 'jumlahPOLunas', 'jumlahPOBlmLunas', 
-            'jumlahPOLunasToday', 'jumlahPOBlmLunasToday', 'jumlahPOLunasWeek', 'jumlahPOBlmLunasWeek', 
-            'jumlahPOLunasMonth', 'jumlahPOBlmLunasMonth', 'jumlahPOLunasYear', 'jumlahPOBlmLunasYear',
-            'datavendor', 'datasisa', 'vendorList', 'dataPembelianInvoice', 'daftarTagihanVendor'
-        ));
+
+            $vendorList = DB::select("SELECT nama_vendor, total_pembelian, pembelian_sisa, pembelian_terbayar
+            FROM vendor
+            ORDER BY pembelian_sisa DESC
+            ");
+            foreach ($vendorList as $v) {
+                $v->formattedTotal = number_format($v->total_pembelian, 0, ',', '.');
+                $v->formattedBayar = number_format($v->pembelian_terbayar, 0, ',', '.');
+                $v->formattedSisa = number_format($v->pembelian_sisa, 0, ',', '.');
+            }
+
+            $dataPembelianInvoice = collect();
+            if (Schema::hasTable('pembelian') && Schema::hasTable('vendor')) {
+                $dataPembelianInvoice = Pembelian::query()
+                    ->join('vendor', 'pembelian.id_vendor', '=', 'vendor.id')
+                    ->where('pembelian.sisa', '>', 0)
+                    ->where('pembelian.status', '<>', 'Batal')
+                    ->selectRaw('COALESCE(jenis_invoice, "Tanpa Pajak") as label, vendor.nama_vendor as vendor, tanggal, COUNT(*) as total_transaksi, SUM(pembelian.sisa) as total_nominal, COALESCE(SUM(pembelian.jumlah_harga), 0) as total_pembelian, COALESCE(SUM(pembelian.terbayar), 0) as terbayar, COALESCE(SUM(ppn_nominal), 0) as total_ppn, COALESCE(SUM(pph_nominal), 0) as total_pph')
+                    ->groupBy('jenis_invoice', 'vendor.nama_vendor', 'tanggal')
+                    ->orderBy('jenis_invoice')
+                    ->get()
+                    ->map(fn ($row) => [
+                        'label' => $row->label ?: 'Tanpa Pajak',
+                        'vendor' => $row->vendor,
+                        'tanggal' => \Carbon\Carbon::parse($row->tanggal)->format('Y-m-d'),
+                        'total_transaksi' => (int) $row->total_transaksi,
+                        'total_nominal' => (float) $row->total_nominal,
+                        'total_pembelian' => (float) $row->total_pembelian,
+                        'terbayar' => (float) $row->terbayar,
+                        'total_ppn' => (float) $row->total_ppn,
+                        'total_pph' => (float) $row->total_pph,
+                    ])->values();
+            }
+
+            $daftarTagihanVendor = collect();
+            if (Schema::hasTable('pembelian') && Schema::hasTable('vendor')) {
+                $daftarTagihanVendor = Pembelian::query()
+                    ->join('vendor', 'pembelian.id_vendor', '=', 'vendor.id')
+                    ->where('pembelian.status', '<>', 'Batal')
+                    ->selectRaw('vendor.nama_vendor, sum(pembelian.jumlah_harga) as total_pembelian, sum(pembelian.terbayar) as terbayar, sum(pembelian.sisa) as sisa_tagihan')
+                    ->groupBy('vendor.id', 'vendor.nama_vendor')
+                    ->orderByDesc('sisa_tagihan')
+                    ->orderByDesc('total_pembelian')
+                    ->get()
+                    ->map(fn ($item) => [
+                        'nama_vendor' => $item->nama_vendor,
+                        'total_pembelian' => (float) $item->total_pembelian,
+                        'terbayar' => (float) ($item->terbayar ?? ($item->total_pembelian - $item->sisa_tagihan)),
+                        'sisa_tagihan' => (float) $item->sisa_tagihan,
+                    ])->values();
+            }
+
+            $existingVendorNames = $daftarTagihanVendor->pluck('nama_vendor')->toArray();
+            foreach ($vendorList as $vRow) {
+                $sisaVal = (float) $vRow->pembelian_sisa;
+                if ($sisaVal > 0 && !in_array($vRow->nama_vendor, $existingVendorNames)) {
+                    $totVal = (float) $vRow->total_pembelian;
+                    $byrVal = (float) $vRow->pembelian_terbayar;
+                    $daftarTagihanVendor->push([
+                        'nama_vendor' => $vRow->nama_vendor,
+                        'total_pembelian' => $totVal,
+                        'terbayar' => $byrVal,
+                        'sisa_tagihan' => $sisaVal,
+                    ]);
+                    $dataPembelianInvoice->push([
+                        'label' => 'Tanpa Pajak',
+                        'vendor' => $vRow->nama_vendor,
+                        'tanggal' => now()->format('Y-m-d'),
+                        'total_transaksi' => 1,
+                        'total_nominal' => $sisaVal,
+                        'total_pembelian' => $totVal,
+                        'terbayar' => $byrVal,
+                        'total_ppn' => 0.0,
+                        'total_pph' => 0.0,
+                    ]);
+                }
+            }
+
+            return compact(
+                'jumlahPerBulan', 'jumlahPerTahun', 
+                'dateArray','dateArrayLastYear', 
+                'monthArray','monthArrayLastYear', 
+                'totalHarianArray','totalHarianArrayLastYear', 
+                'totalBulananArray','totalBulananArrayLastYear', 
+                'hourArray', 'totalJamArray', 
+                'weekArray', 'totalMingguanArray', 
+                'jumlahPerHari', 'jumlahPerMinggu', 
+                'datasInWeek', 'percentageInWeek', 'percentageNotPaidWeek', 'percentageCanceledWeek', 
+                'datasInMonth', 'percentageInMonth', 'percentageNotPaidMonth', 'percentageCanceledMonth', 
+                'datasInYear', 'percentageInYear', 'percentageNotPaidYear', 'percentageCanceledYear', 
+                'datasInLastYear', 'percentageInLastYear', 'percentageNotPaidLastYear', 'percentageCanceledLastYear',
+                'jumlahBBPerBulan', 'jumlahBBPerTahun', 
+                'jumlahPerBulanPO', 'jumlahPerTahunPO', 
+                'dateArrayPO', 'monthArrayPO', 'totalHarianArrayPO', 'totalBulananArrayPO', 
+                'hourArrayPO', 'totalJamArrayPO', 'weekArrayPO', 'totalMingguanArrayPO', 
+                'jumlahPerHariPO', 'jumlahPerMingguPO', 'jumlahBBPerBulanPO', 'jumlahBBPerTahunPO', 
+                'invoicePO','jumlahPO', 'jumlahPOLunas', 'jumlahPOBlmLunas', 
+                'jumlahPOLunasToday', 'jumlahPOBlmLunasToday', 'jumlahPOLunasWeek', 'jumlahPOBlmLunasWeek', 
+                'jumlahPOLunasMonth', 'jumlahPOBlmLunasMonth', 'jumlahPOLunasYear', 'jumlahPOBlmLunasYear',
+                'datavendor', 'datasisa', 'vendorList', 'dataPembelianInvoice', 'daftarTagihanVendor'
+            );
+        });
+
+        return view('pages.welcome', $viewData);
     }
 
 
@@ -562,59 +596,52 @@ class HomeController extends Controller
 }
 
 
+    private function calculatePeriodFinancials($startDate, $endDate)
+    {
+        $row = DB::table('penjualan')
+            ->whereNull('deleted_at')
+            ->whereBetween('tgl_penjualan', [$startDate, $endDate])
+            ->selectRaw("
+                COALESCE(SUM(CASE 
+                    WHEN status = 'Belum Lunas' THEN dp 
+                    WHEN status = 'Lunas' THEN total_pembayaran 
+                    ELSE 0 
+                END), 0) as money_in,
+                COALESCE(SUM(CASE 
+                    WHEN status = 'Belum Lunas' THEN (total_pembayaran - dp) 
+                    ELSE 0 
+                END), 0) as remain_not_paid,
+                COALESCE(SUM(CASE 
+                    WHEN status NOT IN ('Belum Lunas', 'Lunas') THEN total_pembayaran 
+                    ELSE 0 
+                END), 0) as canceled_paid
+            ")->first();
+
+        return [
+            (float)($row->money_in ?? 0),
+            (float)($row->remain_not_paid ?? 0),
+            (float)($row->canceled_paid ?? 0)
+        ];
+    }
+
     function getTotalPerMinggu()
     {
         Carbon::setLocale('id');
         $today = Carbon::now();
-        $startDate = $today->startOfWeek()->isoFormat('YYYY-MM-DD');
-        $endDate = $today->endOfWeek()->isoFormat('YYYY-MM-DD');
-        $previousWeekStart = $today->subWeek()->startOfWeek()->isoFormat('YYYY-MM-DD');
-        $previousWeekEnd = $today->endOfWeek()->isoFormat('YYYY-MM-DD');
+        $startDate = $today->copy()->startOfWeek()->isoFormat('YYYY-MM-DD');
+        $endDate = $today->copy()->endOfWeek()->isoFormat('YYYY-MM-DD');
+        $previousWeekStart = $today->copy()->subWeek()->startOfWeek()->isoFormat('YYYY-MM-DD');
+        $previousWeekEnd = $today->copy()->subWeek()->endOfWeek()->isoFormat('YYYY-MM-DD');
 
-        $invoice = Penjualan::whereBetween('tgl_penjualan', [$startDate, $endDate])->get();
-        $previousInv = Penjualan::whereBetween('tgl_penjualan', [$previousWeekStart, $previousWeekEnd])->get();
-        $penjualanInvoice = $invoice->sum('total_pembayaran');
-        $bayar = [];
-        $blmBayar = [];
-        $btlBayar = [];
-        $preBayar = [];
-        $preBlmBayar = [];
-        $preBtlBayar = [];
-        foreach ($invoice as $inv) {
-
-            if ($inv->status == 'Belum Lunas') {
-                $bayar[] = $inv->dp;
-                $blmBayar[] = $inv->total_pembayaran - $inv->dp;
-            } elseif ($inv->status == 'Lunas') {
-                $bayar[] = $inv->total_pembayaran;
-            } else {
-                $btlBayar[] = $inv->total_pembayaran;
-            }
-        }
-        foreach ($previousInv as $preinv) {
-            if ($preinv->status == 'Belum Lunas') {
-                $preBayar[] = $preinv->dp;
-                $preBlmBayar[] = $preinv->total_pembayaran - $preinv->dp;
-            } elseif ($preinv->status == 'Lunas') {
-                $preBayar[] = $preinv->total_pembayaran;
-            } else {
-                $preBtlBayar[] = $preinv->total_pembayaran;
-            }
-        }
-        $moneyIn = array_sum($bayar);
-        $remainNotPaid = array_sum($blmBayar);
-        $canceledPaid = array_sum($btlBayar);
-        $preMoneyIn = array_sum($preBayar);
-        $preRemainNotPaid = array_sum($preBlmBayar);
-        $preCanceledPaid = array_sum($preBtlBayar);
+        list($moneyIn, $remainNotPaid, $canceledPaid) = $this->calculatePeriodFinancials($startDate, $endDate);
+        list($preMoneyIn, $preRemainNotPaid, $preCanceledPaid) = $this->calculatePeriodFinancials($previousWeekStart, $previousWeekEnd);
 
         $datas = [$moneyIn, $remainNotPaid, $canceledPaid];
 
         $moneyInIncreasePercentage = number_format((($preMoneyIn != 0) ? (($moneyIn - $preMoneyIn) / $preMoneyIn) * 100 : 0), 2);
         $remainNotPaidDecreasePercentage = number_format((($preRemainNotPaid != 0) ? (($preRemainNotPaid - $remainNotPaid) / $preRemainNotPaid) * 100 : 0), 2);
         $canceledPaidIncreasePercentage = ($preCanceledPaid != 0) ? (($canceledPaid - $preCanceledPaid) / $preCanceledPaid) * 100 : 0;
-        // return [$canceledPaid, $preCanceledPaid, $moneyInIncreasePercentage, $canceledPaidIncreasePercentage, $remainNotPaidDecreasePercentage];
-        // return [$moneyIn, $remainNotPaid, $canceledPaid];
+
         return [
             'weekDatas' => $datas,
             'weekIn' => $moneyInIncreasePercentage,
@@ -627,50 +654,13 @@ class HomeController extends Controller
     {
         Carbon::setLocale('id');
         $today = Carbon::now();
-        $startDate = $today->startOfMonth()->isoFormat('YYYY-MM-DD');
-        $endDate = $today->endOfMonth()->isoFormat('YYYY-MM-DD');
-        $previousMonthStart = $today->subMonth()->startOfMonth()->isoFormat('YYYY-MM-DD');
-        $previousMonthEnd = $today->endOfMonth()->isoFormat('YYYY-MM-DD');
+        $startDate = $today->copy()->startOfMonth()->isoFormat('YYYY-MM-DD');
+        $endDate = $today->copy()->endOfMonth()->isoFormat('YYYY-MM-DD');
+        $previousMonthStart = $today->copy()->subMonth()->startOfMonth()->isoFormat('YYYY-MM-DD');
+        $previousMonthEnd = $today->copy()->subMonth()->endOfMonth()->isoFormat('YYYY-MM-DD');
 
-        $invoice = Penjualan::whereBetween('tgl_penjualan', [$startDate, $endDate])->get();
-        $previousInv = Penjualan::whereBetween('tgl_penjualan', [$previousMonthStart, $previousMonthEnd])->get();
-        // $penjualanInvoice = $invoice->sum('total_pembayaran');
-        $bayar = [];
-        $blmBayar = [];
-        $btlBayar = [];
-        $preBayar = [];
-        $preBlmBayar = [];
-        $preBtlBayar = [];
-
-        foreach ($invoice as $inv) {
-            if ($inv->status == 'Belum Lunas') {
-                $bayar[] = $inv->dp;
-                $blmBayar[] = $inv->total_pembayaran - $inv->dp;
-            } elseif ($inv->status == 'Lunas') {
-                $bayar[] = $inv->total_pembayaran;
-            } else {
-                $btlBayar[] = $inv->total_pembayaran;
-            }
-        }
-
-        foreach ($previousInv as $preinv) {
-            if ($preinv->status == 'Belum Lunas') {
-                $preBayar[] = $preinv->dp;
-                $preBlmBayar[] = $preinv->total_pembayaran - $preinv->dp;
-            } elseif ($preinv->status == 'Lunas') {
-                $preBayar[] = $preinv->total_pembayaran;
-            } else {
-                $preBtlBayar[] = $preinv->total_pembayaran;
-            }
-        }
-
-        // dd($previousInv);
-        $moneyIn = array_sum($bayar);
-        $remainNotPaid = array_sum($blmBayar);
-        $canceledPaid = array_sum($btlBayar);
-        $preMoneyIn = array_sum($preBayar);
-        $preRemainNotPaid = array_sum($preBlmBayar);
-        $preCanceledPaid = array_sum($preBtlBayar);
+        list($moneyIn, $remainNotPaid, $canceledPaid) = $this->calculatePeriodFinancials($startDate, $endDate);
+        list($preMoneyIn, $preRemainNotPaid, $preCanceledPaid) = $this->calculatePeriodFinancials($previousMonthStart, $previousMonthEnd);
 
         $datas = [$moneyIn, $remainNotPaid, $canceledPaid];
 
@@ -690,56 +680,20 @@ class HomeController extends Controller
     {
         Carbon::setLocale('id');
         $today = Carbon::now();
-        $startDate = $today->startOfYear()->isoFormat('YYYY-MM-DD');
-        $endDate = $today->endOfYear()->isoFormat('YYYY-MM-DD');
-        $previousYearStart = $today->subYear()->startOfYear()->isoFormat('YYYY-MM-DD');
-        $previousYearEnd = $today->endOfYear()->isoFormat('YYYY-MM-DD');
+        $startDate = $today->copy()->startOfYear()->isoFormat('YYYY-MM-DD');
+        $endDate = $today->copy()->endOfYear()->isoFormat('YYYY-MM-DD');
+        $previousYearStart = $today->copy()->subYear()->startOfYear()->isoFormat('YYYY-MM-DD');
+        $previousYearEnd = $today->copy()->subYear()->endOfYear()->isoFormat('YYYY-MM-DD');
 
-        $invoice = Penjualan::whereBetween('tgl_penjualan', [$startDate, $endDate])->get();
-        $previousInv = Penjualan::whereBetween('tgl_penjualan', [$previousYearStart, $previousYearEnd])->get();
-        $penjualanInvoice = $invoice->sum('total_pembayaran');
-        $bayar = [];
-        $blmBayar = [];
-        $btlBayar = [];
-        $preBayar = [];
-        $preBlmBayar = [];
-        $preBtlBayar = [];
-
-        foreach ($invoice as $inv) {
-            if ($inv->status == 'Belum Lunas') {
-                $bayar[] = $inv->dp;
-                $blmBayar[] = $inv->total_pembayaran - $inv->dp;
-            } elseif ($inv->status == 'Lunas') {
-                $bayar[] = $inv->total_pembayaran;
-            } else {
-                $btlBayar[] = $inv->total_pembayaran;
-            }
-        }
-
-        foreach ($previousInv as $preinv) {
-            if ($preinv->status == 'Belum Lunas') {
-                $preBayar[] = $preinv->dp;
-                $preBlmBayar[] = $preinv->total_pembayaran - $preinv->dp;
-            } elseif ($preinv->status == 'Lunas') {
-                $preBayar[] = $preinv->total_pembayaran;
-            } else {
-                $preBtlBayar[] = $preinv->total_pembayaran;
-            }
-        }
-
-        $moneyIn = array_sum($bayar);
-        $remainNotPaid = array_sum($blmBayar);
-        $canceledPaid = array_sum($btlBayar);
-        $preMoneyIn = array_sum($preBayar);
-        $preRemainNotPaid = array_sum($preBlmBayar);
-        $preCanceledPaid = array_sum($preBtlBayar);
+        list($moneyIn, $remainNotPaid, $canceledPaid) = $this->calculatePeriodFinancials($startDate, $endDate);
+        list($preMoneyIn, $preRemainNotPaid, $preCanceledPaid) = $this->calculatePeriodFinancials($previousYearStart, $previousYearEnd);
 
         $datas = [$moneyIn, $remainNotPaid, $canceledPaid];
 
         $moneyInIncreasePercentage = number_format((($preMoneyIn != 0) ? (($moneyIn - $preMoneyIn) / $preMoneyIn) * 100 : 0), 2);
         $remainNotPaidDecreasePercentage = number_format((($preRemainNotPaid != 0) ? (($preRemainNotPaid - $remainNotPaid) / $preRemainNotPaid) * 100 : 0), 2);
         $canceledPaidIncreasePercentage = number_format((($preCanceledPaid != 0) ? (($canceledPaid - $preCanceledPaid) / $preCanceledPaid) * 100 : 0), 2);
-        // dd($canceledPaid, $preBtlBayar);
+
         return [
             'yearDatas' => $datas,
             'yearIn' => $moneyInIncreasePercentage,
@@ -747,68 +701,21 @@ class HomeController extends Controller
             'yearCanceled' => $canceledPaidIncreasePercentage,
         ];
     }
-    
-    // ✅ 4. FUNGSI BARU: Total Per Tahun Lalu (Dengan Persentase vs 2 Tahun Lalu)
+
+    // Total Per Tahun Lalu (Dengan Persentase vs 2 Tahun Lalu)
     function getTotalPerTahunLalu()
     {
         Carbon::setLocale('id');
-        
-        // 1. Ambil Periode TAHUN LALU (Data Utama)
-        // Jika sekarang 2025, maka ini 2024
         $startDate = Carbon::now()->subYear()->startOfYear()->isoFormat('YYYY-MM-DD');
         $endDate = Carbon::now()->subYear()->endOfYear()->isoFormat('YYYY-MM-DD');
-        
-        // 2. Ambil Periode 2 TAHUN LALU (Data Pembanding)
-        // Jika sekarang 2025, maka ini 2023.
-        // Kita WAJIB mengambil ini hanya untuk menghitung rumus persentase, 
-        // meskipun data 2023 ini tidak ditampilkan ke user.
         $previousYearStart = Carbon::now()->subYears(2)->startOfYear()->isoFormat('YYYY-MM-DD');
         $previousYearEnd = Carbon::now()->subYears(2)->endOfYear()->isoFormat('YYYY-MM-DD');
 
-        // Ambil Data dari Database
-        $invoice = Penjualan::whereBetween('tgl_penjualan', [$startDate, $endDate])->get();
-        $previousInv = Penjualan::whereBetween('tgl_penjualan', [$previousYearStart, $previousYearEnd])->get();
-        
-        $bayar = []; $blmBayar = []; $btlBayar = [];
-        $preBayar = []; $preBlmBayar = []; $preBtlBayar = [];
-
-        // Loop Data Tahun Lalu (Utama)
-        foreach ($invoice as $inv) {
-            if ($inv->status == 'Belum Lunas') {
-                $bayar[] = $inv->dp;
-                $blmBayar[] = $inv->total_pembayaran - $inv->dp;
-            } elseif ($inv->status == 'Lunas') {
-                $bayar[] = $inv->total_pembayaran;
-            } else {
-                $btlBayar[] = $inv->total_pembayaran;
-            }
-        }
-
-        // Loop Data 2 Tahun Lalu (Pembanding)
-        foreach ($previousInv as $preinv) {
-            if ($preinv->status == 'Belum Lunas') {
-                $preBayar[] = $preinv->dp;
-                $preBlmBayar[] = $preinv->total_pembayaran - $preinv->dp;
-            } elseif ($preinv->status == 'Lunas') {
-                $preBayar[] = $preinv->total_pembayaran;
-            } else {
-                $preBtlBayar[] = $preinv->total_pembayaran;
-            }
-        }
-
-        // Hitung Total Uang
-        $moneyIn = array_sum($bayar);
-        $remainNotPaid = array_sum($blmBayar);
-        $canceledPaid = array_sum($btlBayar);
-        
-        // Hitung Total Uang Pembanding
-        $preMoneyIn = array_sum($preBayar);
-        $preRemainNotPaid = array_sum($preBlmBayar);
-        $preCanceledPaid = array_sum($preBtlBayar);
+        list($moneyIn, $remainNotPaid, $canceledPaid) = $this->calculatePeriodFinancials($startDate, $endDate);
+        list($preMoneyIn, $preRemainNotPaid, $preCanceledPaid) = $this->calculatePeriodFinancials($previousYearStart, $previousYearEnd);
 
         $datas = [$moneyIn, $remainNotPaid, $canceledPaid];
 
-        // Rumus Persentase (Sekarang bekerja karena ada pembanding)
         $moneyInIncreasePercentage = number_format((($preMoneyIn != 0) ? (($moneyIn - $preMoneyIn) / $preMoneyIn) * 100 : 0), 2);
         $remainNotPaidDecreasePercentage = number_format((($preRemainNotPaid != 0) ? (($preRemainNotPaid - $remainNotPaid) / $preRemainNotPaid) * 100 : 0), 2);
         $canceledPaidIncreasePercentage = number_format((($preCanceledPaid != 0) ? (($canceledPaid - $preCanceledPaid) / $preCanceledPaid) * 100 : 0), 2);
