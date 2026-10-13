@@ -1,12 +1,6 @@
 @section('head')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-<!--datatable responsive css-->
-  {{-- <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" /> --}}
-
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <style>
     /* ==========================================================================
        DESIGN SYSTEM TOKENS & OVERRIDES (DESIGN.md)
@@ -1342,6 +1336,15 @@
                               </thead>
 
                               <tbody>
+                                @php
+                                    $role = Auth::user()->role ?? '';
+                                    $isOwner = $role === 'Pemilik';
+                                    $isAdmin = $role === 'Admin';
+                                    $waNumber = '628116029999';
+                                    $waNumber2 = '628116179999';
+                                    $waNumberLunas1 = '628116179999';
+                                    $waNumberLunas2 = '628116029999';
+                                @endphp
                                 @foreach ($penjualan as $inv)
 
                                   <tr data-jenis-id="{{ $inv->invoice }}" data-jenis-nama="{{ $inv->jenis_invoice_nama }}">
@@ -1558,24 +1561,16 @@
     </li>
 
     {{-- === LOGIKA USER === --}}
-    @php
-        $role     = Auth::user()->role;
-        $isOwner  = $role === 'Pemilik';
-        $isAdmin  = $role === 'Admin';
-        $waNumber = '628116029999'; // Ganti nomor WA Owner
-        $waNumber2 = '628116179999';
-        $waNumberLunas1 = '628116179999';
-        $waNumberLunas2 = '628116029999';
-
-        $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
-        $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
-
-        $waLink = "https://wa.me/{$waNumber}?text={$msg}";
-        $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
-        $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
-        $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
-
-    @endphp
+    @if($isAdmin)
+        @php
+            $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
+            $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
+            $waLink = "https://wa.me/{$waNumber}?text={$msg}";
+            $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
+            $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
+            $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
+        @endphp
+    @endif
 
     {{-- === APPROVAL (KHUSUS OWNER) === --}}
     @if($isOwner)
@@ -1595,9 +1590,6 @@
                 <i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 1)
             </a>
         </li>
-    @endif
-    
-     @if($isAdmin && $inv->approval !== 'Unlock')
         <li>
             <a class="dropdown-item text-warning fw-semibold" href="{{ $waLink2 }}" target="_blank">
                 <i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 2)
@@ -1611,7 +1603,6 @@
                 <i class="las la-clipboard-list fs-18 align-middle me-2 text-primary"></i>Buat SPK
             </a>
         </li>
-    
     
     {{-- === REQUEST LUNAS (KHUSUS ADMIN) === --}}
     @if($isAdmin && $inv->status !== 'Lunas')
@@ -1645,33 +1636,23 @@
             </a>
         </li>
 
-
         @if($inv->status !== 'Batal')
-           {{-- Menjadi tombol yang memicu fungsi JavaScript --}}
-<button type="button" class="dropdown-item" 
-        onclick="confirmBatal('{{ $inv->id }}', '{{ $inv->nomor_invoice }}')">
-    <i class="las la-folder-minus fs-18 align-middle me-2 text-muted"></i>Invoice Batal
-</button>
-
-{{-- Form tersembunyi untuk mengirim data --}}
-<form id="form-batal-{{ $inv->id }}" action="{{ route('invoice.batal', $inv->id) }}" method="POST" style="display: none;">
-    @csrf
-    <input type="hidden" name="alasan_batal" id="input-alasan-{{ $inv->id }}">
-</form>
+            <li>
+                <button type="button" class="dropdown-item" 
+                        onclick="confirmBatal('{{ $inv->id }}', '{{ $inv->nomor_invoice }}')">
+                    <i class="las la-folder-minus fs-18 align-middle me-2 text-muted"></i>Invoice Batal
+                </button>
+            </li>
         @endif
     @endif
 
     {{-- === DELETE – tampil untuk semua === --}}
     <li class="dropdown-divider"></li>
     <li>
-        <form action="{{ route('delete.invoice', $inv->id) }}" method="POST" id="deleteInv{{ $inv->id }}">
-            @csrf @method('delete')
-            <input type="hidden" name="alasan_hapus" id="input-alasan-hapus-{{ $inv->id }}">
-            <button class="dropdown-item" type="button"
-                    onclick="showConfirmation('{{ $inv->nomor_invoice }}','{{ $inv->id }}')">
-                <i class="las la-trash-alt fs-18 align-middle me-2 text-muted"></i>Delete
-            </button>
-        </form>
+        <button class="dropdown-item" type="button"
+                onclick="showConfirmation('{{ $inv->nomor_invoice }}','{{ $inv->id }}')">
+            <i class="las la-trash-alt fs-18 align-middle me-2 text-muted"></i>Delete
+        </button>
     </li>
 </ul>
 
@@ -1682,6 +1663,15 @@
 
                               </tbody><!-- end tbody -->
                           </table><!-- end table -->
+                          <form id="globalBatalForm" method="POST" style="display: none;">
+                              @csrf
+                              <input type="hidden" name="alasan_batal" id="globalInputAlasanBatal">
+                          </form>
+                          <form id="globalDeleteForm" method="POST" style="display: none;">
+                              @csrf
+                              @method('delete')
+                              <input type="hidden" name="alasan_hapus" id="globalInputAlasanHapus">
+                          </form>
                       </div><!-- end table responsive -->
                   </div>
               </div>
@@ -1789,11 +1779,13 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                var inputHapus = document.getElementById('input-alasan-hapus-' + invId);
+                var form = document.getElementById('globalDeleteForm');
+                form.action = "{{ url('invoice/deleteInvoice') }}/" + invId;
+                var inputHapus = document.getElementById('globalInputAlasanHapus');
                 if (inputHapus) {
                     inputHapus.value = result.value;
                 }
-                document.getElementById('deleteInv' + invId).submit();
+                form.submit();
             }
         });
     }
@@ -1820,10 +1812,13 @@
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            // Masukkan alasan ke input hidden
-            document.getElementById('input-alasan-' + id).value = result.value;
-            // Submit form
-            document.getElementById('form-batal-' + id).submit();
+            var form = document.getElementById('globalBatalForm');
+            form.action = "{{ url('ubah-status-batal') }}/" + id;
+            var inputBatal = document.getElementById('globalInputAlasanBatal');
+            if (inputBatal) {
+                inputBatal.value = result.value;
+            }
+            form.submit();
         }
     });
 }

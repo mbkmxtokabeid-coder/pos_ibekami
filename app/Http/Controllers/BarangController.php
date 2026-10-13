@@ -12,35 +12,30 @@ class BarangController extends Controller
 {
     public function index()
     {
-        // Menambahkan filter is_active = 1
+        $allKategori = KategoriBarang::all();
+        $kategori = $allKategori->pluck('nama_kategori', 'id');
+        $kategori_brg = $allKategori->whereNotIn('id', [7, 5]);
+
+        // Menambahkan filter is_active = 1 dan menghindari query N+1
         $barang = Barang::where('is_active', 1)
             ->select('id', 'jenis_barang', 'kode_barang', 'kategori_id', 'stok', 'harga_modal', 'harga_jual', 'is_material_required', 'created_at', 'updated_at')
             ->get()
             ->map(function ($item) {
                 $item->stok = max(0, $item->stok);
                 $item->updated_at = Carbon::parse($item->updated_at)->addHours(7)->format('d F Y H:i:s');
+                $item->formattedModal = number_format(intval($item->harga_modal), 0, ',', ',');
+                $item->formattedJual = number_format(intval($item->harga_jual), 0, ',', ',');
                 return $item;
+            })
+            ->sortBy(function ($item) use ($kategori) {
+                return $kategori[$item->kategori_id] ?? '';
             });
-
-        foreach ($barang as $brg) {
-            $brg->formattedModal = number_format(intval($brg->harga_modal), 0, ',', ',');
-            $brg->formattedJual = number_format(intval($brg->harga_jual), 0, ',', ',');
-        }
-
-        $kategori = Barang::join('kategori_barang', 'barang.kategori_id', '=', 'kategori_barang.id')
-            ->pluck('kategori_barang.nama_kategori', 'barang.kategori_id');
-        
-        $kategori_brg = KategoriBarang::whereNotIn('id', [7, 5])->get();
-
-        $barang = $barang->sortBy(function ($barang) {
-            return $barang->kategori_item->nama_kategori ?? '';
-        });
 
         return view('pages.barang.daftar-barang', [
             'barang' => $barang,
             'kategori' => $kategori,
             'kategoriBrg' => $kategori_brg,
-            'allKategori' => KategoriBarang::all(),
+            'allKategori' => $allKategori,
         ]);
     }
 

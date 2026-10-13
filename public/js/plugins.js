@@ -1,3 +1,20 @@
-// (document.querySelectorAll("[toast-list]") || document.querySelectorAll("[data-choices]") || document.querySelectorAll("[data-provider]")) && (document.writeln("<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/toastify-js'><\/script>"), document.writeln("<script type='text/javascript' src='public/libs/choices.js/public/assets/scripts/choices.min.js'><\/script>"), document.writeln("<script type='text/javascript' src='public/libs/flatpickr/flatpickr.min.js'><\/script>"));
+(function() {
+    function loadScript(src) {
+        if (!document.querySelector('script[src="' + src + '"]')) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.async = true;
+            document.head.appendChild(s);
+        }
+    }
 
-(document.querySelectorAll("[toast-list]") || document.querySelectorAll("[data-choices]") || document.querySelectorAll("[data-provider]")) && (document.writeln("<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/toastify-js'><\/script>"), document.writeln("<script type='text/javascript' src='libs/choices.js/public/assets/scripts/choices.min.js'><\/script>"), document.writeln("<script type='text/javascript' src='libs/flatpickr/flatpickr.min.js'><\/script>"));
+    if (document.querySelectorAll("[toast-list]").length > 0) {
+        loadScript("https://cdn.jsdelivr.net/npm/toastify-js");
+    }
+    if (document.querySelectorAll("[data-choices]").length > 0) {
+        loadScript("/libs/choices.js/public/assets/scripts/choices.min.js");
+    }
+    if (document.querySelectorAll("[data-provider]").length > 0) {
+        loadScript("/libs/flatpickr/flatpickr.min.js");
+    }
+})();

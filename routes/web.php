@@ -283,6 +283,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
     
     Route::post('/token-notif', TokenController::class)->name('token');
+    Route::post('/invoice/token-notif', TokenController::class);
 });
 
 // ROUTE JSON
