@@ -126,6 +126,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/list-invoice', [InvoiceController::class, 'loadListInvoice'])->name('daftar_invoice');
             Route::get('/list-invoice-tokabe', [InvoiceController::class, 'loadListInvoice'])->name('list_invoice_tokabe');
             Route::get('/list-invoice/cards-data', [InvoiceController::class, 'getCardsData'])->name('invoice.cards_data');
+            Route::match(['get', 'post'], '/list-invoice/datatable-data', [InvoiceController::class, 'getDatatableInvoices'])->name('invoice.datatable_data');
 
 
             Route::get('/getInvoices/{id}', [CustomerController::class, 'getInvoices']);

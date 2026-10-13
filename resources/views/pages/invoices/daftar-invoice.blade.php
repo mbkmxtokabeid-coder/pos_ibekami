@@ -1336,331 +1336,7 @@
                               </thead>
 
                               <tbody>
-                                @php
-                                    $role = Auth::user()->role ?? '';
-                                    $isOwner = $role === 'Pemilik';
-                                    $isAdmin = $role === 'Admin';
-                                    $waNumber = '628116029999';
-                                    $waNumber2 = '628116179999';
-                                    $waNumberLunas1 = '628116179999';
-                                    $waNumberLunas2 = '628116029999';
-                                @endphp
-                                @foreach ($penjualan as $inv)
-
-                                  <tr data-jenis-id="{{ $inv->invoice }}" data-jenis-nama="{{ $inv->jenis_invoice_nama }}">
-                                    <td class="text-center col-no">{{$loop->iteration}}</td>
-                                      <td class="col-invoice">
-                                          <p class="fw-semibold text-white mb-1 font-monospace" style="font-size: 13px;">{{$inv->nomor_invoice}}</p>
-                                          @if(!empty($inv->jenis_invoice_nama) && $inv->jenis_invoice_nama != '-')
-                                              <span class="badge-jenis-inv">{{ $inv->jenis_invoice_nama }}</span>
-                                          @endif
-                                      </td>
-                                      <td class="col-pelanggan">{{$inv->customer. ' / '. $inv->perusahaan}}</td>
-                                      <td class="col-telepon">{{$inv->no_telepon}}</td>
-                                      <td class="col-tgl">{{$inv->formatted_tgl_penjualan}}
-                                        @if ($inv->updated_at != $inv->created_at)
-                                            <br><span class="text-muted" style="font-size: 0.75rem;">Last Update: {{ $inv->formatted_tgl_update }}</span>
-                                        @endif</td>
-                                      <td class="text-center col-status">
-                                          @if ($inv->status == 'Lunas')
-                                              <span class="badge-status badge-status-lunas">{{$inv->status}}</span>
-                                          @elseif($inv->status == 'Belum Lunas')
-                                              <span class="badge-status badge-status-belum">{{$inv->status}}</span>
-                                          @else
-                                              <span class="badge-status badge-status-batal">{{$inv->status}}</span>
-                                          @endif
-                                      </td>
-                                        <td class="col-deskripsi">
-                                          @php 
-                                              $totalDeskripsi = count($inv->penjualanBarang ?? []); 
-                                          @endphp
-                                          <ul class="list-unstyled mb-0">
-                                              @foreach($inv->penjualanBarang as $idx => $pb)
-                                                  @if($idx < 2)
-                                                      <li class="mb-1 text-wrap">- {{ $pb->deskripsi_item }}</li>
-                                                  @else
-                                                      @if($idx === 2)
-                                                          <div class="collapsible-extra-items">
-                                                      @endif
-                                                      <li class="mb-1 text-wrap">- {{ $pb->deskripsi_item }}</li>
-                                                      @if($loop->last)
-                                                          </div>
-                                                      @endif
-                                                  @endif
-                                              @endforeach
-                                          </ul>
-                                          @if($totalDeskripsi > 2)
-                                              <button type="button" class="btn-toggle-row-detail" onclick="toggleSingleRowDetail(this, event)" title="Lebarkan atau kecilkan rincian item baris ini">
-                                                  <span class="btn-text-collapsed"><i class="las la-angle-down"></i> +{{ $totalDeskripsi - 2 }} lainnya (Lebarkan)</span>
-                                                  <span class="btn-text-expanded"><i class="las la-angle-up"></i> Kecilkan</span>
-                                              </button>
-                                          @endif
-                                      </td>
-                                        <td class="col-material">
-                                           @php 
-                                               $hasMaterial = false; 
-                                               $materialItems = [];
-                                               if($inv->penjualanBarang) {
-                                                   foreach($inv->penjualanBarang as $pb) {
-                                                       $rawMatId = $pb->material_id;
-                                                       $matIds = (!empty($rawMatId) && ($rawMatId[0] === '[' || $rawMatId[0] === '{')) ? json_decode($rawMatId, true) : ($rawMatId ? [$rawMatId] : []);
-                                                       if (!is_array($matIds)) { $matIds = [$rawMatId]; }
-
-                                                       $rawMatQty = $pb->material_qty;
-                                                       $matQtys = (!empty($rawMatQty) && ($rawMatQty[0] === '[' || $rawMatQty[0] === '{')) ? json_decode($rawMatQty, true) : ($rawMatQty ? [$rawMatQty] : []);
-                                                       if (!is_array($matQtys)) { $matQtys = [$rawMatQty]; }
-
-                                                       $rawMatPanjang = $pb->material_panjang;
-                                                       $matPanjangs = (!empty($rawMatPanjang) && ($rawMatPanjang[0] === '[' || $rawMatPanjang[0] === '{')) ? json_decode($rawMatPanjang, true) : ($rawMatPanjang ? [$rawMatPanjang] : []);
-                                                       if (!is_array($matPanjangs)) { $matPanjangs = [$rawMatPanjang]; }
-
-                                                       $rawMatLebar = $pb->material_lebar;
-                                                       $matLebars = (!empty($rawMatLebar) && ($rawMatLebar[0] === '[' || $rawMatLebar[0] === '{')) ? json_decode($rawMatLebar, true) : ($rawMatLebar ? [$rawMatLebar] : []);
-                                                       if (!is_array($matLebars)) { $matLebars = [$rawMatLebar]; }
-
-                                                       foreach($matIds as $mIdx => $mId) {
-                                                           $mat = isset($materialsMap) ? $materialsMap->get($mId) : \App\Models\Material::find($mId);
-                                                           if($mat) {
-                                                               $hasMaterial = true;
-                                                               $materialItems[] = [
-                                                                   'jenis' => $mat->jenis_material,
-                                                                   'qty' => $matQtys[$mIdx] ?? 0,
-                                                                   'satuan' => $mat->satuan,
-                                                                   'panjang' => $matPanjangs[$mIdx] ?? null,
-                                                                   'lebar' => $matLebars[$mIdx] ?? null
-                                                               ];
-                                                           }
-                                                       }
-                                                   }
-                                               }
-                                               $totalMaterials = count($materialItems);
-                                           @endphp
-
-                                           @if($hasMaterial)
-                                               <ul class="list-unstyled mb-0">
-                                                   @foreach($materialItems as $mIdx => $mItem)
-                                                       @if($mIdx < 2)
-                                                           <li class="mb-2" style="border-bottom: 1px dashed #334155; padding-bottom: 4px;">
-                                                               <span class="fw-semibold text-primary">{{ $mItem['jenis'] }}</span><br>
-                                                               <span class="text-muted" style="font-size: 0.8rem;">Dipakai: <b>{{ $mItem['qty'] }} {{ $mItem['satuan'] }}</b></span>
-                                                               @if($mItem['panjang'] && $mItem['lebar'])
-                                                                   <br><span class="text-muted" style="font-size: 0.75rem;">(Ukuran: {{ $mItem['panjang'] }} &times; {{ $mItem['lebar'] }})</span>
-                                                               @endif
-                                                           </li>
-                                                       @else
-                                                           @if($mIdx === 2)
-                                                               <div class="collapsible-extra-items">
-                                                           @endif
-                                                           <li class="mb-2" style="border-bottom: 1px dashed #334155; padding-bottom: 4px;">
-                                                               <span class="fw-semibold text-primary">{{ $mItem['jenis'] }}</span><br>
-                                                               <span class="text-muted" style="font-size: 0.8rem;">Dipakai: <b>{{ $mItem['qty'] }} {{ $mItem['satuan'] }}</b></span>
-                                                               @if($mItem['panjang'] && $mItem['lebar'])
-                                                                   <br><span class="text-muted" style="font-size: 0.75rem;">(Ukuran: {{ $mItem['panjang'] }} &times; {{ $mItem['lebar'] }})</span>
-                                                               @endif
-                                                           </li>
-                                                           @if($loop->last)
-                                                               </div>
-                                                           @endif
-                                                       @endif
-                                                   @endforeach
-                                               </ul>
-                                               @if($totalMaterials > 2)
-                                                   <button type="button" class="btn-toggle-row-detail" onclick="toggleSingleRowDetail(this, event)" title="Lebarkan atau kecilkan rincian material baris ini">
-                                                       <span class="btn-text-collapsed"><i class="las la-angle-down"></i> +{{ $totalMaterials - 2 }} lainnya (Lebarkan)</span>
-                                                       <span class="btn-text-expanded"><i class="las la-angle-up"></i> Kecilkan</span>
-                                                   </button>
-                                               @endif
-                                           @else
-                                               <span class="text-muted" style="font-size: 0.8rem;"><i>Tidak ada material yang dipakai</i></span>
-                                           @endif
-                                       </td>
-                                      <td class="col-alasan">{{ $inv->alasan_batal ?: '-' }}</td>
-                                      <td class="text-center col-approval">
-                                          @if ($inv->approval == 'Unlock')
-                                              <span class="badge-status badge-status-lunas">{{$inv->approval}}</span>
-                                          @elseif($inv->approval == 'Lock')
-                                              <span class="badge-status badge-status-belum">{{$inv->approval}}</span>
-                                          @else
-                                              <span class="badge-status badge-status-info">{{$inv->approval}}</span>
-                                          @endif
-                                      </td>
-                                      <td class="numeric text-end col-panjar">Rp {{ $inv->formatted_dp }}</td>
-                                      <td class="numeric text-end fw-semibold text-white col-total">Rp {{ $inv->formatted_total_pembayaran }}</td>
-                                    <td class="text-center col-pembayaran">
-                                        @if ($inv->jenis_pembayaran == 'Cash Lunas' || $inv->jenis_pembayaran == 'Transfer Lunas')
-                                            <span class="badge-status badge-status-lunas">{{$inv->jenis_pembayaran}}</span>
-                                        @else
-                                            <span class="badge-status badge-status-belum">{{ $inv->jenis_pembayaran == 'Cash Belum Lunas' ? 'Cash Belum Lunas' : $inv->jenis_pembayaran }}</span>
-                                        @endif
-                                    </td>
-                                    <td class="col-orderby">{{ $inv->order_by ?: '-' }}</td>
-                                     <td class="col-admin">{{ $inv->user ? $inv->user->nama : 'Tidak Diketahui' }}</td>
-                                      <td class="text-center col-aksi">
-                                      
-                                          <div class="dropdown d-inline-block">
-                                              <!-- PENAMBAHAN data-bs-boundary="window" DAN data-bs-popper-config AGAR DROPDOWN MUNCUL MELAYANG DI LUAR TABEL -->
-                                              <button class="btn btn-action-ghost btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="window" data-bs-popper-config='{"strategy":"fixed"}'>
-                                                  <i class="las la-ellipsis-h align-middle fs-16"></i>
-                                              </button>
-                                              <ul class="dropdown-menu dropdown-menu-end shadow-lg">
-                                                   <li>
-                                                       <a class="dropdown-item" href="{{ url('cetak/'.$inv->id.'?type=asli') }}" target="_blank">
-                                                           <i class="las la-print fs-18 align-middle me-2 text-primary"></i>Cetak Invoice (ASLI)
-                                                       </a>
-                                                   </li>
-                                                   <li>
-                                                       <a class="dropdown-item" href="{{ url('cetak/'.$inv->id.'?type=copy') }}" target="_blank">
-                                                           <i class="las la-print fs-18 align-middle me-2 text-danger"></i>Cetak Invoice (COPY)
-                                                       </a>
-                                                   </li>
-                                                  <li>
-                                                      <a class="dropdown-item" href="{{ url('view/download/'.$inv->id) }}" target="_blank">
-                                                          <i class="las la-file-download fs-18 align-middle me-2 text-muted"></i>Download
-                                                      </a>
-                                                  </li>
-    
-    {{-- === BUTTON KIRIM WA CUSTOMER === --}}
-    @php
-        // 1. Format Nomor HP
-        $no_hp_cust = $inv->no_telepon ?? ''; 
-        $no_hp_cust = preg_replace('/[^0-9]/', '', $no_hp_cust);
-        if(substr($no_hp_cust, 0, 1) == '0'){
-            $no_hp_cust = '62' . substr($no_hp_cust, 1);
-        }
-
-        // 2. Generate Signed URL (Expired 7 Hari)
-        $link_khusus_customer = URL::temporarySignedRoute(
-            'invoice.public_download', 
-            now()->addDays(7),
-            ['id' => $inv->id]   
-        );
-
-        // 3. Susun Pesan Lengkap sesuai format baru
-        $pesan_cust = "Invoice : " . $inv->nomor_invoice . "\n";
-        $pesan_cust .= "Link Download Invoice (Berlaku 7 Hari):\n";
-        $pesan_cust .= $link_khusus_customer . "\n\n";
-        $pesan_cust .= "Total Rp " . number_format($inv->total_harga, 0, ',', '.') . "\n\n";
-
-        // Cek Sisa Pembayaran (Jika > 0 berarti Belum Lunas)
-        if($inv->status !== 'Lunas' && $inv->sisa_pembayaran > 0) {
-             $pesan_cust .= "Mohon transfer ke:\n";
-             $pesan_cust .= $inv->norek_text . "\n";
-             $pesan_cust .= "**\n\n";
-             $pesan_cust .= "Apabila sudah melakukan transaksi pembayaran mohon dikirim bukti transfernya";
-        } else {
-             $pesan_cust .= "Status : Lunas\n";
-             $pesan_cust .= "**\n\n";
-             $pesan_cust .= "Terima kasih,\n";
-             $pesan_cust .= "ibekami.id";
-        }
-    @endphp
-    <li>
-         <a class="dropdown-item" href="https://wa.me/{{ $no_hp_cust }}?text={{ urlencode($pesan_cust) }}" target="_blank">
-            <i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Kirim Invoice (WA)
-        </a>
-    </li>
-
-    {{-- === LOGIKA USER === --}}
-    @if($isAdmin)
-        @php
-            $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
-            $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
-            $waLink = "https://wa.me/{$waNumber}?text={$msg}";
-            $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
-            $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
-            $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
-        @endphp
-    @endif
-
-    {{-- === APPROVAL (KHUSUS OWNER) === --}}
-    @if($isOwner)
-        @if($inv->approval === 'Unlock')
-            <li>
-                <a class="dropdown-item" href="{{ url('ubah-status-lock/'.$inv->id) }}">
-                    <i class="las la-check-square fs-18 align-middle me-2 text-muted"></i>Lock
-                </a>
-            </li>
-        @endif
-    @endif
-
-    {{-- === REQUEST APPROVAL (KHUSUS ADMIN) === --}}
-    @if($isAdmin && $inv->approval !== 'Unlock')
-        <li>
-            <a class="dropdown-item text-warning fw-semibold" href="{{ $waLink }}" target="_blank">
-                <i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 1)
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item text-warning fw-semibold" href="{{ $waLink2 }}" target="_blank">
-                <i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 2)
-            </a>
-        </li>
-    @endif
-    
-    {{-- === BUTTON BUAT SPK === --}}
-        <li>
-            <a class="dropdown-item btn-buat-spk" href="#" data-id="{{ $inv->id }}" data-bs-toggle="modal" data-bs-target="#buatSpkModal">
-                <i class="las la-clipboard-list fs-18 align-middle me-2 text-primary"></i>Buat SPK
-            </a>
-        </li>
-    
-    {{-- === REQUEST LUNAS (KHUSUS ADMIN) === --}}
-    @if($isAdmin && $inv->status !== 'Lunas')
-        <li>
-            <a class="dropdown-item text-warning fw-semibold" href="{{ $waLinkLunas1 }}" target="_blank">
-                <i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Pelunasan (Owner 1)
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item text-warning fw-semibold" href="{{ $waLinkLunas2 }}" target="_blank">
-                <i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Pelunasan (Owner 2)
-            </a>
-        </li>
-    @endif
-
-    {{-- === Tombol lain: Pemilik selalu bisa, Admin hanya jika sudah approved === --}}
-    @php($canManage = !$isAdmin || $inv->approval === 'Unlock')
-
-    @if($canManage)
-        <li>
-            <a class="dropdown-item" href="{{ url('editInvoice/'.$inv->id.'/edit') }}">
-                <i class="las la-pen fs-18 align-middle me-2 text-muted"></i>Edit
-            </a>
-        </li>
-
-        <li>
-            <a class="dropdown-item btn-update-log"
-               href="#" data-id="{{ $inv->id }}"
-               data-bs-toggle="modal" data-bs-target="#updateLogModal">
-                <i class="las la-paste fs-18 align-middle me-2 text-muted"></i>Update Log
-            </a>
-        </li>
-
-        @if($inv->status !== 'Batal')
-            <li>
-                <button type="button" class="dropdown-item" 
-                        onclick="confirmBatal('{{ $inv->id }}', '{{ $inv->nomor_invoice }}')">
-                    <i class="las la-folder-minus fs-18 align-middle me-2 text-muted"></i>Invoice Batal
-                </button>
-            </li>
-        @endif
-    @endif
-
-    {{-- === DELETE – tampil untuk semua === --}}
-    <li class="dropdown-divider"></li>
-    <li>
-        <button class="dropdown-item" type="button"
-                onclick="showConfirmation('{{ $inv->nomor_invoice }}','{{ $inv->id }}')">
-            <i class="las la-trash-alt fs-18 align-middle me-2 text-muted"></i>Delete
-        </button>
-    </li>
-</ul>
-
-                                          </div>
-                                      </td>
-                                  </tr>
-                                  @endforeach
-
+                                  {{-- Data dimuat secara Server-Side melalui AJAX route invoice.datatable_data --}}
                               </tbody><!-- end tbody -->
                           </table><!-- end table -->
                           <form id="globalBatalForm" method="POST" style="display: none;">
@@ -1743,17 +1419,16 @@
 @section('plugins')
 {{-- Datatable --}}
 
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" defer></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js" defer></script>
 {{-- <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script> --}}
 
 <script>
     const loggedInUser = "{{ auth()->user()->nama }}";
 </script>
 
-<script src="{{asset('libs/choices.js/public/assets/scripts/choices.min.js')}}"></script>
-<script src="{{asset('js/pages/datatables.init.js')}}"></script>
-<script src="{{asset('js/halaman/daftar-invoice.js')}}"></script>
+<script src="{{asset('libs/choices.js/public/assets/scripts/choices.min.js')}}" defer></script>
+<script src="{{asset('js/halaman/daftar-invoice.js')}}" defer></script>
 <script>
     function showConfirmation(invoice, invId) {
         Swal.fire({
@@ -2005,23 +1680,79 @@
     }
 </script>
 <script>
-    // Filter DataTables Berdasarkan Jenis Invoice
+    // Inisialisasi Server-Side DataTables & Filter Jenis Invoice
+    var invoiceTable = null;
+
     $(document).ready(function() {
-        if ($.fn.dataTable) {
-            $.fn.dataTable.ext.search.push(
-                function(settings, data, dataIndex) {
-                    if (settings.nTable.id !== 'scroll-horizontal') {
-                        return true;
-                    }
-                    var selectedJenis = $('#filterJenisInvoice').val();
-                    if (!selectedJenis || selectedJenis === '') {
-                        return true;
-                    }
-                    var rowNode = settings.aoData[dataIndex].nTr;
-                    var rowJenisId = $(rowNode).attr('data-jenis-id');
-                    return rowJenisId == selectedJenis;
+        invoiceTable = $('#scroll-horizontal').DataTable({
+            processing: true,
+            serverSide: true,
+            scrollX: true,
+            autoWidth: false,
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            order: [[4, 'desc']], // Default: Tanggal Penjualan descending
+            dom: "lBfrtip",
+            buttons: ["copy", "csv", "excel", "print", "pdf"],
+            ajax: {
+                url: "{{ route('invoice.datatable_data') }}",
+                type: "POST",
+                data: function(d) {
+                    d._token = "{{ csrf_token() }}";
+                    d.jenis = $('#filterJenisInvoice').val();
                 }
-            );
+            },
+            columns: [
+                { data: 0, className: "text-center col-no", orderable: false },
+                { data: 1, className: "col-invoice", orderable: true },
+                { data: 2, className: "col-pelanggan", orderable: true },
+                { data: 3, className: "col-telepon", orderable: true },
+                { data: 4, className: "col-tgl", orderable: true },
+                { data: 5, className: "text-center col-status", orderable: true },
+                { data: 6, className: "col-deskripsi", orderable: false },
+                { data: 7, className: "col-material", orderable: false },
+                { data: 8, className: "col-alasan", orderable: true },
+                { data: 9, className: "text-center col-approval", orderable: true },
+                { data: 10, className: "numeric text-end col-panjar", orderable: true },
+                { data: 11, className: "numeric text-end col-total", orderable: true },
+                { data: 12, className: "text-center col-pembayaran", orderable: true },
+                { data: 13, className: "col-orderby", orderable: true },
+                { data: 14, className: "col-admin", orderable: true },
+                { data: 15, className: "text-center col-aksi", orderable: false }
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Cari invoice, pelanggan...",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ invoice",
+                infoEmpty: "Menampilkan 0 data",
+                infoFiltered: "(disaring dari _MAX_ invoice)",
+                zeroRecords: "Tidak ada invoice yang sesuai",
+                paginate: {
+                    first: '<i class="las la-angle-double-left"></i>',
+                    previous: '<i class="las la-angle-left"></i>',
+                    next: '<i class="las la-angle-right"></i>',
+                    last: '<i class="las la-angle-double-right"></i>'
+                },
+                processing: '<div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Memuat data...</span></div> Memuat invoice...'
+            },
+            drawCallback: function() {
+                var savedDensity = localStorage.getItem('invoice_table_row_density') || 'compact';
+                var table = $('#scroll-horizontal');
+                if (savedDensity === 'compact') {
+                    table.removeClass('table-expanded-mode').addClass('table-compact-mode');
+                } else {
+                    table.removeClass('table-compact-mode').addClass('table-expanded-mode');
+                }
+            }
+        });
+
+        // Terapkan filter otomatis jika terdapat parameter ?jenis= di URL saat pertama kali dimuat
+        var urlParams = new URLSearchParams(window.location.search);
+        var jenisParam = urlParams.get('jenis');
+        if (jenisParam) {
+            $('#filterJenisInvoice').val(jenisParam);
+            $('#btnResetFilterJenis').show();
         }
 
         $('#filterJenisInvoice').on('change', function() {
@@ -2041,21 +1772,14 @@
             }
             window.history.replaceState({}, '', url);
 
-            if ($.fn.dataTable.isDataTable('#scroll-horizontal')) {
-                $('#scroll-horizontal').DataTable().draw();
+            if (invoiceTable) {
+                invoiceTable.ajax.reload();
             }
         });
 
         $('#btnResetFilterJenis').on('click', function() {
             $('#filterJenisInvoice').val('').trigger('change');
         });
-
-        // Terapkan filter otomatis jika terdapat parameter ?jenis= di URL saat pertama kali dimuat
-        var urlParams = new URLSearchParams(window.location.search);
-        var jenisParam = urlParams.get('jenis');
-        if (jenisParam) {
-            $('#filterJenisInvoice').val(jenisParam).trigger('change');
-        }
     });
 </script>
 

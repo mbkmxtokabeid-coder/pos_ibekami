@@ -191,13 +191,10 @@ class BarangController extends Controller
         // Menambahkan filter is_active = 1
         $totalPotensiPenjualan = Barang::where('is_active', 1)
             ->where('kategori_id', $kategori_id)
-            ->selectRaw('SUM(CASE WHEN stok < 0 THEN 0 ELSE stok END * harga_jual) as total_potensi_penjualan')
-            ->selectRaw('SUM(CASE WHEN stok < 0 THEN 0 ELSE stok END) as total_stok')
+            ->selectRaw('COALESCE(SUM(CASE WHEN stok < 0 THEN 0 ELSE stok END * harga_jual), 0) as total_potensi_penjualan')
+            ->selectRaw('COALESCE(SUM(CASE WHEN stok < 0 THEN 0 ELSE stok END), 0) as total_stok')
             ->first();
 
-        if ($totalPotensiPenjualan) {
-            $totalPotensiPenjualan->total_potensi_penjualan /= 1000000;
-        }
         return response()->json($totalPotensiPenjualan);
     }
 
@@ -206,12 +203,9 @@ class BarangController extends Controller
         // Menambahkan filter is_active = 1
         $totalPotensiProfit = Barang::where('is_active', 1)
             ->where('kategori_id', $kategori_id)
-            ->selectRaw('SUM(CASE WHEN stok < 0 THEN 0 ELSE stok END * (harga_jual - harga_modal)) as total_profit')
+            ->selectRaw('COALESCE(SUM(CASE WHEN stok < 0 THEN 0 ELSE stok END * (harga_jual - harga_modal)), 0) as total_profit')
             ->first();
 
-        if ($totalPotensiProfit) {
-            $totalPotensiProfit->total_profit /= 1000000;
-        }
         return response()->json($totalPotensiProfit);
     }
 

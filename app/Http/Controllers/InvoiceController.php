@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 // use App\Models\KategoriBarang;
 // use App\Models\Perusahaan;
 use App\Models\Order;
@@ -114,20 +115,8 @@ class InvoiceController extends Controller
         $invoiceMap = $jenisInvoiceList->keyBy('id');
         $materialsMap = Material::all()->keyBy('id');
 
-        $penjualan = Penjualan::with(['user', 'penjualanBarang'])->orderByDesc('tgl_penjualan')->get();
-
-        foreach ($penjualan as $inv) {
-            $invType = $invoiceMap->get($inv->invoice);
-            $inv->jenis_invoice_nama = $invType ? $invType->nama_invoice : '-';
-            $inv->jenis_invoice_kode = $invType ? $invType->kode_invoice : '-';
-            $inv->formatted_tgl_penjualan = Carbon::parse($inv->tgl_penjualan)->format('d M Y');
-            $inv->formatted_tgl_update = Carbon::parse($inv->updated_at)->addHour(7)->format('d M Y H:i');
-            $inv->formatted_total_pembayaran = number_format($inv->total_pembayaran, 0, ',', '.');
-            $inv->formatted_dp = number_format($inv->dp ?? 0, 0, ',', '.');
-            if ($inv->dp == null) {
-                $inv->dp = 0;
-            }
-        }
+        // Server-Side DataTables: data baris dimuat via AJAX agar render delay < 1s
+        $penjualan = collect();
 
         // =========================================================================
         // 5. PERHITUNGAN PPN & PPH TAHUN INI
@@ -211,6 +200,388 @@ class InvoiceController extends Controller
             'ppn03', 'ppn03Count', 'ppn04', 'ppn04Count', 'pphTotal', 'pphTotalCount', 'availableYears',
             'jenisInvoiceList', 'materialsMap', 'hapusCount', 'jumlahHapus'
         ));
+    }
+
+    public function getDatatableInvoices(Request $request)
+    {
+        Carbon::setLocale('id');
+
+        $currentUser = Auth::user();
+        $role = $currentUser->role ?? '';
+        $isOwner = $role === 'Pemilik';
+        $isAdmin = $role === 'Admin';
+        $waNumber = '628116029999';
+        $waNumber2 = '628116179999';
+        $waNumberLunas1 = '628116179999';
+        $waNumberLunas2 = '628116029999';
+
+        $jenisInvoiceList = Invoice::orderBy('nama_invoice')->get();
+        $invoiceMap = $jenisInvoiceList->keyBy('id');
+        $materialsMap = Material::all()->keyBy('id');
+
+        $baseQuery = Penjualan::whereNull('deleted_at');
+        $recordsTotal = (clone $baseQuery)->count();
+
+        $query = (clone $baseQuery)
+            ->select([
+                'id',
+                'invoice',
+                'nomor_invoice',
+                'customer',
+                'perusahaan',
+                'no_telepon',
+                'tgl_penjualan',
+                'status',
+                'approval',
+                'dp',
+                'total_pembayaran',
+                'total_harga',
+                'sisa_pembayaran',
+                'jenis_pembayaran',
+                'order_by',
+                'admin',
+                'alasan_batal',
+                'no_rek',
+                'created_at',
+                'updated_at'
+            ])
+            ->with([
+                'user:id,nama',
+                'penjualanBarang:id,penjualan_id,deskripsi_item,material_id,material_qty,material_panjang,material_lebar'
+            ]);
+
+        // Filter Jenis Invoice
+        if ($request->filled('jenis')) {
+            $query->where('invoice', $request->input('jenis'));
+        }
+
+        // Search global
+        $searchValue = trim($request->input('search.value', ''));
+        if ($searchValue !== '') {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('nomor_invoice', 'like', "%{$searchValue}%")
+                    ->orWhere('customer', 'like', "%{$searchValue}%")
+                    ->orWhere('perusahaan', 'like', "%{$searchValue}%")
+                    ->orWhere('no_telepon', 'like', "%{$searchValue}%")
+                    ->orWhere('order_by', 'like', "%{$searchValue}%")
+                    ->orWhere('status', 'like', "%{$searchValue}%")
+                    ->orWhere('approval', 'like', "%{$searchValue}%")
+                    ->orWhere('jenis_pembayaran', 'like', "%{$searchValue}%")
+                    ->orWhere('alasan_batal', 'like', "%{$searchValue}%");
+            });
+        }
+
+        $recordsFiltered = (clone $query)->count();
+
+        // Ordering
+        $columnsMap = [
+            1 => 'nomor_invoice',
+            2 => 'customer',
+            3 => 'no_telepon',
+            4 => 'tgl_penjualan',
+            5 => 'status',
+            8 => 'alasan_batal',
+            9 => 'approval',
+            10 => 'dp',
+            11 => 'total_pembayaran',
+            12 => 'jenis_pembayaran',
+            13 => 'order_by',
+            14 => 'admin'
+        ];
+
+        $orderColIndex = $request->input('order.0.column');
+        $orderDir = strtolower($request->input('order.0.dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        if ($orderColIndex !== null && isset($columnsMap[$orderColIndex])) {
+            $query->orderBy($columnsMap[$orderColIndex], $orderDir);
+        } else {
+            $query->orderByDesc('tgl_penjualan')->orderByDesc('id');
+        }
+
+        // Paging
+        $start = max(0, (int)$request->input('start', 0));
+        $length = (int)$request->input('length', 25);
+        if ($length > 0) {
+            $query->skip($start)->take($length);
+        }
+
+        $penjualan = $query->get();
+        $data = [];
+
+        foreach ($penjualan as $idx => $inv) {
+            $invType = $invoiceMap->get($inv->invoice);
+            $jenisInvoiceNama = $invType ? $invType->nama_invoice : '-';
+
+            // 1. Col Invoice
+            $htmlInvoice = '<p class="fw-semibold text-white mb-1 font-monospace" style="font-size: 13px;">' . e($inv->nomor_invoice) . '</p>';
+            if (!empty($jenisInvoiceNama) && $jenisInvoiceNama !== '-') {
+                $htmlInvoice .= '<span class="badge-jenis-inv">' . e($jenisInvoiceNama) . '</span>';
+            }
+
+            // 2. Col Pelanggan
+            $htmlPelanggan = e($inv->customer . ' / ' . $inv->perusahaan);
+
+            // 3. Col Telepon
+            $htmlTelepon = e($inv->no_telepon ?: '-');
+
+            // 4. Col Tanggal
+            $formattedTgl = Carbon::parse($inv->tgl_penjualan)->format('d M Y');
+            $htmlTgl = e($formattedTgl);
+            if ($inv->updated_at && $inv->created_at && $inv->updated_at != $inv->created_at) {
+                $formattedUpdate = Carbon::parse($inv->updated_at)->addHour(7)->format('d M Y H:i');
+                $htmlTgl .= '<br><span class="text-muted" style="font-size: 0.75rem;">Last Update: ' . e($formattedUpdate) . '</span>';
+            }
+
+            // 5. Col Status
+            if ($inv->status === 'Lunas') {
+                $htmlStatus = '<span class="badge-status badge-status-lunas">' . e($inv->status) . '</span>';
+            } elseif ($inv->status === 'Belum Lunas') {
+                $htmlStatus = '<span class="badge-status badge-status-belum">' . e($inv->status) . '</span>';
+            } else {
+                $htmlStatus = '<span class="badge-status badge-status-batal">' . e($inv->status) . '</span>';
+            }
+
+            // 6. Col Deskripsi
+            $items = $inv->penjualanBarang ?? collect();
+            $totalItems = count($items);
+            $htmlDeskripsi = '<ul class="list-unstyled mb-0">';
+            foreach ($items as $pIdx => $pb) {
+                if ($pIdx < 2) {
+                    $htmlDeskripsi .= '<li class="mb-1 text-wrap">- ' . e($pb->deskripsi_item) . '</li>';
+                } else {
+                    if ($pIdx === 2) {
+                        $htmlDeskripsi .= '<div class="collapsible-extra-items">';
+                    }
+                    $htmlDeskripsi .= '<li class="mb-1 text-wrap">- ' . e($pb->deskripsi_item) . '</li>';
+                    if ($pIdx === $totalItems - 1) {
+                        $htmlDeskripsi .= '</div>';
+                    }
+                }
+            }
+            $htmlDeskripsi .= '</ul>';
+            if ($totalItems > 2) {
+                $htmlDeskripsi .= '<button type="button" class="btn-toggle-row-detail" onclick="toggleSingleRowDetail(this, event)" title="Lebarkan atau kecilkan rincian item baris ini">'
+                    . '<span class="btn-text-collapsed"><i class="las la-angle-down"></i> +' . ($totalItems - 2) . ' lainnya (Lebarkan)</span>'
+                    . '<span class="btn-text-expanded"><i class="las la-angle-up"></i> Kecilkan</span>'
+                    . '</button>';
+            }
+
+            // 7. Col Material
+            $hasMaterial = false;
+            $materialItems = [];
+            if ($inv->penjualanBarang) {
+                foreach ($inv->penjualanBarang as $pb) {
+                    $rawMatId = $pb->material_id;
+                    $matIds = (!empty($rawMatId) && ($rawMatId[0] === '[' || $rawMatId[0] === '{')) ? json_decode($rawMatId, true) : ($rawMatId ? [$rawMatId] : []);
+                    if (!is_array($matIds)) { $matIds = [$rawMatId]; }
+
+                    $rawMatQty = $pb->material_qty;
+                    $matQtys = (!empty($rawMatQty) && ($rawMatQty[0] === '[' || $rawMatQty[0] === '{')) ? json_decode($rawMatQty, true) : ($rawMatQty ? [$rawMatQty] : []);
+                    if (!is_array($matQtys)) { $matQtys = [$rawMatQty]; }
+
+                    $rawMatPanjang = $pb->material_panjang;
+                    $matPanjangs = (!empty($rawMatPanjang) && ($rawMatPanjang[0] === '[' || $rawMatPanjang[0] === '{')) ? json_decode($rawMatPanjang, true) : ($rawMatPanjang ? [$rawMatPanjang] : []);
+                    if (!is_array($matPanjangs)) { $matPanjangs = [$rawMatPanjang]; }
+
+                    $rawMatLebar = $pb->material_lebar;
+                    $matLebars = (!empty($rawMatLebar) && ($rawMatLebar[0] === '[' || $rawMatLebar[0] === '{')) ? json_decode($rawMatLebar, true) : ($rawMatLebar ? [$rawMatLebar] : []);
+                    if (!is_array($matLebars)) { $matLebars = [$rawMatLebar]; }
+
+                    foreach ($matIds as $mIdx => $mId) {
+                        $mat = $materialsMap->get($mId);
+                        if ($mat) {
+                            $hasMaterial = true;
+                            $materialItems[] = [
+                                'jenis' => $mat->jenis_material,
+                                'qty' => $matQtys[$mIdx] ?? 0,
+                                'satuan' => $mat->satuan,
+                                'panjang' => $matPanjangs[$mIdx] ?? null,
+                                'lebar' => $matLebars[$mIdx] ?? null
+                            ];
+                        }
+                    }
+                }
+            }
+            $totalMaterials = count($materialItems);
+            if ($hasMaterial) {
+                $htmlMaterial = '<ul class="list-unstyled mb-0">';
+                foreach ($materialItems as $mIdx => $mItem) {
+                    $matContent = '<li class="mb-2" style="border-bottom: 1px dashed #334155; padding-bottom: 4px;">'
+                        . '<span class="fw-semibold text-primary">' . e($mItem['jenis']) . '</span><br>'
+                        . '<span class="text-muted" style="font-size: 0.8rem;">Dipakai: <b>' . e($mItem['qty']) . ' ' . e($mItem['satuan']) . '</b></span>';
+                    if (!empty($mItem['panjang']) && !empty($mItem['lebar'])) {
+                        $matContent .= '<br><span class="text-muted" style="font-size: 0.75rem;">(Ukuran: ' . e($mItem['panjang']) . ' &times; ' . e($mItem['lebar']) . ')</span>';
+                    }
+                    $matContent .= '</li>';
+
+                    if ($mIdx < 2) {
+                        $htmlMaterial .= $matContent;
+                    } else {
+                        if ($mIdx === 2) {
+                            $htmlMaterial .= '<div class="collapsible-extra-items">';
+                        }
+                        $htmlMaterial .= $matContent;
+                        if ($mIdx === $totalMaterials - 1) {
+                            $htmlMaterial .= '</div>';
+                        }
+                    }
+                }
+                $htmlMaterial .= '</ul>';
+                if ($totalMaterials > 2) {
+                    $htmlMaterial .= '<button type="button" class="btn-toggle-row-detail" onclick="toggleSingleRowDetail(this, event)" title="Lebarkan atau kecilkan rincian material baris ini">'
+                        . '<span class="btn-text-collapsed"><i class="las la-angle-down"></i> +' . ($totalMaterials - 2) . ' lainnya (Lebarkan)</span>'
+                        . '<span class="btn-text-expanded"><i class="las la-angle-up"></i> Kecilkan</span>'
+                        . '</button>';
+                }
+            } else {
+                $htmlMaterial = '<span class="text-muted" style="font-size: 0.8rem;"><i>Tidak ada material yang dipakai</i></span>';
+            }
+
+            // 8. Col Alasan
+            $htmlAlasan = e($inv->alasan_batal ?: '-');
+
+            // 9. Col Approval
+            if ($inv->approval === 'Unlock') {
+                $htmlApproval = '<span class="badge-status badge-status-lunas">' . e($inv->approval) . '</span>';
+            } elseif ($inv->approval === 'Lock') {
+                $htmlApproval = '<span class="badge-status badge-status-belum">' . e($inv->approval) . '</span>';
+            } else {
+                $htmlApproval = '<span class="badge-status badge-status-info">' . e($inv->approval) . '</span>';
+            }
+
+            // 10. Col Panjar
+            $htmlPanjar = 'Rp ' . number_format($inv->dp ?? 0, 0, ',', '.');
+
+            // 11. Col Total
+            $htmlTotal = '<span class="fw-semibold text-white">Rp ' . number_format($inv->total_pembayaran ?? 0, 0, ',', '.') . '</span>';
+
+            // 12. Col Pembayaran
+            if ($inv->jenis_pembayaran === 'Cash Lunas' || $inv->jenis_pembayaran === 'Transfer Lunas') {
+                $htmlPembayaran = '<span class="badge-status badge-status-lunas">' . e($inv->jenis_pembayaran) . '</span>';
+            } else {
+                $labelBayar = $inv->jenis_pembayaran === 'Cash Belum Lunas' ? 'Cash Belum Lunas' : $inv->jenis_pembayaran;
+                $htmlPembayaran = '<span class="badge-status badge-status-belum">' . e($labelBayar) . '</span>';
+            }
+
+            // 13. Col Order By
+            $htmlOrderBy = e($inv->order_by ?: '-');
+
+            // 14. Col Admin
+            $htmlAdmin = e($inv->user ? $inv->user->nama : 'Tidak Diketahui');
+
+            // 15. Col Aksi
+            $no_hp_cust = $inv->no_telepon ?? '';
+            $no_hp_cust = preg_replace('/[^0-9]/', '', $no_hp_cust);
+            if (substr($no_hp_cust, 0, 1) === '0') {
+                $no_hp_cust = '62' . substr($no_hp_cust, 1);
+            }
+
+            $link_khusus_customer = URL::temporarySignedRoute(
+                'invoice.public_download',
+                now()->addDays(7),
+                ['id' => $inv->id]
+            );
+
+            $pesan_cust = "Invoice : " . $inv->nomor_invoice . "\n";
+            $pesan_cust .= "Link Download Invoice (Berlaku 7 Hari):\n";
+            $pesan_cust .= $link_khusus_customer . "\n\n";
+            $pesan_cust .= "Total Rp " . number_format($inv->total_harga ?? 0, 0, ',', '.') . "\n\n";
+
+            if ($inv->status !== 'Lunas' && $inv->sisa_pembayaran > 0) {
+                $pesan_cust .= "Mohon transfer ke:\n";
+                $pesan_cust .= $inv->norek_text . "\n";
+                $pesan_cust .= "**\n\n";
+                $pesan_cust .= "Apabila sudah melakukan transaksi pembayaran mohon dikirim bukti transfernya";
+            } else {
+                $pesan_cust .= "Status : Lunas\n";
+                $pesan_cust .= "**\n\n";
+                $pesan_cust .= "Terima kasih,\n";
+                $pesan_cust .= "ibekami.id";
+            }
+
+            $waLink = '#';
+            $waLink2 = '#';
+            $waLinkLunas1 = '#';
+            $waLinkLunas2 = '#';
+            if ($isAdmin) {
+                $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
+                $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
+                $waLink = "https://wa.me/{$waNumber}?text={$msg}";
+                $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
+                $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
+                $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
+            }
+
+            $htmlAksi = '<div class="dropdown d-inline-block">';
+            $htmlAksi .= '<button class="btn btn-action-ghost btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="window" data-bs-popper-config=\'{"strategy":"fixed"}\'>';
+            $htmlAksi .= '<i class="las la-ellipsis-h align-middle fs-16"></i>';
+            $htmlAksi .= '</button>';
+            $htmlAksi .= '<ul class="dropdown-menu dropdown-menu-end shadow-lg">';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print fs-18 align-middle me-2 text-primary"></i>Cetak Invoice (ASLI)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print fs-18 align-middle me-2 text-danger"></i>Cetak Invoice (COPY)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download fs-18 align-middle me-2 text-muted"></i>Download</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Kirim Invoice (WA)</a></li>';
+
+            if ($isOwner && $inv->approval === 'Unlock') {
+                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-check-square fs-18 align-middle me-2 text-muted"></i>Lock</a></li>';
+            }
+
+            if ($isAdmin && $inv->approval !== 'Unlock') {
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink2 . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 2)</a></li>';
+            }
+
+            $htmlAksi .= '<li><a class="dropdown-item btn-buat-spk" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#buatSpkModal"><i class="las la-clipboard-list fs-18 align-middle me-2 text-primary"></i>Buat SPK</a></li>';
+
+            if ($isAdmin && $inv->status !== 'Lunas') {
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas1 . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Pelunasan (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Pelunasan (Owner 2)</a></li>';
+            }
+
+            $canManage = !$isAdmin || $inv->approval === 'Unlock';
+            if ($canManage) {
+                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen fs-18 align-middle me-2 text-muted"></i>Edit</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-paste fs-18 align-middle me-2 text-muted"></i>Update Log</a></li>';
+                if ($inv->status !== 'Batal') {
+                    $htmlAksi .= '<li><button type="button" class="dropdown-item" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-folder-minus fs-18 align-middle me-2 text-muted"></i>Invoice Batal</button></li>';
+                }
+            }
+
+            $htmlAksi .= '<li class="dropdown-divider"></li>';
+            $htmlAksi .= '<li><button class="dropdown-item" type="button" onclick="showConfirmation(\'' . addslashes(e($inv->nomor_invoice)) . '\', \'' . $inv->id . '\')"><i class="las la-trash-alt fs-18 align-middle me-2 text-muted"></i>Delete</button></li>';
+            $htmlAksi .= '</ul></div>';
+
+            $data[] = [
+                'DT_RowId' => 'row_' . $inv->id,
+                'DT_RowAttr' => [
+                    'data-jenis-id' => $inv->invoice ?? '',
+                    'data-jenis-nama' => $jenisInvoiceNama
+                ],
+                0 => $start + $idx + 1,
+                1 => $htmlInvoice,
+                2 => $htmlPelanggan,
+                3 => $htmlTelepon,
+                4 => $htmlTgl,
+                5 => $htmlStatus,
+                6 => $htmlDeskripsi,
+                7 => $htmlMaterial,
+                8 => $htmlAlasan,
+                9 => $htmlApproval,
+                10 => $htmlPanjar,
+                11 => $htmlTotal,
+                12 => $htmlPembayaran,
+                13 => $htmlOrderBy,
+                14 => $htmlAdmin,
+                15 => $htmlAksi,
+            ];
+        }
+
+        return response()->json([
+            'draw' => (int)$request->input('draw', 1),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data
+        ]);
     }
 
     public function getCardsData(Request $request)

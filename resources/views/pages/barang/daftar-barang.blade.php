@@ -1005,7 +1005,6 @@
                       </div>
                       <div class="kpi-value-container">
                         <span class="kpi-value">Rp <span class="counter-value penjualan num" data-target="0">0</span></span>
-                        <span class="kpi-unit">M</span>
                       </div>
                     </div>
                     <div class="kpi-icon-box icon-box-indigo">
@@ -1031,7 +1030,6 @@
                       </div>
                       <div class="kpi-value-container">
                         <span class="kpi-value text-emerald">Rp <span class="counter-value profit num" data-target="0">0</span></span>
-                        <span class="kpi-unit">M</span>
                       </div>
                     </div>
                     <div class="kpi-icon-box icon-box-emerald">
