@@ -534,13 +534,23 @@ class InvoiceController extends Controller
             $waLink2 = '#';
             $waLinkLunas1 = '#';
             $waLinkLunas2 = '#';
+            $waLinkBatal1 = '#';
+            $waLinkBatal2 = '#';
+            $waLinkHapus1 = '#';
+            $waLinkHapus2 = '#';
             if ($isAdmin) {
                 $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
                 $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
+                $msgBatal = urlencode("Halo Owner, saya meminta persetujuan untuk membatalkan invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
+                $msgHapus = urlencode("Halo Owner, saya meminta persetujuan untuk menghapus invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
                 $waLink = "https://wa.me/{$waNumber}?text={$msg}";
                 $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
                 $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
                 $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
+                $waLinkBatal1 = "https://wa.me/{$waNumber}?text={$msgBatal}";
+                $waLinkBatal2 = "https://wa.me/{$waNumber2}?text={$msgBatal}";
+                $waLinkHapus1 = "https://wa.me/{$waNumber}?text={$msgHapus}";
+                $waLinkHapus2 = "https://wa.me/{$waNumber2}?text={$msgHapus}";
             }
 
             // 12. Col Aksi (Sleek 3-dots button ⋮)
@@ -573,6 +583,15 @@ class InvoiceController extends Controller
                 $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Pelunasan (Owner 2)</a></li>';
             }
 
+            if ($isAdmin) {
+                if ($inv->status !== 'Batal') {
+                    $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 1)</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 2)</a></li>';
+                }
+                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkHapus1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Hapus (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkHapus2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Hapus (Owner 2)</a></li>';
+            }
+
             $canManage = !$isAdmin || $inv->approval === 'Unlock';
             if ($canManage) {
                 $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen me-2 text-info"></i>Edit Invoice</a></li>';
@@ -582,8 +601,10 @@ class InvoiceController extends Controller
                 }
             }
 
-            $htmlAksi .= '<li class="dropdown-divider"></li>';
-            $htmlAksi .= '<li><button class="dropdown-item text-danger fw-semibold" type="button" onclick="showConfirmation(\'' . addslashes(e($inv->nomor_invoice)) . '\', \'' . $inv->id . '\')"><i class="las la-trash-alt me-2"></i>Hapus Invoice</button></li>';
+            if (!$isAdmin) {
+                $htmlAksi .= '<li class="dropdown-divider"></li>';
+                $htmlAksi .= '<li><button class="dropdown-item text-danger fw-semibold" type="button" onclick="showConfirmation(\'' . addslashes(e($inv->nomor_invoice)) . '\', \'' . $inv->id . '\')"><i class="las la-trash-alt me-2"></i>Hapus Invoice</button></li>';
+            }
             $htmlAksi .= '</ul></div>';
 
             $data[] = [

@@ -97,13 +97,17 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('invoices/{selectedOption}', [InvoiceController::class, 'getInvoiceByOption']);
             Route::get('editInvoice/{id}/edit', [InvoiceController::class, 'editInvoice']);
             Route::put('updateInvoice/{id}', [InvoiceController::class, 'updateInvoice'])->name('update-invoice');
-            Route::delete('invoice/deleteInvoice/{id}', [PenjualanController::class, 'destroy'])->name('delete.invoice');
+            Route::delete('invoice/deleteInvoice/{id}', [PenjualanController::class, 'destroy'])
+                ->middleware('role:Pemilik')
+                ->name('delete.invoice');
             
             // ROUTE UBAH STATUS INVOICE (Mendukung dengan/tanpa prefix /invoice/ dan spasi)
-            Route::match(['get', 'post'], '/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->name('invoice.batal');
-            Route::match(['get', 'post'], '/invoice/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal']);
-            Route::match(['get', 'post'], '/invoice/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal']);
-            Route::match(['get', 'post'], '/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal']);
+            Route::match(['get', 'post'], '/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])
+                ->middleware('role:Pemilik')
+                ->name('invoice.batal');
+            Route::match(['get', 'post'], '/invoice/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
+            Route::match(['get', 'post'], '/invoice/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
+            Route::match(['get', 'post'], '/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
             
             Route::match(['get', 'post'], '/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas'])->name('invoice.lunas');
             Route::match(['get', 'post'], '/invoice/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas']);
