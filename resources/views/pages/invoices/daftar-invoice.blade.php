@@ -363,611 +363,819 @@
     }
 
     /* ==========================================================================
-       TABLE & DATATABLES (§13)
+       TOKABE INVOICE TABLE STYLING - PERSIS SESUAI DESAIN GAMBAR
+       Palette: Deep Slate/Navy #0B111E, Header #111827 / #131C2E, 
+       Active Sort Highlight #172A4E (#3B82F6),
+       Amber (#F59E0B / #FBBF24), Emerald (#10B981 / #34D399)
        ========================================================================== */
-    .invoice-main-card {
-        background: #161B22 !important;
-        border: 1px solid #1E293B !important;
+
+    /* Card Utama Tokabe */
+    .tokabe-invoice-card {
+        background-color: #0b111e !important;
+        border: 1px solid #1e293b !important;
         border-radius: 12px !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
-        overflow: hidden;
+        overflow: hidden !important;
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45) !important;
+        margin-bottom: 24px;
     }
-    .invoice-card-header {
-        background: transparent !important;
-        border-bottom: 1px solid #1E293B !important;
-        padding: 16px 20px !important;
+
+    /* Header Atas: Judul, Info Pill, Tombol Urutkan & Buka Semua Rincian */
+    .tokabe-card-header {
+        background-color: #0b111e;
+        padding: 18px 24px 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        border-bottom: none;
     }
-    .filter-select-dark {
-        background-color: #0F172A !important;
-        border: 1px solid #334155 !important;
-        color: #F1F5F9 !important;
+
+    .tokabe-card-title {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .tokabe-info-pill {
+        background-color: rgba(37, 99, 235, 0.16);
+        border: 1px solid rgba(59, 130, 246, 0.28);
+        color: #60a5fa;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 4px 14px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-tokabe-sort {
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #cbd5e1 !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
         border-radius: 8px !important;
-        font-size: 13px !important;
-    }
-    .filter-select-dark:focus {
-        border-color: #4F46E5 !important;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25) !important;
-    }
-
-    /* Table Reset & Styling */
-    .invoice-table {
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-        width: 100% !important;
-        margin-bottom: 0 !important;
-        border: none !important;
-    }
-    .invoice-table thead th {
-        background: #1E293B !important;
-        color: #94A3B8 !important;
-        font-size: 11px !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.08em !important;
-        text-transform: uppercase !important;
-        padding: 12px 14px !important;
-        border-top: none !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-bottom: 1px solid #334155 !important;
-        white-space: nowrap;
-    }
-    .invoice-table tbody tr {
-        background-color: transparent !important;
-        transition: background-color 0.15s ease;
-    }
-    .invoice-table tbody tr:hover {
-        background-color: rgba(30, 41, 59, 0.65) !important;
-    }
-    .invoice-table tbody td {
-        padding: 12px 14px !important;
-        color: #CBD5E1 !important;
-        border-top: none !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-bottom: 1px solid #1E293B !important;
-        font-size: 13px !important;
-        vertical-align: middle !important;
-    }
-
-    /* Action Ghost Button */
-    .btn-action-ghost {
-        background: #1E293B !important;
-        border: 1px solid #334155 !important;
-        color: #94A3B8 !important;
-        border-radius: 6px !important;
-        padding: 4px 8px !important;
-        transition: all 0.15s ease;
-    }
-    .btn-action-ghost:hover {
-        background: #334155 !important;
-        color: #F1F5F9 !important;
-        border-color: #475569 !important;
-    }
-
-    /* Dropdown Menu (§11) */
-    .dropdown-menu {
-        background: #161B22 !important;
-        border: 1px solid #1E293B !important;
-        border-radius: 10px !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
-        padding: 6px !important;
-        z-index: 1050 !important;
-    }
-    .dropdown-item {
-        color: #CBD5E1 !important;
-        border-radius: 6px !important;
-        padding: 8px 12px !important;
-        font-size: 13px !important;
-        transition: all 0.15s ease;
-    }
-    .dropdown-item:hover {
-        background: #1E293B !important;
-        color: #F1F5F9 !important;
-    }
-    .dropdown-divider {
-        border-color: #1E293B !important;
-        margin: 4px 0 !important;
-    }
-
-    /* ==========================================================================
-       DATATABLES CONTROLS: SEJAJAR & RAPI (§13.2)
-       ========================================================================== */
-    .dataTables_wrapper {
-        position: relative;
-        clear: both;
-    }
-    .dataTables_wrapper::after {
-        content: "";
-        display: table;
-        clear: both;
-    }
-
-    /* Top Controls: Length (Left) & Filter/Search (Right) Sejajar */
-    .dataTables_wrapper .dataTables_length {
-        float: left !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        height: 52px !important;
-        padding: 8px 16px !important;
-        margin: 0 !important;
-        color: #94A3B8 !important;
-        font-size: 13px !important;
-    }
-
-    .dataTables_wrapper .dt-buttons {
-        float: left !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        height: 52px !important;
-        padding: 8px 8px !important;
-        margin: 0 !important;
-    }
-
-    .dataTables_wrapper .dt-buttons .dt-button {
-        background-color: #1E293B !important;
-        border: 1px solid #334155 !important;
-        color: #CBD5E1 !important;
-        border-radius: 6px !important;
-        padding: 4px 10px !important;
-        font-size: 12px !important;
-        margin-right: 4px !important;
-        transition: all 0.15s ease;
-    }
-    .dataTables_wrapper .dt-buttons .dt-button:hover {
-        background-color: #334155 !important;
-        color: #FFFFFF !important;
-    }
-
-    .dataTables_wrapper .dataTables_filter {
-        float: right !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: flex-end !important;
-        height: 52px !important;
-        padding: 8px 16px !important;
-        margin: 0 !important;
-        text-align: right !important;
-        color: #94A3B8 !important;
-        font-size: 13px !important;
-    }
-
-    .dataTables_wrapper .dataTables_length label,
-    .dataTables_wrapper .dataTables_filter label {
+        padding: 7px 14px !important;
         display: inline-flex !important;
         align-items: center !important;
         gap: 6px !important;
-        margin: 0 !important;
-        line-height: 1 !important;
+        transition: all 0.15s ease !important;
+        line-height: 1.4 !important;
+    }
+
+    .btn-tokabe-sort:hover,
+    .btn-tokabe-sort:focus {
+        background-color: #1a253a !important;
+        border-color: #3b82f6 !important;
+        color: #ffffff !important;
+    }
+
+    .btn-tokabe-sort.dropdown-toggle::after {
+        display: none !important;
+    }
+
+    .btn-tokabe-expand-all {
+        background-color: #2563eb !important;
+        border: 1px solid #2563eb !important;
+        color: #ffffff !important;
         font-size: 13px !important;
-        color: #94A3B8 !important;
+        font-weight: 500 !important;
+        border-radius: 8px !important;
+        padding: 7px 18px !important;
+        transition: all 0.15s ease !important;
+        line-height: 1.4 !important;
+    }
+
+    .btn-tokabe-expand-all:hover {
+        background-color: #1d4ed8 !important;
+        border-color: #1d4ed8 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+
+    /* Toolbar Subheader (Tampilkan X data, Filter Jenis, Cari) */
+    .tokabe-table-toolbar {
+        padding: 10px 24px 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        background-color: #0b111e;
+    }
+
+    .tokabe-filter-label {
+        color: #94a3b8;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .tokabe-select-dark {
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #cbd5e1 !important;
+        border-radius: 8px !important;
+        padding: 5px 12px !important;
+        font-size: 13px !important;
+        height: 36px !important;
+        outline: none !important;
+        cursor: pointer;
+        transition: border-color 0.15s ease;
+    }
+
+    .tokabe-select-dark:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+    }
+
+    /* Penataan Kontrol DataTables (Tampilkan data & Cari) */
+    .dataTables_wrapper .dataTables_length {
+        float: left !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        height: auto !important;
+    }
+
+    .dataTables_wrapper .dataTables_length label {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        color: #94a3b8 !important;
+        font-size: 13px !important;
         font-weight: 500 !important;
     }
 
     .dataTables_wrapper .dataTables_length select {
-        background-color: #0F172A !important;
-        border: 1px solid #334155 !important;
-        color: #F1F5F9 !important;
-        border-radius: 6px !important;
-        padding: 4px 8px !important;
-        height: 32px !important;
-        line-height: 1 !important;
-        margin: 0 4px !important;
-        width: auto !important;
-        display: inline-block !important;
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #cbd5e1 !important;
+        border-radius: 8px !important;
+        padding: 4px 10px !important;
+        font-size: 13px !important;
+        height: 36px !important;
+        min-width: 65px !important;
+        margin: 0 2px !important;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .dataTables_wrapper .dataTables_filter {
+        float: right !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        height: auto !important;
+    }
+
+    .dataTables_wrapper .dataTables_filter label {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        color: #94a3b8 !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
     }
 
     .dataTables_wrapper .dataTables_filter input {
-        background-color: #0F172A !important;
-        border: 1px solid #334155 !important;
-        color: #F1F5F9 !important;
-        border-radius: 6px !important;
-        padding: 4px 10px !important;
-        height: 32px !important;
-        line-height: 1 !important;
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #f1f5f9 !important;
+        border-radius: 8px !important;
+        padding: 6px 14px !important;
+        font-size: 13px !important;
+        height: 36px !important;
+        width: 250px !important;
         margin: 0 0 0 6px !important;
-        width: 200px !important;
-        display: inline-block !important;
+        outline: none !important;
+    }
+
+    .dataTables_wrapper .dataTables_filter input::placeholder {
+        color: #475569 !important;
     }
 
     .dataTables_wrapper .dataTables_filter input:focus,
     .dataTables_wrapper .dataTables_length select:focus {
-        border-color: #4F46E5 !important;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25) !important;
-        outline: none;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
     }
 
-    /* Hilangkan panah sort / filter pada semua header kolom tabel */
-    table#scroll-horizontal thead th,
-    table.invoice-table thead th {
-        cursor: default !important;
+    .dataTables_wrapper .dt-buttons {
+        display: none !important;
     }
-    table#scroll-horizontal thead th:before,
-    table#scroll-horizontal thead th:after,
-    table#scroll-horizontal thead th.sorting:before,
-    table#scroll-horizontal thead th.sorting:after,
-    table#scroll-horizontal thead th.sorting_asc:before,
-    table#scroll-horizontal thead th.sorting_asc:after,
-    table#scroll-horizontal thead th.sorting_desc:before,
-    table#scroll-horizontal thead th.sorting_desc:after,
-    table.invoice-table thead th:before,
-    table.invoice-table thead th:after {
+
+    /* Tabel Tokabe - Horizontal Scrolling (Bisa Digeser Ke Samping) */
+    .tokabe-table-responsive {
+        width: 100%;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        background-color: #0b111e;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Custom Sleek Horizontal Scrollbar */
+    .tokabe-table-responsive::-webkit-scrollbar {
+        height: 10px;
+    }
+    .tokabe-table-responsive::-webkit-scrollbar-track {
+        background: #0b111e;
+        border-radius: 6px;
+    }
+    .tokabe-table-responsive::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 6px;
+        border: 2px solid #0b111e;
+    }
+    .tokabe-table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #3b82f6;
+    }
+
+    table.tokabe-invoice-table {
+        width: 100% !important;
+        min-width: 2150px !important; /* Memastikan semua 16 kolom lega dan dapat digeser ke samping dengan mulus */
+        margin: 0 !important;
+        border-collapse: collapse !important;
+        background-color: transparent !important;
+    }
+
+    /* THEAD Header Kolom */
+    table.tokabe-invoice-table thead th {
+        background-color: #111827 !important;
+        color: #8ba1bc !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.06em !important;
+        text-transform: uppercase !important;
+        padding: 13px 14px !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 1px solid #1e293b !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+        cursor: pointer !important;
+        position: relative !important;
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    /* Hilangkan panah bawaan bootstrap datatables */
+    table.tokabe-invoice-table thead th:before,
+    table.tokabe-invoice-table thead th:after,
+    table.tokabe-invoice-table thead th.sorting:before,
+    table.tokabe-invoice-table thead th.sorting:after,
+    table.tokabe-invoice-table thead th.sorting_asc:before,
+    table.tokabe-invoice-table thead th.sorting_asc:after,
+    table.tokabe-invoice-table thead th.sorting_desc:before,
+    table.tokabe-invoice-table thead th.sorting_desc:after {
         display: none !important;
         content: "" !important;
     }
 
-    /* Table Clearfix */
-    .dataTables_wrapper .dataTables_scroll,
-    .dataTables_wrapper .dataTables_scrollBody,
-    .dataTables_wrapper table.dataTable {
-        clear: both !important;
-        width: 100% !important;
+    /* Highlight Kolom Aktif Sort (Seperti TANGGAL PENJUALAN pada Gambar) */
+    table.tokabe-invoice-table thead th.sorting_desc,
+    table.tokabe-invoice-table thead th.sorting_asc,
+    table.tokabe-invoice-table thead th.active-sort {
+        background-color: #172a4e !important;
+        color: #ffffff !important;
     }
 
-    /* Bottom Controls: Info (Left) & Paginate (Right) Sejajar */
-    .dataTables_wrapper .dataTables_info {
-        float: left !important;
+    .tokabe-sort-icon {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 6px;
+        vertical-align: middle;
+        color: #475569;
+    }
+
+    table.tokabe-invoice-table thead th.sorting_desc .tokabe-sort-icon,
+    table.tokabe-invoice-table thead th.sorting_asc .tokabe-sort-icon,
+    table.tokabe-invoice-table thead th.active-sort .tokabe-sort-icon {
+        color: #3b82f6 !important;
+    }
+
+    /* TBODY Baris & Kolom */
+    table.tokabe-invoice-table tbody tr {
+        background-color: transparent !important;
+        border-bottom: 1px solid #162032 !important;
+        transition: background-color 0.15s ease;
+    }
+
+    table.tokabe-invoice-table tbody tr:hover {
+        background-color: rgba(22, 33, 52, 0.7) !important;
+    }
+
+    /* Highlight baris yang sedang dilebarkan (expanded) seperti pada Gambar 3 & 4 */
+    table.tokabe-invoice-table tbody tr.shown,
+    table.tokabe-invoice-table tbody tr.expanded {
+        background-color: rgba(23, 42, 78, 0.45) !important;
+    }
+
+    table.tokabe-invoice-table tbody td {
+        padding: 13px 14px !important;
+        color: #cbd5e1 !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 1px solid #162032 !important;
+        font-size: 13px !important;
+        vertical-align: middle !important;
+    }
+
+    /* Ukuran & Tata Letak Kolom Sesuai Desain 13 Kolom */
+    .tokabe-col-no, .tokabe-th-no {
+        width: 44px !important;
+        min-width: 44px !important;
+        color: #94a3b8 !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+    }
+
+    .tokabe-col-invoice, .tokabe-th-inv {
+        min-width: 160px !important;
+    }
+
+    .tokabe-col-pelanggan, .tokabe-th-pelanggan {
+        min-width: 220px !important;
+    }
+
+    .tokabe-col-telepon, .tokabe-th-telepon {
+        min-width: 130px !important;
+    }
+
+    .tokabe-col-tgl, .tokabe-th-tgl {
+        min-width: 155px !important;
+    }
+
+    .tokabe-col-status, .tokabe-th-status {
+        min-width: 120px !important;
+    }
+
+    .tokabe-col-approval, .tokabe-th-approval {
+        min-width: 105px !important;
+    }
+
+    .tokabe-col-deskripsi, .tokabe-th-deskripsi {
+        min-width: 250px !important;
+    }
+
+    .tokabe-col-material, .tokabe-th-material {
+        min-width: 220px !important;
+    }
+
+    .tokabe-col-alasan, .tokabe-th-alasan {
+        min-width: 160px !important;
+    }
+
+    .tokabe-col-panjar, .tokabe-th-panjar {
+        min-width: 110px !important;
+    }
+
+    .tokabe-col-total, .tokabe-th-total {
+        min-width: 135px !important;
+    }
+
+    .tokabe-col-pembayaran, .tokabe-th-pembayaran {
+        min-width: 145px !important;
+    }
+
+    .tokabe-col-orderby, .tokabe-th-orderby {
+        min-width: 130px !important;
+    }
+
+    .tokabe-col-admin, .tokabe-th-admin {
+        min-width: 130px !important;
+    }
+
+    .tokabe-col-aksi, .tokabe-th-aksi {
+        width: 60px !important;
+        min-width: 60px !important;
+    }
+
+    .tokabe-col-inv {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    /* Tombol Chevron [ > ] di samping Invoice ID */
+    .tokabe-row-toggle {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background-color: #121a2a;
+        border: 1px solid #233148;
+        color: #94a3b8;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0;
+        flex-shrink: 0;
+    }
+
+    .tokabe-row-toggle:hover {
+        background-color: #1a253a;
+        border-color: #3b82f6;
+        color: #ffffff;
+    }
+
+    .tokabe-row-toggle.active,
+    tr.shown .tokabe-row-toggle,
+    tr.expanded .tokabe-row-toggle {
+        transform: rotate(90deg);
+        background-color: rgba(59, 130, 246, 0.25);
+        border-color: #3b82f6;
+        color: #60a5fa;
+    }
+
+    .tokabe-inv-code {
+        color: #f1f5f9;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    /* Kolom Pelanggan */
+    .tokabe-customer-wrap {
+        max-width: 260px;
+        line-height: 1.3;
+    }
+
+    .tokabe-customer-name {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 13px !important;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .tokabe-customer-sub {
+        color: #64748b;
+        font-size: 11.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 1px;
+    }
+
+    /* Kolom Telepon */
+    .tokabe-phone {
+        color: #94a3b8;
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+        letter-spacing: 0.02em;
+    }
+
+    .tokabe-phone-empty {
+        color: #475569;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    /* Kolom Tanggal */
+    .tokabe-date-main {
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .tokabe-date-sub {
+        color: #64748b;
+        font-size: 11px;
+        white-space: nowrap;
+        margin-top: 2px;
+    }
+
+    /* Status & Approval Pills (Bentuk Pill Sesuai Gambar) */
+    .tokabe-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 12px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .tokabe-pill-dot {
+        font-size: 9px;
+        line-height: 1;
+    }
+
+    /* Amber (Belum Lunas, Lock, Transfer DP) */
+    .tokabe-pill-belum,
+    .tokabe-pill-lock,
+    .tokabe-pill-dp {
+        background-color: rgba(217, 119, 6, 0.12) !important;
+        border: 1px solid rgba(245, 158, 11, 0.35) !important;
+        color: #fbbf24 !important;
+    }
+    .tokabe-pill-belum .tokabe-pill-dot,
+    .tokabe-pill-dp .tokabe-pill-dot,
+    .tokabe-pill-lock i {
+        color: #f59e0b !important;
+    }
+
+    /* Emerald (Lunas & Unlock) */
+    .tokabe-pill-lunas,
+    .tokabe-pill-unlock {
+        background-color: rgba(16, 185, 129, 0.12) !important;
+        border: 1px solid rgba(16, 185, 129, 0.35) !important;
+        color: #34d399 !important;
+    }
+    .tokabe-pill-lunas .tokabe-pill-dot,
+    .tokabe-pill-unlock i {
+        color: #10b981 !important;
+    }
+
+    /* Blue / Cyan (Transfer Lunas) */
+    .tokabe-pill-transfer {
+        background-color: rgba(56, 189, 248, 0.12) !important;
+        border: 1px solid rgba(56, 189, 248, 0.35) !important;
+        color: #38bdf8 !important;
+    }
+    .tokabe-pill-transfer .tokabe-pill-dot {
+        color: #38bdf8 !important;
+    }
+
+    /* Slate (Batal) */
+    .tokabe-pill-batal {
+        background-color: rgba(148, 163, 184, 0.12) !important;
+        border: 1px solid rgba(148, 163, 184, 0.3) !important;
+        color: #94a3b8 !important;
+    }
+
+    /* Kolom Deskripsi (Expandable in-place seperti Gambar 3 & 4) */
+    .tokabe-desc-wrap {
+        max-width: 280px;
+        line-height: 1.4;
+    }
+
+    .tokabe-desc-collapsed,
+    .tokabe-desc-expanded {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .tokabe-desc-item {
+        color: #cbd5e1;
+        font-size: 12.5px;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .tokabe-desc-more {
+        color: #3b82f6;
+        font-size: 11.5px;
+        font-weight: 600;
+        margin-top: 3px;
+        cursor: pointer;
+        display: inline-block;
+    }
+    .tokabe-desc-more:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+
+    .tokabe-desc-less {
+        color: #64748b;
+        font-size: 11px;
+        cursor: pointer;
+        margin-top: 4px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+    }
+    .tokabe-desc-less:hover {
+        color: #94a3b8;
+    }
+
+    /* Angka Panjar & Total */
+    .tokabe-num {
+        color: #cbd5e1;
+        font-variant-numeric: tabular-nums;
+        font-size: 13px;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+        white-space: nowrap;
+    }
+
+    .tokabe-num-bold {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        font-variant-numeric: tabular-nums;
+        font-size: 13.5px;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+        white-space: nowrap;
+    }
+
+    .tokabe-admin-text {
+        color: #cbd5e1;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .tokabe-pill-alasan {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        line-height: 1.35;
+        color: #f87171 !important;
+        background-color: rgba(239, 68, 68, 0.12) !important;
+        border: 1px solid rgba(239, 68, 68, 0.28) !important;
+        white-space: normal;
+        word-break: break-word;
+        max-width: 180px;
+    }
+
+    .tokabe-pill-orderby {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 9px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #93c5fd !important;
+        background-color: rgba(59, 130, 246, 0.12) !important;
+        border: 1px solid rgba(59, 130, 246, 0.28) !important;
+        white-space: nowrap;
+    }
+
+    .tokabe-mat-name {
+        color: #e2e8f0;
+        font-weight: 500;
+    }
+
+    /* Tombol 3 Titik Vertikal (⋮) di Kolom Aksi */
+    .btn-tokabe-action-dots {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #94a3b8 !important;
         display: inline-flex !important;
         align-items: center !important;
-        height: 52px !important;
-        padding: 8px 16px !important;
-        margin: 0 !important;
-        color: #94A3B8 !important;
+        justify-content: center !important;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.15s ease;
+        padding: 0;
+    }
+
+    .btn-tokabe-action-dots:hover,
+    .btn-tokabe-action-dots:focus,
+    .show > .btn-tokabe-action-dots {
+        background-color: #1e293b !important;
+        border-color: #3b82f6 !important;
+        color: #ffffff !important;
+    }
+
+    .btn-tokabe-action-dots::after {
+        display: none !important;
+    }
+
+    .tokabe-expanded-content {
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(11, 17, 30, 0.95) 100%);
+        border-left: 3px solid #3b82f6;
+        margin: 8px 14px 14px 14px;
+        border-radius: 10px;
+        border-right: 1px solid #1e293b;
+        border-top: 1px solid #1e293b;
+        border-bottom: 1px solid #1e293b;
+        animation: tokabeFadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes tokabeFadeIn {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tokabe-stat-box {
+        background-color: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+
+    .tokabe-stat-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+        margin-bottom: 3px;
+    }
+
+    .tokabe-stat-val {
+        font-size: 15px;
+        font-weight: 700;
+        font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    .tokabe-section-box {
+        background-color: rgba(15, 23, 42, 0.45);
+        border: 1px solid rgba(51, 65, 85, 0.45);
+    }
+
+    .tokabe-section-title {
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #60a5fa;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+    }
+
+    /* Footer: Info & Pagination */
+    .tokabe-table-footer {
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        background-color: #0b111e;
+        border-top: 1px solid #1e293b;
+    }
+
+    .dataTables_wrapper .dataTables_info {
+        color: #94a3b8 !important;
         font-size: 13px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        float: left !important;
     }
 
     .dataTables_wrapper .dataTables_paginate {
+        padding: 0 !important;
+        margin: 0 !important;
         float: right !important;
         display: inline-flex !important;
         align-items: center !important;
-        justify-content: flex-end !important;
-        height: 52px !important;
-        padding: 8px 16px !important;
-        margin: 0 !important;
+        gap: 4px !important;
     }
 
     .dataTables_wrapper .dataTables_paginate .page-link {
-        background-color: #161B22 !important;
-        border-color: #1E293B !important;
-        color: #94A3B8 !important;
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #94a3b8 !important;
         border-radius: 6px !important;
-        margin: 0 2px;
+        padding: 5px 11px !important;
+        font-size: 12.5px !important;
+        transition: all 0.15s ease;
     }
+
     .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
-        background-color: #4F46E5 !important;
-        border-color: #4F46E5 !important;
-        color: #FFFFFF !important;
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
+        color: #ffffff !important;
+        font-weight: 600;
     }
+
     .dataTables_wrapper .dataTables_paginate .page-link:hover {
-        background-color: #1E293B !important;
-        color: #F1F5F9 !important;
-        border-color: #334155 !important;
+        background-color: #1a253a !important;
+        color: #ffffff !important;
+        border-color: #3b82f6 !important;
     }
 
-    /* Minimum height for dropdown overflow */
-    .table-responsive, .dataTables_scrollBody, .invoice-table-body {
-        min-height: 380px;
-    }
-
-    /* Modal Styling */
+    /* Modal & SweetAlert Dark */
     .modal-content {
-        background-color: #161B22 !important;
-        border: 1px solid #1E293B !important;
-        color: #F1F5F9 !important;
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #f1f5f9 !important;
         border-radius: 12px !important;
     }
     .modal-header, .modal-footer {
-        border-color: #1E293B !important;
+        border-color: #233148 !important;
     }
     .modal-header .btn-close {
         filter: invert(1) grayscale(100%) brightness(200%);
     }
-
-    /* SweetAlert Dark */
     .swal2-popup {
         width: 500px;
-        background-color: #161B22 !important;
-        border: 1px solid #1E293B !important;
-        color: #F1F5F9 !important;
+        background-color: #121a2a !important;
+        border: 1px solid #233148 !important;
+        color: #f1f5f9 !important;
         border-radius: 12px !important;
-    }
-
-    /* ==========================================================================
-       ROW DENSITY & HEIGHT CONTROLS (LEBARKAN & KECILKAN BARIS)
-       ========================================================================== */
-    .btn-toggle-row-detail {
-        background: rgba(99, 102, 241, 0.12) !important;
-        border: 1px dashed rgba(99, 102, 241, 0.45) !important;
-        color: #A5B4FC !important;
-        font-size: 11px !important;
-        font-weight: 600 !important;
-        padding: 3px 8px !important;
-        border-radius: 6px !important;
-        cursor: pointer !important;
-        transition: all 0.15s ease !important;
-        margin-top: 5px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 4px !important;
-        line-height: 1.3 !important;
-    }
-    .btn-toggle-row-detail:hover {
-        background: rgba(99, 102, 241, 0.28) !important;
-        color: #FFFFFF !important;
-        border-color: #818CF8 !important;
-    }
-
-    /* 1. Mode Compact / Ringkas (Kecilkan Baris) */
-    .table-compact-mode.invoice-table tbody td {
-        padding: 8px 12px !important;
-        font-size: 12.5px !important;
-    }
-    .table-compact-mode.invoice-table tbody tr {
-        transition: background-color 0.15s ease;
-    }
-    .table-compact-mode .collapsible-extra-items {
-        display: none;
-    }
-    .table-compact-mode .btn-toggle-row-detail .btn-text-collapsed {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-    }
-    .table-compact-mode .btn-toggle-row-detail .btn-text-expanded {
-        display: none;
-    }
-
-    /* Baris individual yang dilebarkan manual di mode compact */
-    .table-compact-mode tr.row-manually-expanded .collapsible-extra-items {
-        display: block !important;
-        animation: fadeInDetail 0.2s ease-in-out;
-    }
-    .table-compact-mode tr.row-manually-expanded .btn-toggle-row-detail .btn-text-collapsed {
-        display: none !important;
-    }
-    .table-compact-mode tr.row-manually-expanded .btn-toggle-row-detail .btn-text-expanded {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 3px;
-    }
-
-    /* 2. Mode Expanded / Penuh (Lebarkan Baris) */
-    .table-expanded-mode.invoice-table tbody td {
-        padding: 14px 14px !important;
-        font-size: 13px !important;
-    }
-    .table-expanded-mode .collapsible-extra-items {
-        display: block !important;
-    }
-    .table-expanded-mode .btn-toggle-row-detail .btn-text-collapsed {
-        display: none !important;
-    }
-    .table-expanded-mode .btn-toggle-row-detail .btn-text-expanded {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 3px;
-    }
-
-    /* Baris individual yang dikecilkan manual di mode expanded */
-    .table-expanded-mode tr.row-manually-collapsed .collapsible-extra-items {
-        display: none !important;
-    }
-    .table-expanded-mode tr.row-manually-collapsed .btn-toggle-row-detail .btn-text-collapsed {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 3px;
-    }
-    .table-expanded-mode tr.row-manually-collapsed .btn-toggle-row-detail .btn-text-expanded {
-        display: none !important;
-    }
-
-    
-    /* ==========================================================================
-       LEBAR & KESELARASAN KOLOM TABEL (COLUMN SIZING & ALIGNMENT LOCK)
-       Mengunci ukuran & posisi setiap kolom agar thead dan tbody selalu 100% presisi
-       ========================================================================== */
-    table#scroll-horizontal th.col-no,
-    table#scroll-horizontal td.col-no,
-    table.invoice-table th.col-no,
-    table.invoice-table td.col-no {
-        width: 48px !important;
-        min-width: 48px !important;
-        max-width: 48px !important;
-        text-align: center !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-invoice,
-    table#scroll-horizontal td.col-invoice,
-    table.invoice-table th.col-invoice,
-    table.invoice-table td.col-invoice {
-        width: 140px !important;
-        min-width: 140px !important;
-        text-align: left !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-pelanggan,
-    table#scroll-horizontal td.col-pelanggan,
-    table.invoice-table th.col-pelanggan,
-    table.invoice-table td.col-pelanggan {
-        width: 220px !important;
-        min-width: 220px !important;
-        text-align: left !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-telepon,
-    table#scroll-horizontal td.col-telepon,
-    table.invoice-table th.col-telepon,
-    table.invoice-table td.col-telepon {
-        width: 130px !important;
-        min-width: 130px !important;
-        text-align: left !important;
-        white-space: nowrap !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-tgl,
-    table#scroll-horizontal td.col-tgl,
-    table.invoice-table th.col-tgl,
-    table.invoice-table td.col-tgl {
-        width: 155px !important;
-        min-width: 155px !important;
-        text-align: left !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-status,
-    table#scroll-horizontal td.col-status,
-    table.invoice-table th.col-status,
-    table.invoice-table td.col-status {
-        width: 115px !important;
-        min-width: 115px !important;
-        text-align: center !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-deskripsi,
-    table#scroll-horizontal td.col-deskripsi,
-    table.invoice-table th.col-deskripsi,
-    table.invoice-table td.col-deskripsi {
-        width: 260px !important;
-        min-width: 260px !important;
-        max-width: 260px !important;
-        text-align: left !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-        overflow-wrap: anywhere !important;
-        vertical-align: top !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-material,
-    table#scroll-horizontal td.col-material,
-    table.invoice-table th.col-material,
-    table.invoice-table td.col-material {
-        width: 240px !important;
-        min-width: 240px !important;
-        max-width: 240px !important;
-        text-align: left !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-        overflow-wrap: anywhere !important;
-        vertical-align: top !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-alasan,
-    table#scroll-horizontal td.col-alasan,
-    table.invoice-table th.col-alasan,
-    table.invoice-table td.col-alasan {
-        width: 140px !important;
-        min-width: 140px !important;
-        text-align: left !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-approval,
-    table#scroll-horizontal td.col-approval,
-    table.invoice-table th.col-approval,
-    table.invoice-table td.col-approval {
-        width: 105px !important;
-        min-width: 105px !important;
-        text-align: center !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-panjar,
-    table#scroll-horizontal td.col-panjar,
-    table.invoice-table th.col-panjar,
-    table.invoice-table td.col-panjar {
-        width: 120px !important;
-        min-width: 120px !important;
-        text-align: right !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-total,
-    table#scroll-horizontal td.col-total,
-    table.invoice-table th.col-total,
-    table.invoice-table td.col-total {
-        width: 135px !important;
-        min-width: 135px !important;
-        text-align: right !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-pembayaran,
-    table#scroll-horizontal td.col-pembayaran,
-    table.invoice-table th.col-pembayaran,
-    table.invoice-table td.col-pembayaran {
-        width: 140px !important;
-        min-width: 140px !important;
-        text-align: center !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-orderby,
-    table#scroll-horizontal td.col-orderby,
-    table.invoice-table th.col-orderby,
-    table.invoice-table td.col-orderby {
-        width: 120px !important;
-        min-width: 120px !important;
-        text-align: left !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-admin,
-    table#scroll-horizontal td.col-admin,
-    table.invoice-table th.col-admin,
-    table.invoice-table td.col-admin {
-        width: 135px !important;
-        min-width: 135px !important;
-        text-align: left !important;
-        white-space: normal !important;
-        box-sizing: border-box !important;
-    }
-    table#scroll-horizontal th.col-aksi,
-    table#scroll-horizontal td.col-aksi,
-    table.invoice-table th.col-aksi,
-    table.invoice-table td.col-aksi {
-        width: 65px !important;
-        min-width: 65px !important;
-        max-width: 65px !important;
-        text-align: center !important;
-        box-sizing: border-box !important;
-    }
-
-    /* Sinkronisasi Header dan Body DataTables Scroll Horizontal */
-    .dataTables_scrollHead,
-    .dataTables_scrollBody {
-        width: 100% !important;
-    }
-    .dataTables_scrollHeadInner {
-        width: 100% !important;
-        padding-right: 0px !important;
-        box-sizing: content-box !important;
-    }
-    .dataTables_scrollHeadInner table.invoice-table,
-    .dataTables_scrollBody table.invoice-table {
-        margin-bottom: 0 !important;
-        margin-top: 0 !important;
-        width: 100% !important;
-    }
-
-    /* Wrap teks list di dalam kolom deskripsi & material agar memanjang vertikal tanpa melebar horizontal */
-    .col-deskripsi ul,
-    .col-deskripsi li,
-    .col-material ul,
-    .col-material li {
-        white-space: normal !important;
-        word-break: break-word !important;
-        overflow-wrap: anywhere !important;
-    }
-
-    /* Kursor pointer dan hover baris tabel yang interaktif */
-    table#scroll-horizontal tbody tr,
-    table.invoice-table tbody tr {
-        cursor: pointer;
-    }
-    table#scroll-horizontal tbody tr:hover,
-    table.invoice-table tbody tr:hover {
-        background-color: rgba(99, 102, 241, 0.05) !important;
-    }
-
-    @keyframes fadeInDetail {
-        from { opacity: 0; transform: translateY(-3px); }
-        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 @endsection
@@ -1280,78 +1488,144 @@
 
       <div class="row">
           <div class="col-12">
-              <div class="card invoice-main-card">
-                  <div class="card-header invoice-card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <div class="d-flex flex-wrap align-items-center gap-3">
-                        <h5 class="card-title mb-0 text-white font-weight-semibold">Daftar Invoice</h5>
-                        
-                        {{-- Tombol Pengatur Lebarkan / Kecilkan Baris Tabel --}}
-                        <div class="timeframe-pill-container" role="group" aria-label="Tampilan Baris Tabel">
-                            <button type="button" class="btn btn-card-timeframe" id="btn-density-compact" onclick="applyRowDensity('compact')" title="Kecilkan baris (Tampilan ringkas)">
-                                <i class="las la-compress-arrows-alt me-1"></i> Kecilkan Baris
-                            </button>
-                            <button type="button" class="btn btn-card-timeframe active" id="btn-density-expanded" onclick="applyRowDensity('expanded')" title="Lebarkan baris (Tampilan penuh)">
-                                <i class="las la-expand-arrows-alt me-1"></i> Lebarkan Baris
-                            </button>
-                        </div>
-                    </div>
+              <div class="card tokabe-invoice-card">
+                  <!-- Header: Judul, Info Pill, Tombol Urutkan & Buka Semua Rincian -->
+                  <div class="tokabe-card-header">
+                      <div class="d-flex flex-wrap align-items-center gap-2">
+                          <h5 class="tokabe-card-title mb-0">Daftar Invoice Tokabe</h5>
+                          <span class="tokabe-info-pill">
+                              <i class="las la-info-circle"></i> Klik baris untuk melihat rincian lengkap
+                          </span>
+                      </div>
+                      
+                      <div class="d-flex flex-wrap align-items-center gap-2">
+                          <!-- Sort dropdown button -->
+                          <div class="dropdown">
+                              <button class="btn btn-tokabe-sort dropdown-toggle" type="button" id="sortDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                                      <line x1="3" y1="6" x2="15" y2="6"></line>
+                                      <line x1="3" y1="12" x2="10" y2="12"></line>
+                                      <line x1="3" y1="18" x2="6" y2="18"></line>
+                                      <polyline points="17 14 20 17 23 14"></polyline>
+                                      <line x1="20" y1="7" x2="20" y2="17"></line>
+                                  </svg>
+                                  Urutkan: <span id="currentSortLabel" class="ms-1">Tanggal Terbaru</span>
+                                  <i class="las la-angle-down ms-1"></i>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg" aria-labelledby="sortDropdownBtn">
+                                  <li><a class="dropdown-item active" href="javascript:void(0)" onclick="applyTableSort(4, 'desc', 'Tanggal Terbaru')"><i class="las la-calendar-check me-2 text-primary"></i>Tanggal Terbaru</a></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(4, 'asc', 'Tanggal Terlama')"><i class="las la-calendar me-2 text-muted"></i>Tanggal Terlama</a></li>
+                                  <li><hr class="dropdown-divider"></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(1, 'asc', 'Invoice ID (A-Z)')"><i class="las la-sort-numeric-down me-2 text-info"></i>Invoice ID (A-Z)</a></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(1, 'desc', 'Invoice ID (Z-A)')"><i class="las la-sort-numeric-up-alt me-2 text-info"></i>Invoice ID (Z-A)</a></li>
+                                  <li><hr class="dropdown-divider"></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(2, 'asc', 'Nama Pelanggan (A-Z)')"><i class="las la-user me-2 text-success"></i>Nama Pelanggan (A-Z)</a></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(5, 'asc', 'Status Pembayaran')"><i class="las la-check-circle me-2 text-warning"></i>Status Pembayaran</a></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(13, 'asc', 'Order By')"><i class="las la-shopping-cart me-2 text-primary"></i>Order By</a></li>
+                                  <li><hr class="dropdown-divider"></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(11, 'desc', 'Total Terbesar')"><i class="las la-wallet me-2 text-success"></i>Total Terbesar</a></li>
+                                  <li><a class="dropdown-item" href="javascript:void(0)" onclick="applyTableSort(11, 'asc', 'Total Terkecil')"><i class="las la-wallet me-2 text-muted"></i>Total Terkecil</a></li>
+                              </ul>
+                          </div>
 
-                    <div class="d-flex align-items-center gap-2">
-                        <label for="filterJenisInvoice" class="form-label mb-0 fs-13 text-muted text-nowrap fw-semibold">
-                            <i class="las la-filter me-1 fs-15 text-primary"></i>Jenis Invoice:
-                        </label>
-                        <select id="filterJenisInvoice" class="form-select form-select-sm filter-select-dark" style="min-width: 210px;">
-                            <option value="">Semua Jenis Invoice</option>
-                            @foreach ($jenisInvoiceList as $jInv)
-                                <option value="{{ $jInv->id }}">{{ $jInv->nama_invoice }} ({{ $jInv->kode_invoice }})</option>
-                            @endforeach
-                        </select>
-                        <button type="button" class="btn btn-sm btn-outline-danger" id="btnResetFilterJenis" title="Reset filter" style="display: none;">
-                            <i class="las la-times"></i>
-                        </button>
-                    </div>
+                          <!-- Buka Semua Rincian button -->
+                          <button type="button" class="btn btn-tokabe-expand-all" id="btnToggleAllRows" onclick="toggleAllRowDetails()">
+                              Buka Semua Rincian
+                          </button>
+                      </div>
                   </div>
-                      <!-- KELAS invoice-table-body DITAMBAHKAN DI SINI -->
-                      <div class="card-body invoice-table-body p-0">
-                          <table id="scroll-horizontal" class="table nowrap dt-responsive align-middle invoice-table" style="width:100%">
-                              <thead>
-                                  <tr>
-                                      <th scope="col" class="text-center col-no">No</th>
-                                      <th scope="col" class="col-invoice">Invoice ID</th>
-                                      <th scope="col" class="col-pelanggan">Nama Pelanggan & Perusahaan</th>
-                                      <th scope="col" class="col-telepon">No. Telepon</th>
-                                      <th scope="col" class="col-tgl">Tanggal Penjualan</th>
-                                      <th scope="col" class="text-center col-status">Status</th>
-                                      <th scope="col" class="col-deskripsi">Deskripsi</th>
-                                      <th scope="col" class="col-material">Bahan Material</th>
-                                      <th scope="col" class="col-alasan">Alasan Batal</th>
-                                      <th scope="col" class="text-center col-approval">Approval</th>
-                                      <th scope="col" class="numeric text-end col-panjar">Panjar</th>
-                                      <th scope="col" class="numeric text-end col-total">Total</th>
-                                      <th scope="col" class="text-center col-pembayaran">Tipe Pembayaran</th>
-                                      <th scope="col" class="col-orderby">Order By</th>
-                                      <th scope="col" class="col-admin">Admin</th>
-                                      <th scope="col" class="text-center col-aksi">Aksi</th>
-                                  </tr>
-                              </thead>
 
-                              <tbody>
-                                  {{-- Data dimuat secara Server-Side melalui AJAX route invoice.datatable_data --}}
-                              </tbody><!-- end tbody -->
-                          </table><!-- end table -->
-                          <form id="globalBatalForm" method="POST" style="display: none;">
-                              @csrf
-                              <input type="hidden" name="alasan_batal" id="globalInputAlasanBatal">
-                          </form>
-                          <form id="globalDeleteForm" method="POST" style="display: none;">
-                              @csrf
-                              @method('delete')
-                              <input type="hidden" name="alasan_hapus" id="globalInputAlasanHapus">
-                          </form>
-                      </div><!-- end table responsive -->
+                  <!-- Toolbar Filter & Search Container -->
+                  <div class="tokabe-table-toolbar">
+                      <div class="d-flex flex-wrap align-items-center gap-3">
+                          <div id="tokabeCustomLength" class="d-inline-flex align-items-center"></div>
+
+                          <div class="d-inline-flex align-items-center gap-2">
+                              <span class="tokabe-filter-label">Jenis:</span>
+                              <select id="filterJenisInvoice" class="tokabe-select-dark">
+                                  <option value="">Semua Jenis</option>
+                                  @foreach ($jenisInvoiceList as $jInv)
+                                      <option value="{{ $jInv->id }}">{{ $jInv->nama_invoice }}</option>
+                                  @endforeach
+                              </select>
+                              <button type="button" class="btn btn-sm btn-link text-danger p-0" id="btnResetFilterJenis" title="Reset filter" style="display: none; text-decoration: none;">
+                                  <i class="las la-times-circle fs-16"></i>
+                              </button>
+                          </div>
+                      </div>
+
+                      <div id="tokabeCustomSearch" class="d-inline-flex align-items-center"></div>
+                  </div>
+
+                  <!-- Table Body (Scrollable horizontally) -->
+                  <div class="tokabe-table-responsive p-0">
+                      <table id="scroll-horizontal" class="table align-middle tokabe-invoice-table" style="width:100%">
+                          <thead>
+                              <tr>
+                                  <th scope="col" class="tokabe-col-no text-center">NO</th>
+                                  <th scope="col" class="tokabe-th-inv">
+                                      INVOICE ID <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-pelanggan">
+                                      NAMA PELANGGAN <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-telepon">NO. TELEPON</th>
+                                  <th scope="col" class="tokabe-th-tgl active-sort">
+                                      TANGGAL PENJUALAN <span class="tokabe-sort-icon"><i class="las la-arrow-down text-primary"></i></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-status text-center">
+                                      STATUS <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-approval text-center">
+                                      APPROVAL <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-deskripsi">DESKRIPSI</th>
+                                  <th scope="col" class="tokabe-th-material">BAHAN MATERIAL</th>
+                                  <th scope="col" class="tokabe-th-alasan">
+                                      ALASAN BATAL <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-panjar">
+                                      PANJAR <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-total">
+                                      TOTAL <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-pembayaran text-center">
+                                      TIPE PEMBAYARAN <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-orderby">
+                                      ORDER BY <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-admin">
+                                      ADMIN <span class="tokabe-sort-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></span>
+                                  </th>
+                                  <th scope="col" class="tokabe-th-aksi text-center">AKSI</th>
+                              </tr>
+                          </thead>
+
+                          <tbody>
+                              {{-- Data dimuat secara Server-Side melalui AJAX route invoice.datatable_data --}}
+                          </tbody>
+                      </table>
+                      <form id="globalBatalForm" method="POST" style="display: none;">
+                          @csrf
+                          <input type="hidden" name="alasan_batal" id="globalInputAlasanBatal">
+                      </form>
+                      <form id="globalDeleteForm" method="POST" style="display: none;">
+                          @csrf
+                          @method('delete')
+                          <input type="hidden" name="alasan_hapus" id="globalInputAlasanHapus">
+                      </form>
+                  </div>
+
+                  <!-- Footer Info & Pagination Container -->
+                  <div class="tokabe-table-footer">
+                      <div id="tokabeCustomInfo"></div>
+                      <div id="tokabeCustomPaginate"></div>
                   </div>
               </div>
           </div>
+      </div>
     
     <!-- Scrollable Modal Update Log -->
 <div class="modal fade" id="updateLogModal" tabindex="-1" aria-labelledby="updateLogModalLabel" aria-hidden="true">
@@ -1680,20 +1954,63 @@
     }
 </script>
 <script>
-    // Inisialisasi Server-Side DataTables & Filter Jenis Invoice
+    // Inisialisasi Server-Side DataTables Tokabe Style
     var invoiceTable = null;
+
+    function applyTableSort(columnIndex, direction, label) {
+        if (!invoiceTable) return;
+        $('#currentSortLabel').text(label);
+        invoiceTable.order([columnIndex, direction]).draw();
+    }
+
+    function toggleRowDesc(element) {
+        var tr = $(element).closest('tr');
+        var collapsed = tr.find('.tokabe-desc-collapsed');
+        var expanded = tr.find('.tokabe-desc-expanded');
+        var toggleBtn = tr.find('.tokabe-row-toggle');
+
+        if (expanded.length === 0) return;
+
+        if (expanded.is(':visible')) {
+            expanded.hide();
+            collapsed.show();
+            tr.removeClass('expanded shown');
+            toggleBtn.removeClass('active');
+        } else {
+            collapsed.hide();
+            expanded.show();
+            tr.addClass('expanded shown');
+            toggleBtn.addClass('active');
+        }
+    }
+
+    function toggleAllRowDetails() {
+        var anyOpen = $('#scroll-horizontal tbody tr.expanded').length > 0;
+        if (anyOpen) {
+            $('#scroll-horizontal tbody tr').removeClass('expanded shown');
+            $('#scroll-horizontal tbody .tokabe-desc-collapsed').show();
+            $('#scroll-horizontal tbody .tokabe-desc-expanded').hide();
+            $('#scroll-horizontal tbody .tokabe-row-toggle').removeClass('active');
+            $('#btnToggleAllRows').text('Buka Semua Rincian');
+        } else {
+            $('#scroll-horizontal tbody tr').addClass('expanded shown');
+            $('#scroll-horizontal tbody .tokabe-desc-collapsed').hide();
+            $('#scroll-horizontal tbody .tokabe-desc-expanded').show();
+            $('#scroll-horizontal tbody .tokabe-row-toggle').addClass('active');
+            $('#btnToggleAllRows').text('Tutup Semua Rincian');
+        }
+    }
 
     $(document).ready(function() {
         invoiceTable = $('#scroll-horizontal').DataTable({
             processing: true,
             serverSide: true,
-            scrollX: true,
+            scrollX: false,
             autoWidth: false,
             pageLength: 25,
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
             order: [[4, 'desc']], // Default: Tanggal Penjualan descending
-            dom: "lBfrtip",
-            buttons: ["copy", "csv", "excel", "print", "pdf"],
+            dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>rt<'row'<'col-sm-6'i><'col-sm-6'p>>",
             ajax: {
                 url: "{{ route('invoice.datatable_data') }}",
                 type: "POST",
@@ -1703,30 +2020,30 @@
                 }
             },
             columns: [
-                { data: 0, className: "text-center col-no", orderable: false },
-                { data: 1, className: "col-invoice", orderable: true },
-                { data: 2, className: "col-pelanggan", orderable: true },
-                { data: 3, className: "col-telepon", orderable: true },
-                { data: 4, className: "col-tgl", orderable: true },
-                { data: 5, className: "text-center col-status", orderable: true },
-                { data: 6, className: "col-deskripsi", orderable: false },
-                { data: 7, className: "col-material", orderable: false },
-                { data: 8, className: "col-alasan", orderable: true },
-                { data: 9, className: "text-center col-approval", orderable: true },
-                { data: 10, className: "numeric text-end col-panjar", orderable: true },
-                { data: 11, className: "numeric text-end col-total", orderable: true },
-                { data: 12, className: "text-center col-pembayaran", orderable: true },
-                { data: 13, className: "col-orderby", orderable: true },
-                { data: 14, className: "col-admin", orderable: true },
-                { data: 15, className: "text-center col-aksi", orderable: false }
+                { data: 0, className: "text-center tokabe-col-no", orderable: false },
+                { data: 1, className: "tokabe-col-invoice", orderable: true },
+                { data: 2, className: "tokabe-col-pelanggan", orderable: true },
+                { data: 3, className: "tokabe-col-telepon", orderable: true },
+                { data: 4, className: "tokabe-col-tgl", orderable: true },
+                { data: 5, className: "text-center tokabe-col-status", orderable: true },
+                { data: 6, className: "text-center tokabe-col-approval", orderable: true },
+                { data: 7, className: "tokabe-col-deskripsi", orderable: false },
+                { data: 8, className: "tokabe-col-material", orderable: false },
+                { data: 9, className: "tokabe-col-alasan", orderable: true },
+                { data: 10, className: "tokabe-col-panjar", orderable: true },
+                { data: 11, className: "tokabe-col-total", orderable: true },
+                { data: 12, className: "text-center tokabe-col-pembayaran", orderable: true },
+                { data: 13, className: "tokabe-col-orderby", orderable: true },
+                { data: 14, className: "tokabe-col-admin", orderable: true },
+                { data: 15, className: "text-center tokabe-col-aksi", orderable: false }
             ],
             language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Cari invoice, pelanggan...",
+                search: "Cari:",
+                searchPlaceholder: "Nomor invoice, pelanggan...",
                 lengthMenu: "Tampilkan _MENU_ data",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ invoice",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                 infoEmpty: "Menampilkan 0 data",
-                infoFiltered: "(disaring dari _MAX_ invoice)",
+                infoFiltered: "(disaring dari _MAX_ total data)",
                 zeroRecords: "Tidak ada invoice yang sesuai",
                 paginate: {
                     first: '<i class="las la-angle-double-left"></i>',
@@ -1736,18 +2053,83 @@
                 },
                 processing: '<div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Memuat data...</span></div> Memuat invoice...'
             },
-            drawCallback: function() {
-                var savedDensity = localStorage.getItem('invoice_table_row_density') || 'compact';
-                var table = $('#scroll-horizontal');
-                if (savedDensity === 'compact') {
-                    table.removeClass('table-expanded-mode').addClass('table-compact-mode');
-                } else {
-                    table.removeClass('table-compact-mode').addClass('table-expanded-mode');
+            initComplete: function() {
+                // Relokasi length, search, info, paginate ke custom toolbar & footer container
+                var wrapper = $('#scroll-horizontal_wrapper');
+                var lengthEl = wrapper.find('.dataTables_length');
+                var filterEl = wrapper.find('.dataTables_filter');
+                var infoEl = wrapper.find('.dataTables_info');
+                var paginateEl = wrapper.find('.dataTables_paginate');
+
+                if (lengthEl.length && $('#tokabeCustomLength').length) {
+                    $('#tokabeCustomLength').empty().append(lengthEl);
                 }
+                if (filterEl.length && $('#tokabeCustomSearch').length) {
+                    $('#tokabeCustomSearch').empty().append(filterEl);
+                }
+                if (infoEl.length && $('#tokabeCustomInfo').length) {
+                    $('#tokabeCustomInfo').empty().append(infoEl);
+                }
+                if (paginateEl.length && $('#tokabeCustomPaginate').length) {
+                    $('#tokabeCustomPaginate').empty().append(paginateEl);
+                }
+            },
+            drawCallback: function() {
+                $('#btnToggleAllRows').text('Buka Semua Rincian');
             }
         });
 
-        // Terapkan filter otomatis jika terdapat parameter ?jenis= di URL saat pertama kali dimuat
+        // Event listener saat sort header kolom DataTables berubah
+        invoiceTable.on('order.dt', function() {
+            var order = invoiceTable.order();
+            var ths = $('#scroll-horizontal thead th');
+            ths.removeClass('active-sort');
+            ths.find('.tokabe-sort-icon').html('<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>');
+
+            if (order.length > 0) {
+                var colIdx = order[0][0];
+                var dir = order[0][1];
+                var activeTh = $(ths[colIdx]);
+                activeTh.addClass('active-sort');
+                var arrowIcon = dir === 'desc' 
+                    ? '<i class="las la-arrow-down text-primary"></i>' 
+                    : '<i class="las la-arrow-up text-primary"></i>';
+                activeTh.find('.tokabe-sort-icon').html(arrowIcon);
+
+                var label = 'Tanggal Terbaru';
+                if (colIdx === 4 && dir === 'desc') label = 'Tanggal Terbaru';
+                else if (colIdx === 4 && dir === 'asc') label = 'Tanggal Terlama';
+                else if (colIdx === 1 && dir === 'asc') label = 'Invoice ID (A-Z)';
+                else if (colIdx === 1 && dir === 'desc') label = 'Invoice ID (Z-A)';
+                else if (colIdx === 2 && dir === 'asc') label = 'Pelanggan (A-Z)';
+                else if (colIdx === 2 && dir === 'desc') label = 'Pelanggan (Z-A)';
+                else if (colIdx === 5) label = 'Status Pembayaran';
+                else if (colIdx === 6) label = 'Approval';
+                else if (colIdx === 9) label = 'Alasan Batal';
+                else if (colIdx === 10 && dir === 'desc') label = 'Panjar Terbesar';
+                else if (colIdx === 11 && dir === 'desc') label = 'Total Terbesar';
+                else if (colIdx === 11 && dir === 'asc') label = 'Total Terkecil';
+                else if (colIdx === 13) label = 'Order By';
+                else if (colIdx === 14) label = 'Admin';
+                $('#currentSortLabel').text(label);
+            }
+        });
+
+        // Klik tombol chevron [ > ], '+ X item lagi', atau 'Sembunyikan'
+        $(document).on('click', '.tokabe-row-toggle, .tokabe-desc-more, .tokabe-desc-less', function(e) {
+            e.stopPropagation();
+            toggleRowDesc(this);
+        });
+
+        // Klik baris tabel
+        $(document).on('click', '#scroll-horizontal tbody tr', function(e) {
+            if ($(e.target).closest('a, button, select, input, textarea, .dropdown-menu, .tokabe-action-dropdown').length) {
+                return;
+            }
+            toggleRowDesc(this);
+        });
+
+        // Filter Jenis Invoice
         var urlParams = new URLSearchParams(window.location.search);
         var jenisParam = urlParams.get('jenis');
         if (jenisParam) {
@@ -1763,7 +2145,6 @@
                 $('#btnResetFilterJenis').hide();
             }
 
-            // Sync URL parameter tanpa reload
             var url = new URL(window.location);
             if (val) {
                 url.searchParams.set('jenis', val);
@@ -1779,82 +2160,6 @@
 
         $('#btnResetFilterJenis').on('click', function() {
             $('#filterJenisInvoice').val('').trigger('change');
-        });
-    });
-</script>
-
-<script>
-    // =========================================================================
-    // FITUR LEBARKAN & KECILKAN BARIS TABEL (Row Density & Row Expand/Collapse)
-    // =========================================================================
-    function applyRowDensity(mode) {
-        var table = $('#scroll-horizontal');
-        var btnCompact = $('#btn-density-compact');
-        var btnExpanded = $('#btn-density-expanded');
-
-        if (mode === 'compact') {
-            table.removeClass('table-expanded-mode').addClass('table-compact-mode');
-            table.find('tr').removeClass('row-manually-expanded').removeClass('row-manually-collapsed');
-            btnCompact.addClass('active');
-            btnExpanded.removeClass('active');
-            localStorage.setItem('invoice_table_row_density', 'compact');
-        } else {
-            table.removeClass('table-compact-mode').addClass('table-expanded-mode');
-            table.find('tr').removeClass('row-manually-expanded').removeClass('row-manually-collapsed');
-            btnExpanded.addClass('active');
-            btnCompact.removeClass('active');
-            localStorage.setItem('invoice_table_row_density', 'expanded');
-        }
-
-        if ($.fn.dataTable.isDataTable('#scroll-horizontal')) {
-            $('#scroll-horizontal').DataTable().columns.adjust();
-        }
-    }
-
-    function toggleSingleRowDetail(elem, e) {
-        if (e && e.stopPropagation) {
-            e.stopPropagation();
-        }
-        var row = $(elem).is('tr') ? $(elem) : $(elem).closest('tr');
-        var table = $('#scroll-horizontal');
-        var isCurrentlyCompact = table.hasClass('table-compact-mode');
-
-        if (isCurrentlyCompact) {
-            row.toggleClass('row-manually-expanded');
-        } else {
-            row.toggleClass('row-manually-collapsed');
-        }
-    }
-
-    // Trigger adjust column DataTables saat resize dan density berganti
-    $(window).on('resize', function() {
-        if ($.fn.dataTable.isDataTable('#scroll-horizontal')) {
-            $('#scroll-horizontal').DataTable().columns.adjust();
-        }
-    });
-
-    $(document).ready(function() {
-        var savedDensity = localStorage.getItem('invoice_table_row_density') || 'compact';
-        applyRowDensity(savedDensity);
-
-        // Pastikan header & body sinkron sempurna setelah inisialisasi awal
-        setTimeout(function() {
-            if ($.fn.dataTable.isDataTable('#scroll-horizontal')) {
-                $('#scroll-horizontal').DataTable().columns.adjust();
-            }
-        }, 200);
-
-        // Klik baris tabel manjang kebawah (expand/collapse rincian baris)
-        $(document).on('click', '#scroll-horizontal tbody tr', function(e) {
-            // Hindari toggle jika klik pada link, button, select, input, textarea, dropdown aksi
-            if ($(e.target).closest('a, button, select, input, textarea, .dropdown, .dropdown-menu, .btn-action-ghost').length) {
-                return;
-            }
-
-            // Jalankan toggle jika baris memiliki rincian tambahan (collapsible-extra-items)
-            if ($(this).find('.collapsible-extra-items').length > 0) {
-                toggleSingleRowDetail(this, e);
-            }
         });
     });
 </script>

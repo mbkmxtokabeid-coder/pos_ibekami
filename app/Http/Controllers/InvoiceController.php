@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 // use App\Models\KategoriBarang;
 // use App\Models\Perusahaan;
 use App\Models\Order;
@@ -280,13 +281,13 @@ class InvoiceController extends Controller
             3 => 'no_telepon',
             4 => 'tgl_penjualan',
             5 => 'status',
-            8 => 'alasan_batal',
-            9 => 'approval',
+            6 => 'approval',
+            9 => 'alasan_batal',
             10 => 'dp',
             11 => 'total_pembayaran',
             12 => 'jenis_pembayaran',
             13 => 'order_by',
-            14 => 'admin'
+            14 => 'admin',
         ];
 
         $orderColIndex = $request->input('order.0.column');
@@ -312,61 +313,92 @@ class InvoiceController extends Controller
             $invType = $invoiceMap->get($inv->invoice);
             $jenisInvoiceNama = $invType ? $invType->nama_invoice : '-';
 
-            // 1. Col Invoice
-            $htmlInvoice = '<p class="fw-semibold text-white mb-1 font-monospace" style="font-size: 13px;">' . e($inv->nomor_invoice) . '</p>';
-            if (!empty($jenisInvoiceNama) && $jenisInvoiceNama !== '-') {
-                $htmlInvoice .= '<span class="badge-jenis-inv">' . e($jenisInvoiceNama) . '</span>';
+            // 1. Col Invoice ID (with chevron expand button)
+            $htmlInvoice = '<div class="tokabe-col-inv">'
+                . '<button type="button" class="tokabe-row-toggle" aria-label="Buka Rincian" title="Lihat rincian lengkap">'
+                . '<i class="las la-angle-right"></i>'
+                . '</button>'
+                . '<span class="tokabe-inv-code">' . e($inv->nomor_invoice) . '</span>'
+                . '</div>';
+
+            // 2. Col Pelanggan (Bold uppercase)
+            $namaUtama = (!empty($inv->perusahaan) && $inv->perusahaan !== '----') ? $inv->perusahaan : $inv->customer;
+            $subNama = (!empty($inv->perusahaan) && $inv->perusahaan !== '----' && strcasecmp($inv->perusahaan, $inv->customer) !== 0) ? $inv->customer : '';
+            $htmlPelanggan = '<div class="tokabe-customer-wrap" title="' . e($inv->customer . ($inv->perusahaan ? ' - ' . $inv->perusahaan : '')) . '">'
+                . '<span class="tokabe-customer-name">' . e($namaUtama) . '</span>';
+            if (!empty($subNama)) {
+                $htmlPelanggan .= '<div class="tokabe-customer-sub">' . e($subNama) . '</div>';
+            }
+            $htmlPelanggan .= '</div>';
+
+            // 3. Col Telepon (Spaced 4-4-4 or dashes)
+            $phoneClean = preg_replace('/[^0-9]/', '', $inv->no_telepon ?? '');
+            if (empty($phoneClean) || $phoneClean === '0') {
+                $htmlTelepon = '<span class="tokabe-phone-empty">---- --</span>';
+            } else {
+                if (substr($phoneClean, 0, 2) === '62') {
+                    $phoneClean = '0' . substr($phoneClean, 2);
+                }
+                $phoneFormatted = trim(preg_replace('/(\d{4})(?=\d)/', '$1 ', $phoneClean));
+                $htmlTelepon = '<span class="tokabe-phone">' . e($phoneFormatted) . '</span>';
             }
 
-            // 2. Col Pelanggan
-            $htmlPelanggan = e($inv->customer . ' / ' . $inv->perusahaan);
-
-            // 3. Col Telepon
-            $htmlTelepon = e($inv->no_telepon ?: '-');
-
-            // 4. Col Tanggal
+            // 4. Col Tanggal (Date + Indonesian "Diperbarui: ...")
             $formattedTgl = Carbon::parse($inv->tgl_penjualan)->format('d M Y');
-            $htmlTgl = e($formattedTgl);
+            $htmlTgl = '<div class="tokabe-date-main">' . e($formattedTgl) . '</div>';
             if ($inv->updated_at && $inv->created_at && $inv->updated_at != $inv->created_at) {
                 $formattedUpdate = Carbon::parse($inv->updated_at)->addHour(7)->format('d M Y H:i');
-                $htmlTgl .= '<br><span class="text-muted" style="font-size: 0.75rem;">Last Update: ' . e($formattedUpdate) . '</span>';
+                $htmlTgl .= '<div class="tokabe-date-sub">Diperbarui: ' . e($formattedUpdate) . '</div>';
             }
 
-            // 5. Col Status
+            // 5. Col Status (Pill with dot indicator)
             if ($inv->status === 'Lunas') {
-                $htmlStatus = '<span class="badge-status badge-status-lunas">' . e($inv->status) . '</span>';
+                $htmlStatus = '<span class="tokabe-pill tokabe-pill-lunas"><span class="tokabe-pill-dot">●</span> Lunas</span>';
             } elseif ($inv->status === 'Belum Lunas') {
-                $htmlStatus = '<span class="badge-status badge-status-belum">' . e($inv->status) . '</span>';
+                $htmlStatus = '<span class="tokabe-pill tokabe-pill-belum"><span class="tokabe-pill-dot">●</span> Belum Lunas</span>';
             } else {
-                $htmlStatus = '<span class="badge-status badge-status-batal">' . e($inv->status) . '</span>';
+                $htmlStatus = '<span class="tokabe-pill tokabe-pill-batal"><span class="tokabe-pill-dot">●</span> ' . e($inv->status) . '</span>';
             }
 
-            // 6. Col Deskripsi
+            // 6. Col Approval (Pill with lock icon)
+            if ($inv->approval === 'Lock') {
+                $htmlApproval = '<span class="tokabe-pill tokabe-pill-lock"><i class="las la-lock"></i> Lock</span>';
+            } elseif ($inv->approval === 'Unlock') {
+                $htmlApproval = '<span class="tokabe-pill tokabe-pill-unlock"><i class="las la-lock-open"></i> Unlock</span>';
+            } else {
+                $htmlApproval = '<span class="tokabe-pill tokabe-pill-belum"><i class="las la-lock"></i> ' . e($inv->approval) . '</span>';
+            }
+
+            // 7. Col Deskripsi (Collapsed max 2 items, expanded all items)
             $items = $inv->penjualanBarang ?? collect();
             $totalItems = count($items);
-            $htmlDeskripsi = '<ul class="list-unstyled mb-0">';
-            foreach ($items as $pIdx => $pb) {
-                if ($pIdx < 2) {
-                    $htmlDeskripsi .= '<li class="mb-1 text-wrap">- ' . e($pb->deskripsi_item) . '</li>';
-                } else {
-                    if ($pIdx === 2) {
-                        $htmlDeskripsi .= '<div class="collapsible-extra-items">';
-                    }
-                    $htmlDeskripsi .= '<li class="mb-1 text-wrap">- ' . e($pb->deskripsi_item) . '</li>';
-                    if ($pIdx === $totalItems - 1) {
-                        $htmlDeskripsi .= '</div>';
+            $htmlDeskripsi = '<div class="tokabe-desc-wrap">';
+            if ($totalItems === 0) {
+                $htmlDeskripsi .= '<span class="text-muted fs-12">-</span>';
+            } else {
+                $htmlDeskripsi .= '<div class="tokabe-desc-collapsed">';
+                foreach ($items as $pIdx => $pb) {
+                    if ($pIdx < 2) {
+                        $htmlDeskripsi .= '<div class="tokabe-desc-item" title="' . e($pb->deskripsi_item) . '">- ' . e($pb->deskripsi_item) . '</div>';
                     }
                 }
-            }
-            $htmlDeskripsi .= '</ul>';
-            if ($totalItems > 2) {
-                $htmlDeskripsi .= '<button type="button" class="btn-toggle-row-detail" onclick="toggleSingleRowDetail(this, event)" title="Lebarkan atau kecilkan rincian item baris ini">'
-                    . '<span class="btn-text-collapsed"><i class="las la-angle-down"></i> +' . ($totalItems - 2) . ' lainnya (Lebarkan)</span>'
-                    . '<span class="btn-text-expanded"><i class="las la-angle-up"></i> Kecilkan</span>'
-                    . '</button>';
-            }
+                if ($totalItems > 2) {
+                    $htmlDeskripsi .= '<div class="tokabe-desc-more" role="button" title="Klik untuk melebarkan rincian">+ ' . ($totalItems - 2) . ' item lagi</div>';
+                }
+                $htmlDeskripsi .= '</div>';
 
-            // 7. Col Material
+                if ($totalItems > 2) {
+                    $htmlDeskripsi .= '<div class="tokabe-desc-expanded" style="display: none;">';
+                    foreach ($items as $pb) {
+                        $htmlDeskripsi .= '<div class="tokabe-desc-item" title="' . e($pb->deskripsi_item) . '">- ' . e($pb->deskripsi_item) . '</div>';
+                    }
+                    $htmlDeskripsi .= '<div class="tokabe-desc-less" role="button" title="Klik untuk mengecilkan"><i class="las la-angle-up"></i> Sembunyikan</div>';
+                    $htmlDeskripsi .= '</div>';
+                }
+            }
+            $htmlDeskripsi .= '</div>';
+
+            // 8. Col Bahan Material (Bahan Material)
             $hasMaterial = false;
             $materialItems = [];
             if ($inv->penjualanBarang) {
@@ -402,74 +434,73 @@ class InvoiceController extends Controller
                     }
                 }
             }
+
             $totalMaterials = count($materialItems);
-            if ($hasMaterial) {
-                $htmlMaterial = '<ul class="list-unstyled mb-0">';
+            $htmlMaterial = '<div class="tokabe-desc-wrap tokabe-mat-wrap">';
+            if (!$hasMaterial) {
+                $htmlMaterial .= '<span class="text-muted" style="color: #64748b !important; font-size: 12px;">-</span>';
+            } else {
+                $htmlMaterial .= '<div class="tokabe-desc-collapsed">';
                 foreach ($materialItems as $mIdx => $mItem) {
-                    $matContent = '<li class="mb-2" style="border-bottom: 1px dashed #334155; padding-bottom: 4px;">'
-                        . '<span class="fw-semibold text-primary">' . e($mItem['jenis']) . '</span><br>'
-                        . '<span class="text-muted" style="font-size: 0.8rem;">Dipakai: <b>' . e($mItem['qty']) . ' ' . e($mItem['satuan']) . '</b></span>';
-                    if (!empty($mItem['panjang']) && !empty($mItem['lebar'])) {
-                        $matContent .= '<br><span class="text-muted" style="font-size: 0.75rem;">(Ukuran: ' . e($mItem['panjang']) . ' &times; ' . e($mItem['lebar']) . ')</span>';
-                    }
-                    $matContent .= '</li>';
-
                     if ($mIdx < 2) {
-                        $htmlMaterial .= $matContent;
-                    } else {
-                        if ($mIdx === 2) {
-                            $htmlMaterial .= '<div class="collapsible-extra-items">';
-                        }
-                        $htmlMaterial .= $matContent;
-                        if ($mIdx === $totalMaterials - 1) {
-                            $htmlMaterial .= '</div>';
-                        }
+                        $dimText = (!empty($mItem['panjang']) && !empty($mItem['lebar'])) ? ' <span class="text-muted" style="font-size: 11px;">(' . e($mItem['panjang']) . '&times;' . e($mItem['lebar']) . ')</span>' : '';
+                        $htmlMaterial .= '<div class="tokabe-desc-item" title="' . e($mItem['jenis']) . '"><span class="tokabe-mat-name">- ' . e($mItem['jenis']) . '</span>: <b class="text-info" style="font-weight: 500;">' . e($mItem['qty']) . ' ' . e($mItem['satuan']) . '</b>' . $dimText . '</div>';
                     }
                 }
-                $htmlMaterial .= '</ul>';
                 if ($totalMaterials > 2) {
-                    $htmlMaterial .= '<button type="button" class="btn-toggle-row-detail" onclick="toggleSingleRowDetail(this, event)" title="Lebarkan atau kecilkan rincian material baris ini">'
-                        . '<span class="btn-text-collapsed"><i class="las la-angle-down"></i> +' . ($totalMaterials - 2) . ' lainnya (Lebarkan)</span>'
-                        . '<span class="btn-text-expanded"><i class="las la-angle-up"></i> Kecilkan</span>'
-                        . '</button>';
+                    $htmlMaterial .= '<div class="tokabe-desc-more" role="button" title="Klik untuk melebarkan rincian material">+ ' . ($totalMaterials - 2) . ' material lagi</div>';
                 }
-            } else {
-                $htmlMaterial = '<span class="text-muted" style="font-size: 0.8rem;"><i>Tidak ada material yang dipakai</i></span>';
+                $htmlMaterial .= '</div>';
+
+                if ($totalMaterials > 2) {
+                    $htmlMaterial .= '<div class="tokabe-desc-expanded" style="display: none;">';
+                    foreach ($materialItems as $mItem) {
+                        $dimText = (!empty($mItem['panjang']) && !empty($mItem['lebar'])) ? ' <span class="text-muted" style="font-size: 11px;">(' . e($mItem['panjang']) . '&times;' . e($mItem['lebar']) . ')</span>' : '';
+                        $htmlMaterial .= '<div class="tokabe-desc-item" title="' . e($mItem['jenis']) . '"><span class="tokabe-mat-name">- ' . e($mItem['jenis']) . '</span>: <b class="text-info" style="font-weight: 500;">' . e($mItem['qty']) . ' ' . e($mItem['satuan']) . '</b>' . $dimText . '</div>';
+                    }
+                    $htmlMaterial .= '<div class="tokabe-desc-less" role="button" title="Klik untuk mengecilkan"><i class="las la-angle-up"></i> Sembunyikan</div>';
+                    $htmlMaterial .= '</div>';
+                }
             }
+            $htmlMaterial .= '</div>';
 
-            // 8. Col Alasan
-            $htmlAlasan = e($inv->alasan_batal ?: '-');
-
-            // 9. Col Approval
-            if ($inv->approval === 'Unlock') {
-                $htmlApproval = '<span class="badge-status badge-status-lunas">' . e($inv->approval) . '</span>';
-            } elseif ($inv->approval === 'Lock') {
-                $htmlApproval = '<span class="badge-status badge-status-belum">' . e($inv->approval) . '</span>';
+            // 9. Col Alasan Batal
+            if (!empty($inv->alasan_batal) && trim($inv->alasan_batal) !== '-') {
+                $htmlAlasan = '<div class="tokabe-alasan-wrap" title="' . e($inv->alasan_batal) . '"><span class="tokabe-pill-alasan"><i class="las la-exclamation-circle me-1"></i>' . e(Str::limit($inv->alasan_batal, 35)) . '</span></div>';
             } else {
-                $htmlApproval = '<span class="badge-status badge-status-info">' . e($inv->approval) . '</span>';
+                $htmlAlasan = '<span class="text-muted" style="color: #64748b !important;">-</span>';
             }
 
             // 10. Col Panjar
-            $htmlPanjar = 'Rp ' . number_format($inv->dp ?? 0, 0, ',', '.');
+            $htmlPanjar = '<span class="tokabe-num">Rp ' . number_format($inv->dp ?? 0, 0, ',', '.') . '</span>';
 
-            // 11. Col Total
-            $htmlTotal = '<span class="fw-semibold text-white">Rp ' . number_format($inv->total_pembayaran ?? 0, 0, ',', '.') . '</span>';
+            // 11. Col Total (Bold white)
+            $htmlTotal = '<span class="tokabe-num-bold">Rp ' . number_format($inv->total_pembayaran ?? 0, 0, ',', '.') . '</span>';
 
-            // 12. Col Pembayaran
-            if ($inv->jenis_pembayaran === 'Cash Lunas' || $inv->jenis_pembayaran === 'Transfer Lunas') {
-                $htmlPembayaran = '<span class="badge-status badge-status-lunas">' . e($inv->jenis_pembayaran) . '</span>';
+            // 12. Col Tipe Pembayaran (Pill with dot indicator)
+            $jenisBayar = $inv->jenis_pembayaran ?: '-';
+            if (stripos($jenisBayar, 'DP') !== false || stripos($jenisBayar, 'Belum') !== false) {
+                $htmlTipePembayaran = '<span class="tokabe-pill tokabe-pill-dp"><span class="tokabe-pill-dot">●</span> ' . e($jenisBayar) . '</span>';
+            } elseif (stripos($jenisBayar, 'Transfer') !== false) {
+                $htmlTipePembayaran = '<span class="tokabe-pill tokabe-pill-transfer"><span class="tokabe-pill-dot">●</span> ' . e($jenisBayar) . '</span>';
+            } elseif (stripos($jenisBayar, 'Cash') !== false || stripos($jenisBayar, 'Lunas') !== false) {
+                $htmlTipePembayaran = '<span class="tokabe-pill tokabe-pill-lunas"><span class="tokabe-pill-dot">●</span> ' . e($jenisBayar) . '</span>';
             } else {
-                $labelBayar = $inv->jenis_pembayaran === 'Cash Belum Lunas' ? 'Cash Belum Lunas' : $inv->jenis_pembayaran;
-                $htmlPembayaran = '<span class="badge-status badge-status-belum">' . e($labelBayar) . '</span>';
+                $htmlTipePembayaran = '<span class="tokabe-pill tokabe-pill-batal"><span class="tokabe-pill-dot">●</span> ' . e($jenisBayar) . '</span>';
             }
 
             // 13. Col Order By
-            $htmlOrderBy = e($inv->order_by ?: '-');
+            $orderByVal = trim($inv->order_by ?? '');
+            if (!empty($orderByVal) && $orderByVal !== '-') {
+                $htmlOrderBy = '<span class="tokabe-pill-orderby"><i class="las la-shopping-cart me-1 text-primary"></i>' . e($orderByVal) . '</span>';
+            } else {
+                $htmlOrderBy = '<span class="text-muted" style="color: #64748b !important;">-</span>';
+            }
 
             // 14. Col Admin
-            $htmlAdmin = e($inv->user ? $inv->user->nama : 'Tidak Diketahui');
+            $htmlAdmin = '<span class="tokabe-admin-text">' . e($inv->user ? $inv->user->nama : 'Tidak Diketahui') . '</span>';
 
-            // 15. Col Aksi
+            // WhatsApp link for customer
             $no_hp_cust = $inv->no_telepon ?? '';
             $no_hp_cust = preg_replace('/[^0-9]/', '', $no_hp_cust);
             if (substr($no_hp_cust, 0, 1) === '0') {
@@ -512,43 +543,47 @@ class InvoiceController extends Controller
                 $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
             }
 
-            $htmlAksi = '<div class="dropdown d-inline-block">';
-            $htmlAksi .= '<button class="btn btn-action-ghost btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="window" data-bs-popper-config=\'{"strategy":"fixed"}\'>';
-            $htmlAksi .= '<i class="las la-ellipsis-h align-middle fs-16"></i>';
+            // 12. Col Aksi (Sleek 3-dots button ⋮)
+            $htmlAksi = '<div class="dropdown text-center tokabe-action-dropdown">';
+            $htmlAksi .= '<button class="btn btn-tokabe-action-dots" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="window" data-bs-popper-config=\'{"strategy":"fixed"}\' title="Menu Aksi">';
+            $htmlAksi .= '<i class="las la-ellipsis-v"></i>';
             $htmlAksi .= '</button>';
-            $htmlAksi .= '<ul class="dropdown-menu dropdown-menu-end shadow-lg">';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print fs-18 align-middle me-2 text-primary"></i>Cetak Invoice (ASLI)</a></li>';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print fs-18 align-middle me-2 text-danger"></i>Cetak Invoice (COPY)</a></li>';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download fs-18 align-middle me-2 text-muted"></i>Download</a></li>';
-            $htmlAksi .= '<li><a class="dropdown-item" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Kirim Invoice (WA)</a></li>';
+            $htmlAksi .= '<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg">';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print me-2 text-primary"></i>Cetak Nota (ASLI)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print me-2 text-danger"></i>Cetak Nota (COPY)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download me-2 text-info"></i>Download Invoice</a></li>';
+
+            if (!empty($no_hp_cust)) {
+                $htmlAksi .= '<li><a class="dropdown-item text-success" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</a></li>';
+            }
 
             if ($isOwner && $inv->approval === 'Unlock') {
-                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-check-square fs-18 align-middle me-2 text-muted"></i>Lock</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-lock me-2 text-warning"></i>Lock Invoice</a></li>';
             }
 
             if ($isAdmin && $inv->approval !== 'Unlock') {
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink2 . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Unlock (Owner 2)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Unlock (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Unlock (Owner 2)</a></li>';
             }
 
-            $htmlAksi .= '<li><a class="dropdown-item btn-buat-spk" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#buatSpkModal"><i class="las la-clipboard-list fs-18 align-middle me-2 text-primary"></i>Buat SPK</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item btn-buat-spk" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#buatSpkModal"><i class="las la-clipboard-list me-2 text-primary"></i>Buat SPK Baru</a></li>';
 
             if ($isAdmin && $inv->status !== 'Lunas') {
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas1 . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Pelunasan (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp fs-18 align-middle me-2 text-success"></i>Request Pelunasan (Owner 2)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Pelunasan (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Pelunasan (Owner 2)</a></li>';
             }
 
             $canManage = !$isAdmin || $inv->approval === 'Unlock';
             if ($canManage) {
-                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen fs-18 align-middle me-2 text-muted"></i>Edit</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-paste fs-18 align-middle me-2 text-muted"></i>Update Log</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen me-2 text-info"></i>Edit Invoice</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-history me-2 text-secondary"></i>Riwayat Log</a></li>';
                 if ($inv->status !== 'Batal') {
-                    $htmlAksi .= '<li><button type="button" class="dropdown-item" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-folder-minus fs-18 align-middle me-2 text-muted"></i>Invoice Batal</button></li>';
+                    $htmlAksi .= '<li><button type="button" class="dropdown-item text-danger" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-times-circle me-2"></i>Invoice Batal</button></li>';
                 }
             }
 
             $htmlAksi .= '<li class="dropdown-divider"></li>';
-            $htmlAksi .= '<li><button class="dropdown-item" type="button" onclick="showConfirmation(\'' . addslashes(e($inv->nomor_invoice)) . '\', \'' . $inv->id . '\')"><i class="las la-trash-alt fs-18 align-middle me-2 text-muted"></i>Delete</button></li>';
+            $htmlAksi .= '<li><button class="dropdown-item text-danger fw-semibold" type="button" onclick="showConfirmation(\'' . addslashes(e($inv->nomor_invoice)) . '\', \'' . $inv->id . '\')"><i class="las la-trash-alt me-2"></i>Hapus Invoice</button></li>';
             $htmlAksi .= '</ul></div>';
 
             $data[] = [
@@ -563,13 +598,13 @@ class InvoiceController extends Controller
                 3 => $htmlTelepon,
                 4 => $htmlTgl,
                 5 => $htmlStatus,
-                6 => $htmlDeskripsi,
-                7 => $htmlMaterial,
-                8 => $htmlAlasan,
-                9 => $htmlApproval,
+                6 => $htmlApproval,
+                7 => $htmlDeskripsi,
+                8 => $htmlMaterial,
+                9 => $htmlAlasan,
                 10 => $htmlPanjar,
                 11 => $htmlTotal,
-                12 => $htmlPembayaran,
+                12 => $htmlTipePembayaran,
                 13 => $htmlOrderBy,
                 14 => $htmlAdmin,
                 15 => $htmlAksi,
