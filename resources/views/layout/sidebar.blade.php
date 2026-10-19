@@ -35,6 +35,11 @@
                             <i class="las la-users-cog fs-16 text-warning"></i> Kelola Karyawan
                         </a>
                         @endif
+                        @if (Auth::check() && Auth::user()->role == 'Pemilik')
+                        <a class="dropdown-item shadcn-item d-flex align-items-center gap-2" href="{{ route('perusahaan.list') }}">
+                            <i class="ri-building-line fs-16 text-success"></i> Kelola Perusahaan
+                        </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -182,6 +187,14 @@
                     <a class="nav-link menu-link {{ (Request::is('*budget*') || Request::routeIs('budget.*')) ? 'active' : '' }}" href="{{ route('budget.list') }}">
                         <span class="icon-box"><i class="ri-coins-line menu-icon"></i></span>
                         <span class="menu-text" data-key="t-invoices">Daftar Budget</span>
+                    </a>
+                </li>
+
+                <!-- Perusahaan Management -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ (Request::is('*perusahaan*') || Request::routeIs('perusahaan.*')) ? 'active' : '' }}" href="{{ route('perusahaan.list') }}">
+                        <span class="icon-box"><i class="ri-building-line menu-icon"></i></span>
+                        <span class="menu-text" data-key="t-invoices">Daftar Perusahaan</span>
                     </a>
                 </li>
                 @endif

@@ -129,13 +129,16 @@ class SpjController extends Controller
     public function edit(string $id)
     {
         $spj = Spj::find($id);
+        if (!$spj) {
+            Alert::error('Gagal', 'Data SPJ tidak ditemukan');
+            return redirect('daftar-spj');
+        }
         $tanggal = Carbon::now(new DateTimeZone('Asia/Jakarta'));
         $year = $tanggal->format('Y'); // Get the current year
         $month = $tanggal->format('m'); // Get the current month
         $day = $tanggal->format('d');
         $today = sprintf('%s/%s/%s', $day, $month, $year);
 
-       
         return view('pages.SPJ.edit-spj', compact('spj', 'today'));
     }
 
@@ -145,7 +148,11 @@ class SpjController extends Controller
     public function update(Request $request, string $id)
     {
         $spj = Spj::find($id);
-            $validator = Validator::make($request->all(), [
+        if (!$spj) {
+            Alert::error('Gagal', 'Data SPJ tidak ditemukan');
+            return redirect('daftar-spj');
+        }
+        $validator = Validator::make($request->all(), [
             'spj' => 'required|string|in:Ibekami,Ibeka,Tokabe,Personal',
             'nomor_spj' => 'required|string',
             'tanggal_tugas' => 'required|date_format:d/m/Y',
@@ -203,6 +210,10 @@ class SpjController extends Controller
     public function destroy(string $id)
     {
         $spj = Spj::find($id);
+        if (!$spj) {
+            Alert::error('Gagal', 'Data SPJ tidak ditemukan');
+            return redirect('daftar-spj');
+        }
         
         $spj->delete();
         Alert::success('Berhasil', 'Data berhasil dihapus');
@@ -257,6 +268,10 @@ class SpjController extends Controller
         Carbon::setLocale('id');
         $current_date=Carbon::now()->format('d-m-Y'); 
         $spj = Spj::find($id);
+        if (!$spj) {
+            Alert::error('Gagal', 'Data SPJ tidak ditemukan');
+            return redirect('daftar-spj');
+        }
         $spj->tanggal_tugas = Carbon::parse($spj->tanggal_tugas)->format('d-m-y');
         $spj->waktu_berangkat = Carbon::parse($spj->waktu_berangkat)->format('H:i');
         $spj->jam_kembali = Carbon::parse($spj->jam_kembali)->format('H:i');
@@ -269,6 +284,10 @@ class SpjController extends Controller
         Carbon::setLocale('id');
         $current_date=Carbon::now()->format('d-m-Y'); 
         $spj = Spj::find($id);
+        if (!$spj) {
+            Alert::error('Gagal', 'Data SPJ tidak ditemukan');
+            return redirect('daftar-spj');
+        }
         $spj->tanggal_tugas = Carbon::parse($spj->tanggal_tugas)->format('d-m-y');
         $spj->waktu_berangkat = Carbon::parse($spj->waktu_berangkat)->format('H:i');
         $spj->jam_kembali = Carbon::parse($spj->jam_kembali)->format('H:i');

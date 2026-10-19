@@ -149,21 +149,43 @@ class BarangController extends Controller
     public function editStokTinta($id)
     {
         $tinta = Barang::find($id);
+        if (!$tinta) {
+            Alert::error('Error', 'Data tinta tidak ditemukan');
+            return redirect(route('stokTinta'));
+        }
         if ($tinta->stok < 0) {
             $tinta->stok = 0;
         }
-        $format_tgl = Carbon::createFromFormat('Y-m-d H:i:s', $tinta->tgl_masuk)->format('d/m/Y');
+        try {
+            $format_tgl = $tinta->tgl_masuk ? Carbon::parse($tinta->tgl_masuk)->format('d/m/Y') : Carbon::now()->format('d/m/Y');
+        } catch (\Exception $e) {
+            $format_tgl = Carbon::now()->format('d/m/Y');
+        }
         return view('pages.barang.edit-tinta', compact('tinta', 'format_tgl'));
     }
 
     public function updateTinta(Request $request, $id)
     {
         $tinta = Barang::find($id);
+        if (!$tinta) {
+            Alert::error('Error', 'Data tinta tidak ditemukan');
+            return redirect(route('stokTinta'));
+        }
         if ($request->stok < 0) {
             Alert::error('Stok tidak boleh di bawah 0');
         }
         $stok = $request->stok;
         $noComaStok = str_replace(',', '', $stok);
+
+        try {
+            $tglMasuk = $request->tgl_masuk 
+                ? (str_contains($request->tgl_masuk, '/') 
+                    ? Carbon::createFromFormat('d/m/Y', $request->tgl_masuk)->format('Y-m-d') 
+                    : Carbon::parse($request->tgl_masuk)->format('Y-m-d')) 
+                : Carbon::now()->format('Y-m-d');
+        } catch (\Exception $e) {
+            $tglMasuk = Carbon::now()->format('Y-m-d');
+        }
 
         $tinta->update([
             'kategori_id' => $request->kategori,
@@ -172,7 +194,7 @@ class BarangController extends Controller
             'stok' => $noComaStok,
             'harga_modal' => $request->harga_modal,
             'harga_jual' => $request->harga_jual,
-            'tgl_masuk' => Carbon::createFromFormat('d/m/Y', $request->tgl_masuk)->format('Y-m-d'),
+            'tgl_masuk' => $tglMasuk,
         ]);
         Alert::success('Tinta Berhasil diUpdate');
         return redirect(route('stokTinta'));

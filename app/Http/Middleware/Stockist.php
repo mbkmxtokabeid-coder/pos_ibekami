@@ -16,14 +16,16 @@ class Stockist
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->role === 'Pemilik' || auth()->user()->role === 'Stockist'|| auth()->user()->role === 'Admin'|| auth()->user()->role === 'Produksi') {
-            return $next($request);
-        } elseif (auth()->user()->role === 'Admin') {
-            Alert::error('Kamu tidak memiliki akses');
-            return redirect('/');
-        } else {
-            Alert::error('Kamu tidak memiliki akses');
-            return redirect('/daftar-spk');
+        if (!auth()->check()) {
+            return redirect('/login');
         }
+
+        $allowedRoles = ['pemilik', 'stockist', 'admin', 'admintkb', 'produksi'];
+        if (in_array(strtolower(auth()->user()->role), $allowedRoles)) {
+            return $next($request);
+        }
+
+        Alert::error('Kamu tidak memiliki akses');
+        return redirect('/profile');
     }
 }

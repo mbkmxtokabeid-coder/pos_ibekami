@@ -32,7 +32,7 @@
         <div class="col-xxl-12">
           <div class="card">
             {{-- Start Isi Form --}}
-            <form action="/invoice/update-spk/{{$spk->id}}" class="needs-validation" novalidate method="POST" enctype="multipart/form-data">
+            <form action="{{ url('/update-spk/' . $spk->id) }}" class="needs-validation" novalidate method="POST" enctype="multipart/form-data">
               @csrf
               @method('put')
               <div class="card-body p-4">
@@ -115,7 +115,7 @@
                         </div>
                           <div class="col-lg-6">
                             <input type="text" class="form-control form-control-md" id="pelanggan" name="customer" list="customer" value="{{$spk->customer}}" placeholder="Nama Customer">
-                            <datalist>
+                            <datalist id="customer">
                               @foreach ($customer as $cust)
                                   <option value="{{$cust}}"></option>
                               @endforeach
@@ -124,19 +124,19 @@
                         </div>
                       <div class="row mb-3">
                         <div class="col-lg-3">
-                         <label for="jumlah" class="form-label col-form-label col-form-label-md">Jumlah</label>
+                         <label for="cleave-numeral" class="form-label col-form-label col-form-label-md">Jumlah</label>
                         </div>
                           <div class="col-lg-6">
-                            <input type="text" class="form-control form-control-md" id="cleave-numeral" value="{{$spk->jumlah}}" name="jumlah" id="jumlah" placeholder="Jumlah">
+                            <input type="text" class="form-control form-control-md" id="cleave-numeral" value="{{$spk->jumlah}}" name="jumlah" placeholder="Jumlah">
                           </div>
                         </div>
                       <div class="row mb-3">
                         <div class="col-lg-3">
-                         <label for="satuan" class="form-label col-form-label col-form-label-md">Satuan</label>
+                          <label for="satuan" class="form-label col-form-label col-form-label-md">Satuan</label>
                         </div>
                           <div class="col-lg-6">
                             <select class="form-select bg-light border-0" id="choices-orderBy" name="satuan" required>
-                              <option value="{{$spk->satuan}}">{{$spk->satuan}}</option> --}}
+                              <option value="{{$spk->satuan}}">{{$spk->satuan}}</option>
                               @foreach(['Pcs', 'Set', 'Und', 'Blok', 'Rim', 'Lbr', 'Kotak'] as $option)
                                   @if($option !== $spk->satuan)
                                       <option value="{{ $option }}">{{ $option }}</option>

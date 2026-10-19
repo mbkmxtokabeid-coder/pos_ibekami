@@ -57,12 +57,20 @@ class VendorController extends Controller
     function edit($id)
     {
         $vendor = Vendor::find($id);
+        if (!$vendor) {
+            Alert::error('Gagal', 'Data vendor tidak ditemukan');
+            return redirect(route('vendor.list'));
+        }
         return view('pages.vendorPgs.edit-vendor', compact('vendor'));
     }
 
     function update(Request $request, $id)
     {
         $vendor = Vendor::find($id);
+        if (!$vendor) {
+            Alert::error('Gagal', 'Data vendor tidak ditemukan');
+            return redirect(route('vendor.list'));
+        }
         $vendor->update([
             'nama_vendor' => $request->vendor,
             'total_pembelian' => $vendor->total_pembelian,

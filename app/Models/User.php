@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'nomor_telepon',
         'role',
+        'status',
         'device_token',
     ];
 
@@ -45,7 +46,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    protected $guarded = [];
 
     public function getNameAttribute()
     {

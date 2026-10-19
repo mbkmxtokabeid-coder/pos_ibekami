@@ -97,26 +97,27 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('invoices/{selectedOption}', [InvoiceController::class, 'getInvoiceByOption']);
             Route::get('editInvoice/{id}/edit', [InvoiceController::class, 'editInvoice']);
             Route::put('updateInvoice/{id}', [InvoiceController::class, 'updateInvoice'])->name('update-invoice');
+            Route::put('/invoice/updateInvoice/{id}', [InvoiceController::class, 'updateInvoice']);
             Route::delete('invoice/deleteInvoice/{id}', [PenjualanController::class, 'destroy'])
                 ->middleware('role:Pemilik')
                 ->name('delete.invoice');
             
             // ROUTE UBAH STATUS INVOICE (Mendukung dengan/tanpa prefix /invoice/ dan spasi)
-            Route::match(['get', 'post'], '/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])
+            Route::post('/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])
                 ->middleware('role:Pemilik')
                 ->name('invoice.batal');
-            Route::match(['get', 'post'], '/invoice/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
-            Route::match(['get', 'post'], '/invoice/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
-            Route::match(['get', 'post'], '/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
+            Route::post('/invoice/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
+            Route::post('/invoice/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
+            Route::post('/ubah status batal/{id}', [InvoiceController::class, 'storeStatusBatal'])->middleware('role:Pemilik');
             
-            Route::match(['get', 'post'], '/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas'])->name('invoice.lunas');
-            Route::match(['get', 'post'], '/invoice/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas']);
+            Route::post('/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas'])->middleware('role:Pemilik')->name('invoice.lunas');
+            Route::post('/invoice/ubah-status-lunas/{id}', [InvoiceController::class, 'statusLunas'])->middleware('role:Pemilik');
             
-            Route::match(['get', 'post'], '/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->name('invoice.unlock');
-            Route::match(['get', 'post'], '/invoice/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock']);
+            Route::post('/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->middleware('role:Pemilik')->name('invoice.unlock');
+            Route::post('/invoice/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->middleware('role:Pemilik');
             
-            Route::match(['get', 'post'], '/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->name('invoice.lock');
-            Route::match(['get', 'post'], '/invoice/ubah-status-lock/{id}', [InvoiceController::class, 'lock']);
+            Route::post('/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik')->name('invoice.lock');
+            Route::post('/invoice/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik');
             
             Route::get('/invoice-approval/{id}', [InvoiceController::class, 'approvalPage'])
             ->middleware('auth', 'role:Pemilik') 
@@ -149,10 +150,13 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/daftar-spk', [SpkController::class, 'indexSPK'])->name('daftar-spk');
             Route::get('/tambah-spk', [SpkController::class, 'addSPK']);
             Route::post('/store-spk', [SpkController::class, 'storeSPK']);
+            Route::post('/invoice/store-spk', [SpkController::class, 'storeSPK']);
             Route::post('/store-spk-dari-invoice', [SpkController::class, 'storeDariInvoice'])->name('spk.store_dari_invoice');
             Route::get('/edit-spk/{id}', [SpkController::class, 'editSPK']);
             Route::put('/update-spk/{id}', [SpkController::class, 'updateSPK']);
+            Route::put('/invoice/update-spk/{id}', [SpkController::class, 'updateSPK']);
             Route::delete('/delete-spk/{id}', [SpkController::class, 'destroySPK']);
+            Route::delete('/invoice/delete-spk/{id}', [SpkController::class, 'destroySPK']);
             Route::get('/cetak-spk/{id}', [SpkController::class, 'cetakSPK']);
             Route::get('/ubah-status-spk/{id}', [SpkController::class, 'statusSPK']);
             Route::get('/lihat-spk/{id}', [SpkController::class, 'lihatSPK']);
@@ -174,8 +178,10 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('addBarang', [BarangController::class, 'create']);
             Route::post('barang', [BarangController::class, 'store'])->name('barang.store');
             Route::delete('deleteBarang/{id}', [BarangController::class, 'destroy']);
+            Route::delete('/invoice/deleteBarang/{id}', [BarangController::class, 'destroy']);
             Route::get('/edit-stok/{id}', [BarangController::class, 'edit']);
             Route::put('/update-stok/{id}', [BarangController::class, 'update']);
+            Route::put('/invoice/update-stok/{id}', [BarangController::class, 'update']);
             Route::post('/barang/toggle-material/{id}', [BarangController::class, 'toggleMaterial'])->name('barang.toggle_material');
             Route::post('/invoice/barang/toggle-material/{id}', [BarangController::class, 'toggleMaterial'])->name('barang.toggle_material_invoice');
             
@@ -186,6 +192,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::delete('deleteMaterial/{id}', [MaterialController::class, 'destroy']);
             Route::get('/edit-stokMaterial/{id}', [MaterialController::class, 'edit']);
             Route::put('/update-stokMaterial/{id}', [MaterialController::class, 'update']);
+            Route::put('/invoice/update-stokMaterial/{id}', [MaterialController::class, 'update']);
 
              // ROUTE INVENTARIS
             Route::get('listInventaris', [InventarisController::class, 'index'])->name('listInventaris');
@@ -194,6 +201,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::delete('deleteInventaris/{id}', [InventarisController::class, 'destroy']);
             Route::get('/edit-stokInventaris/{id}', [InventarisController::class, 'edit']);
             Route::put('/update-stokInventaris/{id}', [InventarisController::class, 'update']);
+            Route::put('/invoice/update-stokInventaris/{id}', [InventarisController::class, 'update']);
 
             // ROUTE VENDOR & PEMBELIAN
             Route::get('/daftar-vendor', [VendorController::class, 'index'])->name('vendor.list');
@@ -210,10 +218,10 @@ Route::group(['middleware' => ['auth']], function () {
             Route::put('/update-pembelian/{uid}', [PembelianController::class, 'update'])->name('pembelian.update');
             Route::delete('/delete-pembelian/{uid}', [PembelianController::class, 'destroy'])->name('pembelian.delete');
             Route::delete('/pembelian/{uid}', [PembelianController::class, 'destroy'])->name('pembelian.destroy');
-            Route::get('/lunas-pembelian/{uid}', [PembelianController::class, 'lunas'])->name('pembelian.lunas');
-            Route::post('/pembelian/unlock/{id}', [PembelianController::class, 'unlock'])->name('pembelian.unlock');
-            Route::get('/pembelian/lock/{id}', [PembelianController::class, 'lock'])->name('pembelian.lock');
-            Route::get('/pembelian-approval/{id}', [PembelianController::class, 'approvalPage'])->name('pembelian.approval.page');
+            Route::get('/lunas-pembelian/{uid}', [PembelianController::class, 'lunas'])->middleware('role:Pemilik')->name('pembelian.lunas');
+            Route::post('/pembelian/unlock/{id}', [PembelianController::class, 'unlock'])->middleware('role:Pemilik')->name('pembelian.unlock');
+            Route::get('/pembelian/lock/{id}', [PembelianController::class, 'lock'])->middleware('role:Pemilik')->name('pembelian.lock');
+            Route::get('/pembelian-approval/{id}', [PembelianController::class, 'approvalPage'])->middleware('role:Pemilik')->name('pembelian.approval.page');
 
             // ROUTE DAFTAR CUSTOMER
             Route::get('/daftar-pelanggan', [CustomerController::class, 'index'])->name('daftar.pelanggan');
@@ -279,6 +287,7 @@ Route::group(['middleware' => ['auth']], function () {
         // ====================================================================
         Route::get('/profile', [UserController::class, 'profiles'])->name('auth.profile');
         Route::put('/profile/update/{id}', [UserController::class, 'updateProfile']);
+        Route::put('/invoice/profile/update/{id}', [UserController::class, 'updateProfile']);
         
         Route::get('invoice/get-barang-data/{kategoriId}', [BarangController::class, 'dataBarang']);
         Route::get('invoice/get-potensi-profit/{kategoriId}', [BarangController::class, 'potensiProfit']);

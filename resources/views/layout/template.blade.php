@@ -4,6 +4,7 @@
 <head>
 
 <meta charset="utf-8" />
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="Kasir Ibekami" content="Ibekami">
 <title>Ibekami Kasir</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -669,6 +670,7 @@
         pointer-events: auto !important;
         transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1) 0.06s,
                     transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) 0.06s !important;
+    }
     /* Header Topbar Removed */
     #page-topbar {
         display: none !important;
@@ -719,7 +721,7 @@
         @csrf
     </form>
 
-    @extends('layout.vendor-script')
+    @include('layout.vendor-script')
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {

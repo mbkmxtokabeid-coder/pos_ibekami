@@ -64,7 +64,7 @@ class POController extends Controller
                   DATE_FORMAT(tgl_penjualan, '%Y-%m-%d') AS tanggal_penjualan,
                   DATE_FORMAT(tgl_penjualan, '%Y-%m-%d') AS bulan_penjualan,
                   total_pembayaran AS total_harian,
-                  CASE WHEN MONTH(tgl_penjualan) AND YEAR(tgl_penjualan) = YEAR(NOW()) THEN total_pembayaran ELSE 0 END AS total_bulanan
+                  CASE WHEN MONTH(tgl_penjualan) = MONTH(NOW()) AND YEAR(tgl_penjualan) = YEAR(NOW()) THEN total_pembayaran ELSE 0 END AS total_bulanan
               FROM penjualan
               WHERE jenis_pembayaran = 'PO'
               AND status <> 'Batal'

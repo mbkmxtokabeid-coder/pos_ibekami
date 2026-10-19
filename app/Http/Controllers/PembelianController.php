@@ -209,6 +209,18 @@ class PembelianController extends Controller
             return redirect()->back();
         }
 
+        if (!$request->has('deskripsi') || !is_array($request->deskripsi) || count($request->deskripsi) === 0) {
+            Alert::error('Error', 'Barang pembelian harus diisi minimal 1 item.');
+            return redirect()->back()->withInput();
+        }
+
+        foreach ($request->deskripsi as $key => $deskripsi) {
+            if (empty($deskripsi) || empty($request->qty[$key]) || empty($request->satuan[$key]) || (!isset($request->harga[$key]) && $request->harga[$key] !== '0')) {
+                Alert::error('Error', 'Harap lengkapi semua rincian barang pembelian.');
+                return redirect()->back()->withInput();
+            }
+        }
+
         $terbayar = intval(str_replace(['.', ','], '', $request->terbayar ?? '0'));
         $sisa = intval(str_replace(['.', ','], '', $request->sisa ?? '0'));
         $jumlahTot = intval(str_replace(['.', ','], '', $request->jumlahTotal ?? '0'));
@@ -216,65 +228,62 @@ class PembelianController extends Controller
             $terbayar = $jumlahTot;
             $sisa = 0;
         }
-        if ($pembelian->anggaran !== $request->anggaran) {
-            $budget = Budget::find($pembelian->anggaran);
-            Budget::where('id', $pembelian->anggaran)->update([
-                'anggaran' => $budget->anggaran + $pembelian->terbayar
-            ]);
-        }
 
-        $selisih_bayar = $terbayar - $pembelian->terbayar;
-        $selisih_sisa = $sisa - $pembelian->sisa;
-        $selisih_total = $jumlahTot - $pembelian->jumlah_harga;
-        
-        $pembelian->update([
-            'anggaran' => $request->anggaran,
-            'id_vendor' => $pembelian->id_vendor,
-            'nomor_inv' => $request->no_inv,
-            'tanggal' => $request->tgl,
-            'tgl_jto' => $request->tgl_jto,
-            'status' => $request->status,
-            'terbayar' => $terbayar,
-            'sisa' => $sisa,
-            'jumlah_harga' => $jumlahTot,
-        ]);
-        PembelianBarang::where('pembelian_id', $id)->delete();
+        DB::transaction(function () use ($pembelian, $request, $terbayar, $sisa, $jumlahTot, $id) {
+            $oldAnggaranId = $pembelian->anggaran;
+            $newAnggaranId = $request->anggaran;
+            $oldTerbayar = (float) $pembelian->terbayar;
+            $newTerbayar = (float) $terbayar;
 
-        $budgets = Budget::find($request->anggaran);
-        Budget::where('id', $request->anggaran)->update([
-            'anggaran' => $budgets->anggaran - $terbayar
-        ]);
-
-        $vendor = Vendor::find($pembelian->id_vendor);
-        
-        Vendor::where('id', $pembelian->id_vendor)->update([
-            'pembelian_terbayar' => $vendor->pembelian_terbayar + $selisih_bayar,
-            'pembelian_sisa' => $vendor->pembelian_sisa + $selisih_sisa,
-            'total_pembelian' => $vendor->total_pembelian + $selisih_total,
-        ]);
-
-        foreach ($request->deskripsi as $key => $deskripsi) {
-            if (empty($deskripsi) || empty($request->qty[$key]) || empty($request->satuan[$key]) || (!isset($request->harga[$key]) && $request->harga[$key] !== '0')) {
-                Alert::error('error', 'Barang Harus diisi');
-                return redirect()->back()->withInput();
+            if ($oldAnggaranId !== $newAnggaranId) {
+                // Kembalikan dana ke anggaran lama
+                $this->adjustBudget($oldAnggaranId, $oldTerbayar);
+                // Potong dana dari anggaran baru
+                $this->adjustBudget($newAnggaranId, -$newTerbayar);
             } else {
-                $harga_barang = intval(str_replace(['.', ','], '', $request->harga[$key]));
-                $qty = intval($request->qty[$key]);
-                $satuan = $request->satuan[$key];
+                // Anggaran sama: potong selisih pembayarannya saja
+                $selisihAnggaran = $newTerbayar - $oldTerbayar;
+                $this->adjustBudget($newAnggaranId, -$selisihAnggaran);
+            }
+
+            $selisih_bayar = $terbayar - $pembelian->terbayar;
+            $selisih_sisa = $sisa - $pembelian->sisa;
+            $selisih_total = $jumlahTot - $pembelian->jumlah_harga;
+
+            $this->adjustVendor($pembelian->id_vendor, $selisih_total, $selisih_bayar, $selisih_sisa);
+
+            $pembelian->update([
+                'anggaran' => $request->anggaran,
+                'id_vendor' => $pembelian->id_vendor,
+                'nomor_inv' => $request->no_inv,
+                'tanggal' => $request->tgl,
+                'tgl_jto' => $request->tgl_jto,
+                'status' => $request->status,
+                'terbayar' => $terbayar,
+                'sisa' => $sisa,
+                'jumlah_harga' => $jumlahTot,
+            ]);
+
+            PembelianBarang::where('pembelian_id', $id)->delete();
+
+            foreach ($request->deskripsi as $key => $deskripsi) {
+                $harga_barang = intval(str_replace(['.', ','], '', $request->harga[$key] ?? '0'));
+                $qty = intval($request->qty[$key] ?? 1);
+                $satuan = $request->satuan[$key] ?? 'Pcs';
                 $total = $harga_barang * $qty;
 
-                // $total = $request->jumlah[$key];
                 PembelianBarang::create([
                     'id' => Uuid::uuid4()->toString(),
                     'pembelian_id' => $pembelian->id,
                     'deskripsi' => $deskripsi,
-                    'satuan' => $request->satuan[$key],
+                    'satuan' => $satuan,
                     'harga_barang' => $harga_barang,
                     'qty' => $qty,
                     'total' => $total,
                 ]);
             }
-        }
+        });
+
         Alert::success('Berhasil', 'Data Pembelian Berhasil diupdate');
         return redirect(route('pembelian.list', ['uid' => $pembelian->id_vendor]));
     }
@@ -301,6 +310,11 @@ class PembelianController extends Controller
 
     function lunas($uid)
     {
+        if (strtolower(auth()->user()->role) !== 'pemilik') {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik yang memiliki hak akses ini.');
+            return redirect('/profile');
+        }
+
         DB::transaction(function () use ($uid) {
             $pembelian = Pembelian::lockForUpdate()->findOrFail($uid);
             $sisa = $pembelian->sisa;
@@ -324,6 +338,11 @@ class PembelianController extends Controller
 
     public function unlock($id)
     {
+        if (strtolower(auth()->user()->role) !== 'pemilik') {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik yang memiliki hak akses ini.');
+            return redirect('/profile');
+        }
+
         $pembelian = Pembelian::find($id);
         if (!$pembelian) {
             Alert::error('Gagal', 'Data pembelian tidak ditemukan.');
@@ -340,6 +359,11 @@ class PembelianController extends Controller
 
     public function lock($id)
     {
+        if (strtolower(auth()->user()->role) !== 'pemilik') {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik yang memiliki hak akses ini.');
+            return redirect('/profile');
+        }
+
         $pembelian = Pembelian::find($id);
         if (!$pembelian) {
             Alert::error('Gagal', 'Data pembelian tidak ditemukan.');
@@ -356,6 +380,11 @@ class PembelianController extends Controller
 
     public function approvalPage($id)
     {
+        if (strtolower(auth()->user()->role) !== 'pemilik') {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik yang memiliki hak akses ini.');
+            return redirect('/profile');
+        }
+
         $pembelian = Pembelian::with(['vendor', 'barang'])->findOrFail($id);
         return view('pages.pembelian.approval', compact('pembelian'));
     }

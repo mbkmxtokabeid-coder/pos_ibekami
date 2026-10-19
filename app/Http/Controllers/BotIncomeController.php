@@ -8,11 +8,17 @@ use Illuminate\Support\Facades\DB;
 
 class BotIncomeController extends Controller
 {
+    private function isValidToken($token): bool
+    {
+        $secret = config('services.bot.token', env('BOT_INCOME_TOKEN', 'Ibeka123'));
+        return hash_equals((string) $secret, (string) $token);
+    }
+
     // function income yearly
     public function getIncome($token)
     {
-        // Validasi token sederhana
-        if ($token !== "Ibeka123") {
+        // Validasi token via timing-safe comparison dan env fallback
+        if (!$this->isValidToken($token)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -40,39 +46,39 @@ class BotIncomeController extends Controller
 
     public function getPerHari($token)
     {
-    if ($token !== "Ibeka123") {
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
+        if (!$this->isValidToken($token)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-    $results = Penjualan::selectRaw('DATE(tgl_penjualan) as tanggal, SUM(total_pembayaran) as total_harian')
-        ->whereYear('tgl_penjualan', now()->year)
-        ->whereMonth('tgl_penjualan', now()->month)
-        ->where('jenis_pembayaran', '<>', 'PO')
-        ->where('status', 'Lunas')
-        ->whereNull('deleted_at')
-        ->groupBy('tanggal')
-        ->orderBy('tanggal', 'ASC')
-        ->get();
+        $results = Penjualan::selectRaw('DATE(tgl_penjualan) as tanggal, SUM(total_pembayaran) as total_harian')
+            ->whereYear('tgl_penjualan', now()->year)
+            ->whereMonth('tgl_penjualan', now()->month)
+            ->where('jenis_pembayaran', '<>', 'PO')
+            ->where('status', 'Lunas')
+            ->whereNull('deleted_at')
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'ASC')
+            ->get();
 
-    $tanggal = [];
-    $total = [];
+        $tanggal = [];
+        $total = [];
 
-    foreach ($results as $row) {
-        $tanggal[] = $row->tanggal;
-        $total[] = $row->total_harian;
-    }
+        foreach ($results as $row) {
+            $tanggal[] = $row->tanggal;
+            $total[] = $row->total_harian;
+        }
 
-    return response()->json([
-        'tanggalPenjualan' => $tanggal,
-        'totalHarian' => $total,
-    ]);
+        return response()->json([
+            'tanggalPenjualan' => $tanggal,
+            'totalHarian' => $total,
+        ]);
     }
     
     public function getPerJamHarian($token)
-{
-    if ($token !== "Ibeka123") {
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
+    {
+        if (!$this->isValidToken($token)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
     try {
         $results = Penjualan::selectRaw("

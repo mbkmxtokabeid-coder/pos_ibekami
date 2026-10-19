@@ -17,10 +17,15 @@ class Karyawan
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->role === 'Pemilik' || auth()->user()->role === 'Admin' || auth()->user()->role === 'Produksi') {
+        if (!auth()->check()) {
+            return redirect('/login');
+        }
+
+        $allowedRoles = ['pemilik', 'admin', 'admintkb', 'produksi', 'stockist', 'magang'];
+        if (in_array(strtolower(auth()->user()->role), $allowedRoles)) {
             return $next($request);
         }
         Alert::error('Kamu tidak memiliki akses Karyawan');
-        return redirect('/listBarang');
+        return redirect('/profile');
     }
 }

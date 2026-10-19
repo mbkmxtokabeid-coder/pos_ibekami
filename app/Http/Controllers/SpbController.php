@@ -108,14 +108,14 @@ class SpbController extends Controller
     public function cetakSPB($id)
     {
         $spb = Spb::where('id', $id)->first();
+        if (!$spb) {
+            Alert::error('Gagal', 'Data SPB tidak ditemukan');
+            return redirect('daftar-spb');
+        }
         $brg_spb = BarangSpb::where('spb', $id)->get();
         $tanggal = $spb->created_at;
         $barangs = [];
         Carbon::setLocale('id');
-        // $deskripsi = [];
-        // $satuan = [];
-        // $qty = [];
-        // $keterangan = [];
 
         $tanggalString = Carbon::parse($tanggal)->toDateString();
 
@@ -136,6 +136,10 @@ class SpbController extends Controller
             $namaPerusahaan = Perusahaan::where('id', 1)->get();
         }
         $spb = Spb::where('id', $id)->first();
+        if (!$spb) {
+            Alert::error('Gagal', 'Data SPB tidak ditemukan');
+            return redirect('daftar-spb');
+        }
         $customer = Penjualan::pluck('customer');
         $perusahaan = Penjualan::pluck('perusahaan');
         $kategori_brg = KategoriBarang::all();
@@ -174,6 +178,10 @@ class SpbController extends Controller
         }
 
         $spb = Spb::find($id);
+        if (!$spb) {
+            Alert::error('Gagal', 'Data SPB tidak ditemukan');
+            return redirect('daftar-spb');
+        }
         $item = count($request->barang_id);
 
         $spb->nama_spb = $request->namaSpb;
@@ -205,10 +213,13 @@ class SpbController extends Controller
 
     public function destroySPB($id)
     {
-        Spb::where('id', $id)->delete();
-        $barang_spb = BarangSpb::where('spb', $id);
-
-        $barang_spb->delete();
+        $spb = Spb::find($id);
+        if (!$spb) {
+            Alert::error('Gagal', 'Data SPB tidak ditemukan');
+            return redirect('daftar-spb');
+        }
+        $spb->delete();
+        BarangSpb::where('spb', $id)->delete();
         Alert::success('Berhasil', 'Data berhasil dihapus');
         return redirect('daftar-spb');
     }

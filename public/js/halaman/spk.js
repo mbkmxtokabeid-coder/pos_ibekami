@@ -7,7 +7,7 @@ $(document).ready(function () {
     e.preventDefault();
 
     var spk_id = $(this).attr('value');
-    var deleteUrl = $(this).data('url');
+    var deleteUrl = $(this).data('url') || ('/delete-spk/' + spk_id);
     $('#deleteForm').attr('action', deleteUrl); // Update the form action URL dynamically
 
     $('#deleteModal').modal('show');

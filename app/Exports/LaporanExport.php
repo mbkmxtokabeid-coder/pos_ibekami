@@ -77,7 +77,7 @@ class LaporanExport implements FromArray, ShouldAutoSize, WithHeadings, WithEven
                     $items = DB::table('penjualan_barang')
                         ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
                         ->where('penjualan_barang.penjualan_id', $penjualan->id)
-                        
+                        ->whereNull('penjualan_barang.deleted_at')
                         ->select('barang.jenis_barang', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.satuan')
                         ->get();
                 } catch (\Exception $e) {

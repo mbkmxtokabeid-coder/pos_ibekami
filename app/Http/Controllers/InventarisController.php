@@ -33,7 +33,7 @@ class InventarisController extends Controller
 
 
         $inventaris = $inventaris->sortBy(function ($inventaris) {
-            return $inventaris->jenis_material;
+            return $inventaris->jenis_inventaris;
         });
 
         
@@ -69,17 +69,23 @@ class InventarisController extends Controller
     public function destroy($id)
     {
         $inventaris = Inventaris::find($id);
-        $inventaris->delete();
-        Alert::success('Barang berhasil dihapus');
+        if ($inventaris) {
+            $inventaris->delete();
+            Alert::success('Barang berhasil dihapus');
+        } else {
+            Alert::error('Inventaris tidak ditemukan');
+        }
         return redirect('listInventaris');
     }
-    
     
     function edit($id)
     {
         $inventaris = Inventaris::find($id);
-       
-        // dd($kategori);
+        if (!$inventaris) {
+            Alert::error('Inventaris tidak ditemukan');
+            return redirect('listInventaris');
+        }
+
         if ($inventaris->stok < 0) {
             $inventaris->stok = 0;
         }
@@ -89,6 +95,10 @@ class InventarisController extends Controller
     function update(Request $request, $id)
     {
         $inventaris = Inventaris::find($id);
+        if (!$inventaris) {
+            Alert::error('Inventaris tidak ditemukan');
+            return redirect('listInventaris');
+        }
         if ($request->stok < 0) {
             Alert::error('Stok tidak boleh dibawah 0');
             return redirect()->back();

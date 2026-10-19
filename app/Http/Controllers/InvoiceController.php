@@ -907,6 +907,10 @@ class InvoiceController extends Controller
     public function editInvoice($id)
     {
         $inv = Penjualan::find($id);
+        if (!$inv) {
+            Alert::error('Invoice tidak ditemukan');
+            return redirect()->route('daftar_invoice');
+        }
         $invoice = Invoice::find($inv->invoice);
         $admin_now = User::find($inv->admin);
         $admin = User::where('role', 'Admin')->get();
@@ -915,11 +919,11 @@ class InvoiceController extends Controller
         $jenisBarang = Barang::with('kategori_item')->where('is_active', 1)->get();
         $materials = Material::all();
 
-        $jam = substr($inv->tgl_penjualan, 11, 5);
-        $nomor_unik = preg_replace("/[^0-9]/", '', $inv->nomor_invoice);
-        $kode = preg_replace("/[^A-Z]/", '', $inv->nomor_invoice);
+        $jam = substr($inv->tgl_penjualan ?? '', 11, 5);
+        $nomor_unik = preg_replace("/[^0-9]/", '', $inv->nomor_invoice ?? '');
+        $kode = preg_replace("/[^A-Z]/", '', $inv->nomor_invoice ?? '');
         $perusahaan = $inv->perusahaan;
-        $nama_adm = $admin_now->nama;
+        $nama_adm = $admin_now ? $admin_now->nama : 'Admin';
         $sales = $inv->nama_sales;
         if (!$perusahaan) {
             $perusahaan  = '-';
@@ -939,12 +943,58 @@ class InvoiceController extends Controller
         return view('pages.invoices.edit-invoices', compact('inv', 'jam', 'nomor_unik', 'perusahaan', 'admin', 'order', 'sales', 'materials', 'jenisBarang', 'nama_adm', 'barang', 'invoice', 'kode', 'penjualan_barang'));
     }
 
+    private function restoreInvoiceStock(Penjualan $invoice): void
+    {
+        foreach ($invoice->penjualanBarang as $items) {
+            // Restore Stok Barang
+            $barang = Barang::find($items->barang_id);
+            if ($barang) {
+                $barang->increment('stok', $items->qty);
+            }
+
+            // Restore Stok Material (Support Multi-Material / JSON)
+            if (!empty($items->material_id) && !empty($items->material_qty)) {
+                $matIds = json_decode($items->material_id, true);
+                $matQtys = json_decode($items->material_qty, true);
+
+                if (is_array($matIds)) {
+                    foreach ($matIds as $index => $matId) {
+                        $materialObj = Material::find($matId);
+                        if ($materialObj) {
+                            $materialObj->increment('stok', (float) ($matQtys[$index] ?? 0));
+                        }
+                    }
+                } else {
+                    $materialObj = Material::find($items->material_id);
+                    if ($materialObj) {
+                        $materialObj->increment('stok', (float) $items->material_qty);
+                    }
+                }
+            }
+        }
+    }
+
     public function updateInvoice(Request $request, $id)
     {
         $penjualan = Penjualan::find($id);
-        // $tot_barang = $request->input('count');
-        $nmr_inv = $request->kode . $request->kodeUnik;
+        if (!$penjualan) {
+            Alert::error('Invoice tidak ditemukan');
+            return redirect()->route('daftar_invoice');
+        }
 
+        if (!$request->has('barang_id') || !is_array($request->barang_id) || count($request->barang_id) === 0) {
+            Alert::error('Error', 'Harap masukkan minimal 1 item barang.');
+            return redirect()->back()->withInput();
+        }
+
+        foreach ($request->barang_id as $key => $value) {
+            if (empty($value) || empty($request->deskripsi_item[$key]) || empty($request->qty[$key]) || empty($request->satuan[$key])) {
+                Alert::error('Error', 'Harap lengkapi semua kolom item.');
+                return redirect()->back()->withInput();
+            }
+        }
+
+        $nmr_inv = $request->kode . $request->kodeUnik;
         $status = ($request->jns_pem == 'Cash Lunas' || $request->jns_pem == 'Transfer Lunas') ? 'Lunas' : 'Belum Lunas';
         $tanggalPenjualan = $request->tgl_jual . ":" . $request->jam;
         $item = (!empty($request->barang_id)) ? count($request->barang_id) : 0;
@@ -965,54 +1015,11 @@ class InvoiceController extends Controller
             $sisa_pemb = $cleanNominal($request->sisa_pem);
         }
        
-        if(!$request->norek){
-             $norek = 'BNI';
-        } else {
-            $norek = $request->norek;
-        }
-        
-         // 1. KEMBALIKAN (RESTORE) STOK BARANG & MATERIAL SEBELUMNYA
-         $stokSebelumnya = [];
-        foreach ($penjualan->penjualanBarang as $items) {
-            $stokSebelumnya[] = [
-                'barang_id' => $items->barang_id,
-                'stok' => $items->qty,
-                'material_id' => $items->material_id, // Simpan ID Material sebelumnya
-                'material_qty' => $items->material_qty // Simpan Qty Material sebelumnya
-            ];
-        }
-        
-        foreach ($stokSebelumnya as $barangSebelumnya) {
-            // Restore Stok Barang
-            $barang = Barang::find($barangSebelumnya['barang_id']);
-            if($barang) {
-                $barang->stok += $barangSebelumnya['stok'];
-                $barang->save();
-            }
+        $norek = $request->norek ?: 'BNI';
 
-            // Restore Stok Material (Support Multi-Material / JSON)
-            if (!empty($barangSebelumnya['material_id']) && !empty($barangSebelumnya['material_qty'])) {
-                $matIds = json_decode($barangSebelumnya['material_id'], true);
-                $matQtys = json_decode($barangSebelumnya['material_qty'], true);
-
-                if (is_array($matIds)) {
-                    foreach ($matIds as $index => $matId) {
-                        $materialObj = Material::find($matId);
-                        if ($materialObj) {
-                            $materialObj->stok += (float) ($matQtys[$index] ?? 0);
-                            $materialObj->save();
-                        }
-                    }
-                } else {
-                    // Fallback jika datanya masih string ID lama (sebelum multi-material)
-                    $materialObj = Material::find($barangSebelumnya['material_id']);
-                    if ($materialObj) {
-                        $materialObj->stok += (float) $barangSebelumnya['material_qty'];
-                        $materialObj->save();
-                    }
-                }
-            }
-        }
+        DB::transaction(function () use ($penjualan, $request, $nmr_inv, $status, $tanggalPenjualan, $item, $dp, $norek, $tot_harga, $tot_pem, $sisa_pemb, $cleanNominal, $id) {
+            // 1. KEMBALIKAN (RESTORE) STOK BARANG & MATERIAL SEBELUMNYA
+            $this->restoreInvoiceStock($penjualan);
        
         $penjualan->invoice = $request->inv;
         $penjualan->nomor_invoice = $nmr_inv;
@@ -1092,16 +1099,6 @@ class InvoiceController extends Controller
 
         // 2. SIMPAN ITEM BARU DAN POTONG STOK (BARANG & MATERIAL)
         foreach ($request->barang_id as $key => $value) {
-            $hrg = $request->hrg[$key];
-            if (empty($hrg)) {
-                $hrg = 0;
-            }
-            if (empty($value) || empty($request->deskripsi_item[$key]) || empty($request->qty[$key]) || empty($request->satuan[$key])) {
-                Alert::error('Error', 'Harap lengkapi semua kolom item.');
-                return redirect()->back();
-               
-            }
-
             $barangObj = Barang::find($value);
             if ($barangObj && $barangObj->is_material_required == 1) {
                 $matIds = [];
@@ -1134,10 +1131,8 @@ class InvoiceController extends Controller
             $item->save();
 
             // Kurangi Stok Barang
-            $barang = Barang::find($item->barang_id);
-            if ($barang) {
-                $barang->stok -= $item->qty;
-                $barang->save();
+            if ($barangObj) {
+                $barangObj->decrement('stok', $item->qty);
             }
 
             // Kurangi Stok Material
@@ -1146,12 +1141,13 @@ class InvoiceController extends Controller
                     $material = Material::find($mId);
                     $mQty = array_values($matQtys)[$mIndex] ?? 0;
                     if ($material) {
-                        $material->stok -= $mQty;
-                        $material->save();
+                        $material->decrement('stok', $mQty);
                     }
                 }
             }
         }
+        });
+
         Alert::success('Data Invoice Berhasil diUpdate');
         return redirect('list-invoice');
     }
@@ -1164,6 +1160,10 @@ class InvoiceController extends Controller
             $type = 'asli';
         }
         $penjualan = Penjualan::where('id', $id)->first();
+        if (!$penjualan) {
+            Alert::error('Invoice tidak ditemukan');
+            return redirect()->back();
+        }
         $invoice = Invoice::where('id', $penjualan->invoice)->first();
         $penjualan_barang = PenjualanBarang::where('penjualan_id', $id)->get();
         $admin_now = User::where('id', $penjualan->admin)->first();
@@ -1171,9 +1171,9 @@ class InvoiceController extends Controller
         $barang = [];
         $hargaMod = [];
         $jumlahHarga = [];
-        $totHargaMod = number_format($penjualan->total_harga, 0, ',', '.');
-        $sisaBayarMod = $penjualan->status === 'Lunas' ? '0' : number_format($penjualan->sisa_pembayaran, 0, ',', '.');
-        $admin = $admin_now->nama;
+        $totHargaMod = number_format($penjualan->total_harga ?? 0, 0, ',', '.');
+        $sisaBayarMod = $penjualan->status === 'Lunas' ? '0' : number_format($penjualan->sisa_pembayaran ?? 0, 0, ',', '.');
+        $admin = $admin_now ? $admin_now->nama : 'Admin';
         $tanggal =  $penjualan->tgl_penjualan;
         Carbon::setLocale('id');
 
@@ -1225,6 +1225,9 @@ class InvoiceController extends Controller
     public function viewDownloadInvoice($id)
     {
         $penjualan = Penjualan::where('id', $id)->first();
+        if (!$penjualan) {
+            abort(404, 'Data Invoice tidak ditemukan');
+        }
         $invoice = Invoice::where('id', $penjualan->invoice)->first();
         $namaInv = $penjualan->nomor_invoice;
         $penjualan_barang = PenjualanBarang::where('penjualan_id', $id)->get();
@@ -1438,27 +1441,39 @@ class InvoiceController extends Controller
             Alert::error('Data tidak ditemukan');
             return redirect()->route('daftar_invoice');
         }
-        $inv->status = 'Batal';
-        $inv->save();
-        InvoiceUpdateLog::create([
-            'invoice_id' => $inv->id,
-        ]);
-        Alert::warning('Invoice Dibatalkan', 'Invoice #' . $inv->nomor_invoice . ' berhasil dibatalkan.');
-        return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dibatalkan.');
+
+        DB::transaction(function () use ($inv) {
+            if ($inv->status !== 'Batal') {
+                $this->restoreInvoiceStock($inv);
+            }
+            $inv->status = 'Batal';
+            $inv->save();
+
+            InvoiceUpdateLog::create([
+                'invoice_id' => $inv->id,
+            ]);
+        });
+
+        Alert::warning('Invoice Dibatalkan', 'Invoice #' . $inv->nomor_invoice . ' berhasil dibatalkan dan stok dikembalikan.');
+        return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dibatalkan dan stok dikembalikan.');
     }
     function statusLunas($id)
     {
+        if (strtolower(auth()->user()->role) !== 'pemilik') {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik yang memiliki hak akses ini.');
+            return redirect('/profile');
+        }
+
         $inv = Penjualan::find($id);
         if (!$inv) {
             Alert::error('Data tidak ditemukan');
             return redirect()->back();
         }
         $inv->status = 'Lunas';
-        $inv->sisa_pembayaran =0;
+        $inv->sisa_pembayaran = 0;
         $inv->save();
-         InvoiceUpdateLog::create([
-        'invoice_id' => $inv->id,
-        
+        InvoiceUpdateLog::create([
+            'invoice_id' => $inv->id,
         ]);
         Alert::success('Invoice Sudah Lunas');
         return redirect()->back();
@@ -1466,6 +1481,11 @@ class InvoiceController extends Controller
     
     function unlock($id)
     {
+        if (strtolower(auth()->user()->role) !== 'pemilik') {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik yang memiliki hak akses ini.');
+            return redirect('/profile');
+        }
+
         $inv = Penjualan::find($id);
         if (!$inv) {
             Alert::error('Data tidak ditemukan');
@@ -1474,23 +1494,24 @@ class InvoiceController extends Controller
         $inv->approval = 'Unlock';
         $inv->approved_at = now();
         $inv->save();
-
-        $inv->save();
         
         Alert::success('Invoice Sudah di-Unlock');
         return redirect()->route('daftar_invoice');
     }
     
-     function lock($id)
+    function lock($id)
     {
+        if (strtolower(auth()->user()->role) !== 'pemilik') {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik yang memiliki hak akses ini.');
+            return redirect('/profile');
+        }
+
         $inv = Penjualan::find($id);
         if (!$inv) {
             Alert::error('Data tidak ditemukan');
             return redirect()->back();
         }
         $inv->approval = 'Lock';
-        
-
         $inv->save();
         
         Alert::success('Invoice Sudah di-Lock');
@@ -1543,18 +1564,24 @@ class InvoiceController extends Controller
                 Alert::error('Data tidak ditemukan');
                 return redirect()->route('daftar_invoice');
             }
-            $invoice->status = 'Batal';
-            if ($request->has('alasan_batal') && !empty($request->alasan_batal)) {
-                $invoice->alasan_batal = $request->alasan_batal; // Simpan alasan dari SweetAlert
-            }
-            $invoice->save();
-            
-            InvoiceUpdateLog::create([
-                'invoice_id' => $invoice->id,
-            ]);
 
-            Alert::warning('Invoice Dibatalkan', 'Invoice #' . $invoice->nomor_invoice . ' berhasil dibatalkan.');
-            return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dibatalkan.');
+            DB::transaction(function () use ($invoice, $request) {
+                if ($invoice->status !== 'Batal') {
+                    $this->restoreInvoiceStock($invoice);
+                }
+                $invoice->status = 'Batal';
+                if ($request->has('alasan_batal') && !empty($request->alasan_batal)) {
+                    $invoice->alasan_batal = $request->alasan_batal; // Simpan alasan dari SweetAlert
+                }
+                $invoice->save();
+                
+                InvoiceUpdateLog::create([
+                    'invoice_id' => $invoice->id,
+                ]);
+            });
+
+            Alert::warning('Invoice Dibatalkan', 'Invoice #' . $invoice->nomor_invoice . ' berhasil dibatalkan dan stok dikembalikan.');
+            return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dibatalkan dan stok dikembalikan.');
         }
     
      public function getUpdateLog($id)

@@ -17,11 +17,14 @@ class Produksi
      */
     public function handle(Request $request, Closure $next)
     {
+        if (!auth()->check()) {
+            return redirect('/login');
+        }
 
-        if (strtolower(auth()->user()->role) === 'produksi') {
+        if (in_array(strtolower(auth()->user()->role), ['produksi', 'pemilik', 'admin', 'admintkb', 'stockist'])) {
             return $next($request);
         }
         Alert::error('Kamu tidak memiliki akses produksi');
-        return redirect('/');
+        return redirect('/profile');
     }
 }

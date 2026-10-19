@@ -16,11 +16,15 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
-        $allowedRoles = ['admin', 'pemilik', 'magang', 'stockist', 'produksi'];
+        if (!auth()->check()) {
+            return redirect('/login');
+        }
+
+        $allowedRoles = ['admin', 'admintkb', 'pemilik', 'magang', 'stockist', 'produksi'];
         if (in_array(strtolower(auth()->user()->role), $allowedRoles)) {
             return $next($request);
         }
         Alert::error('Kamu tidak memiliki akses Admin');
-        return redirect('/daftar-spk');
+        return redirect('/profile');
     }
 }

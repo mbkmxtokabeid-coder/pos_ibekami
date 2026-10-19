@@ -169,11 +169,16 @@ class PenjualanController extends Controller
             $existingPenjualan->save();
 
             foreach ($request->barang_id as $key => $value) {
+                if (empty($value)) {
+                    continue;
+                }
                 $barang = Barang::find($value);
-                if ($barang != null || $request->deskripsi_item[$key] != null || $request->qty[$key] != null || $request->satuan[$key] != null || $request->hrg[$key] != null || $request->jlh_hrg[$key] != null) {
-                    $existingPenjualanBarang = PenjualanBarang::where('penjualan_id', $existingPenjualan->id)
-                        ->where('barang_id', $barang->id)
-                        ->first();
+                if (!$barang) {
+                    continue;
+                }
+                $existingPenjualanBarang = PenjualanBarang::where('penjualan_id', $existingPenjualan->id)
+                    ->where('barang_id', $barang->id)
+                    ->first();
 
                     // Jika barang non-material (is_material_required == 1), kosongkan material
                     if ($barang && $barang->is_material_required == 1) {
@@ -240,7 +245,6 @@ class PenjualanController extends Controller
                             }
                         }
                     }
-                }
             }
         } else {
             // Data belum ada, buat data baru
@@ -269,8 +273,13 @@ class PenjualanController extends Controller
             ]);
 
             foreach ($request->barang_id as $key => $value) {
+                if (empty($value)) {
+                    continue;
+                }
                 $barang = Barang::find($value);
-                if ($barang != null || $request->deskripsi_item[$key] != null || $request->qty[$key] || $request->satuan[$key] || !empty($request->hrg[$key]) || !empty($request->jlh_hrg[$key])) {
+                if (!$barang) {
+                    continue;
+                }
                     
                     // Jika barang non-material (is_material_required == 1), kosongkan material
                     if ($barang && $barang->is_material_required == 1) {
@@ -318,7 +327,6 @@ class PenjualanController extends Controller
                             }
                         }
                     }
-                }
             }
         }
 

@@ -48,7 +48,6 @@ class SpkController extends Controller
             if ($item->status_spk == 'Belum Selesai') {
                 if ($item->status_kerja != 'Selesai') {
                     $tglSekarang = Carbon::now('Asia/Jakarta');
-                    $tglSekarang->addHours(7);
                     $target = Carbon::parse($item->target_selesai);
 
                     $diff = $tglSekarang->diff($target);
@@ -89,63 +88,61 @@ class SpkController extends Controller
     {
         Carbon::setLocale('id');
         $waktuNow = Carbon::now('Asia/Jakarta');
-        $waktuNow->addHour(7);
         $spk = Spk::find($id);
-        $tanggalMulai = Carbon::parse($spk->tgl_mulai);
 
         if (!$spk) {
             Alert::error('Gagal, SPK tidak ditemukan');
             return redirect()->back();
-        } else {
-            if ($spk->status_kerja == 'Belum Diproses') {
-                $spk->status_kerja = 'Proses Design';
-                $waktuNow->subHour(7);
-                $spk->timeline_design = $waktuNow;
-                $spk->save();
-                Alert::success('SPK Didesign');
-                return redirect()->back();
-            } elseif ($spk->status_kerja == 'Proses Design') {
-                $spk->status_kerja = 'Proses Produksi';
-                $tgl_design = Carbon::parse($spk->timeline_design);
-                $selisihWaktu = $tgl_design->diff($waktuNow);
-                $hari = $selisihWaktu->days;
-                $jam = $selisihWaktu->h;
-                $menit = $selisihWaktu->i;
-                $timeline = "Design Selesai ";
-                if ($hari > 0) { $timeline .= $hari . " Hari, "; }
-                if ($jam >= 0) { $timeline .= $jam . " Jam, "; }
-                if ($menit > 0) { $timeline .= $menit . " Menit"; }
-                $spk->timeline_design = $timeline;
-                $waktuNow->subHour(7);
-                $spk->timeline_produksi = $waktuNow;
-                $spk->save();
-                Alert::success('SPK diproduksi');
-                return redirect()->back();
-            } elseif ($spk->status_kerja == 'Proses Produksi') {
-                $spk->status_kerja = 'Selesai';
-                $tgl_produksi = Carbon::parse($spk->timeline_produksi);
-                $selisihProduksi = $tgl_produksi->diff($waktuNow);
-                $hariProduksi = $selisihProduksi->days;
-                $jamProduksi = $selisihProduksi->h;
-                $menitProduksi = $selisihProduksi->i;
-                $timelineProd = "Produksi Selesai ";
-                if ($hariProduksi > 0) { $timelineProd .= $hariProduksi . " Hari, "; }
-                if ($jamProduksi >= 0) { $timelineProd .= $jamProduksi . " Jam, "; }
-                if ($menitProduksi > 0) { $timelineProd .= $menitProduksi . " Menit"; }
-                $spk->timeline_produksi = $timelineProd;
-                $selisihWaktu = $tanggalMulai->diff($waktuNow);
-                $hari = $selisihWaktu->days;
-                $jam = $selisihWaktu->h;
-                $menit = $selisihWaktu->i;
-                $timeline = "Selesai ";
-                if ($hari > 0) { $timeline .= $hari . " Hari, "; }
-                if ($jam >= 0) { $timeline .= $jam . " Jam, "; }
-                if ($menit > 0) { $timeline .= $menit . " Menit"; }
-                $spk->timeline = $timeline;
-                $spk->save();
-                Alert::success('Barang Telah Selesai');
-                return redirect()->back();
-            }
+        }
+
+        $tanggalMulai = Carbon::parse($spk->tgl_mulai);
+
+        if ($spk->status_kerja == 'Belum Diproses') {
+            $spk->status_kerja = 'Proses Design';
+            $spk->timeline_design = $waktuNow;
+            $spk->save();
+            Alert::success('SPK Didesign');
+            return redirect()->back();
+        } elseif ($spk->status_kerja == 'Proses Design') {
+            $spk->status_kerja = 'Proses Produksi';
+            $tgl_design = Carbon::parse($spk->timeline_design);
+            $selisihWaktu = $tgl_design->diff($waktuNow);
+            $hari = $selisihWaktu->days;
+            $jam = $selisihWaktu->h;
+            $menit = $selisihWaktu->i;
+            $timeline = "Design Selesai ";
+            if ($hari > 0) { $timeline .= $hari . " Hari, "; }
+            if ($jam >= 0) { $timeline .= $jam . " Jam, "; }
+            if ($menit > 0) { $timeline .= $menit . " Menit"; }
+            $spk->timeline_design = $timeline;
+            $spk->timeline_produksi = $waktuNow;
+            $spk->save();
+            Alert::success('SPK diproduksi');
+            return redirect()->back();
+        } elseif ($spk->status_kerja == 'Proses Produksi') {
+            $spk->status_kerja = 'Selesai';
+            $tgl_produksi = Carbon::parse($spk->timeline_produksi);
+            $selisihProduksi = $tgl_produksi->diff($waktuNow);
+            $hariProduksi = $selisihProduksi->days;
+            $jamProduksi = $selisihProduksi->h;
+            $menitProduksi = $selisihProduksi->i;
+            $timelineProd = "Produksi Selesai ";
+            if ($hariProduksi > 0) { $timelineProd .= $hariProduksi . " Hari, "; }
+            if ($jamProduksi >= 0) { $timelineProd .= $jamProduksi . " Jam, "; }
+            if ($menitProduksi > 0) { $timelineProd .= $menitProduksi . " Menit"; }
+            $spk->timeline_produksi = $timelineProd;
+            $selisihWaktu = $tanggalMulai->diff($waktuNow);
+            $hari = $selisihWaktu->days;
+            $jam = $selisihWaktu->h;
+            $menit = $selisihWaktu->i;
+            $timeline = "Selesai ";
+            if ($hari > 0) { $timeline .= $hari . " Hari, "; }
+            if ($jam >= 0) { $timeline .= $jam . " Jam, "; }
+            if ($menit > 0) { $timeline .= $menit . " Menit"; }
+            $spk->timeline = $timeline;
+            $spk->save();
+            Alert::success('Barang Telah Selesai');
+            return redirect()->back();
         }
     }
 
@@ -153,35 +150,35 @@ class SpkController extends Controller
     {
         Carbon::setLocale('id');
         $waktuNow = Carbon::now('Asia/Jakarta');
-        $waktuNow->addHour(7);
         $spk = Spk::find($id);
-        $tanggalMulai = Carbon::parse($spk->tgl_mulai);
 
         if (!$spk) {
             Alert::error('Gagal, SPK tidak ditemukan');
             return redirect()->back();
+        }
+
+        $tanggalMulai = Carbon::parse($spk->tgl_mulai);
+
+        if ($spk->status_kerja != 'Selesai') {
+            $spk->status_spk = 'Selesai';
+            $spk->status_kerja = 'Selesai';
+            $selisihWaktu = $tanggalMulai->diff($waktuNow);
+            $hari = $selisihWaktu->days;
+            $jam = $selisihWaktu->h;
+            $menit = $selisihWaktu->i;
+            $timeline = "Selesai ";
+            if ($hari > 0) { $timeline .= $hari . " Hari, "; }
+            if ($jam >= 0) { $timeline .= $jam . " Jam, "; }
+            if ($menit > 0) { $timeline .= $menit . " Menit"; }
+            $spk->timeline = $timeline;
+            $spk->save();
+            Alert::success('Berhasil, SPK sudah Selesai');
+            return redirect()->back();
         } else {
-            if ($spk->status_kerja != 'Selesai') {
-                $spk->status_spk = 'Selesai';
-                $spk->status_kerja = 'Selesai';
-                $selisihWaktu = $tanggalMulai->diff($waktuNow);
-                $hari = $selisihWaktu->days;
-                $jam = $selisihWaktu->h;
-                $menit = $selisihWaktu->i;
-                $timeline = "Selesai ";
-                if ($hari > 0) { $timeline .= $hari . " Hari, "; }
-                if ($jam >= 0) { $timeline .= $jam . " Jam, "; }
-                if ($menit > 0) { $timeline .= $menit . " Menit"; }
-                $spk->timeline = $timeline;
-                $spk->save();
-                Alert::success('Berhasil, SPK sudah Selesai');
-                return redirect()->back();
-            } else {
-                $spk->status_spk = 'Selesai';
-                $spk->save();
-                Alert::success('Berhasil, SPK sudah Selesai');
-                return redirect()->back();
-            }
+            $spk->status_spk = 'Selesai';
+            $spk->save();
+            Alert::success('Berhasil, SPK sudah Selesai');
+            return redirect()->back();
         }
     }
 
@@ -196,6 +193,13 @@ class SpkController extends Controller
 
     public function storeSPK(Request $request)
     {
+        $request->validate([
+            'contoh_design' => 'nullable|file|mimes:jpeg,jpg,png,webp,svg,pdf|max:2048',
+        ], [
+            'contoh_design.mimes' => 'Format file contoh desain harus berupa jpeg, jpg, png, webp, svg, atau pdf.',
+            'contoh_design.max' => 'Ukuran file contoh desain maksimal 2 MB.',
+        ]);
+
         $existingSpk = Spk::where('nomor_invoice', $request->invoice)->first();
         if ($existingSpk) {
             Alert::error('Gagal', 'SPK untuk Nomor Invoice ini sudah ada.');
@@ -378,6 +382,10 @@ class SpkController extends Controller
     public function editSPK($id)
     {
         $spk = Spk::find($id);
+        if (!$spk) {
+            Alert::error('Gagal', 'Data SPK tidak ditemukan');
+            return redirect()->route('daftar-spk');
+        }
         $today = Carbon::parse($spk->tgl_mulai)->format('d/m/Y');
         $waktu = Carbon::parse($spk->tgl_mulai)->format('H:i');
         $tgl_selesai = Carbon::parse($spk->target_selesai)->format('d/m/Y H:i');
@@ -388,7 +396,19 @@ class SpkController extends Controller
 
     public function updateSPK(Request $request, $id)
     {
+        $request->validate([
+            'contoh_design' => 'nullable|file|mimes:jpeg,jpg,png,webp,svg,pdf|max:2048',
+        ], [
+            'contoh_design.mimes' => 'Format file contoh desain harus berupa jpeg, jpg, png, webp, svg, atau pdf.',
+            'contoh_design.max' => 'Ukuran file contoh desain maksimal 2 MB.',
+        ]);
+
         $spk = Spk::find($id);
+        if (!$spk) {
+            Alert::error('Gagal', 'Data SPK tidak ditemukan');
+            return redirect()->route('daftar-spk');
+        }
+
         if ($request->hasFile('contoh_design')) {
             $contohDesign = $request->file('contoh_design');
             $imageName = uniqid() . '.' . $contohDesign->extension();
@@ -422,6 +442,10 @@ class SpkController extends Controller
     public function destroySPK($id)
     {
         $spk = Spk::find($id);
+        if (!$spk) {
+            Alert::error('Gagal', 'Data SPK tidak ditemukan');
+            return redirect('daftar-spk');
+        }
         if ($spk->gambar && $spk->gambar != 'noImage.jpg') {
             $oldPath = public_path('images/spk') . '/' . $spk->gambar;
             if (file_exists($oldPath)) { unlink($oldPath); }
@@ -440,6 +464,10 @@ class SpkController extends Controller
     public function cetakSPK($id)
     {
         $spk = Spk::find($id);
+        if (!$spk) {
+            Alert::error('Gagal', 'Data SPK tidak ditemukan');
+            return redirect()->back();
+        }
         Carbon::setLocale('id');
         $tanggal = Carbon::parse($spk->tgl_mulai)->format('d/m/Y');
         $target = Carbon::parse($spk->target_selesai)->isoFormat('DD MMMM YYYY');
@@ -449,6 +477,10 @@ class SpkController extends Controller
     public function lihatSPK($id)
     {
         $spk = Spk::find($id);
+        if (!$spk) {
+            Alert::error('Gagal', 'Data SPK tidak ditemukan');
+            return redirect()->back();
+        }
         Carbon::setLocale('id');
         $tanggal = Carbon::parse($spk->tgl_mulai)->format('d/m/Y');
         $target = Carbon::parse($spk->target_selesai)->isoFormat('DD MMMM YYYY');

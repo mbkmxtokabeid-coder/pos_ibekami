@@ -14,6 +14,7 @@ use App\Models\Vendor;
 use App\Models\Pembelian;
 use Illuminate\Http\Request;
 use App\Exports\LaporanExport;
+use App\Exports\LaporanPembelianExport;
 use App\Models\PenjualanBarang;
 
 use Illuminate\Support\Facades\DB;
@@ -56,7 +57,8 @@ class LaporanPembelianController extends Controller
     $vendorId = $request->vendor; 
     $vendor = Vendor::find($vendorId); 
     $namaVendor = $vendor ? $vendor->nama_vendor : 'Semua Vendor';
-    $namaPerusahaan = Perusahaan::where('id', 1)->first()->nama_perusahaan;
+    $perusahaanModel = Perusahaan::find(1) ?? Perusahaan::first();
+    $namaPerusahaan = $perusahaanModel ? $perusahaanModel->nama_perusahaan : 'PT IBEKAMI';
 
     if ($vendorId == 'semua') {
         $pembelians = Pembelian::with('vendor')
@@ -99,7 +101,7 @@ class LaporanPembelianController extends Controller
     }
 
     if ($request->export_type == 'excel') {
-        return Excel::download(new LaporanExport($pembelians), "Laporan {$namaVendor} {$status} {$tanggal}.xlsx");
+        return Excel::download(new LaporanPembelianExport($pembelians, $namaPerusahaan), "Laporan Pembelian {$namaVendor} {$status} {$tanggal}.xlsx");
     } elseif ($request->export_type == 'pdf') {
         return view('pages.laporanPembelian.pembelianpdf', compact('pembelians', 'namaVendor', 'status', 'formatGrandTotal', 'tanggal', 'namaPerusahaan'));
     }
@@ -112,7 +114,8 @@ class LaporanPembelianController extends Controller
     Carbon::setLocale('id');
     $tgl_custom = $request->tgl_custom;
     $vendor = vendor::find($request->vendor); // Mengambil data invoice berdasarkan ID
-    $namaPerusahaan = Perusahaan::where('id', 1)->first()->nama_perusahaan;
+    $perusahaanModel = Perusahaan::find(1) ?? Perusahaan::first();
+    $namaPerusahaan = $perusahaanModel ? $perusahaanModel->nama_perusahaan : 'PT IBEKAMI';
     $namaVendor = $vendor ? $vendor->nama_vendor : 'Semua Invoice';
     $tglMulai = null;
     $tglAkhir = null;
@@ -166,7 +169,7 @@ class LaporanPembelianController extends Controller
         $tanggal = Carbon::now()->locale('id')->isoFormat('DD MMMM YYYY');
 
         if ($request->export_type == 'excel') {
-            return Excel::download(new LaporanExport($penjualans), 'Laporan dari tanggal ' . $tglMulai . ' Hingga tanggal ' . $tglAkhir . ' '  . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+            return Excel::download(new LaporanPembelianExport($pembelians, $namaPerusahaan), 'Laporan Pembelian dari tanggal ' . $tglMulai . ' Hingga tanggal ' . ($tglAkhir ?? $tglMulai) . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
         } elseif ($request->export_type == 'pdf') {
             Carbon::setLocale('id');
             $formatGrandTotal = 'Rp.' . number_format($grandTotal, 0, ',', ',');
@@ -192,7 +195,8 @@ class LaporanPembelianController extends Controller
         $bulanIndonesia = $request->bulan;
         $periode = 'Bulan ' . $request->bulan;
         $vendor = Vendor::find($request->vendor); // Mengambil data invoice berdasarkan ID
-          $namaPerusahaan = Perusahaan::where('id', 1)->first()->nama_perusahaan;
+        $perusahaanModel = Perusahaan::find(1) ?? Perusahaan::first();
+        $namaPerusahaan = $perusahaanModel ? $perusahaanModel->nama_perusahaan : 'PT IBEKAMI';
         $namaVendor = $vendor ? $vendor->nama_vendor : 'Semua Vendor';
         // Mengonversi nama bulan dari bahasa Indonesia ke bahasa Inggris
         $bulanInggris = '';
@@ -261,7 +265,7 @@ class LaporanPembelianController extends Controller
         } else {
             $tanggal = Carbon::now()->locale('id')->isoFormat('DD MMMM YYYY');
             if ($request->export_type == 'excel') {
-                return Excel::download(new LaporanExport($penjualans), 'Laporan ' . $namaInvoice . ' Bulan ' . $request->bulan . ' tahun ' . $tahun . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+                return Excel::download(new LaporanPembelianExport($pembelians, $namaPerusahaan), 'Laporan Pembelian ' . $namaVendor . ' Bulan ' . $request->bulan . ' tahun ' . $tahun . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
             } elseif ($request->export_type == 'pdf') {
                 Carbon::setLocale('id');
                 $formatGrandTotal = 'Rp.' . number_format($grandTotal, 0, ',', ',');
@@ -285,7 +289,8 @@ class LaporanPembelianController extends Controller
         $vendor = Vendor::find($request->vendor); // Mengambil data invoice berdasarkan ID
         $namaVendor = $vendor ? $vendor->nama_vendor : 'Semua Vendor';
         $tahun = $request->tahun;
-         $namaPerusahaan = Perusahaan::where('id', 1)->first()->nama_perusahaan;
+        $perusahaanModel = Perusahaan::find(1) ?? Perusahaan::first();
+        $namaPerusahaan = $perusahaanModel ? $perusahaanModel->nama_perusahaan : 'PT IBEKAMI';
         
         if ($request->vendor == 'semua') {
             $pembelians = Pembelian::whereYear('tanggal', $tahun)
@@ -306,7 +311,7 @@ class LaporanPembelianController extends Controller
         } else {
             $tanggal = Carbon::now()->locale('id')->isoFormat('DD MMMM YYYY');
             if ($request->export_type == 'excel') {
-                return Excel::download(new LaporanExport($pembelians), 'Laporan ' . $namaVendor . ' tahun ' . $tahun . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+                return Excel::download(new LaporanPembelianExport($pembelians, $namaPerusahaan), 'Laporan Pembelian ' . $namaVendor . ' tahun ' . $tahun . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
             } elseif ($request->export_type == 'pdf') {
                 Carbon::setLocale('id');
                 $formatGrandTotal = 'Rp.' . number_format($grandTotal, 0, ',', ',');

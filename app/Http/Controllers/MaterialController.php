@@ -29,7 +29,7 @@ class MaterialController extends Controller
         }
 
         $material = $material->sortBy(function ($material) {
-            return $material->nama_material;
+            return $material->jenis_material;
         });
 
         // Kembali ke view awal
@@ -70,14 +70,22 @@ class MaterialController extends Controller
     public function destroy($id)
     {
         $material = Material::find($id);
-        $material->delete();
-        Alert::success('Barang berhasil dihapus');
+        if ($material) {
+            $material->delete();
+            Alert::success('Barang berhasil dihapus');
+        } else {
+            Alert::error('Material tidak ditemukan');
+        }
         return redirect('listMaterial');
     }
 
     public function edit($id)
     {
         $material = Material::find($id);
+        if (!$material) {
+            Alert::error('Material tidak ditemukan');
+            return redirect('listMaterial');
+        }
 
         if ($material->stok < 0) {
             $material->stok = 0;
@@ -90,6 +98,10 @@ class MaterialController extends Controller
     public function update(Request $request, $id)
     {
         $material = Material::find($id);
+        if (!$material) {
+            Alert::error('Material tidak ditemukan');
+            return redirect('listMaterial');
+        }
         
         if ($request->stok < 0) {
             Alert::error('Stok tidak boleh dibawah 0');

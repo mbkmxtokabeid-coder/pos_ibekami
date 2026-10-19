@@ -39,7 +39,7 @@
                     <div class="row justify-content-center">
                        <div class="col-xxl-12">
                          <div class="card">
-                           <form action="/invoice/updateInvoice/{{$inv->id}}" id="invoice_form" data-invoice-id="{{ $inv->id }}" method ="POST" enctype="multipart/form-data">
+                           <form action="{{ url('/updateInvoice/' . $inv->id) }}" id="invoice_form" data-invoice-id="{{ $inv->id }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('put')
                              <div class="card-body border-bottom border-bottom-dashed p-4">

@@ -432,13 +432,13 @@
                   Kata Sandi / Password
                 </label>
                 <div class="auth-pass-inputgroup">
-                  <input class="form-control password-input is-readonly" type="password" id="password-input" name="password" placeholder="Masukkan password (minimal 5 karakter)" required readonly autocomplete="new-password">
+                  <input class="form-control password-input is-readonly" type="password" id="password-input" name="password" placeholder="Kosongkan jika tidak ingin mengubah password" readonly autocomplete="new-password">
                   <button class="password-addon" type="button" aria-label="Lihat Password">
                     <i class="las la-eye"></i>
                   </button>
                 </div>
                 <span class="text-muted fs-12 mt-1 d-block" id="password-hint">
-                  <i class="las la-info-circle me-1"></i>Ketikkan password Anda untuk verifikasi atau masukkan password baru jika ingin mengubah.
+                  <i class="las la-info-circle me-1"></i>Kosongkan jika tidak ingin mengubah password. Masukkan password baru (minimal 5 karakter) untuk mengganti.
                 </span>
                 @error('password')
                   <span class="error-help-block">{{ $message }}</span>

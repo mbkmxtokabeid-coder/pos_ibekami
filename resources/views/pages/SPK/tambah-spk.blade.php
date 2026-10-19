@@ -32,7 +32,7 @@
         <div class="col-xxl-12">
           <div class="card">
             {{-- Start Isi Form --}}
-            <form action="/invoice/store-spk" class="needs-validation" novalidate method="POST" enctype="multipart/form-data">
+            <form action="{{ url('/store-spk') }}" class="needs-validation" novalidate method="POST" enctype="multipart/form-data">
               @csrf
               <div class="card-body p-4">
                 <div class="row">
@@ -107,7 +107,7 @@
                         </div>
                           <div class="col-lg-6">
                             <input type="text" class="form-control form-control-md" id="pelanggan" name="customer" list="customer" value="{{old('customer')}}" placeholder="Nama Customer">
-                            <datalist>
+                            <datalist id="customer">
                               @foreach ($customer as $cust)
                                   <option value="{{$cust}}"></option>
                               @endforeach
@@ -116,10 +116,10 @@
                         </div>
                       <div class="row mb-3">
                         <div class="col-lg-3">
-                         <label for="jumlah" class="form-label col-form-label col-form-label-md">Jumlah</label>
+                         <label for="cleave-numeral" class="form-label col-form-label col-form-label-md">Jumlah</label>
                         </div>
                           <div class="col-lg-6">
-                            <input type="text" class="form-control form-control-md" id="cleave-numeral" name="jumlah" id="jumlah" placeholder="Jumlah">
+                            <input type="text" class="form-control form-control-md" id="cleave-numeral" name="jumlah" placeholder="Jumlah">
                           </div>
                         </div>
                       <div class="row mb-3">

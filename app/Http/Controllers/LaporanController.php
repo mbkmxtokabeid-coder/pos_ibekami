@@ -88,6 +88,7 @@ class LaporanController extends Controller
                     $inv->items = DB::table('penjualan_barang')
                         ->join('barang', 'penjualan_barang.barang_id', '=', 'barang.id')
                         ->where('penjualan_barang.penjualan_id', $inv->id)
+                        ->whereNull('penjualan_barang.deleted_at')
                         ->select('barang.jenis_barang', 'penjualan_barang.deskripsi_item', 'penjualan_barang.qty', 'penjualan_barang.satuan')
                         ->get();
                 } catch (\Exception $e) {
@@ -220,7 +221,8 @@ class LaporanController extends Controller
             Alert::error('Mohon isi Nama Perusahaan terlebih dahulu');
             return redirect('daftar-laporan');
         }
-        $namaPerusahaan = Perusahaan::where('id', $request->perusahaan)->first()->nama_perusahaan;
+        $perusahaanModel = Perusahaan::find($request->perusahaan);
+        $namaPerusahaan = $perusahaanModel ? $perusahaanModel->nama_perusahaan : '';
 
         // Mengonversi nama bulan dari bahasa Indonesia ke bahasa Inggris
         $bulanInggris = '';
@@ -306,7 +308,8 @@ class LaporanController extends Controller
             Alert::error('Mohon isi Nama Perusahaan terlebih dahulu');
             return redirect('daftar-laporan');
         }
-        $namaPerusahaan = Perusahaan::where('id', $request->perusahaan)->first()->nama_perusahaan;
+        $perusahaanModel = Perusahaan::find($request->perusahaan);
+        $namaPerusahaan = $perusahaanModel ? $perusahaanModel->nama_perusahaan : '';
 
         if ($request->invoice == 'semua') {
             $penjualans = Penjualan::withTrashed()->whereYear('tgl_penjualan', $tahun)->get();
