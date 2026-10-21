@@ -98,9 +98,6 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('editInvoice/{id}/edit', [InvoiceController::class, 'editInvoice']);
             Route::put('updateInvoice/{id}', [InvoiceController::class, 'updateInvoice'])->name('update-invoice');
             Route::put('/invoice/updateInvoice/{id}', [InvoiceController::class, 'updateInvoice']);
-            Route::delete('invoice/deleteInvoice/{id}', [PenjualanController::class, 'destroy'])
-                ->middleware('role:Pemilik')
-                ->name('delete.invoice');
             
             // ROUTE UBAH STATUS INVOICE (Mendukung dengan/tanpa prefix /invoice/ dan spasi)
             Route::post('/ubah-status-batal/{id}', [InvoiceController::class, 'storeStatusBatal'])

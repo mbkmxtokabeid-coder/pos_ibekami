@@ -100,15 +100,6 @@ class InvoiceController extends Controller
         $jumlahPerBulan = number_format($totalPerBulan, 0, ',', '.');
         $jumlahInvoice = number_format($stats->jumlah_invoice ?? 0, 0, ',', '.');
 
-        // Card Hapus (Invoice yang Dihapus / Soft Deleted)
-        $statsHapus = DB::table('penjualan')
-            ->whereNotNull('deleted_at')
-            ->whereYear('tgl_penjualan', $yearNow)
-            ->selectRaw('COUNT(*) as count_hapus, COALESCE(SUM(total_pembayaran), 0) as total_hapus')
-            ->first();
-        $hapusCount = $statsHapus->count_hapus ?? 0;
-        $jumlahHapus = number_format($statsHapus->total_hapus ?? 0, 0, ',', '.');
-
         // =========================================================================
         // 4. DATA INVOICE (Eager load user & penjualanBarang)
         // =========================================================================
@@ -199,7 +190,7 @@ class InvoiceController extends Controller
             'countAllSettledPO', 'jumlahBBPerBulanPO',
             'ppnTotal', 'ppnTotalCount', 'ppn01', 'ppn01Count', 'ppn02', 'ppn02Count',
             'ppn03', 'ppn03Count', 'ppn04', 'ppn04Count', 'pphTotal', 'pphTotalCount', 'availableYears',
-            'jenisInvoiceList', 'materialsMap', 'hapusCount', 'jumlahHapus'
+            'jenisInvoiceList', 'materialsMap'
         ));
     }
 
@@ -536,21 +527,16 @@ class InvoiceController extends Controller
             $waLinkLunas2 = '#';
             $waLinkBatal1 = '#';
             $waLinkBatal2 = '#';
-            $waLinkHapus1 = '#';
-            $waLinkHapus2 = '#';
             if ($isAdmin) {
                 $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
                 $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
                 $msgBatal = urlencode("Halo Owner, saya meminta persetujuan untuk membatalkan invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
-                $msgHapus = urlencode("Halo Owner, saya meminta persetujuan untuk menghapus invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
                 $waLink = "https://wa.me/{$waNumber}?text={$msg}";
                 $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
                 $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
                 $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
                 $waLinkBatal1 = "https://wa.me/{$waNumber}?text={$msgBatal}";
                 $waLinkBatal2 = "https://wa.me/{$waNumber2}?text={$msgBatal}";
-                $waLinkHapus1 = "https://wa.me/{$waNumber}?text={$msgHapus}";
-                $waLinkHapus2 = "https://wa.me/{$waNumber2}?text={$msgHapus}";
             }
 
             // 12. Col Aksi (Sleek 3-dots button ⋮)
@@ -588,8 +574,6 @@ class InvoiceController extends Controller
                     $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 1)</a></li>';
                     $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 2)</a></li>';
                 }
-                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkHapus1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Hapus (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkHapus2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Hapus (Owner 2)</a></li>';
             }
 
             $canManage = !$isAdmin || $inv->approval === 'Unlock';
@@ -599,11 +583,6 @@ class InvoiceController extends Controller
                 if ($inv->status !== 'Batal') {
                     $htmlAksi .= '<li><button type="button" class="dropdown-item text-danger" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-times-circle me-2"></i>Invoice Batal</button></li>';
                 }
-            }
-
-            if (!$isAdmin) {
-                $htmlAksi .= '<li class="dropdown-divider"></li>';
-                $htmlAksi .= '<li><button class="dropdown-item text-danger fw-semibold" type="button" onclick="showConfirmation(\'' . addslashes(e($inv->nomor_invoice)) . '\', \'' . $inv->id . '\')"><i class="las la-trash-alt me-2"></i>Hapus Invoice</button></li>';
             }
             $htmlAksi .= '</ul></div>';
 
@@ -657,7 +636,6 @@ class InvoiceController extends Controller
 
         $query = Penjualan::query();
         $card4Query = Penjualan::query();
-        $queryHapus = Penjualan::onlyTrashed();
 
         $periodLabel = '';
         $card4MonthName = '';
@@ -665,7 +643,6 @@ class InvoiceController extends Controller
         if ($timeframe === 'today') {
             $today = $now->toDateString();
             $query->whereDate('tgl_penjualan', $today);
-            $queryHapus->whereDate('tgl_penjualan', $today);
             $periodLabel = 'HARI INI';
             
             $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
@@ -674,21 +651,18 @@ class InvoiceController extends Controller
             $startOfWeek = $now->copy()->startOfWeek()->format('Y-m-d 00:00:00');
             $endOfWeek = $now->copy()->endOfWeek()->format('Y-m-d 23:59:59');
             $query->whereBetween('tgl_penjualan', [$startOfWeek, $endOfWeek]);
-            $queryHapus->whereBetween('tgl_penjualan', [$startOfWeek, $endOfWeek]);
             $periodLabel = 'MINGGU INI';
 
             $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
             $card4MonthName = strtoupper($now->translatedFormat('F Y'));
         } elseif ($timeframe === 'month') {
             $query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
-            $queryHapus->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
             $periodLabel = 'BULAN ' . strtoupper($now->translatedFormat('F Y'));
 
             $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
             $card4MonthName = strtoupper($now->translatedFormat('F Y'));
         } elseif ($timeframe === 'year') {
             $query->whereYear('tgl_penjualan', $yearNow);
-            $queryHapus->whereYear('tgl_penjualan', $yearNow);
             $periodLabel = 'TAHUN ' . $yearNow;
 
             $card4Query->whereYear('tgl_penjualan', $yearNow)->whereMonth('tgl_penjualan', $monthNow);
@@ -696,7 +670,6 @@ class InvoiceController extends Controller
         } elseif ($timeframe === 'last_year') {
             $lastYear = $yearNow - 1;
             $query->whereYear('tgl_penjualan', $lastYear);
-            $queryHapus->whereYear('tgl_penjualan', $lastYear);
             $periodLabel = 'TAHUN ' . $lastYear;
 
             $card4Query->whereYear('tgl_penjualan', $lastYear)->whereMonth('tgl_penjualan', 12);
@@ -705,14 +678,12 @@ class InvoiceController extends Controller
             if ($mode === 'date' && $date) {
                 $parsedDate = Carbon::parse($date);
                 $query->whereDate('tgl_penjualan', $parsedDate->toDateString());
-                $queryHapus->whereDate('tgl_penjualan', $parsedDate->toDateString());
                 $periodLabel = 'TANGGAL ' . $parsedDate->format('d/m/Y');
 
                 $card4Query->whereYear('tgl_penjualan', $parsedDate->year)->whereMonth('tgl_penjualan', $parsedDate->month);
                 $card4MonthName = strtoupper($parsedDate->translatedFormat('F Y'));
             } elseif ($mode === 'month' && $month && $year) {
                 $query->whereYear('tgl_penjualan', $year)->whereMonth('tgl_penjualan', $month);
-                $queryHapus->whereYear('tgl_penjualan', $year)->whereMonth('tgl_penjualan', $month);
                 $parsedDate = Carbon::createFromDate($year, $month, 1);
                 $periodLabel = 'BULAN ' . strtoupper($parsedDate->translatedFormat('F Y'));
 
@@ -720,7 +691,6 @@ class InvoiceController extends Controller
                 $card4MonthName = strtoupper($parsedDate->translatedFormat('F Y'));
             } elseif ($mode === 'year' && $year) {
                 $query->whereYear('tgl_penjualan', $year);
-                $queryHapus->whereYear('tgl_penjualan', $year);
                 $periodLabel = 'TAHUN ' . $year;
 
                 $card4Month = ($year == $yearNow) ? $monthNow : 12;
@@ -731,7 +701,6 @@ class InvoiceController extends Controller
                 $start = Carbon::parse($startDate)->startOfDay();
                 $end = Carbon::parse($endDate)->endOfDay();
                 $query->whereBetween('tgl_penjualan', [$start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')]);
-                $queryHapus->whereBetween('tgl_penjualan', [$start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')]);
                 $periodLabel = $start->format('d/m/Y') . ' - ' . $end->format('d/m/Y');
 
                 $card4Query->whereYear('tgl_penjualan', $end->year)->whereMonth('tgl_penjualan', $end->month);
@@ -808,11 +777,6 @@ class InvoiceController extends Controller
         $totalBatal = (clone $dataBatal)->sum('total_pembayaran');
         $valCard5 = number_format($totalBatal, 0, ',', '.');
 
-        // Card Hapus: Invoice Dihapus (Soft Deleted)
-        $hapusCount = (clone $queryHapus)->count();
-        $totalHapus = (clone $queryHapus)->sum('total_pembayaran');
-        $valCardHapus = number_format($totalHapus, 0, ',', '.');
-
         // Pajak PPN & PPh
         $dataPajak = (clone $query)->where('status', '!=', 'Batal')
             ->select('ppn', 'diskon', 'potongan', 'total_pembayaran', 'total_harga')
@@ -877,7 +841,6 @@ class InvoiceController extends Controller
             'cardPo3' => ['nominal' => $valPo3, 'count' => $countPo3],
             'cardPo4' => ['nominal' => $valPo4, 'count' => $countPo4],
             'card5' => ['nominal' => $valCard5, 'count' => $batal],
-            'cardHapus' => ['nominal' => $valCardHapus, 'count' => $hapusCount],
             'card6' => ['nominal' => number_format($ppnTotal, 0, ',', '.'), 'count' => $ppnTotalCount],
             'card7' => ['nominal' => number_format($pphTotal, 0, ',', '.'), 'count' => $pphTotalCount],
             'card8' => ['nominal' => number_format($ppn01, 0, ',', '.'), 'count' => $ppn01Count],

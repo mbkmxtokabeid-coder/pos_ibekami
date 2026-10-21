@@ -215,9 +215,6 @@
     .card-kpi-batal::before {
         background: linear-gradient(90deg, #A855F7, #7C3AED);
     }
-    .card-kpi-hapus::before {
-        background: linear-gradient(90deg, #F43F5E, #E11D48);
-    }
 
     .tokabe-card-title {
         font-size: 11.5px;
@@ -1424,27 +1421,6 @@
                   </div>
               </div>
           </div>
-
-          {{-- Card: Invoice Dihapus --}}
-          <div class="col-xl-3 col-md-6 mb-3">
-              <div class="card tokabe-card card-kpi-hapus">
-                  <div class="card-body">
-                      <div class="d-flex align-items-start justify-content-between">
-                          <div>
-                              <p class="tokabe-card-title">INVOICE DIHAPUS</p>
-                              <h4 class="tokabe-card-number mb-1">Rp <span id="card-hapus-total">{{ $jumlahHapus }}</span></h4>
-                          </div>
-                          <div class="tokabe-card-icon icon-danger">
-                              <i class="las la-trash-alt"></i>
-                          </div>
-                      </div>
-                      <div class="d-flex align-items-center mt-3 pt-2 border-top border-dark-subtle">
-                          <span class="tokabe-count-pill pill-danger me-2" id="card-hapus-count">{{ $hapusCount }}</span>
-                          <span class="tokabe-card-footer-text">Invoice Dihapus</span>
-                      </div>
-                  </div>
-              </div>
-          </div>
       </div>
       @else
       {{-- Non Pemilik View: Invoice Belum Terbayar Saja --}}
@@ -1611,11 +1587,6 @@
                           @csrf
                           <input type="hidden" name="alasan_batal" id="globalInputAlasanBatal">
                       </form>
-                      <form id="globalDeleteForm" method="POST" style="display: none;">
-                          @csrf
-                          @method('delete')
-                          <input type="hidden" name="alasan_hapus" id="globalInputAlasanHapus">
-                      </form>
                   </div>
 
                   <!-- Footer Info & Pagination Container -->
@@ -1704,40 +1675,6 @@
 <script src="{{asset('libs/choices.js/public/assets/scripts/choices.min.js')}}" defer></script>
 <script src="{{asset('js/halaman/daftar-invoice.js')}}" defer></script>
 <script>
-    function showConfirmation(invoice, invId) {
-        Swal.fire({
-            title: 'Hapus Invoice',
-            text: "Masukkan alasan penghapusan untuk invoice " + invoice,
-            input: 'textarea',
-            inputPlaceholder: 'Tulis alasan hapus invoice di sini...',
-            inputAttributes: {
-                'aria-label': 'Tulis alasan hapus invoice di sini'
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Hapus Invoice',
-            cancelButtonText: 'Kembali',
-            confirmButtonColor: '#c71f16',
-            cancelButtonColor: '#6c757d',
-            inputValidator: (value) => {
-                if (!value || value.trim() === '') {
-                    return 'Alasan penghapusan harus diisi!'
-                }
-            },
-            customClass: {
-                popup: 'swal2-popup'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var form = document.getElementById('globalDeleteForm');
-                form.action = "{{ url('invoice/deleteInvoice') }}/" + invId;
-                var inputHapus = document.getElementById('globalInputAlasanHapus');
-                if (inputHapus) {
-                    inputHapus.value = result.value;
-                }
-                form.submit();
-            }
-        });
-    }
     function confirmBatal(id, nomorInvoice) {
     Swal.fire({
         title: 'Pembatalan Invoice',
@@ -1935,14 +1872,10 @@
                         $('#card-po-blm-bln-count').text(res.cardPo4.count);
                     }
 
-                    // Pembatalan & Penghapusan
+                    // Pembatalan
                     if (res.card5) {
                         $('#card-batal-total').text(res.card5.nominal);
                         $('#card-batal-count').text(res.card5.count);
-                    }
-                    if (res.cardHapus) {
-                        $('#card-hapus-total').text(res.cardHapus.nominal);
-                        $('#card-hapus-count').text(res.cardHapus.count);
                     }
                 }
             },
