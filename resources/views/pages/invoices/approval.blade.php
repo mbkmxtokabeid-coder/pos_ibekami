@@ -69,11 +69,34 @@
             <p class="text-base text-green-600 font-semibold">Rp.{{$invoice->formatted_total_pembayaran}}</p>
         </div>
 
-        <form action="/invoice/ubah-status-unlock/{{$invoice->id}}" method="POST">
-            @csrf
-            <button type="submit" class="w-full bg-success  text-white font-bold py-2 px-4 rounded-lg transition">
-                Setujui & Buka Kunci Invoice
+        <div class="mt-4 d-flex flex-column gap-2">
+            <form action="{{ url('invoice/ubah-status-unlock/' . $invoice->id) }}" method="POST" class="m-0">
+                @csrf
+                <button type="submit" class="w-100 btn btn-success fw-bold py-2 px-4 rounded-lg transition" style="font-size: 14px;">
+                    <i class="las la-lock-open me-1"></i> Setujui & Buka Kunci Invoice
+                </button>
+            </form>
+
+            <button type="button" class="w-100 btn btn-danger fw-bold py-2 px-4 rounded-lg transition" style="font-size: 14px;" onclick="confirmHapusApproval('{{ $invoice->id }}', '{{ addslashes(e($invoice->nomor_invoice)) }}')">
+                <i class="las la-trash me-1"></i> Hapus Invoice Ini
             </button>
+
+            @if($invoice->status !== 'Batal')
+            <button type="button" class="w-100 btn btn-warning fw-bold py-2 px-4 rounded-lg transition text-dark" style="font-size: 14px;" onclick="confirmBatalApproval('{{ $invoice->id }}', '{{ addslashes(e($invoice->nomor_invoice)) }}')">
+                <i class="las la-times-circle me-1"></i> Batalkan Invoice
+            </button>
+            @endif
+        </div>
+
+        <form id="approvalHapusForm" method="POST" style="display: none;">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="alasan_hapus" id="approvalInputAlasanHapus">
+        </form>
+
+        <form id="approvalBatalForm" method="POST" style="display: none;">
+            @csrf
+            <input type="hidden" name="alasan_batal" id="approvalInputAlasanBatal">
         </form>
 
         <div class="mt-4 text-center">
@@ -96,3 +119,79 @@
 <script src="{{asset('libs/choices.js/public/assets/scripts/choices.min.js')}}"></script>
 <script src="{{asset('js/pages/datatables.init.js')}}"></script>
 <script src="{{asset('js/halaman/daftar-invoice.js')}}"></script>
+
+<script>
+function confirmHapusApproval(id, nomorInvoice) {
+    Swal.fire({
+        title: 'Hapus Invoice',
+        html: `Apakah Anda yakin ingin menghapus invoice <strong>#${nomorInvoice}</strong>?<br><span class="text-danger small">Tindakan ini akan mengembalikan stok barang/material dan menghapus SPK terkait.</span>`,
+        input: 'textarea',
+        inputValue: 'Dihapus oleh Pemilik atas permintaan Admin',
+        inputPlaceholder: 'Tulis alasan penghapusan invoice di sini...',
+        inputAttributes: {
+            'aria-label': 'Tulis alasan hapus di sini'
+        },
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus Invoice',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        inputValidator: (value) => {
+            if (!value || !value.trim()) {
+                return 'Alasan penghapusan invoice wajib diisi!';
+            }
+        },
+        customClass: {
+            popup: 'swal2-popup'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var form = document.getElementById('approvalHapusForm');
+            form.action = "{{ url('delete-invoice') }}/" + id;
+            var inputHapus = document.getElementById('approvalInputAlasanHapus');
+            if (inputHapus) {
+                inputHapus.value = result.value.trim();
+            }
+            form.submit();
+        }
+    });
+}
+
+function confirmBatalApproval(id, nomorInvoice) {
+    Swal.fire({
+        title: 'Batalkan Invoice',
+        html: `Apakah Anda yakin ingin membatalkan invoice <strong>#${nomorInvoice}</strong>?<br><span class="text-warning small">Stok barang/material akan dikembalikan.</span>`,
+        input: 'textarea',
+        inputValue: 'Dibatalkan oleh Pemilik atas permintaan Admin',
+        inputPlaceholder: 'Tulis alasan pembatalan invoice di sini...',
+        inputAttributes: {
+            'aria-label': 'Tulis alasan batal di sini'
+        },
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Batalkan Invoice',
+        cancelButtonText: 'Kembali',
+        confirmButtonColor: '#f59e0b',
+        cancelButtonColor: '#64748b',
+        inputValidator: (value) => {
+            if (!value || !value.trim()) {
+                return 'Alasan pembatalan invoice wajib diisi!';
+            }
+        },
+        customClass: {
+            popup: 'swal2-popup'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var form = document.getElementById('approvalBatalForm');
+            form.action = "{{ url('ubah-status-batal') }}/" + id;
+            var inputBatal = document.getElementById('approvalInputAlasanBatal');
+            if (inputBatal) {
+                inputBatal.value = result.value.trim();
+            }
+            form.submit();
+        }
+    });
+}
+</script>

@@ -17,6 +17,7 @@ use App\Models\Order;
 use App\Models\Penjualan;
 use App\Models\InvoiceUpdateLog;
 use App\Models\PenjualanBarang;
+use App\Models\Spk;
 use App\Models\User;
 use Illuminate\Http\Request;
 use PDF;
@@ -367,23 +368,27 @@ class InvoiceController extends Controller
             if ($totalItems === 0) {
                 $htmlDeskripsi .= '<span class="text-muted fs-12">-</span>';
             } else {
-                $htmlDeskripsi .= '<div class="tokabe-desc-collapsed">';
+                // Item 1 & 2 (Selalu tampil statis, tidak pernah hilang / berkedip)
                 foreach ($items as $pIdx => $pb) {
                     if ($pIdx < 2) {
                         $htmlDeskripsi .= '<div class="tokabe-desc-item" title="' . e($pb->deskripsi_item) . '">- ' . e($pb->deskripsi_item) . '</div>';
                     }
                 }
-                if ($totalItems > 2) {
-                    $htmlDeskripsi .= '<div class="tokabe-desc-more" role="button" title="Klik untuk melebarkan rincian">+ ' . ($totalItems - 2) . ' item lagi</div>';
-                }
-                $htmlDeskripsi .= '</div>';
 
+                // Item 3 dst (Muncul saat baris/tombol di-expand)
                 if ($totalItems > 2) {
-                    $htmlDeskripsi .= '<div class="tokabe-desc-expanded" style="display: none;">';
-                    foreach ($items as $pb) {
-                        $htmlDeskripsi .= '<div class="tokabe-desc-item" title="' . e($pb->deskripsi_item) . '">- ' . e($pb->deskripsi_item) . '</div>';
+                    $htmlDeskripsi .= '<div class="tokabe-desc-extra" style="display: none;">';
+                    foreach ($items as $pIdx => $pb) {
+                        if ($pIdx >= 2) {
+                            $htmlDeskripsi .= '<div class="tokabe-desc-item" title="' . e($pb->deskripsi_item) . '">- ' . e($pb->deskripsi_item) . '</div>';
+                        }
                     }
-                    $htmlDeskripsi .= '<div class="tokabe-desc-less" role="button" title="Klik untuk mengecilkan"><i class="las la-angle-up"></i> Sembunyikan</div>';
+                    $htmlDeskripsi .= '</div>';
+
+                    // Tombol Toggle (+ X item lagi / Sembunyikan)
+                    $htmlDeskripsi .= '<div class="tokabe-desc-action-wrap">';
+                    $htmlDeskripsi .= '<span class="tokabe-desc-more" role="button" title="Klik untuk melebarkan rincian">+ ' . ($totalItems - 2) . ' item lagi</span>';
+                    $htmlDeskripsi .= '<span class="tokabe-desc-less" role="button" title="Klik untuk mengecilkan" style="display: none;"><i class="las la-angle-up"></i> Sembunyikan</span>';
                     $htmlDeskripsi .= '</div>';
                 }
             }
@@ -431,25 +436,29 @@ class InvoiceController extends Controller
             if (!$hasMaterial) {
                 $htmlMaterial .= '<span class="text-muted" style="color: #64748b !important; font-size: 12px;">-</span>';
             } else {
-                $htmlMaterial .= '<div class="tokabe-desc-collapsed">';
+                // Material 1 & 2 (Selalu tampil statis, tidak pernah hilang / berkedip)
                 foreach ($materialItems as $mIdx => $mItem) {
                     if ($mIdx < 2) {
                         $dimText = (!empty($mItem['panjang']) && !empty($mItem['lebar'])) ? ' <span class="text-muted" style="font-size: 11px;">(' . e($mItem['panjang']) . '&times;' . e($mItem['lebar']) . ')</span>' : '';
                         $htmlMaterial .= '<div class="tokabe-desc-item" title="' . e($mItem['jenis']) . '"><span class="tokabe-mat-name">- ' . e($mItem['jenis']) . '</span>: <b class="text-info" style="font-weight: 500;">' . e($mItem['qty']) . ' ' . e($mItem['satuan']) . '</b>' . $dimText . '</div>';
                     }
                 }
-                if ($totalMaterials > 2) {
-                    $htmlMaterial .= '<div class="tokabe-desc-more" role="button" title="Klik untuk melebarkan rincian material">+ ' . ($totalMaterials - 2) . ' material lagi</div>';
-                }
-                $htmlMaterial .= '</div>';
 
+                // Material 3 dst (Muncul saat baris/tombol di-expand)
                 if ($totalMaterials > 2) {
-                    $htmlMaterial .= '<div class="tokabe-desc-expanded" style="display: none;">';
-                    foreach ($materialItems as $mItem) {
-                        $dimText = (!empty($mItem['panjang']) && !empty($mItem['lebar'])) ? ' <span class="text-muted" style="font-size: 11px;">(' . e($mItem['panjang']) . '&times;' . e($mItem['lebar']) . ')</span>' : '';
-                        $htmlMaterial .= '<div class="tokabe-desc-item" title="' . e($mItem['jenis']) . '"><span class="tokabe-mat-name">- ' . e($mItem['jenis']) . '</span>: <b class="text-info" style="font-weight: 500;">' . e($mItem['qty']) . ' ' . e($mItem['satuan']) . '</b>' . $dimText . '</div>';
+                    $htmlMaterial .= '<div class="tokabe-desc-extra" style="display: none;">';
+                    foreach ($materialItems as $mIdx => $mItem) {
+                        if ($mIdx >= 2) {
+                            $dimText = (!empty($mItem['panjang']) && !empty($mItem['lebar'])) ? ' <span class="text-muted" style="font-size: 11px;">(' . e($mItem['panjang']) . '&times;' . e($mItem['lebar']) . ')</span>' : '';
+                            $htmlMaterial .= '<div class="tokabe-desc-item" title="' . e($mItem['jenis']) . '"><span class="tokabe-mat-name">- ' . e($mItem['jenis']) . '</span>: <b class="text-info" style="font-weight: 500;">' . e($mItem['qty']) . ' ' . e($mItem['satuan']) . '</b>' . $dimText . '</div>';
+                        }
                     }
-                    $htmlMaterial .= '<div class="tokabe-desc-less" role="button" title="Klik untuk mengecilkan"><i class="las la-angle-up"></i> Sembunyikan</div>';
+                    $htmlMaterial .= '</div>';
+
+                    // Tombol Toggle (+ X material lagi / Sembunyikan)
+                    $htmlMaterial .= '<div class="tokabe-desc-action-wrap">';
+                    $htmlMaterial .= '<span class="tokabe-desc-more" role="button" title="Klik untuk melebarkan rincian material">+ ' . ($totalMaterials - 2) . ' material lagi</span>';
+                    $htmlMaterial .= '<span class="tokabe-desc-less" role="button" title="Klik untuk mengecilkan" style="display: none;"><i class="las la-angle-up"></i> Sembunyikan</span>';
                     $htmlMaterial .= '</div>';
                 }
             }
@@ -527,16 +536,21 @@ class InvoiceController extends Controller
             $waLinkLunas2 = '#';
             $waLinkBatal1 = '#';
             $waLinkBatal2 = '#';
+            $waLinkDelete1 = '#';
+            $waLinkDelete2 = '#';
             if ($isAdmin) {
                 $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
                 $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
                 $msgBatal = urlencode("Halo Owner, saya meminta persetujuan untuk membatalkan invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
+                $msgDelete = urlencode("Halo Owner, saya meminta persetujuan untuk MENGHAPUS invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
                 $waLink = "https://wa.me/{$waNumber}?text={$msg}";
                 $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
                 $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
                 $waLinkLunas2 = "https://wa.me/{$waNumberLunas2}?text={$msgLunas}";
                 $waLinkBatal1 = "https://wa.me/{$waNumber}?text={$msgBatal}";
                 $waLinkBatal2 = "https://wa.me/{$waNumber2}?text={$msgBatal}";
+                $waLinkDelete1 = "https://wa.me/{$waNumber}?text={$msgDelete}";
+                $waLinkDelete2 = "https://wa.me/{$waNumber2}?text={$msgDelete}";
             }
 
             // 12. Col Aksi (Sleek 3-dots button ⋮)
@@ -574,6 +588,8 @@ class InvoiceController extends Controller
                     $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 1)</a></li>';
                     $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 2)</a></li>';
                 }
+                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkDelete1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-danger"></i>Request Delete (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkDelete2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-danger"></i>Request Delete (Owner 2)</a></li>';
             }
 
             $canManage = !$isAdmin || $inv->approval === 'Unlock';
@@ -581,8 +597,9 @@ class InvoiceController extends Controller
                 $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen me-2 text-info"></i>Edit Invoice</a></li>';
                 $htmlAksi .= '<li><a class="dropdown-item btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-history me-2 text-secondary"></i>Riwayat Log</a></li>';
                 if ($inv->status !== 'Batal') {
-                    $htmlAksi .= '<li><button type="button" class="dropdown-item text-danger" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-times-circle me-2"></i>Invoice Batal</button></li>';
+                    $htmlAksi .= '<li><button type="button" class="dropdown-item text-warning" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-times-circle me-2"></i>Invoice Batal</button></li>';
                 }
+                $htmlAksi .= '<li><button type="button" class="dropdown-item text-danger" onclick="confirmHapus(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-trash me-2"></i>Hapus Invoice</button></li>';
             }
             $htmlAksi .= '</ul></div>';
 
@@ -1546,6 +1563,64 @@ class InvoiceController extends Controller
             Alert::warning('Invoice Dibatalkan', 'Invoice #' . $invoice->nomor_invoice . ' berhasil dibatalkan dan stok dikembalikan.');
             return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dibatalkan dan stok dikembalikan.');
         }
+
+    public function destroy(Request $request, $id)
+    {
+        $role = strtolower(Auth::user()->role ?? '');
+        if (!in_array($role, ['pemilik', 'admin', 'admintkb'])) {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik dan Admin yang memiliki hak akses menghapus invoice.');
+            return redirect()->back();
+        }
+
+        $invoice = Penjualan::find($id);
+        if (!$invoice) {
+            Alert::error('Gagal', 'Data invoice tidak ditemukan.');
+            return redirect()->route('daftar_invoice');
+        }
+
+        // IDOR / Hak Akses: Jika Admin, invoice harus berstatus 'Unlock' dari Pemilik
+        if ($role !== 'pemilik' && $invoice->approval !== 'Unlock') {
+            Alert::error('Akses Terkunci', 'Akses hapus invoice #' . $invoice->nomor_invoice . ' terkunci. Silakan minta persetujuan ke Pemilik terlebih dahulu.');
+            return redirect()->back();
+        }
+
+        DB::transaction(function () use ($invoice, $request) {
+            // 1. Simpan alasan hapus jika ada
+            if ($request->filled('alasan_hapus')) {
+                $invoice->alasan_hapus = $request->input('alasan_hapus');
+                $invoice->save();
+            }
+
+            // 2. Hapus SPK terkait beserta file gambar fisiknya jika ada
+            $spks = Spk::where('nomor_invoice', $invoice->nomor_invoice)->get();
+            foreach ($spks as $spk) {
+                if ($spk->gambar && $spk->gambar !== 'noImage.jpg') {
+                    $imagePath = public_path('images/spk/') . $spk->gambar;
+                    if (file_exists($imagePath)) {
+                        @unlink($imagePath);
+                    }
+                }
+                $spk->delete();
+            }
+
+            // 3. Kembalikan stok barang & material hanya jika invoice belum berstatus Batal
+            if ($invoice->status !== 'Batal') {
+                $this->restoreInvoiceStock($invoice);
+            }
+
+            // 4. Catat riwayat log
+            InvoiceUpdateLog::create([
+                'invoice_id' => $invoice->id,
+            ]);
+
+            // 5. Soft delete detail barang dan invoice utama
+            $invoice->penjualanBarang()->delete();
+            $invoice->delete();
+        });
+
+        Alert::success('Berhasil', 'Invoice #' . $invoice->nomor_invoice . ' berhasil dihapus dan stok barang/material telah dikembalikan.');
+        return redirect()->route('daftar_invoice')->with('success', 'Invoice berhasil dihapus.');
+    }
     
      public function getUpdateLog($id)
 {

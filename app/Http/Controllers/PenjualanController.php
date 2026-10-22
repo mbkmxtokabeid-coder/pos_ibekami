@@ -15,7 +15,10 @@ use App\Models\Spk; // Ditambahkan agar bisa mengakses tabel SPK untuk penghapus
 use Carbon\Carbon;
 use DateTimezone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\InvoiceUpdateLog;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PenjualanController extends Controller
@@ -68,6 +71,68 @@ class PenjualanController extends Controller
 
     public function tambahPenjualan(Request $request)
     {
+        // --- 0. VALIDASI KELENGKAPAN INPUT (Semua Input Wajib Diisi) ---
+        $invoice = Invoice::where('nama_invoice', $request->inv)->first();
+        $isTanpaHarga = ($invoice && $invoice->tipe_harga === 'tanpa_harga');
+
+        $rules = [
+            'inv' => 'required',
+            'pelanggan' => 'required',
+            'tlp' => 'required',
+            'adm' => 'required',
+            'order' => 'required',
+            'tgl_selesai' => 'required',
+            'barang_id' => 'required|array|min:1',
+            'barang_id.*' => 'required',
+            'deskripsi_item.*' => 'required',
+        ];
+
+        if (!$isTanpaHarga) {
+            $rules['jns_pem'] = 'required';
+            $rules['hrg.*'] = 'required';
+        }
+
+        if ($request->order === 'Sales') {
+            $rules['sales'] = 'required';
+        }
+
+        $messages = [
+            'inv.required' => 'Jenis invoice wajib dipilih.',
+            'pelanggan.required' => 'Nama customer wajib diisi.',
+            'tlp.required' => 'Nomor telepon wajib diisi.',
+            'adm.required' => 'Nama admin wajib dipilih.',
+            'order.required' => 'Order dari wajib dipilih.',
+            'sales.required' => 'Nama sales wajib diisi ketika Order Dari adalah Sales.',
+            'tgl_selesai.required' => 'Target penyelesaian wajib diisi.',
+            'jns_pem.required' => 'Jenis pembayaran (Payment Method) wajib dipilih.',
+            'barang_id.required' => 'Minimal 1 item barang harus dimasukkan.',
+            'barang_id.*.required' => 'Silakan pilih item barang pada setiap baris.',
+            'deskripsi_item.*.required' => 'Deskripsi item pada setiap baris wajib diisi.',
+            'hrg.*.required' => 'Harga barang pada setiap baris wajib diisi.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        if (!$isTanpaHarga && ($request->jns_pem === 'Transfer DP' || !empty($request->dp))) {
+            $cleanNominalCheck = function($val) {
+                if ($val === null || $val === '') return 0;
+                $digits = preg_replace('/[^0-9]/', '', (string)$val);
+                return !empty($digits) ? intval($digits) : 0;
+            };
+            if ($cleanNominalCheck($request->dp) <= 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Nominal DP wajib diisi lebih dari Rp 0 untuk metode pembayaran DP.'
+                ], 422);
+            }
+        }
+
         // --- 1. VALIDASI & FILTERING STOK MULTI-MATERIAL ---
         if (!empty($request->barang_id)) {
             foreach ($request->barang_id as $key => $value) {
@@ -77,7 +142,7 @@ class PenjualanController extends Controller
                     continue;
                 }
 
-                // Jika is_material_required == 0 (OFF), barang memakai material -> cek stoknya
+                // Jika is_material_required == 0 (OFF), barang memakai material -> cek kelengkapan & stoknya
                 if (isset($request->material_id[$key]) && is_array($request->material_id[$key])) {
                     foreach ($request->material_id[$key] as $matIndex => $matId) {
                         if (!empty($matId)) {
@@ -353,71 +418,83 @@ class PenjualanController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        $role = strtolower(Auth::user()->role ?? '');
+        if (!in_array($role, ['pemilik', 'admin', 'admintkb'])) {
+            Alert::error('Akses Ditolak', 'Hanya Pemilik dan Admin yang memiliki hak akses menghapus invoice.');
+            return redirect()->back();
+        }
+
         $penjualan = Penjualan::find($id);
         if (!$penjualan) {
             Alert::error('Data tidak ditemukan');
             return redirect('list-invoice');
         }
 
-        if ($request->filled('alasan_hapus')) {
-            $penjualan->alasan_hapus = $request->input('alasan_hapus');
-            $penjualan->save();
+        if ($role !== 'pemilik' && $penjualan->approval !== 'Unlock') {
+            Alert::error('Akses Terkunci', 'Akses hapus invoice #' . $penjualan->nomor_invoice . ' terkunci. Silakan minta persetujuan ke Pemilik terlebih dahulu.');
+            return redirect()->back();
         }
 
-        // --- 1. PROSES HAPUS SPK TERKAIT ---
-        // Mencari data SPK berdasarkan nomor_invoice
-        $spk = Spk::where('nomor_invoice', $penjualan->nomor_invoice)->first();
-        if ($spk) {
-            // Hapus file gambar SPK jika ada dan bukan gambar default
-            if ($spk->gambar && $spk->gambar != 'noImage.jpg') {
-                $imagePath = public_path('images/spk/') . $spk->gambar;
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
+        DB::transaction(function () use ($penjualan, $request) {
+            if ($request->filled('alasan_hapus')) {
+                $penjualan->alasan_hapus = $request->input('alasan_hapus');
+                $penjualan->save();
+            }
+
+            // --- 1. PROSES HAPUS SPK TERKAIT ---
+            $spks = Spk::where('nomor_invoice', $penjualan->nomor_invoice)->get();
+            foreach ($spks as $spk) {
+                if ($spk->gambar && $spk->gambar !== 'noImage.jpg') {
+                    $imagePath = public_path('images/spk/') . $spk->gambar;
+                    if (file_exists($imagePath)) {
+                        @unlink($imagePath);
+                    }
                 }
+                $spk->delete();
             }
-            // Hapus data SPK dari database
-            $spk->delete();
-        }
-        // -----------------------------------
-        
-        $pjBarang = PenjualanBarang::where('penjualan_id', $penjualan->id)->get();
+            // -----------------------------------
 
-        // Mengembalikan stok barang dan material yang terkait
-        foreach ($pjBarang as $barang) {
-            $barangObj = Barang::find($barang->barang_id);
-            if ($barangObj) {
-                $barangObj->stok += $barang->qty;
-                $barangObj->save();
-            }
-            
-            // Mengembalikan stok multi-material
-            if ($barang->material_id && $barang->material_qty) {
-                $matIds = json_decode($barang->material_id, true);
-                $matQtys = json_decode($barang->material_qty, true);
+            // Mengembalikan stok barang dan material yang terkait hanya jika belum Batal
+            if ($penjualan->status !== 'Batal') {
+                $pjBarang = PenjualanBarang::where('penjualan_id', $penjualan->id)->get();
+                foreach ($pjBarang as $barang) {
+                    $barangObj = Barang::find($barang->barang_id);
+                    if ($barangObj) {
+                        $barangObj->increment('stok', $barang->qty);
+                    }
+                    
+                    // Mengembalikan stok multi-material
+                    if ($barang->material_id && $barang->material_qty) {
+                        $matIds = json_decode($barang->material_id, true);
+                        $matQtys = json_decode($barang->material_qty, true);
 
-                if (is_array($matIds)) {
-                    foreach ($matIds as $index => $matId) {
-                        $materialObj = Material::find($matId);
-                        if ($materialObj) {
-                            $materialObj->stok += (float) ($matQtys[$index] ?? 0);
-                            $materialObj->save();
+                        if (is_array($matIds)) {
+                            foreach ($matIds as $index => $matId) {
+                                $materialObj = Material::find($matId);
+                                if ($materialObj) {
+                                    $materialObj->increment('stok', (float) ($matQtys[$index] ?? 0));
+                                }
+                            }
+                        } else {
+                            $materialObj = Material::find($barang->material_id);
+                            if ($materialObj) {
+                                $materialObj->increment('stok', (float) $barang->material_qty);
+                            }
                         }
                     }
-                } else {
-                    // Fallback jika datanya masih string ID lama (sebelum multi-material)
-                    $materialObj = Material::find($barang->material_id);
-                    if ($materialObj) {
-                        $materialObj->stok += (float) $barang->material_qty;
-                        $materialObj->save();
-                    }
                 }
             }
-        }
 
-        // Menghapus penjualan dan barang penjualan terkait
-        $penjualan->penjualanBarang()->delete();
-        $penjualan->delete();
-        Alert::success('Data Berhasil dihapus');
+            InvoiceUpdateLog::create([
+                'invoice_id' => $penjualan->id,
+            ]);
+
+            // Menghapus penjualan dan barang penjualan terkait
+            $penjualan->penjualanBarang()->delete();
+            $penjualan->delete();
+        });
+
+        Alert::success('Berhasil', 'Invoice #' . $penjualan->nomor_invoice . ' berhasil dihapus dan stok dikembalikan.');
         return redirect('list-invoice');
     }
 }

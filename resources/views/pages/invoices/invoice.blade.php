@@ -185,6 +185,10 @@ span.flatpickr-weekday {
     color: #ffffff !important;
     outline: none !important;
 }
+.inv-dark-control.is-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+}
 .inv-dark-control::placeholder {
     color: #94a3b8 !important;
     opacity: 1 !important;
@@ -731,40 +735,202 @@ select.inv-dark-control option:checked {
         calcTotals();
     });
 
-    // Form Submit AJAX dengan Validasi Wajib Isi Spesifikasi Material
+    // Form Submit AJAX dengan Validasi Lengkap (Semua Input Wajib Diisi)
     $('#invoice_form').on('submit', function (e) {
         e.preventDefault();
 
-        // 1. VALIDASI SPESIFIKASI MATERIAL WAJIB DIISI
-        var materialValid = true;
-        var errorMessage = '';
-        var firstInvalidElem = null;
+        // 1. Validasi Jenis Invoice
+        var invType = $('#choices-invoice').val();
+        if (!invType) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Belum Lengkap',
+                text: 'Silakan pilih Jenis Invoice!',
+                confirmButtonColor: '#5051F9'
+            });
+            $('#choices-invoice').addClass('is-invalid').focus();
+            return false;
+        } else {
+            $('#choices-invoice').removeClass('is-invalid');
+        }
 
-        $('tr.product').each(function(itemIdx) {
-            var itemRow = $(this);
-            var itemNum = itemIdx + 1;
-            var itemSelect = itemRow.find('select[name^="barang_id"]');
-            var selectedBarangId = itemSelect.val();
+        // 2. Validasi Nama Customer
+        var customerVal = $.trim($('#customer').val());
+        if (!customerVal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Belum Lengkap',
+                text: 'Nama Customer wajib diisi!',
+                confirmButtonColor: '#5051F9'
+            });
+            $('#customer').addClass('is-invalid').focus();
+            return false;
+        } else {
+            $('#customer').removeClass('is-invalid');
+        }
 
-            // Jika baris item dipilih
-            if (selectedBarangId && selectedBarangId !== "" && selectedBarangId !== "Pilih Item") {
-                // Cek apakah barang Non-Material (is_material_required == 1)
-                var isNonMat = (typeof isMaterialRequiredMap !== 'undefined' && isMaterialRequiredMap[selectedBarangId] == "1");
-                if (isNonMat) {
-                    return true; // Lewati validasi material untuk barang non-material
-                }
+        // 3. Validasi Nomor Telepon
+        var phoneVal = $.trim($('#phone-number').val());
+        if (!phoneVal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Belum Lengkap',
+                text: 'Nomor Telepon wajib diisi!',
+                confirmButtonColor: '#5051F9'
+            });
+            $('#phone-number').addClass('is-invalid').focus();
+            return false;
+        } else {
+            $('#phone-number').removeClass('is-invalid');
+        }
 
-                var matContainer = itemRow.find('.materials-container');
+        // 4. Validasi Nama Admin
+        var adminVal = $('#choices-admin').val();
+        if (!adminVal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Belum Lengkap',
+                text: 'Nama Admin wajib dipilih!',
+                confirmButtonColor: '#5051F9'
+            });
+            $('#choices-admin').addClass('is-invalid').focus();
+            return false;
+        } else {
+            $('#choices-admin').removeClass('is-invalid');
+        }
+
+        // 5. Validasi Order Dari
+        var orderVal = $('#choices-orderBy').val();
+        if (!orderVal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Belum Lengkap',
+                text: 'Order Dari wajib dipilih!',
+                confirmButtonColor: '#5051F9'
+            });
+            $('#choices-orderBy').addClass('is-invalid').focus();
+            return false;
+        } else {
+            $('#choices-orderBy').removeClass('is-invalid');
+        }
+
+        // 6. Validasi Sales jika Order Dari == Sales
+        if (orderVal === 'Sales') {
+            var salesVal = $.trim($('#colFormLabelNamaSales').val());
+            if (!salesVal) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data Belum Lengkap',
+                    text: 'Nama Sales wajib diisi ketika Order Dari adalah Sales!',
+                    confirmButtonColor: '#5051F9'
+                });
+                $('#colFormLabelNamaSales').addClass('is-invalid').focus();
+                return false;
+            } else {
+                $('#colFormLabelNamaSales').removeClass('is-invalid');
+            }
+        }
+
+        // 7. Validasi Target Penyelesaian
+        var tglSelesaiVal = $.trim($('#dateInput').val());
+        if (!tglSelesaiVal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Belum Lengkap',
+                text: 'Target Penyelesaian wajib diisi!',
+                confirmButtonColor: '#5051F9'
+            });
+            $('#dateInput').addClass('is-invalid').focus();
+            return false;
+        } else {
+            $('#dateInput').removeClass('is-invalid');
+        }
+
+        // 8. Validasi Baris Barang / Item
+        var productRows = $('tr.product');
+        if (productRows.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Item Kosong',
+                text: 'Minimal harus ada 1 item barang dalam invoice!',
+                confirmButtonColor: '#5051F9'
+            });
+            return false;
+        }
+
+        var selectedInvoiceOpt = $('#choices-invoice').find('option:selected');
+        var isTanpaHarga = (selectedInvoiceOpt.data('tipe-harga') === 'tanpa_harga');
+
+        var itemValid = true;
+        var itemErrorMsg = '';
+        var firstInvalidEl = null;
+
+        productRows.each(function(idx) {
+            var row = $(this);
+            var itemNum = idx + 1;
+            var barangSelect = row.find('select[name^="barang_id"]');
+            var barangId = barangSelect.val();
+            var descTextarea = row.find('textarea[name^="deskripsi_item"]');
+            var descVal = $.trim(descTextarea.val());
+            var hrgInput = row.find('input[name^="hrg"]');
+            var hrgVal = parseFloat(hrgInput.val() ? hrgInput.val().toString().replace(/[.,]/g, '') : 0) || 0;
+            var qtyInput = row.find('input[name^="qty"]');
+            var qtyVal = parseFloat(qtyInput.val()) || 0;
+
+            if (!barangId || barangId === "" || barangId === "Pilih Item") {
+                itemValid = false;
+                itemErrorMsg = 'Silakan pilih Item barang pada baris #' + itemNum + '!';
+                barangSelect.addClass('is-invalid');
+                if (!firstInvalidEl) firstInvalidEl = barangSelect;
+                return false;
+            } else {
+                barangSelect.removeClass('is-invalid');
+            }
+
+            if (!descVal) {
+                itemValid = false;
+                itemErrorMsg = 'Deskripsi item pada baris #' + itemNum + ' wajib diisi!';
+                descTextarea.addClass('is-invalid');
+                if (!firstInvalidEl) firstInvalidEl = descTextarea;
+                return false;
+            } else {
+                descTextarea.removeClass('is-invalid');
+            }
+
+            if (!isTanpaHarga && hrgVal <= 0) {
+                itemValid = false;
+                itemErrorMsg = 'Harga pada baris #' + itemNum + ' wajib diisi lebih dari Rp 0!';
+                hrgInput.addClass('is-invalid');
+                if (!firstInvalidEl) firstInvalidEl = hrgInput;
+                return false;
+            } else {
+                hrgInput.removeClass('is-invalid');
+            }
+
+            if (qtyVal <= 0) {
+                itemValid = false;
+                itemErrorMsg = 'Quantity pada baris #' + itemNum + ' wajib lebih dari 0!';
+                qtyInput.addClass('is-invalid');
+                if (!firstInvalidEl) firstInvalidEl = qtyInput;
+                return false;
+            } else {
+                qtyInput.removeClass('is-invalid');
+            }
+
+            // Validasi Spesifikasi Material jika barang memerlukan material
+            var isNonMat = (typeof isMaterialRequiredMap !== 'undefined' && isMaterialRequiredMap[barangId] == "1");
+            if (!isNonMat) {
+                var matContainer = row.find('.materials-container');
                 var matRows = matContainer.find('.material-row');
 
                 if (matRows.length === 0) {
-                    materialValid = false;
-                    errorMessage = 'Spesifikasi Material untuk item #' + itemNum + ' wajib diisi!';
-                    firstInvalidElem = itemRow.find('.btn-tambah-material');
+                    itemValid = false;
+                    itemErrorMsg = 'Spesifikasi Material untuk item #' + itemNum + ' wajib diisi!';
+                    firstInvalidEl = row.find('.btn-tambah-material');
                     return false;
                 }
 
-                matRows.each(function(mIdx) {
+                matRows.each(function() {
                     var mRow = $(this);
                     var mSelect = mRow.find('.material-select');
                     var mP = mRow.find('.material-panjang');
@@ -775,54 +941,88 @@ select.inv-dark-control option:checked {
                     var valL = parseFloat(mL.val()) || 0;
 
                     if (!valMat || valMat === "") {
-                        materialValid = false;
-                        errorMessage = 'Silakan pilih material pada Spesifikasi Material item #' + itemNum + '!';
+                        itemValid = false;
+                        itemErrorMsg = 'Silakan pilih material pada Spesifikasi Material item #' + itemNum + '!';
                         mSelect.addClass('is-invalid');
-                        if (!firstInvalidElem) firstInvalidElem = mSelect;
+                        if (!firstInvalidEl) firstInvalidEl = mSelect;
                         return false;
                     } else {
                         mSelect.removeClass('is-invalid');
                     }
 
                     if (valP <= 0) {
-                        materialValid = false;
-                        errorMessage = 'Panjang (P) pada Spesifikasi Material item #' + itemNum + ' wajib diisi lebih dari 0!';
+                        itemValid = false;
+                        itemErrorMsg = 'Panjang (P) pada Spesifikasi Material item #' + itemNum + ' wajib diisi lebih dari 0!';
                         mP.addClass('is-invalid');
-                        if (!firstInvalidElem) firstInvalidElem = mP;
+                        if (!firstInvalidEl) firstInvalidEl = mP;
                         return false;
                     } else {
                         mP.removeClass('is-invalid');
                     }
 
                     if (valL <= 0) {
-                        materialValid = false;
-                        errorMessage = 'Lebar (L) pada Spesifikasi Material item #' + itemNum + ' wajib diisi lebih dari 0!';
+                        itemValid = false;
+                        itemErrorMsg = 'Lebar (L) pada Spesifikasi Material item #' + itemNum + ' wajib diisi lebih dari 0!';
                         mL.addClass('is-invalid');
-                        if (!firstInvalidElem) firstInvalidElem = mL;
+                        if (!firstInvalidEl) firstInvalidEl = mL;
                         return false;
                     } else {
                         mL.removeClass('is-invalid');
                     }
                 });
 
-                if (!materialValid) return false;
+                if (!itemValid) return false;
             }
         });
 
-        if (!materialValid) {
+        if (!itemValid) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Spesifikasi Material Wajib Diisi',
-                text: errorMessage,
-                confirmButtonColor: '#4F46E5'
+                title: 'Data Item Belum Lengkap',
+                text: itemErrorMsg,
+                confirmButtonColor: '#5051F9'
             });
-            if (firstInvalidElem && firstInvalidElem.length) {
-                firstInvalidElem.focus();
+            if (firstInvalidEl && firstInvalidEl.length) {
+                firstInvalidEl.focus();
                 $('html, body').animate({
-                    scrollTop: firstInvalidElem.offset().top - 120
+                    scrollTop: firstInvalidEl.offset().top - 120
                 }, 300);
             }
             return false;
+        }
+
+        // 9. Validasi Jenis Pembayaran & DP
+        if (!isTanpaHarga) {
+            var jnsPem = $('#choices-payment-type').val();
+            if (!jnsPem) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data Belum Lengkap',
+                    text: 'Silakan pilih Jenis Pembayaran (Payment Method)!',
+                    confirmButtonColor: '#5051F9'
+                });
+                $('#choices-payment-type').addClass('is-invalid').focus();
+                return false;
+            } else {
+                $('#choices-payment-type').removeClass('is-invalid');
+            }
+
+            if (jnsPem === 'Transfer DP' || $('#div-dp-row').is(':visible')) {
+                var dpInput = $('#input-dp');
+                var dpVal = parseFloat(dpInput.val() ? dpInput.val().toString().replace(/[.,]/g, '') : 0) || 0;
+                if (dpVal <= 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data Belum Lengkap',
+                        text: 'Nominal DP wajib diisi lebih dari Rp 0 untuk metode pembayaran DP!',
+                        confirmButtonColor: '#5051F9'
+                    });
+                    dpInput.addClass('is-invalid').focus();
+                    return false;
+                } else {
+                    dpInput.removeClass('is-invalid');
+                }
+            }
         }
 
         var formData = new FormData(this);
@@ -1033,9 +1233,11 @@ select.inv-dark-control option:checked {
 
                                     <!-- Nomor Telepon -->
                                     <div class="row align-items-center mb-3">
-                                        <label for="phone-number" class="col-sm-4 col-form-label inv-form-label">Nomor Telepon</label>
+                                        <label for="phone-number" class="col-sm-4 col-form-label inv-form-label">
+                                            Nomor Telepon <span class="inv-required-mark">*</span>
+                                        </label>
                                         <div class="col-sm-8">
-                                            <input type="text" class="form-control inv-dark-control @error('tlp') is-invalid @enderror" id="phone-number" name="tlp" placeholder="08xxxxxxxxx" value="{{ old('tlp') }}">
+                                            <input type="text" class="form-control inv-dark-control @error('tlp') is-invalid @enderror" id="phone-number" name="tlp" placeholder="08xxxxxxxxx" value="{{ old('tlp') }}" required>
                                             @error('tlp')
                                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
@@ -1081,7 +1283,9 @@ select.inv-dark-control option:checked {
                                     <!-- Sales Row (Conditional via JS) -->
                                     <div id="divSales" style="display: none;">
                                         <div class="row align-items-center mb-3">
-                                            <label for="colFormLabelNamaSales" class="col-sm-4 col-form-label inv-form-label">Nama Sales</label>
+                                            <label for="colFormLabelNamaSales" class="col-sm-4 col-form-label inv-form-label">
+                                                Nama Sales <span class="inv-required-mark">*</span>
+                                            </label>
                                             <div class="col-sm-8">
                                                 <input type="text" class="form-control inv-dark-control @error('sales') is-invalid @enderror" id="colFormLabelNamaSales" placeholder="Nama Sales" name="sales" value="{{ old('sales') }}">
                                                 @error('sales')
@@ -1093,10 +1297,12 @@ select.inv-dark-control option:checked {
 
                                     <!-- Target Penyelesaian -->
                                     <div class="row align-items-center mb-3">
-                                        <label for="dateInput" class="col-sm-4 col-form-label inv-form-label">Target Penyelesaian</label>
+                                        <label for="dateInput" class="col-sm-4 col-form-label inv-form-label">
+                                            Target Penyelesaian <span class="inv-required-mark">*</span>
+                                        </label>
                                         <div class="col-sm-8">
                                             <div class="position-relative">
-                                                <input type="text" class="form-control inv-dark-control flatpickr-input @error('tgl_selesai') is-invalid @enderror" data-provider="flatpickr" data-date-format="Y-m-d" name="tgl_selesai" id="dateInput" placeholder="YYYY-MM-DD" value="{{ old('tgl_selesai') }}" readonly="readonly" style="cursor: pointer; padding-right: 38px;">
+                                                <input type="text" class="form-control inv-dark-control flatpickr-input @error('tgl_selesai') is-invalid @enderror" data-provider="flatpickr" data-date-format="Y-m-d" name="tgl_selesai" id="dateInput" placeholder="YYYY-MM-DD" value="{{ old('tgl_selesai') }}" readonly="readonly" style="cursor: pointer; padding-right: 38px;" required>
                                                 <i class="ri-calendar-2-line position-absolute text-muted" style="right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px;"></i>
                                             </div>
                                             @error('tgl_selesai')
@@ -1132,10 +1338,10 @@ select.inv-dark-control option:checked {
                                 <thead>
                                     <tr>
                                         <th style="width: 45px;" class="text-center">#</th>
-                                        <th style="min-width: 420px;">ITEM</th>
-                                        <th style="width: 120px;">SATUAN</th>
-                                        <th style="width: 150px;" class="col-header-harga">HARGA (Rp)</th>
-                                        <th style="width: 110px;" class="text-center">QUANTITY</th>
+                                        <th style="min-width: 420px;">ITEM <span class="inv-required-mark">*</span></th>
+                                        <th style="width: 120px;">SATUAN <span class="inv-required-mark">*</span></th>
+                                        <th style="width: 150px;" class="col-header-harga">HARGA (Rp) <span class="inv-required-mark">*</span></th>
+                                        <th style="width: 110px;" class="text-center">QUANTITY <span class="inv-required-mark">*</span></th>
                                         <th style="width: 160px;" class="col-header-jumlah-harga text-end">JUMLAH HARGA</th>
                                         <th style="width: 90px;" class="text-center"></th>
                                     </tr>
@@ -1146,8 +1352,8 @@ select.inv-dark-control option:checked {
                                         <td class="text-start">
                                             <!-- Product Item Select -->
                                             <div class="mb-2">
-                                                <select class="form-select inv-dark-control @error('barang_id.0') is-invalid @enderror" data-choices data-choices-sorting="true" id="productName-1" name="barang_id[0]">
-                                                    <option selected disabled>Pilih Item</option>
+                                                <select class="form-select inv-dark-control @error('barang_id.0') is-invalid @enderror" data-choices data-choices-sorting="true" id="productName-1" name="barang_id[0]" required>
+                                                    <option value="" selected disabled>Pilih Item</option>
                                                     @foreach ($jenisBarang as $jns)
                                                         <option value="{{$jns->id}}" data-kategori-id="{{$jns->kategori_id}}" {{old('barang_id.0') == $jns->id ? 'selected' : ''}}>{{$jns->jenis_barang}}</option>
                                                     @endforeach
@@ -1158,7 +1364,7 @@ select.inv-dark-control option:checked {
                                             </div>
 
                                             <!-- Description Textarea -->
-                                            <textarea class="form-control inv-dark-control mb-2 @error('deskripsi_item.0') is-invalid @enderror" id="productDetails-1" name="deskripsi_item[0]" rows="2" placeholder="Deskripsi Item"></textarea>
+                                            <textarea class="form-control inv-dark-control mb-2 @error('deskripsi_item.0') is-invalid @enderror" id="productDetails-1" name="deskripsi_item[0]" rows="2" placeholder="Deskripsi Item (Wajib Diisi)" required></textarea>
                                             @error('deskripsi_item.0')
                                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
@@ -1233,7 +1439,7 @@ select.inv-dark-control option:checked {
                                         </td>
 
                                         <td>
-                                            <input type="number" class="form-control inv-dark-control text-center fw-bold" id="product-qty-1" value="1" min="1" step="any" name="qty[0]" onchange="autoCalc(this)">
+                                            <input type="number" class="form-control inv-dark-control text-center fw-bold" id="product-qty-1" value="1" min="1" step="any" name="qty[0]" onchange="autoCalc(this)" required>
                                         </td>
 
                                         <td class="col-item-jumlah-harga text-end">
@@ -1263,9 +1469,11 @@ select.inv-dark-control option:checked {
                                 <div class="col-lg-6 col-md-9 col-12">
                                     <!-- Jenis Pembayaran -->
                                     <div class="row align-items-center mb-2">
-                                        <label for="choices-payment-type" class="col-sm-4 col-form-label inv-form-label">Jenis Pembayaran</label>
+                                        <label for="choices-payment-type" class="col-sm-4 col-form-label inv-form-label">
+                                            Jenis Pembayaran <span class="inv-required-mark">*</span>
+                                        </label>
                                         <div class="col-sm-8">
-                                            <select class="form-select inv-dark-control @error('jns_pem') is-invalid @enderror" id="choices-payment-type" name="jns_pem">
+                                            <select class="form-select inv-dark-control @error('jns_pem') is-invalid @enderror" id="choices-payment-type" name="jns_pem" required>
                                                 <option disabled selected value="">Payment Method</option>
                                                 <option value="Cash Lunas">Cash Lunas</option>
                                                 <option value="Cash Belum Lunas">Cash Belum Lunas</option>
@@ -1295,7 +1503,9 @@ select.inv-dark-control option:checked {
                                     <!-- DP Input (Conditional) -->
                                     <div class="row align-items-center mb-2" id="div-dp-row" style="display: none;">
                                         <div class="col-sm-4" id="div-label">
-                                            <label for="input-dp" class="col-form-label text-warning fs-13 fw-semibold mb-0">DP</label>
+                                            <label for="input-dp" class="col-form-label text-warning fs-13 fw-semibold mb-0">
+                                                DP <span class="inv-required-mark">*</span>
+                                            </label>
                                         </div>
                                         <div class="col-sm-8" id="dp">
                                             <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' class="form-control inv-dark-control numeric text-warning fw-bold" placeholder="0" value="{{ old('dp') }}">
@@ -1499,11 +1709,11 @@ select.inv-dark-control option:checked {
             </th>
             <td class="text-start">
                 <div class="mb-2">
-                    <select class="form-select inv-dark-control" name="barang_id[${currentIdx}]" id="productName-${nextNum}">
+                    <select class="form-select inv-dark-control" name="barang_id[${currentIdx}]" id="productName-${nextNum}" required>
                         ${itemOptions}
                     </select>
                 </div>
-                <textarea class="form-control inv-dark-control mb-2" id="productDetails-${nextNum}" name="deskripsi_item[${currentIdx}]" rows="2" placeholder="Deskripsi Item"></textarea>
+                <textarea class="form-control inv-dark-control mb-2" id="productDetails-${nextNum}" name="deskripsi_item[${currentIdx}]" rows="2" placeholder="Deskripsi Item (Wajib Diisi)" required></textarea>
                 
                 <!-- CONTAINER MATERIAL UNTUK ITEM BARU -->
                 <div class="materials-container material-container-${currentIdx}" data-row-index="${currentIdx}">
@@ -1563,7 +1773,7 @@ select.inv-dark-control option:checked {
                 <input type="text" class="form-control inv-dark-control product-price numeric" id="productRate-${nextNum}" name="hrg[${currentIdx}]" placeholder="Rp. 0.000" onchange="autoCalc(this)" required />
             </td>
             <td>
-                <input type="number" class="form-control inv-dark-control text-center fw-bold" id="product-qty-${nextNum}" value="1" min="1" step="any" name="qty[${currentIdx}]" onchange="autoCalc(this)">
+                <input type="number" class="form-control inv-dark-control text-center fw-bold" id="product-qty-${nextNum}" value="1" min="1" step="any" name="qty[${currentIdx}]" onchange="autoCalc(this)" required>
             </td>
             <td class="col-item-jumlah-harga text-end">
                 <input type="text" class="form-control inv-dark-control inv-readonly product-line-price numeric text-end font-mono" id="productPrice-${nextNum}" name="jlh_hrg[${currentIdx}]" placeholder="Rp.0.000" readonly />

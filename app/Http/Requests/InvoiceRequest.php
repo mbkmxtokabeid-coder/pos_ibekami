@@ -30,23 +30,28 @@ class InvoiceRequest extends FormRequest
             'kode' => 'required',
             'tgl_jual' => 'required',
             'pelanggan' => 'required|min:2',
-            'perusahaan' => 'required|min:2',
-            'tlp' => 'required|regex:/^[0-9\+\s-]+$/|min:2',
+            'perusahaan' => 'nullable',
+            'tlp' => 'required|min:3',
             'adm' => 'required',
             'order' => 'required',
             'tgl_selesai' => 'required',
-            'barang_id[]' => 'required',
-            'deskripsi_item[]' => 'required',
-            'satuan[]' => 'required',
-            'qty[]' => 'required',
+            'barang_id' => 'required|array|min:1',
+            'barang_id.*' => 'required',
+            'deskripsi_item.*' => 'required',
+            'satuan.*' => 'required',
+            'qty.*' => 'required',
         ];
 
         if ($isTanpaHarga) {
             $rules['jns_pem'] = 'nullable';
-            $rules['hrg[]'] = 'nullable';
+            $rules['hrg.*'] = 'nullable';
         } else {
             $rules['jns_pem'] = 'required';
-            $rules['hrg[]'] = 'required';
+            $rules['hrg.*'] = 'required';
+        }
+
+        if ($this->input('order') === 'Sales') {
+            $rules['sales'] = 'required';
         }
 
         return $rules;
@@ -55,26 +60,24 @@ class InvoiceRequest extends FormRequest
     public function messages()
     {
         return [
-            'inv.required' => 'Nomor invoice harus diisi.',
-            'kode.required' => 'Kode harus diisi.',
+            'inv.required' => 'Jenis invoice wajib dipilih.',
+            'kode.required' => 'Kode invoice harus diisi.',
             'tgl_jual.required' => 'Tanggal penjualan harus diisi.',
-            'pelanggan.required' => 'Nama pelanggan harus diisi.',
-            'pelanggan.min' => 'Nama pelanggan minimal terdiri dari 2 karakter.',
-            'perusahaan.required' => 'Nama perusahaan harus diisi.',
-            'perusahaan.min' => 'Nama perusahaan minimal terdiri dari 2 karakter.',
-            'tlp.required' => 'Nomor telepon harus diisi.',
-            'tlp.regex' => 'Nomor telepon tidak valid.',
-            'tlp.min' => 'Nomor telepon minimal terdiri dari 2 karakter.',
-            'adm.required' => 'Admin harus diisi.',
-            'order.required' => 'Order harus diisi.',
-            'tgl_selesai.required' => 'Tanggal selesai harus diisi.',
-            'jns_pem.required' => 'Jenis pembayaran harus diisi.',
-            'barang_id[].required' => 'Barang harus dipilih.',
-            'deskripsi_item[].required' => 'Deskripsi item harus diisi.',
-            'satuan[].required' => 'Satuan harus diisi.',
-            'hrg[].required' => 'Harga harus diisi.',
-            'qty[].required' => 'Kuantitas harus diisi.',
+            'pelanggan.required' => 'Nama customer wajib diisi.',
+            'pelanggan.min' => 'Nama customer minimal terdiri dari 2 karakter.',
+            'tlp.required' => 'Nomor telepon wajib diisi.',
+            'tlp.min' => 'Nomor telepon minimal terdiri dari 3 karakter.',
+            'adm.required' => 'Nama admin wajib dipilih.',
+            'order.required' => 'Order dari wajib dipilih.',
+            'sales.required' => 'Nama sales wajib diisi ketika Order Dari dipilih Sales.',
+            'tgl_selesai.required' => 'Target penyelesaian wajib diisi.',
+            'jns_pem.required' => 'Jenis pembayaran (Payment Method) wajib dipilih.',
+            'barang_id.required' => 'Minimal 1 item barang harus dimasukkan.',
+            'barang_id.*.required' => 'Silakan pilih item barang pada setiap baris.',
+            'deskripsi_item.*.required' => 'Deskripsi item pada setiap baris wajib diisi.',
+            'satuan.*.required' => 'Satuan barang wajib dipilih.',
+            'hrg.*.required' => 'Harga barang wajib diisi.',
+            'qty.*.required' => 'Kuantitas barang wajib diisi.',
         ];
-        
     }
 }

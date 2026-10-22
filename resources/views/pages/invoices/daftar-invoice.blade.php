@@ -685,7 +685,7 @@
         border-right: none !important;
         border-bottom: 1px solid #162032 !important;
         font-size: 13px !important;
-        vertical-align: middle !important;
+        vertical-align: top !important;
     }
 
     /* Ukuran & Tata Letak Kolom Sesuai Desain 13 Kolom */
@@ -919,17 +919,10 @@
         color: #94a3b8 !important;
     }
 
-    /* Kolom Deskripsi (Expandable in-place seperti Gambar 3 & 4) */
+    /* Kolom Deskripsi & Material (Expandable in-place tanpa flicker / berkedip) */
     .tokabe-desc-wrap {
         max-width: 280px;
-        line-height: 1.4;
-    }
-
-    .tokabe-desc-collapsed,
-    .tokabe-desc-expanded {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
+        line-height: 1.45;
     }
 
     .tokabe-desc-item {
@@ -937,15 +930,30 @@
         font-size: 12.5px;
         white-space: normal;
         word-break: break-word;
+        line-height: 1.4;
+        margin-bottom: 3px;
+    }
+
+    .tokabe-desc-extra {
+        overflow: hidden;
+    }
+
+    .tokabe-desc-extra .tokabe-desc-item {
+        margin-bottom: 3px;
+    }
+
+    .tokabe-desc-action-wrap {
+        margin-top: 3px;
+        line-height: 1;
     }
 
     .tokabe-desc-more {
         color: #3b82f6;
         font-size: 11.5px;
         font-weight: 600;
-        margin-top: 3px;
         cursor: pointer;
         display: inline-block;
+        transition: color 0.15s ease;
     }
     .tokabe-desc-more:hover {
         color: #60a5fa;
@@ -956,14 +964,19 @@
         color: #64748b;
         font-size: 11px;
         cursor: pointer;
-        margin-top: 4px;
         font-weight: 500;
         display: inline-flex;
         align-items: center;
         gap: 2px;
+        transition: color 0.15s ease;
     }
     .tokabe-desc-less:hover {
         color: #94a3b8;
+    }
+
+    table.tokabe-invoice-table tbody tr.expanded > td,
+    table.tokabe-invoice-table tbody tr.shown > td {
+        background-color: rgba(23, 42, 78, 0.45) !important;
     }
 
     /* Angka Panjar & Total */
@@ -1587,6 +1600,11 @@
                           @csrf
                           <input type="hidden" name="alasan_batal" id="globalInputAlasanBatal">
                       </form>
+                      <form id="globalHapusForm" method="POST" style="display: none;">
+                          @csrf
+                          @method('DELETE')
+                          <input type="hidden" name="alasan_hapus" id="globalInputAlasanHapus">
+                      </form>
                   </div>
 
                   <!-- Footer Info & Pagination Container -->
@@ -1703,6 +1721,42 @@
             var inputBatal = document.getElementById('globalInputAlasanBatal');
             if (inputBatal) {
                 inputBatal.value = result.value;
+            }
+            form.submit();
+        }
+    });
+}
+
+function confirmHapus(id, nomorInvoice) {
+    Swal.fire({
+        title: 'Hapus Invoice',
+        html: `Apakah Anda yakin ingin menghapus invoice <strong>#${nomorInvoice}</strong>?<br><span class="text-danger small">Tindakan ini akan mengembalikan stok barang/material dan menghapus SPK terkait.</span>`,
+        input: 'textarea',
+        inputPlaceholder: 'Tulis alasan penghapusan invoice di sini...',
+        inputAttributes: {
+            'aria-label': 'Tulis alasan hapus di sini'
+        },
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus Invoice',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        inputValidator: (value) => {
+            if (!value || !value.trim()) {
+                return 'Alasan penghapusan invoice wajib diisi!';
+            }
+        },
+        customClass: {
+            popup: 'swal2-popup'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var form = document.getElementById('globalHapusForm');
+            form.action = "{{ url('delete-invoice') }}/" + id;
+            var inputHapus = document.getElementById('globalInputAlasanHapus');
+            if (inputHapus) {
+                inputHapus.value = result.value.trim();
             }
             form.submit();
         }
@@ -1898,39 +1952,61 @@
 
     function toggleRowDesc(element) {
         var tr = $(element).closest('tr');
-        var collapsed = tr.find('.tokabe-desc-collapsed');
-        var expanded = tr.find('.tokabe-desc-expanded');
+        if (!tr.length) return;
+
+        var isCurrentlyExpanded = tr.hasClass('expanded');
         var toggleBtn = tr.find('.tokabe-row-toggle');
+        var extraSections = tr.find('.tokabe-desc-extra');
+        var moreBtns = tr.find('.tokabe-desc-more');
+        var lessBtns = tr.find('.tokabe-desc-less');
 
-        if (expanded.length === 0) return;
+        // Jika baris ini tidak memiliki item ke-3 dst (tidak ada yang perlu dimekarkan)
+        if (extraSections.length === 0) return;
 
-        if (expanded.is(':visible')) {
-            expanded.hide();
-            collapsed.show();
+        if (isCurrentlyExpanded) {
+            // TUTUP / COLLAPSE
             tr.removeClass('expanded shown');
             toggleBtn.removeClass('active');
+
+            // Slide up item tambahan tanpa flicker (stop animasi sebelumnya dengan lembut)
+            extraSections.stop(true, false).slideUp(180);
+            lessBtns.hide();
+            moreBtns.show();
         } else {
-            collapsed.hide();
-            expanded.show();
+            // BUKA / EXPAND
             tr.addClass('expanded shown');
             toggleBtn.addClass('active');
+
+            // Slide down item tambahan secara mulus langsung di bawah item 1 & 2
+            extraSections.stop(true, false).slideDown(200);
+            moreBtns.hide();
+            lessBtns.show();
         }
     }
 
     function toggleAllRowDetails() {
         var anyOpen = $('#scroll-horizontal tbody tr.expanded').length > 0;
+        var allTrs = $('#scroll-horizontal tbody tr');
+
         if (anyOpen) {
-            $('#scroll-horizontal tbody tr').removeClass('expanded shown');
-            $('#scroll-horizontal tbody .tokabe-desc-collapsed').show();
-            $('#scroll-horizontal tbody .tokabe-desc-expanded').hide();
+            allTrs.removeClass('expanded shown');
             $('#scroll-horizontal tbody .tokabe-row-toggle').removeClass('active');
             $('#btnToggleAllRows').text('Buka Semua Rincian');
+
+            allTrs.find('.tokabe-desc-extra').stop(true, false).slideUp(180);
+            allTrs.find('.tokabe-desc-less').hide();
+            allTrs.find('.tokabe-desc-more').show();
         } else {
-            $('#scroll-horizontal tbody tr').addClass('expanded shown');
-            $('#scroll-horizontal tbody .tokabe-desc-collapsed').hide();
-            $('#scroll-horizontal tbody .tokabe-desc-expanded').show();
-            $('#scroll-horizontal tbody .tokabe-row-toggle').addClass('active');
+            var expandableRows = allTrs.filter(function() {
+                return $(this).find('.tokabe-desc-extra').length > 0;
+            });
+            expandableRows.addClass('expanded shown');
+            expandableRows.find('.tokabe-row-toggle').addClass('active');
             $('#btnToggleAllRows').text('Tutup Semua Rincian');
+
+            expandableRows.find('.tokabe-desc-extra').stop(true, false).slideDown(200);
+            expandableRows.find('.tokabe-desc-more').hide();
+            expandableRows.find('.tokabe-desc-less').show();
         }
     }
 
@@ -2054,9 +2130,12 @@
             toggleRowDesc(this);
         });
 
-        // Klik baris tabel
+        // Klik baris tabel (tidak memicu jika mengklik tombol/link atau sedang seleksi teks)
         $(document).on('click', '#scroll-horizontal tbody tr', function(e) {
             if ($(e.target).closest('a, button, select, input, textarea, .dropdown-menu, .tokabe-action-dropdown').length) {
+                return;
+            }
+            if (window.getSelection && window.getSelection().toString().length > 0) {
                 return;
             }
             toggleRowDesc(this);

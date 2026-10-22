@@ -115,6 +115,12 @@ Route::group(['middleware' => ['auth']], function () {
             
             Route::post('/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik')->name('invoice.lock');
             Route::post('/invoice/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik');
+            Route::get('/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik');
+            Route::get('/invoice/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik');
+            
+            // ROUTE DELETE INVOICE
+            Route::match(['delete', 'post'], '/delete-invoice/{id}', [InvoiceController::class, 'destroy'])->name('invoice.destroy');
+            Route::match(['delete', 'post'], '/invoice/delete/{id}', [InvoiceController::class, 'destroy']);
             
             Route::get('/invoice-approval/{id}', [InvoiceController::class, 'approvalPage'])
             ->middleware('auth', 'role:Pemilik') 
@@ -126,7 +132,7 @@ Route::group(['middleware' => ['auth']], function () {
             
             Route::get('/invoice/update-log/{id}', [InvoiceController::class, 'getUpdateLog']);
             Route::get('/list-invoice', [InvoiceController::class, 'loadListInvoice'])->name('daftar_invoice');
-            Route::get('/list-invoice-tokabe', [InvoiceController::class, 'loadListInvoice'])->name('list_invoice_tokabe');
+            Route::redirect('/list-invoice-tokabe', '/list-invoice');
             Route::get('/list-invoice/cards-data', [InvoiceController::class, 'getCardsData'])->name('invoice.cards_data');
             Route::match(['get', 'post'], '/list-invoice/datatable-data', [InvoiceController::class, 'getDatatableInvoices'])->name('invoice.datatable_data');
 
