@@ -84,10 +84,10 @@
 
                                           <label for="date-field">Tanggal Penjualan</label>
                                           <div class="col-lg-4">
-                                            <input type="text" class="form-control bg-light border-0 flatpickr-input" id="date-field" name="tgl_jual" data-provider="flatpickr" value="{{$inv->tgl_penjualan}}" readonly="readonly">
+                                            <input type="text" class="form-control bg-light border-0 flatpickr-input" id="date-field" name="tgl_jual" data-provider="flatpickr" data-date-format="Y-m-d" value="{{ $inv->tgl_penjualan ? substr($inv->tgl_penjualan, 0, 10) : '' }}" style="cursor: pointer;">
                                           </div>
                                           <div class="col-lg-6">
-                                            <input type="text" class="form-control bg-light border-0" placeholder="H:i" name="jam" value="{{$jam}}" readonly="readonly">
+                                            <input type="text" class="form-control bg-light border-0 flatpickr-input" id="time-field" placeholder="H:i" name="jam" value="{{ $jam }}" style="cursor: pointer;" autocomplete="off">
                                           </div>
 
                                         </div>
@@ -460,9 +460,10 @@
                                       </div>
                                     </div>
                                     {{-- Input untuk Dp --}}
-                                    <div class="row mb-1"  >
+                                    <div class="row mb-1" id="div-dp-row" style="{{ ($inv->jenis_pembayaran === 'Transfer DP' || $inv->jenis_pembayaran === 'Cash Belum Lunas' || !empty($inv->dp)) ? 'display: flex' : 'display: none' }};">
                                       <div class="col-lg-4" id="div-label" style="display: block" >
-                                        <label for="dp" class="form-label col-form-label col-form-label-md" id="label-dp">Dp</label>
+                                        <label for="dp" class="form-label col-form-label col-form-label-md mb-0" id="label-dp">DP (70%)</label>
+                                        <small class="text-muted d-block" style="font-size: 11px;">(Default 70%, dapat diedit jika nego)</small>
                                       </div>
                                       <div class="col-lg-6" id="dp" style="display: block;">
                                         @if (!empty($inv->dp))
@@ -838,5 +839,28 @@
             });
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let dateField = document.getElementById("date-field");
+        let timeField = document.getElementById("time-field");
+        if (typeof flatpickr !== 'undefined') {
+            if (dateField) {
+                flatpickr(dateField, {
+                    dateFormat: "Y-m-d",
+                    allowInput: true
+                });
+            }
+            if (timeField) {
+                flatpickr(timeField, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    allowInput: true,
+                    defaultDate: timeField.value || "{{ $jam }}"
+                });
+            }
+        }
+    });
 </script>
 @endsection

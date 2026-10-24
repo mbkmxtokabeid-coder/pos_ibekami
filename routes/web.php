@@ -112,6 +112,8 @@ Route::group(['middleware' => ['auth']], function () {
             
             Route::post('/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->middleware('role:Pemilik')->name('invoice.unlock');
             Route::post('/invoice/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->middleware('role:Pemilik');
+            Route::get('/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->middleware('role:Pemilik');
+            Route::get('/invoice/ubah-status-unlock/{id}', [InvoiceController::class, 'unlock'])->middleware('role:Pemilik');
             
             Route::post('/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik')->name('invoice.lock');
             Route::post('/invoice/ubah-status-lock/{id}', [InvoiceController::class, 'lock'])->middleware('role:Pemilik');

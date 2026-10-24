@@ -50,20 +50,29 @@ function getTotal() {
 }
 
 function dP() {
+  var divRow = document.getElementById("div-dp-row");
   var divLabel = document.getElementById("div-label");
   var divElement = document.getElementById("dp");
-  var totalHargaElem = document.getElementById('total-harga');
-  var totalHarga = totalHargaElem ? parseNominal(totalHargaElem.value) : 0;
+  var dpInput = document.getElementById("input-dp");
+  var totalPemElem = document.getElementById('total-pembelian') || document.getElementById('total-harga');
+  var totalAkhir = totalPemElem ? parseNominal(totalPemElem.value) : 0;
   var jnsPemElem = document.getElementById('choices-payment-type');
   var jnsPem = jnsPemElem ? jnsPemElem.value : '';
 
-  if (divLabel && divElement) {
-    if (totalHarga >= 500000 && (jnsPem == 'Cash Belum Lunas' || jnsPem == 'Transfer DP')) {
-      divLabel.style.display = "block";
-      divElement.style.display = "block";
-    } else {
-      divLabel.style.display = "none";
-      divElement.style.display = "none";
+  if (jnsPem === 'Transfer DP' || jnsPem === 'Cash Belum Lunas') {
+    if (divRow) divRow.style.display = "flex";
+    if (divLabel) divLabel.style.display = "block";
+    if (divElement) divElement.style.display = "block";
+
+    if (jnsPem === 'Transfer DP' && dpInput && (!window.userEditedDp || parseNominal(dpInput.value) <= 0) && totalAkhir > 0) {
+      dpInput.value = formatNominal(Math.round(totalAkhir * 0.7));
+    }
+  } else {
+    if (divRow) divRow.style.display = "none";
+    if (divLabel) divLabel.style.display = "none";
+    if (divElement) divElement.style.display = "none";
+    if (dpInput && (jnsPem === 'Cash Lunas' || jnsPem === 'Transfer Lunas')) {
+      dpInput.value = "0";
     }
   }
 }
@@ -131,8 +140,16 @@ if (document.getElementById('total-pembelian')) {
   document.getElementById('total-pembelian').addEventListener('input', sisaPembayaran);
 }
 if (document.getElementById('input-dp')) {
+  document.getElementById('input-dp').addEventListener('input', function() {
+    var raw = this.value;
+    if (raw && raw.trim() !== '') {
+      window.userEditedDp = true;
+    } else {
+      window.userEditedDp = false;
+    }
+    sisaPembayaran();
+  });
   document.getElementById('input-dp').addEventListener('change', sisaPembayaran);
-  document.getElementById('input-dp').addEventListener('input', sisaPembayaran);
 }
 if (document.getElementById('total-harga')) {
   document.getElementById('total-harga').addEventListener('input', dP);
@@ -140,6 +157,9 @@ if (document.getElementById('total-harga')) {
 }
 if (document.getElementById('choices-payment-type')) {
   document.getElementById('choices-payment-type').addEventListener('change', function() {
+    if (this.value === 'Transfer DP') {
+      window.userEditedDp = false;
+    }
     dP();
     sisaPembayaran();
   });

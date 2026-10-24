@@ -201,8 +201,8 @@ class InvoiceController extends Controller
 
         $currentUser = Auth::user();
         $role = $currentUser->role ?? '';
-        $isOwner = $role === 'Pemilik';
-        $isAdmin = $role === 'Admin';
+        $isOwner = strcasecmp($role, 'Pemilik') === 0;
+        $isAdmin = strcasecmp($role, 'Admin') === 0;
         $waNumber = '628116029999';
         $waNumber2 = '628116179999';
         $waNumberLunas1 = '628116179999';
@@ -567,8 +567,12 @@ class InvoiceController extends Controller
                 $htmlAksi .= '<li><a class="dropdown-item text-success" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</a></li>';
             }
 
-            if ($isOwner && $inv->approval === 'Unlock') {
-                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-lock me-2 text-warning"></i>Lock Invoice</a></li>';
+            if ($isOwner) {
+                if ($inv->approval === 'Unlock') {
+                    $htmlAksi .= '<li><a class="dropdown-item text-warning" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-lock me-2"></i>Lock Invoice</a></li>';
+                } else {
+                    $htmlAksi .= '<li><a class="dropdown-item text-success" href="' . url('ubah-status-unlock/' . $inv->id) . '"><i class="las la-lock-open me-2"></i>Unlock Invoice</a></li>';
+                }
             }
 
             if ($isAdmin && $inv->approval !== 'Unlock') {
@@ -976,7 +980,12 @@ class InvoiceController extends Controller
 
         $nmr_inv = $request->kode . $request->kodeUnik;
         $status = ($request->jns_pem == 'Cash Lunas' || $request->jns_pem == 'Transfer Lunas') ? 'Lunas' : 'Belum Lunas';
-        $tanggalPenjualan = $request->tgl_jual . ":" . $request->jam;
+        $tgl = trim(explode(' ', $request->tgl_jual)[0]);
+        $jam = trim($request->jam ?: date('H:i'));
+        if (strlen($jam) === 5) {
+            $jam .= ':00';
+        }
+        $tanggalPenjualan = $tgl . ' ' . $jam;
         $item = (!empty($request->barang_id)) ? count($request->barang_id) : 0;
 
         $cleanNominal = function($val) {
@@ -1476,7 +1485,10 @@ class InvoiceController extends Controller
         $inv->save();
         
         Alert::success('Invoice Sudah di-Unlock');
-        return redirect()->route('daftar_invoice');
+        if (request()->headers->get('referer') && str_contains(request()->headers->get('referer'), 'invoice-approval')) {
+            return redirect()->route('daftar_invoice');
+        }
+        return redirect()->back();
     }
     
     function lock($id)
@@ -1492,6 +1504,7 @@ class InvoiceController extends Controller
             return redirect()->back();
         }
         $inv->approval = 'Lock';
+        $inv->approved_at = null;
         $inv->save();
         
         Alert::success('Invoice Sudah di-Lock');

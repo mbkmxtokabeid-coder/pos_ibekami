@@ -723,7 +723,20 @@ select.inv-dark-control option:checked {
         }
     });
 
-    // Toggle Bank Rekening display
+    window.userEditedDp = false;
+
+    // Track ketika user mengedit nominal DP secara manual (misal customer nego)
+    $(document).on('input', '#input-dp', function () {
+        var rawVal = $(this).val();
+        if (rawVal && rawVal.toString().trim() !== '') {
+            window.userEditedDp = true;
+        } else {
+            window.userEditedDp = false;
+        }
+        calcTotals();
+    });
+
+    // Toggle Bank Rekening display & DP Input
     $('#choices-payment-type').on('change', function () {
         var val = $(this).val();
         if (val && val.indexOf('Transfer') !== -1) {
@@ -731,6 +744,24 @@ select.inv-dark-control option:checked {
         } else {
             $('#alamatPembayaran').hide();
         }
+
+        if (val === 'Transfer DP') {
+            window.userEditedDp = false; // Reset agar langsung terhitung default 70%
+            $('#div-dp-row').show();
+            $('#div-label').show();
+            $('#dp').show();
+        } else if (val === 'Cash Belum Lunas') {
+            $('#div-dp-row').show();
+            $('#div-label').show();
+            $('#dp').show();
+        } else {
+            $('#div-dp-row').hide();
+            $('#div-label').hide();
+            $('#dp').hide();
+            $('#input-dp').val('0');
+            window.userEditedDp = false;
+        }
+
         if (typeof dP === 'function') dP();
         calcTotals();
     });
@@ -1107,14 +1138,61 @@ select.inv-dark-control option:checked {
         var totalAkhir = Math.round(totalHarga + ppnNominal - pphNominal);
         $('#total-pembelian').val(totalAkhir.toLocaleString('id-ID'));
 
+        var jnsPem = $('#choices-payment-type').val();
+
+        if (jnsPem === 'Transfer DP') {
+            $('#div-dp-row').show();
+            $('#div-label').show();
+            $('#dp').show();
+
+            // Hitung otomatis 70% secara default jika belum diedit manual oleh user
+            if (!window.userEditedDp && totalAkhir > 0) {
+                var defaultDp = Math.round(totalAkhir * 0.7);
+                $('#input-dp').val(defaultDp.toLocaleString('id-ID'));
+            }
+        } else if (jnsPem === 'Cash Belum Lunas') {
+            $('#div-dp-row').show();
+            $('#div-label').show();
+            $('#dp').show();
+        } else {
+            $('#div-dp-row').hide();
+            $('#div-label').hide();
+            $('#dp').hide();
+            if (jnsPem === 'Cash Lunas' || jnsPem === 'Transfer Lunas') {
+                $('#input-dp').val('0');
+                window.userEditedDp = false;
+            }
+        }
+
         var dpVal = parseFloat($('#input-dp').val() ? $('#input-dp').val().toString().replace(/[.,]/g, '') : 0) || 0;
-        var sisaVal = Math.max(0, Math.round(totalAkhir - dpVal));
-        $('#sisa-pembayaran').val(sisaVal.toLocaleString('id-ID'));
+
+        if (jnsPem === 'Cash Lunas' || jnsPem === 'Transfer Lunas') {
+            $('#sisa-pembayaran').val('0');
+        } else {
+            var sisaVal = Math.max(0, Math.round(totalAkhir - dpVal));
+            $('#sisa-pembayaran').val(sisaVal.toLocaleString('id-ID'));
+        }
     };
 
-    $(document).on('input change', '#input-ppn, #input-pph, #input-dp, #total-harga', function() {
+    $(document).on('input change', '#input-ppn, #input-pph, #total-harga', function() {
         calcTotals();
     });
+
+    // Inisialisasi awal saat halaman dibuka
+    var rawDp = $('#input-dp').val();
+    if (rawDp && parseFloat(rawDp.toString().replace(/[.,]/g, '')) > 0) {
+        window.userEditedDp = true;
+    }
+    var initPayment = $('#choices-payment-type').val();
+    if (initPayment && initPayment.indexOf('Transfer') !== -1) {
+        $('#alamatPembayaran').show();
+    }
+    if (initPayment === 'Transfer DP' || initPayment === 'Cash Belum Lunas') {
+        $('#div-dp-row').show();
+        $('#div-label').show();
+        $('#dp').show();
+    }
+    calcTotals();
   });
 </script>
 @endsection
@@ -1188,10 +1266,10 @@ select.inv-dark-control option:checked {
                                     <label class="form-label inv-form-label">Tanggal Penjualan</label>
                                     <div class="d-flex gap-2">
                                         <div class="flex-grow-1">
-                                            <input type="text" class="form-control inv-dark-control inv-readonly flatpickr-input" id="date-field" name="tgl_jual" data-provider="flatpickr" value="{{$hariIni}}" readonly="readonly">
+                                            <input type="text" class="form-control inv-dark-control flatpickr-input" id="date-field" name="tgl_jual" data-provider="flatpickr" data-date-format="Y-m-d" value="{{$hariIni}}" placeholder="YYYY-MM-DD" style="cursor: pointer;">
                                         </div>
-                                        <div style="width: 110px;">
-                                            <input type="text" class="form-control inv-dark-control inv-readonly text-center" placeholder="H:i" name="jam" value="{{$formatJam}}" readonly>
+                                        <div style="width: 120px;">
+                                            <input type="text" class="form-control inv-dark-control text-center flatpickr-input" id="time-field" placeholder="H:i" name="jam" value="{{$formatJam}}" style="cursor: pointer;" title="Klik untuk mengatur jam" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -1504,8 +1582,9 @@ select.inv-dark-control option:checked {
                                     <div class="row align-items-center mb-2" id="div-dp-row" style="display: none;">
                                         <div class="col-sm-4" id="div-label">
                                             <label for="input-dp" class="col-form-label text-warning fs-13 fw-semibold mb-0">
-                                                DP <span class="inv-required-mark">*</span>
+                                                DP (70%) <span class="inv-required-mark">*</span>
                                             </label>
+                                            <small class="text-muted d-block" style="font-size: 11px;">(Default 70%, dapat diedit jika nego)</small>
                                         </div>
                                         <div class="col-sm-8" id="dp">
                                             <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' class="form-control inv-dark-control numeric text-warning fw-bold" placeholder="0" value="{{ old('dp') }}">
@@ -1606,6 +1685,7 @@ select.inv-dark-control option:checked {
 
     document.addEventListener("DOMContentLoaded", function () {
         let dateField = document.getElementById("date-field");
+        let timeField = document.getElementById("time-field");
         let dateInput = document.getElementById("dateInput");
         let invoiceInput = document.getElementById("noInvoice");
 
@@ -1624,6 +1704,17 @@ select.inv-dark-control option:checked {
                             })
                             .catch(error => console.error('Error fetching invoice number:', error));
                     }
+                });
+            }
+
+            if (timeField) {
+                flatpickr(timeField, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    allowInput: true,
+                    defaultDate: timeField.value || "{{ $formatJam }}"
                 });
             }
 

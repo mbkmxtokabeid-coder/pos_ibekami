@@ -678,6 +678,118 @@
     .page-content {
         padding-top: 24px !important;
     }
+
+    /* =========================================================
+       SWEETALERT2 DARK THEME & HIGH-CONTRAST TOAST NOTIFICATIONS
+       ========================================================= */
+    .swal2-popup.swal2-toast {
+        background: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+    }
+    .swal2-popup.swal2-toast .swal2-title {
+        color: #ffffff !important;
+        font-size: 14.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.2px !important;
+        margin-bottom: 4px !important;
+        text-align: left !important;
+    }
+    .swal2-popup.swal2-toast .swal2-html-container {
+        color: #cbd5e1 !important;
+        font-size: 12.5px !important;
+        font-weight: 400 !important;
+        line-height: 1.45 !important;
+        text-align: left !important;
+        margin: 0 !important;
+    }
+    .swal2-popup.swal2-toast .swal2-icon {
+        margin: 0 12px 0 0 !important;
+    }
+    .swal2-popup.swal2-toast .swal2-icon.swal2-info {
+        border-color: #38bdf8 !important;
+        color: #38bdf8 !important;
+    }
+    .swal2-popup.swal2-toast .swal2-icon.swal2-success {
+        border-color: #10b981 !important;
+        color: #10b981 !important;
+    }
+    .swal2-popup.swal2-toast .swal2-icon.swal2-warning {
+        border-color: #f59e0b !important;
+        color: #f59e0b !important;
+    }
+    .swal2-popup.swal2-toast .swal2-icon.swal2-error {
+        border-color: #ef4444 !important;
+        color: #ef4444 !important;
+    }
+    .swal2-popup.swal2-toast .swal2-timer-progress-bar {
+        background: linear-gradient(90deg, #38bdf8, #818cf8) !important;
+        height: 3px !important;
+        border-radius: 0 0 12px 12px !important;
+    }
+
+    /* Regular Modal SweetAlert */
+    .swal2-popup:not(.swal2-toast) {
+        background: #161e2e !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7) !important;
+        border-radius: 14px !important;
+        color: #f1f5f9 !important;
+    }
+    .swal2-popup:not(.swal2-toast) .swal2-title {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+    .swal2-popup:not(.swal2-toast) .swal2-html-container {
+        color: #cbd5e1 !important;
+        font-size: 14px !important;
+    }
+    .swal2-popup:not(.swal2-toast) .swal2-close {
+        color: #94a3b8 !important;
+    }
+    .swal2-popup:not(.swal2-toast) .swal2-close:hover {
+        color: #ffffff !important;
+    }
+
+    /* Flatpickr Timepicker Dark Styling */
+    .flatpickr-calendar.hasTime.noCalendar {
+        background: #161e2e !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5) !important;
+        border-radius: 10px !important;
+        padding: 6px 10px !important;
+        width: auto !important;
+    }
+    .flatpickr-time {
+        background: transparent !important;
+        border: none !important;
+        height: 40px !important;
+        line-height: 40px !important;
+    }
+    .flatpickr-time .numInputWrapper input {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 15px !important;
+    }
+    .flatpickr-time .flatpickr-time-separator {
+        color: #94a3b8 !important;
+        font-weight: 700 !important;
+    }
+    .flatpickr-time .numInputWrapper span {
+        opacity: 0.75 !important;
+    }
+    .flatpickr-time .numInputWrapper span.arrowUp:after {
+        border-bottom-color: #38bdf8 !important;
+    }
+    .flatpickr-time .numInputWrapper span.arrowDown:after {
+        border-top-color: #38bdf8 !important;
+    }
+    .flatpickr-time .numInputWrapper span:hover {
+        opacity: 1 !important;
+        background: rgba(56, 189, 248, 0.25) !important;
+    }
 </style>
 </head>
 

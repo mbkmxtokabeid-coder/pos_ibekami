@@ -172,7 +172,12 @@ class PenjualanController extends Controller
         }
 
         $status = $isTanpaHarga ? 'Lunas' : (($jns_pem == 'Cash Lunas' || $jns_pem == 'Transfer Lunas') ? 'Lunas' : 'Belum Lunas');
-        $tanggalPenjualan = $request->tgl_jual . ":" . $request->jam;
+        $tgl = trim(explode(' ', $request->tgl_jual)[0]);
+        $jam = trim($request->jam ?: date('H:i'));
+        if (strlen($jam) === 5) {
+            $jam .= ':00';
+        }
+        $tanggalPenjualan = $tgl . ' ' . $jam;
         $item = (!empty($request->barang_id)) ? count($request->barang_id) : 0;
 
         $cleanNominal = function($val) {

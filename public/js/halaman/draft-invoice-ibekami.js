@@ -47,6 +47,8 @@
                 adm: $('[name="adm"]').val() || '',
                 order: $('[name="order"]').val() || '',
                 sales: $('[name="sales"]').val() || '',
+                tgl_jual: $('[name="tgl_jual"]').val() || '',
+                jam: $('[name="jam"]').val() || '',
                 tgl_selesai: $('[name="tgl_selesai"]').val() || '',
                 jns_pem: $('[name="jns_pem"]').val() || '',
                 norek: $('[name="norek"]:checked').val() || '',
@@ -132,6 +134,20 @@
         if (header.sales) {
             $('[name="sales"]').val(header.sales);
             if ($('#divSales').length) $('#divSales').show();
+        }
+        if (header.tgl_jual) {
+            var $tglJual = $('[name="tgl_jual"]');
+            $tglJual.val(header.tgl_jual);
+            if ($tglJual.length && $tglJual[0]._flatpickr) {
+                $tglJual[0]._flatpickr.setDate(header.tgl_jual, false);
+            }
+        }
+        if (header.jam) {
+            var $jam = $('[name="jam"]');
+            $jam.val(header.jam);
+            if ($jam.length && $jam[0]._flatpickr) {
+                $jam[0]._flatpickr.setDate(header.jam, false);
+            }
         }
         if (header.tgl_selesai) {
             var $tglSelesai = $('[name="tgl_selesai"]');
@@ -231,7 +247,11 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 5000
+                timer: 5000,
+                timerProgressBar: true,
+                background: '#1e293b',
+                color: '#ffffff',
+                iconColor: '#38bdf8'
             });
         }
     }
