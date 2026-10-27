@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Waktu pembuatan: 22 Okt 2026 pada 02.24
+-- Waktu pembuatan: 27 Okt 2026 pada 04.28
 -- Versi server: 11.8.9-MariaDB-log
 -- Versi PHP: 7.2.34
 
@@ -489,9 +489,9 @@ INSERT INTO `barang` (`id`, `jenis_barang`, `kode_barang`, `kategori_id`, `stok`
 (486, 'Spanduk', 'SPDK', 2, -105, NULL, '0', '0', '2026-02-22 20:34:43', '2026-08-13 04:11:30', 0, 0),
 (487, 'Tumbler', 'TBL', 3, -164, NULL, '0', '0', '2026-02-22 21:50:10', '2026-10-05 14:38:25', 1, 1),
 (488, 'Trodat', 'TRD', 1, -2, NULL, '0', '0', '2026-02-22 23:42:33', '2026-09-05 07:41:05', 1, 1),
-(490, 'Plakat Akrilik', 'PLA', 4, -493, NULL, '0', '0', '2026-02-23 00:04:00', '2026-10-21 14:28:06', 1, 0),
+(490, 'Plakat Akrilik', 'PLA', 4, -503, NULL, '0', '0', '2026-02-23 00:04:00', '2026-10-24 14:28:14', 1, 0),
 (491, 'Goodiebag Spunbond', 'GBS', 6, -9160, NULL, '0', '0', '2026-02-23 00:04:54', '2026-09-05 07:39:03', 1, 1),
-(492, 'Id Card 1 Sisi', 'IDC', 2, -1, NULL, '0', '30000', '2026-02-23 00:05:52', '2026-06-24 08:29:09', 1, 0),
+(492, 'Id Card 1 Sisi', 'IDC', 2, -2, NULL, '0', '30000', '2026-02-23 00:05:52', '2026-10-23 14:23:29', 1, 0),
 (493, 'Vinyl 280 811', 'V280-811', 5, 0, NULL, '0', '0', '2026-02-23 00:06:54', '2026-02-23 00:06:54', 1, 0),
 (495, 'Flashdisk 8 GB', 'FLD', 5, 0, NULL, '0', '0', '2026-02-23 00:16:48', '2026-09-05 07:38:42', 1, 1),
 (496, 'Jasa', 'JS', 6, -256, NULL, '0', '0', '2026-02-23 00:17:43', '2026-10-09 09:05:50', 1, 0),
@@ -505,7 +505,7 @@ INSERT INTO `barang` (`id`, `jenis_barang`, `kode_barang`, `kategori_id`, `stok`
 (506, 'Cetak Umum', 'CU', 4, 0, NULL, '0', '0', '2026-02-23 00:24:36', '2026-02-23 00:24:36', 1, 0),
 (507, 'Tinta Warna', 'TTW', 7, 0, NULL, '0', '0', '2026-02-23 00:25:30', '2026-09-05 07:41:14', 1, 1),
 (508, 'Nametag', 'NMT', 2, 0, NULL, '0', '50000', '2026-02-23 00:26:02', '2026-06-20 04:33:07', 1, 0),
-(509, 'Customized', 'CSTM', 8, -3366, NULL, '0', '0', '2026-02-23 00:26:49', '2026-10-21 14:03:19', 1, 1),
+(509, 'Customized', 'CSTM', 8, -3369, NULL, '0', '0', '2026-02-23 00:26:49', '2026-10-24 11:54:48', 1, 1),
 (510, 'Kaki X Banner 60x160', 'XB', 2, 0, NULL, '18000', '0', '2026-02-23 00:27:27', '2026-05-18 02:58:26', 1, 0),
 (511, 'Y Banner', 'YX', 2, 0, NULL, '0', '0', '2026-02-23 00:27:45', '2026-02-23 00:27:45', 1, 0),
 (512, 'Roll banner 60x160', 'RB', 2, -202, NULL, '140000', '0', '2026-02-23 00:28:08', '2026-10-21 16:16:07', 1, 0),
@@ -519,7 +519,7 @@ INSERT INTO `barang` (`id`, `jenis_barang`, `kode_barang`, `kategori_id`, `stok`
 (523, 'Lem Akrilik', 'LA', 5, 0, NULL, '0', '0', '2026-02-23 00:34:46', '2026-09-05 07:38:42', 1, 1),
 (524, 'Karet Stample', 'KSTP', 6, 0, NULL, '0', '0', '2026-02-23 00:35:17', '2026-02-23 00:35:17', 1, 0),
 (533, 'Payung Golf Navy', 'PYG', 2, 1, NULL, '0', '0', '2026-02-23 00:41:16', '2026-04-27 08:12:44', 1, 0),
-(534, 'Akrilik', 'AKP', 4, -681, NULL, '0', '0', '2026-02-23 00:41:45', '2026-10-21 14:03:19', 1, 0),
+(534, 'Akrilik', 'AKP', 4, -684, NULL, '0', '0', '2026-02-23 00:41:45', '2026-10-24 11:54:48', 1, 0),
 (535, 'Earphone', 'EAR', 6, 1, NULL, '0', '0', '2026-02-23 00:42:17', '2026-09-05 07:39:36', 1, 1),
 (537, 'Folding Desktop Phone Stand', 'FDPS', 6, 8, NULL, '0', '0', '2026-02-23 00:43:33', '2026-09-05 07:39:38', 1, 1),
 (538, 'Tali Lanyard', 'TL', 6, 0, NULL, '0', '0', '2026-02-23 00:44:09', '2026-09-05 07:39:40', 1, 1),
@@ -530,7 +530,7 @@ INSERT INTO `barang` (`id`, `jenis_barang`, `kode_barang`, `kategori_id`, `stok`
 (544, 'Cover Id Card', 'CIC', 5, 9, NULL, '0', '0', '2026-02-23 00:47:51', '2026-03-14 08:46:02', 1, 0),
 (545, 'Voucher', 'VOC', 5, -2181, NULL, '0', '0', '2026-02-23 00:48:10', '2026-09-05 07:38:43', 1, 1),
 (546, 'Undangan', 'UDG', 5, -70, NULL, '0', '0', '2026-02-23 00:48:51', '2026-09-05 07:38:44', 1, 1),
-(547, 'Poster', 'PST', 2, -6, NULL, '0', '0', '2026-02-23 00:49:13', '2026-10-21 16:16:07', 1, 0),
+(547, 'Poster', 'PST', 2, -8, NULL, '0', '0', '2026-02-23 00:49:13', '2026-10-22 16:14:56', 1, 0),
 (548, 'Spanduk', 'SPDK', 2, -30, NULL, '0', '25000', '2026-02-23 00:49:36', '2026-10-20 15:51:33', 1, 0),
 (549, 'Mancis Cricket Putih', 'MCS', 6, 19, NULL, '0', '25000', '2026-02-23 00:54:58', '2026-09-05 07:39:43', 1, 1),
 (550, 'Kartu Nama 2 Sisi', 'KRTNM', 8, -2, NULL, '55000', '160000', '2026-02-24 00:56:37', '2026-10-07 16:03:06', 1, 1),
@@ -715,7 +715,7 @@ INSERT INTO `barang` (`id`, `jenis_barang`, `kode_barang`, `kategori_id`, `stok`
 (734, 'Tumbler Vanessa Putih', 'TBLVP', 3, 0, NULL, '0', '0', '2026-07-25 03:20:28', '2026-09-05 07:44:33', 1, 1),
 (735, 'Casual Sport Tumbler Hitam', 'CASPTBLH', 3, 3, NULL, '0', '0', '2026-07-25 03:21:26', '2026-09-05 07:44:34', 1, 1),
 (736, 'Tumbler Niagara Merah', 'TBLNIAGM', 3, 0, NULL, '0', '0', '2026-07-25 03:21:56', '2026-09-05 07:44:35', 1, 1),
-(737, 'Stiker', 'STKR01', 2, -16, NULL, '25500', '85000', '2026-09-07 07:15:16', '2026-10-20 11:18:47', 1, 0);
+(737, 'Stiker', 'STKR01', 2, -21, NULL, '25500', '85000', '2026-09-07 07:15:16', '2026-10-24 09:04:06', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -1401,7 +1401,8 @@ INSERT INTO `barang_spb` (`id`, `spb`, `barang_id`, `deskripsi`, `satuan`, `qty`
 (934, 329, 8, 'Spanduk Ukuran 3 x 1 M', 'Pcs', 2, '-------------------', '2026-09-29 02:58:18', '2026-09-29 02:58:18'),
 (935, 330, 8, 'Spanduk Ukuran 4 x 1 M', 'Pcs', 1, '-------------------', '2026-10-03 13:06:06', '2026-10-03 13:06:06'),
 (936, 331, 5, 'Dokumen BAST & BAPP', 'Set', 1, '-------------------', '2026-10-20 08:41:09', '2026-10-20 08:41:09'),
-(937, 331, 5, 'Dokumen Permohonan Pembayaran & Kwintansi', 'Set', 1, '-------------------', '2026-10-20 08:41:09', '2026-10-20 08:41:09');
+(937, 331, 5, 'Dokumen Permohonan Pembayaran & Kwintansi', 'Set', 1, '-------------------', '2026-10-20 08:41:09', '2026-10-20 08:41:09'),
+(938, 332, 8, 'Nama Dokter Ukuran 59,3 x 10,5 cm ( dr. T. Rifki Mirza Alfuadi M. Ked (Cardio), Sp.JP)', 'Pcs', 1, '-------------------', '2026-10-23 14:55:07', '2026-10-23 14:55:07');
 
 -- --------------------------------------------------------
 
@@ -2348,7 +2349,23 @@ INSERT INTO `invoice_update_logs` (`id`, `invoice_id`, `created_at`) VALUES
 (847, 2612, '2026-10-21 10:25:20'),
 (848, 2613, '2026-10-21 10:26:20'),
 (849, 2614, '2026-10-21 15:57:21'),
-(850, 2616, '2026-10-21 16:13:54');
+(850, 2616, '2026-10-21 16:13:54'),
+(851, 2617, '2026-10-22 10:01:04'),
+(852, 2618, '2026-10-23 09:06:26'),
+(853, 2589, '2026-10-23 09:06:52'),
+(854, 2619, '2026-10-23 11:39:34'),
+(855, 2620, '2026-10-23 11:41:14'),
+(856, 2621, '2026-10-23 14:23:29'),
+(857, 2615, '2026-10-24 11:08:38'),
+(858, 2623, '2026-10-24 11:23:11'),
+(859, 2623, '2026-10-24 11:23:27'),
+(860, 2615, '2026-10-24 11:53:31'),
+(861, 2615, '2026-10-24 11:54:48'),
+(862, 2615, '2026-10-24 13:40:19'),
+(863, 2625, '2026-10-24 14:11:30'),
+(864, 2626, '2026-10-24 14:40:14'),
+(865, 2624, '2026-10-24 15:08:33'),
+(866, 2589, '2026-10-26 14:42:48');
 
 -- --------------------------------------------------------
 
@@ -2400,24 +2417,24 @@ CREATE TABLE `material` (
 --
 
 INSERT INTO `material` (`id`, `kode_material`, `jenis_material`, `stok`, `satuan`, `harga_modal`, `harga_jual`, `created_at`, `updated_at`) VALUES
-(16, 'AK8B', 'Akrilik 8mm Bening', '7360.55', 'cm²', '1430000', '0', '2026-02-24 20:41:03', '2026-10-21 14:28:06'),
-(17, 'AK5B', 'Akrilik 5mm Bening', '278', 'cm²', '895000', '0', '2026-02-24 20:41:39', '2026-10-16 16:17:30'),
-(18, 'AK2B', 'Akrilik 2mm bening', '61282.11', 'cm²', '380000', '0', '2026-02-24 20:45:20', '2026-10-21 14:03:19'),
+(16, 'AK8B', 'Akrilik 8mm Bening', '5956.55', 'cm²', '1430000', '0', '2026-02-24 20:41:03', '2026-10-24 13:12:47'),
+(17, 'AK5B', 'Akrilik 5mm Bening', '24086', 'cm²', '895000', '0', '2026-02-24 20:41:39', '2026-10-24 14:28:14'),
+(18, 'AK2B', 'Akrilik 2mm bening', '61282.11', 'cm²', '380000', '0', '2026-02-24 20:45:20', '2026-10-24 11:54:48'),
 (19, 'AK2BR', 'Akrilik Biru 2mm', '0', 'cm²', '405000', '0', '2026-02-24 20:46:12', '2026-08-05 08:59:24'),
 (20, 'AK3BR', 'Akrilik Biru 3mm', '8334', 'cm²', '570000', '0', '2026-02-24 20:47:16', '2026-09-01 06:40:50'),
 (21, 'AK2PS', 'Akrilik Putih Susu 2mm', '0', 'cm²', '405000', '0', '2026-02-24 20:47:51', '2026-08-05 09:00:13'),
 (22, 'AK2PB', 'Akrilik Putih biasa 2mm', '13346.75', 'cm²', '405000', '0', '2026-02-24 20:48:33', '2026-10-21 13:31:31'),
 (23, 'AK3H', 'Akrilik Hitam 5mm', '0', 'cm²', '570000', '0', '2026-02-24 20:49:17', '2026-08-05 09:01:39'),
 (24, 'AK2H', 'Akrilik Hitam 2mm', '208265', 'cm²', '420000', '0', '2026-02-24 20:49:42', '2026-10-06 14:39:49'),
-(25, 'AK3PS', 'Akrilik Putih susu 3mm', '19764', 'cm²', '570000', '0', '2026-02-24 20:50:17', '2026-08-05 09:02:26'),
+(25, 'AK3PS', 'Akrilik Putih susu 3mm', '18564', 'cm²', '570000', '0', '2026-02-24 20:50:17', '2026-10-23 10:06:54'),
 (26, 'AK2M', 'Akrilik Merah 2mm', '9882', 'cm²', '405000', '0', '2026-02-24 20:50:50', '2026-08-05 09:02:55'),
 (27, 'AK2K', 'Akrilik Kuning 2mm', '9041', 'cm²', '405000', '0', '2026-02-24 20:51:28', '2026-09-14 02:24:11'),
 (28, 'AKE', 'Akrilik emas', '9777', 'cm²', '750000', '0', '2026-02-24 20:51:53', '2026-08-24 04:15:58'),
 (29, 'STKRNR', 'Stiker Nar 152 50', '0', 'cm²', '0', '0', '2026-02-25 20:59:23', '2026-08-21 09:26:11'),
 (30, 'VNL280110', 'Vinyl flexy 280 110', '250350', 'cm²', '0', '0', '2026-02-25 21:23:21', '2026-10-08 08:49:20'),
-(31, 'VNL280160', 'Vinyl flexy 280 160', '1130737.1500000001', 'cm²', '0', '0', '2026-02-25 21:27:34', '2026-10-21 14:03:19'),
+(31, 'VNL280160', 'Vinyl flexy 280 160', '1125533.15', 'cm²', '0', '0', '2026-02-25 21:27:34', '2026-10-24 11:54:48'),
 (32, 'KRMT', 'Korean Matte 160 50', '776149.04', 'cm²', '0', '0', '2026-02-25 21:29:08', '2026-09-10 06:59:42'),
-(33, 'ALBTRS', 'Alabtros 127 50', '121585.99999999999', 'cm²', '14000', '0', '2026-02-25 21:32:40', '2026-10-21 16:16:07'),
+(33, 'ALBTRS', 'Alabtros 127 50', '119091.19999999998', 'cm²', '14000', '0', '2026-02-25 21:32:40', '2026-10-22 16:14:56'),
 (34, 'CML', 'Stiker Camel High Gloss', '87.88701000000002', 'mtr', '0', '0', '2026-04-17 03:44:07', '2026-10-20 11:18:47');
 
 -- --------------------------------------------------------
@@ -12757,7 +12774,7 @@ INSERT INTO `penjualan` (`id`, `invoice`, `nomor_invoice`, `tgl_penjualan`, `cus
 (2586, 1, 'IBPL15502', '2026-10-10 10:11:00', 'RIO', 'Kejaksaan Kotanopan', '0853 5932 4646', 33, 'WhatsApp/Online', NULL, '2026-10-12', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 190000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 190000, 0, '2026-10-10 10:13:55', '2026-10-10 16:51:21', NULL),
 (2587, 2, 'IB15503', '2026-10-10 13:47:00', 'Ady Manalu', 'PLN', '0822 9495 5487', 33, 'WhatsApp/Online', NULL, '2026-10-13', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 1000000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 1000000, 0, '2026-10-10 13:51:13', '2026-10-10 16:51:40', NULL),
 (2588, 1, 'IBPL15504', '2026-10-10 15:03:00', 'Jere', 'BMKG', '0857 6230 7151', 33, 'Walk in', NULL, '2026-10-13', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 400000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 400000, 0, '2026-10-10 15:05:26', '2026-10-12 12:12:11', NULL),
-(2589, 1, 'IBPL15505', '2026-10-12 10:33:00', 'BARUS', 'BSD', '0852 6119 4940', 33, 'Walk in', '-', '2026-10-17', 'Tidak', 2, 5000000, 'Transfer DP', 'BNI', 9337500, 'Belum Lunas', NULL, 'Lock', NULL, NULL, NULL, NULL, 9337500, 4337500, '2026-10-12 10:37:51', '2026-10-15 09:28:46', NULL),
+(2589, 1, 'IBPL15505', '2026-10-12 10:33:00', 'BARUS', 'BSD', '0852 6119 4940', 33, 'Walk in', '-', '2026-10-17', 'Tidak', 2, 5000000, 'Transfer DP', 'BNI', 9630000, 'Lunas', NULL, 'Lock', NULL, NULL, NULL, NULL, 9630000, 0, '2026-10-12 10:37:51', '2026-10-26 14:42:48', NULL),
 (2590, 2, 'IB15506', '2026-10-12 10:52:00', 'Ucoll', 'Ucoll Project', '0821 6495 2215', 33, 'WhatsApp/Online', NULL, '2026-10-12', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 85000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 85000, 0, '2026-10-12 10:54:46', '2026-10-12 13:40:23', NULL),
 (2591, 2, 'IB15507', '2026-10-12 10:58:00', 'Imam', 'Nusantara Roastery', '0823 7406 6550', 33, 'WhatsApp/Online', NULL, '2026-10-14', 'Tidak', 5, 0, 'Transfer DP', 'BNI', 682600, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 682600, 0, '2026-10-12 11:06:43', '2026-10-12 13:42:43', NULL),
 (2592, 1, 'IBPL15508', '2026-10-12 13:42:00', 'WANDY', 'PT. TENERA SERGAI PERKASA', '0813 6102 0050', 33, 'Walk in', NULL, '2026-10-14', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 400000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 400000, 0, '2026-10-12 13:44:44', '2026-10-14 08:56:35', NULL),
@@ -12784,9 +12801,18 @@ INSERT INTO `penjualan` (`id`, `invoice`, `nomor_invoice`, `tgl_penjualan`, `cus
 (2612, 2, 'IB15528', '2026-10-20 11:10:00', 'fian', 'Miesop Vinde', '0819 1133 8899', 33, 'Walk in', NULL, '2026-10-21', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 85000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 85000, 0, '2026-10-20 11:18:47', '2026-10-21 10:25:20', NULL),
 (2613, 2, 'IB15529', '2026-10-20 14:12:00', 'Annisa Azalea', 'Kedai Es Kita', '0812 6386 0699', 33, 'Walk in', NULL, '2026-10-24', 'Tidak', 4, 0, 'Transfer DP', 'BNI', 117500, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 117500, 0, '2026-10-20 15:51:33', '2026-10-21 10:26:20', NULL),
 (2614, 2, 'IB15530', '2026-10-21 11:24:00', 'Yerry Wengku', 'Cv. Tritek Mandiri', '0811 6070 517', 33, 'WhatsApp/Online', NULL, '2026-10-23', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 100000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 100000, 0, '2026-10-21 13:31:31', '2026-10-21 15:57:21', NULL),
-(2615, 2, 'IB15531', '2026-10-21 13:40:00', 'Nova', 'Atar Global Mandiri', '0851 5666 3345', 8, 'Walk in', NULL, '2026-10-24', 'Tidak', 2, 0, 'Transfer DP', 'BNI', 425000, 'Belum Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 425000, 425000, '2026-10-21 14:03:19', '2026-10-21 14:03:19', NULL),
+(2615, 2, 'IB15531', '2026-10-21 13:40:00', 'Nova', 'Atar Global Mandiri', '0851 5666 3345', 8, 'Walk in', '-', '2026-10-24', 'Tidak', 2, 365000, 'Transfer DP', 'BNI', 485000, 'Lunas', NULL, 'Lock', NULL, NULL, NULL, NULL, 485000, 0, '2026-10-21 14:03:19', '2026-10-24 13:40:19', NULL),
 (2616, 1, 'IBPL15532', '2026-10-21 14:16:00', 'Said Hasibuan', 'bapas medan', '0823 6331 3722', 33, 'WhatsApp/Online', NULL, '2026-10-27', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 380000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 380000, 0, '2026-10-21 14:28:06', '2026-10-21 16:13:54', NULL),
-(2617, 2, 'IB15533', '2026-10-21 16:06:00', 'Marissa', 'RSU Bandung Medan', '0822 7647 9949', 33, 'WhatsApp/Online', NULL, '2026-10-24', 'Tidak', 2, 0, 'Transfer DP', 'BNI', 355000, 'Belum Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 355000, 355000, '2026-10-21 16:16:07', '2026-10-21 16:16:07', NULL);
+(2617, 2, 'IB15533', '2026-10-21 16:06:00', 'Marissa', 'RSU Bandung Medan', '0822 7647 9949', 33, 'WhatsApp/Online', NULL, '2026-10-24', 'Tidak', 2, 0, 'Transfer DP', 'BNI', 355000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 355000, 0, '2026-10-21 16:16:07', '2026-10-22 10:01:04', NULL),
+(2618, 2, 'IB15534', '2026-10-22 16:10:00', 'Marissa', 'RSU Bandung Medan', '0822 7647 9949', 33, 'WhatsApp/Online', NULL, '2026-10-24', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 90000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 90000, 0, '2026-10-22 16:14:56', '2026-10-23 09:06:26', NULL),
+(2619, 2, 'IB15535', '2026-10-23 09:58:00', 'morris', '----', '0811 6097 655', 33, 'WhatsApp/Online', NULL, '2026-10-26', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 160000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 160000, 0, '2026-10-23 10:06:54', '2026-10-23 11:39:34', NULL),
+(2620, 1, 'IBPL15536', '2026-10-23 10:24:00', 'Kak Joe', 'SMAIT Al_FITYAN SCHOOL MEDAN', '0821 6627 3309', 8, 'WhatsApp/Online', NULL, '2026-10-26', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 190000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 190000, 0, '2026-10-23 10:27:11', '2026-10-23 11:41:14', NULL),
+(2621, 2, 'IB15537', '2026-10-23 13:58:00', 'Putri Maria Ndruru', 'BCA', '0852 7055 6024', 33, 'WhatsApp/Online', '-', '2026-10-24', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 30000, 'Belum Lunas', NULL, 'Lock', NULL, NULL, NULL, NULL, 30000, 30000, '2026-10-23 14:03:04', '2026-10-23 14:23:29', NULL),
+(2622, 2, 'IB15538', '2026-10-23 15:00:00', 'Alwi', '------', '0852 1375 9649', 33, 'WhatsApp/Online', NULL, '2026-10-26', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 45000, 'Belum Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 45000, 45000, '2026-10-23 15:03:19', '2026-10-23 15:03:19', NULL),
+(2623, 2, 'IB15539', '2026-10-24 08:59:00', 'Imam', 'Nusantara Roastery', '0823 7406 6550', 33, 'WhatsApp/Online', NULL, '2026-10-27', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 500000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 500000, 0, '2026-10-24 09:04:06', '2026-10-24 11:23:11', NULL),
+(2624, 2, 'IB15540', '2026-10-24 13:08:00', 'Helen', 'PT Terra Drone', '0821 8642 8963', 33, 'WhatsApp/Online', NULL, '2026-10-26', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 600000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 600000, 0, '2026-10-24 13:12:47', '2026-10-24 15:08:33', NULL),
+(2625, 1, 'IBPL15541', '2026-10-24 13:50:00', 'Dian Pebriyani', 'Fakultas Pertanian USU', '0823 6377 4573', 33, 'WhatsApp/Online', NULL, '2026-10-26', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 480000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 480000, 0, '2026-10-24 13:55:47', '2026-10-24 14:11:30', NULL),
+(2626, 1, 'IBPL15542', '2026-10-24 14:26:00', 'Lulu Elysia Putri A Nst', 'Universitas Sumatera Utara (keperawatan)', '0821 8192 5949', 33, 'WhatsApp/Online', NULL, '2026-10-30', 'Tidak', 1, 0, 'Transfer DP', 'BNI', 160000, 'Lunas', NULL, 'Lock', NULL, 0, NULL, NULL, 160000, 0, '2026-10-24 14:28:14', '2026-10-24 14:40:14', NULL);
 
 -- --------------------------------------------------------
 
@@ -14790,8 +14816,8 @@ INSERT INTO `penjualan_barang` (`id`, `barang_id`, `material_id`, `material_qty`
 (5743, 737, '[\"31\"]', '[\"3600\"]', 2600, 'Uk 120x30cm', 1, 'Pcs', 31000, 31000, '2026-10-14 15:48:58', '2026-10-14 15:48:58', NULL, '[\"120\"]', '[\"30\"]'),
 (5744, 490, '[\"16\"]', '[\"234\"]', 2601, 'Uk 13x18cm Ketebalan 8mm Dudukan akrilik Hitam + Akrilik Putih', 1, 'Pcs', 260000, 260000, '2026-10-14 16:00:46', '2026-10-14 16:00:46', NULL, '[\"13\"]', '[\"18\"]'),
 (5745, 509, NULL, NULL, 2602, 'Gantungan Kunci 1 sisi uk 7cm', 50, 'Set', 8000, 400000, '2026-10-14 17:01:47', '2026-10-14 17:01:47', NULL, NULL, NULL),
-(5746, 490, '[\"16\"]', '[\"14274\"]', 2589, 'uk 13x18cm Ketebalan 8mm', 61, 'Pcs', 135000, 8235000, '2026-10-15 09:28:46', '2026-10-15 09:28:46', NULL, '[\"13\"]', '[\"18\"]'),
-(5747, 509, NULL, NULL, 2589, 'Sertifikat Uk A4 Bahan Concord 250gsm', 147, 'Lbr', 7500, 1102500, '2026-10-15 09:28:46', '2026-10-15 09:28:46', NULL, NULL, NULL),
+(5746, 490, '[\"16\"]', '[\"14274\"]', 2589, 'uk 13x18cm Ketebalan 8mm', 61, 'Pcs', 135000, 8235000, '2026-10-15 09:28:46', '2026-10-23 09:06:52', '2026-10-23 09:06:52', '[\"13\"]', '[\"18\"]'),
+(5747, 509, NULL, NULL, 2589, 'Sertifikat Uk A4 Bahan Concord 250gsm', 147, 'Lbr', 7500, 1102500, '2026-10-15 09:28:46', '2026-10-23 09:06:52', '2026-10-23 09:06:52', NULL, NULL),
 (5748, 490, '[\"16\"]', '[\"2340\"]', 2603, 'uk 13x18cm ketebalan 8mm, duudkan akrilik hitam + akrilik putih', 10, 'Pcs', 250000, 2500000, '2026-10-15 16:28:28', '2026-10-15 16:28:28', NULL, '[\"13\"]', '[\"18\"]'),
 (5749, 490, '[\"17\"]', '[\"234\"]', 2604, 'uk 13x18cm ketebalan 5mm', 1, 'Pcs', 160000, 160000, '2026-10-16 09:12:57', '2026-10-16 09:12:57', NULL, '[\"13\"]', '[\"18\"]'),
 (5750, 534, '[\"18\"]', '[\"2.88\"]', 2605, 'Gantungan Kunci 6cm 1 sisi', 8, 'Pcs', 10000, 80000, '2026-10-16 09:43:04', '2026-10-16 14:30:45', '2026-10-16 14:30:45', '[\"0.6\"]', '[\"0.6\"]'),
@@ -14815,11 +14841,30 @@ INSERT INTO `penjualan_barang` (`id`, `barang_id`, `material_id`, `material_qty`
 (5768, 685, NULL, NULL, 2613, 'Custom Daftar Menu Uk A4', 1, 'Pcs', 10000, 10000, '2026-10-20 15:51:33', '2026-10-20 15:51:33', NULL, NULL, NULL),
 (5769, 685, NULL, NULL, 2613, 'Custom Qris Uk A5', 1, 'Pcs', 7500, 7500, '2026-10-20 15:51:33', '2026-10-20 15:51:33', NULL, NULL, NULL),
 (5770, 534, '[\"22\"]', '[\"200\"]', 2614, 'Akrilik Putih 2mm Cutting Custom ukuran 2,5x20cm + Print Uv', 4, 'Pcs', 25000, 100000, '2026-10-21 13:31:31', '2026-10-21 13:31:31', NULL, '[\"2.5\"]', '[\"20\"]'),
-(5771, 534, '[\"18\",\"16\",\"31\"]', '[\"0.45\",\"0.45\",\"0.45\"]', 2615, 'Custom ukuran 90x50cm', 1, 'Pcs', 365000, 365000, '2026-10-21 14:03:19', '2026-10-21 14:03:19', NULL, '[\"0.90\",\"0.90\",\"0.90\"]', '[\"0.50\",\"0.50\",\"0.50\"]'),
-(5772, 509, NULL, NULL, 2615, 'Ongkos Kirim Ke Asia Johor Best', 1, 'Pcs', 60000, 60000, '2026-10-21 14:03:19', '2026-10-21 14:03:19', NULL, NULL, NULL),
+(5771, 534, '[\"18\",\"16\",\"31\"]', '[\"0.45\",\"0.45\",\"0.45\"]', 2615, 'Custom ukuran 90x50cm', 1, 'Pcs', 365000, 365000, '2026-10-21 14:03:19', '2026-10-24 11:08:38', '2026-10-24 11:08:38', '[\"0.90\",\"0.90\",\"0.90\"]', '[\"0.50\",\"0.50\",\"0.50\"]'),
+(5772, 509, NULL, NULL, 2615, 'Ongkos Kirim Ke Asia Johor Best', 1, 'Pcs', 60000, 60000, '2026-10-21 14:03:19', '2026-10-24 11:08:38', '2026-10-24 11:08:38', NULL, NULL),
 (5773, 490, '[\"16\"]', '[\"468\"]', 2616, 'Ukuran 13x18cm Ketebalan 8mm, dudukan Akrilik Bening', 2, 'Pcs', 190000, 380000, '2026-10-21 14:28:06', '2026-10-21 14:28:06', NULL, '[\"13\"]', '[\"18\"]'),
 (5774, 512, '[\"33\"]', '[\"9600\"]', 2617, 'Bahan Albatros', 1, 'Pcs', 265000, 265000, '2026-10-21 16:16:07', '2026-10-21 16:16:07', NULL, '[\"60\"]', '[\"160\"]'),
-(5775, 547, '[\"33\"]', '[\"2494.7999999999997\"]', 2617, 'Uk A3 Bahan Albatros', 2, 'Pcs', 45000, 90000, '2026-10-21 16:16:07', '2026-10-21 16:16:07', NULL, '[\"29.7\"]', '[\"42\"]');
+(5775, 547, '[\"33\"]', '[\"2494.7999999999997\"]', 2617, 'Uk A3 Bahan Albatros', 2, 'Pcs', 45000, 90000, '2026-10-21 16:16:07', '2026-10-21 16:16:07', NULL, '[\"29.7\"]', '[\"42\"]'),
+(5776, 547, '[\"33\"]', '[\"2494.7999999999997\"]', 2618, 'UKuran A3 Bahan Albatros', 2, 'Pcs', 45000, 90000, '2026-10-22 16:14:56', '2026-10-22 16:14:56', NULL, '[\"29.7\"]', '[\"42\"]'),
+(5777, 490, '[\"16\"]', '[\"14742\"]', 2589, 'uk 13x18cm Ketebalan 8mm', 63, 'Pcs', 135000, 8505000, '2026-10-23 09:06:52', '2026-10-23 09:06:52', NULL, '[\"13\"]', '[\"18\"]'),
+(5778, 509, NULL, NULL, 2589, 'Sertifikat Uk A4 Bahan Concord 250gsm', 150, 'Lbr', 7500, 1125000, '2026-10-23 09:06:52', '2026-10-23 09:06:52', NULL, NULL, NULL),
+(5779, 534, '[\"25\"]', '[\"1200\"]', 2619, 'Nomor Rumah, Putih Susu 3mm Uk 30x20', 2, 'Pcs', 80000, 160000, '2026-10-23 10:06:54', '2026-10-23 10:06:54', NULL, '[\"30\"]', '[\"20\"]'),
+(5780, 490, '[\"16\"]', '[\"234\"]', 2620, 'Uk 13x18cm Ketebalan 8mm', 1, 'Pcs', 190000, 190000, '2026-10-23 10:27:11', '2026-10-23 10:27:11', NULL, '[\"13\"]', '[\"18\"]'),
+(5781, 492, NULL, NULL, 2621, 'Print UV EXPRESS', 1, 'Pcs', 45000, 45000, '2026-10-23 14:03:04', '2026-10-23 14:23:29', '2026-10-23 14:23:29', NULL, NULL),
+(5782, 492, NULL, NULL, 2621, 'Id Card 1 Sisi Print UV', 1, 'Pcs', 30000, 30000, '2026-10-23 14:23:29', '2026-10-23 14:23:29', NULL, NULL, NULL),
+(5783, 737, '[\"31\"]', '[\"5200\"]', 2622, 'stiker kiss cut ukuran 130x40cm', 1, 'Pcs', 45000, 45000, '2026-10-23 15:03:19', '2026-10-23 15:03:19', NULL, '[\"130\"]', '[\"40\"]'),
+(5784, 737, '[\"31\"]', '[\"4\"]', 2623, 'Kiss Cut Uk 10x10cm', 4, 'Set', 125000, 500000, '2026-10-24 09:04:06', '2026-10-24 09:04:06', NULL, '[\"1\"]', '[\"1\"]'),
+(5785, 534, '[\"18\",\"16\",\"31\"]', '[\"0.45\",\"0.45\",\"0.45\"]', 2615, 'Custom ukuran 90x50cm', 1, 'Pcs', 365000, 365000, '2026-10-24 11:08:38', '2026-10-24 11:53:31', '2026-10-24 11:53:31', '[\"0.90\",\"0.90\",\"0.90\"]', '[\"0.50\",\"0.50\",\"0.50\"]'),
+(5786, 509, NULL, NULL, 2615, 'Ongkos Kirim Ke Asia Johor Best', 1, 'Pcs', 60000, 60000, '2026-10-24 11:08:38', '2026-10-24 11:53:31', '2026-10-24 11:53:31', NULL, NULL),
+(5787, 509, NULL, NULL, 2615, 'Tambahan Stiker', 1, 'Pcs', 120000, 120000, '2026-10-24 11:08:38', '2026-10-24 11:53:31', '2026-10-24 11:53:31', NULL, NULL),
+(5788, 534, '[\"18\",\"16\",\"31\"]', '[\"0.45\",\"0.45\",\"0.45\"]', 2615, 'Custom ukuran 90x50cm', 1, 'Pcs', 365000, 365000, '2026-10-24 11:53:31', '2026-10-24 11:54:48', '2026-10-24 11:54:48', '[\"0.90\",\"0.90\",\"0.90\"]', '[\"0.50\",\"0.50\",\"0.50\"]'),
+(5789, 509, NULL, NULL, 2615, 'Tambahan Stiker', 1, 'Pcs', 120000, 120000, '2026-10-24 11:53:31', '2026-10-24 11:54:48', '2026-10-24 11:54:48', NULL, NULL),
+(5790, 534, '[\"18\",\"16\",\"31\"]', '[\"0.45\",\"0.45\",\"0.45\"]', 2615, 'Custom ukuran 90x50cm', 1, 'Pcs', 365000, 365000, '2026-10-24 11:54:48', '2026-10-24 11:54:48', NULL, '[\"0.90\",\"0.90\",\"0.90\"]', '[\"0.50\",\"0.50\",\"0.50\"]'),
+(5791, 509, NULL, NULL, 2615, 'Tambahan Stiker', 1, 'Pcs', 120000, 120000, '2026-10-24 11:54:48', '2026-10-24 11:54:48', NULL, NULL, NULL),
+(5792, 490, '[\"16\"]', '[\"702\"]', 2624, 'Ketebalan 8mm Uk 13x18cm, dudukan akrilik hitam', 3, 'Pcs', 200000, 600000, '2026-10-24 13:12:47', '2026-10-24 13:12:47', NULL, '[\"13\"]', '[\"18\"]'),
+(5793, 490, '[\"17\"]', '[\"702\"]', 2625, 'uk.13x18cm ketebalan 5mm + kotak kayu beludru', 3, 'Pcs', 160000, 480000, '2026-10-24 13:55:47', '2026-10-24 13:55:47', NULL, '[\"13\"]', '[\"18\"]'),
+(5794, 490, '[\"17\"]', '[\"195\"]', 2626, 'uk. 13x18cm ketebalan 5mm + kotak kayu beludru (biru)', 1, 'Pcs', 160000, 160000, '2026-10-24 14:28:14', '2026-10-24 14:28:14', NULL, '[\"13\"]', '[\"15\"]');
 
 -- --------------------------------------------------------
 
@@ -15461,7 +15506,8 @@ INSERT INTO `penjualan_jasa_tokabe` (`id`, `barang_id`, `material_id`, `material
 (641, 509, NULL, NULL, 129, 'Penyesuaian Nomenklatur Spanduk ZI (105 x 455,5 cm)', 1, 'Pcs', 1875000, 1875000, '2026-10-12 11:09:33', '2026-10-12 11:09:33', NULL, NULL, NULL),
 (642, 509, NULL, NULL, 129, 'Penyesuaian Nomenklatur Backdrop & Photobooth (80 x 7 cm)', 2, 'Pcs', 262500, 525000, '2026-10-12 11:09:33', '2026-10-12 11:09:33', NULL, NULL, NULL),
 (643, 509, NULL, NULL, 129, 'Spanduk Ukuran 3 x 1 M', 1, 'Pcs', 500000, 500000, '2026-10-12 11:09:33', '2026-10-12 11:09:33', NULL, NULL, NULL),
-(644, 548, '[\"30\"]', NULL, 132, 'Spanduk Ukuran 3 x 1 M', 1, 'Pcs', 300000, 300000, '2026-10-12 11:21:19', '2026-10-12 11:21:19', NULL, '[\"0\"]', '[\"0\"]');
+(644, 548, '[\"30\"]', NULL, 132, 'Spanduk Ukuran 3 x 1 M', 1, 'Pcs', 300000, 300000, '2026-10-12 11:21:19', '2026-10-12 11:21:19', NULL, '[\"0\"]', '[\"0\"]'),
+(645, 534, '[\"18\"]', '[\"622.65\"]', 133, 'Nama Dokter Ukuran 59,3 x 10,5 cm ( dr. T. Rifki Mirza Alfuadi M. Ked (Cardio), Sp.JP', 1, 'Pcs', 230000, 230000, '2026-10-23 14:59:18', '2026-10-23 14:59:18', NULL, '[\"59.3\"]', '[\"10.5\"]');
 
 -- --------------------------------------------------------
 
@@ -15623,7 +15669,8 @@ INSERT INTO `penjualan_tokabe` (`id`, `invoice`, `nomor_invoice`, `tgl_penjualan
 (129, 5, '004/TKB/IX/2026', '2026-09-25 14:30:00', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', '0813 7702 2003', 20, 'WhatsApp/Online', '-', '2026-09-25', 4, 0, 'Transfer DP', 'TKB', 4250000, 'Belum Lunas', NULL, NULL, 11, NULL, 4717500, 4717500, 'Lock', NULL, NULL, '2026-09-25 07:40:16', '2026-10-12 11:09:33', NULL),
 (130, 5, '001/TKB/X/2026', '2026-10-01 14:24:00', 'BADAN PUSAT STATISTIK PROVINSI SUMATERA UTARA', 'BADAN PUSAT STATISTIK PROVINSI SUMATERA UTARA', '0852 8438 8004', 20, 'WhatsApp/Online', NULL, '2026-10-08', 1, 0, 'Transfer DP', 'TKB', 13750000, 'Belum Lunas', NULL, NULL, 11, NULL, 15262500, 15262500, 'Lock', NULL, NULL, '2026-10-01 07:29:28', '2026-10-01 07:29:28', NULL),
 (131, 5, '002/TKB/X/2026', '2026-10-08 08:56:00', 'BADAN PUSAT STATISTIK PROVINSI SUMATERA UTARA', 'BADAN PUSAT STATISTIK PROVINSI SUMATERA UTARA', '0852 8438 8004', 20, 'WhatsApp/Online', '-', '2026-10-08', 1, 0, 'Transfer DP', 'TKB', 58100000, 'Belum Lunas', NULL, NULL, 11, NULL, 64491000, 64491000, 'Lock', NULL, NULL, '2026-10-08 09:13:05', '2026-10-08 11:09:09', NULL),
-(132, 5, '005/TKB/IX/2026', '2026-09-25 11:18:00', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', '0813 7702 2003', 20, 'WhatsApp/Online', NULL, '2026-09-28', 1, 0, 'Transfer DP', 'TKB', 300000, 'Belum Lunas', NULL, NULL, 11, NULL, 333000, 333000, 'Lock', NULL, NULL, '2026-10-12 11:21:19', '2026-10-12 11:21:19', NULL);
+(132, 5, '005/TKB/IX/2026', '2026-09-25 11:18:00', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', '0813 7702 2003', 20, 'WhatsApp/Online', NULL, '2026-09-28', 1, 0, 'Transfer DP', 'TKB', 300000, 'Belum Lunas', NULL, NULL, 11, NULL, 333000, 333000, 'Lock', NULL, NULL, '2026-10-12 11:21:19', '2026-10-12 11:21:19', NULL),
+(133, 5, '003/TKB/X/2026', '2026-10-23 14:57:00', 'Bapak Freddy', 'RSU Bunda Thamrin', '0812 6536 2455', 20, 'WhatsApp/Online', NULL, '2026-10-23', 1, 0, 'Transfer DP', 'TKB', 230000, 'Belum Lunas', NULL, NULL, 11, NULL, 255300, 255300, 'Lock', NULL, NULL, '2026-10-23 14:59:18', '2026-10-23 14:59:18', NULL);
 
 -- --------------------------------------------------------
 
@@ -16003,7 +16050,8 @@ INSERT INTO `spb` (`id`, `nama_spb`, `customer`, `perusahaan`, `nomor_telepon`, 
 (328, 2, 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', '0813 7702 2003', 'Wawan', 4, 'Belum diantar', '2026-09-29 02:12:32', '2026-09-29 02:55:14'),
 (329, 2, 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', '0813 7702 2003', 'Wawan', 1, 'Belum diantar', '2026-09-29 02:58:18', '2026-09-29 02:58:18'),
 (330, 1, 'Henry Sinaga', 'Kantor imigrasi kelas I Non TPI Medan', '0813 7702 2003', 'Wawan', 1, 'Belum diantar', '2026-10-03 13:06:06', '2026-10-03 13:06:06'),
-(331, 2, 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', '0813 7702 2003', 'Wawan', 2, 'Belum diantar', '2026-10-20 08:41:09', '2026-10-20 08:41:09');
+(331, 2, 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', 'KANTOR IMIGRASI KELAS I NON TPI MEDAN', '0813 7702 2003', 'Wawan', 2, 'Belum diantar', '2026-10-20 08:41:09', '2026-10-20 08:41:09'),
+(332, 2, 'Bapak Fredy', 'RSU Bunda Thamrin', '0812 6536 2455', 'Wawan', 1, 'Belum diantar', '2026-10-23 14:55:07', '2026-10-23 14:55:07');
 
 -- --------------------------------------------------------
 
@@ -18345,7 +18393,7 @@ ALTER TABLE `barang`
 -- AUTO_INCREMENT untuk tabel `barang_spb`
 --
 ALTER TABLE `barang_spb`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=938;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=939;
 
 --
 -- AUTO_INCREMENT untuk tabel `budget`
@@ -18369,7 +18417,7 @@ ALTER TABLE `invoice`
 -- AUTO_INCREMENT untuk tabel `invoice_update_logs`
 --
 ALTER TABLE `invoice_update_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=851;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=867;
 
 --
 -- AUTO_INCREMENT untuk tabel `kategori_barang`
@@ -18405,25 +18453,25 @@ ALTER TABLE `owner_access_links`
 -- AUTO_INCREMENT untuk tabel `penjualan`
 --
 ALTER TABLE `penjualan`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2618;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2627;
 
 --
 -- AUTO_INCREMENT untuk tabel `penjualan_barang`
 --
 ALTER TABLE `penjualan_barang`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5776;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5795;
 
 --
 -- AUTO_INCREMENT untuk tabel `penjualan_jasa_tokabe`
 --
 ALTER TABLE `penjualan_jasa_tokabe`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=645;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=646;
 
 --
 -- AUTO_INCREMENT untuk tabel `penjualan_tokabe`
 --
 ALTER TABLE `penjualan_tokabe`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
 
 --
 -- AUTO_INCREMENT untuk tabel `personal_access_tokens`
@@ -18441,7 +18489,7 @@ ALTER TABLE `perusahaan`
 -- AUTO_INCREMENT untuk tabel `spb`
 --
 ALTER TABLE `spb`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=332;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=333;
 
 --
 -- AUTO_INCREMENT untuk tabel `spj`

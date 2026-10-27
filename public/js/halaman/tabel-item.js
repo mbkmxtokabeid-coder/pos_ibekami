@@ -68,7 +68,7 @@ function dP() {
     if (divLabel) divLabel.style.display = "block";
     if (divElement) divElement.style.display = "block";
 
-    if (jnsPem === 'Transfer DP' && dpInput && (!window.userEditedDp || parseNominal(dpInput.value) <= 0) && totalAkhir > 0) {
+    if (jnsPem === 'Transfer DP' && dpInput && !window.userEditedDp && (!dpInput.value || dpInput.value.trim() === '') && totalAkhir > 0) {
       dpInput.value = formatNominal(Math.round(totalAkhir * 0.7));
     }
   } else {
@@ -145,9 +145,6 @@ if (document.getElementById('total-harga')) {
 }
 if (document.getElementById('choices-payment-type')) {
   document.getElementById('choices-payment-type').addEventListener('change', function () {
-    if (this.value === 'Transfer DP') {
-      window.userEditedDp = false;
-    }
     dP();
     sisaPembayaran();
     if (typeof window.calcTotals === 'function') {
@@ -163,12 +160,7 @@ if (document.getElementById('choices-potongan')) {
 }
 if (document.getElementById('input-dp')) {
   document.getElementById('input-dp').addEventListener('input', function () {
-    var raw = this.value;
-    if (raw && raw.trim() !== '') {
-      window.userEditedDp = true;
-    } else {
-      window.userEditedDp = false;
-    }
+    window.userEditedDp = true;
     sisaPembayaran();
     if (typeof window.calcTotals === 'function') {
       window.calcTotals();

@@ -463,13 +463,13 @@
                                     <div class="row mb-1" id="div-dp-row" style="{{ ($inv->jenis_pembayaran === 'Transfer DP' || $inv->jenis_pembayaran === 'Cash Belum Lunas' || !empty($inv->dp)) ? 'display: flex' : 'display: none' }};">
                                       <div class="col-lg-4" id="div-label" style="display: block" >
                                         <label for="dp" class="form-label col-form-label col-form-label-md mb-0" id="label-dp">DP (70%)</label>
-                                        <small class="text-muted d-block" style="font-size: 11px;">(Default 70%, dapat diedit jika nego)</small>
+                                        <small class="text-muted d-block" style="font-size: 11px;">(Default 70%, opsional / dapat dikosongkan)</small>
                                       </div>
                                       <div class="col-lg-6" id="dp" style="display: block;">
                                         @if (!empty($inv->dp))
-                                          <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }'  class="form-control bg-light border-0" rows="1" placeholder="0" value="{{ number_format($inv->dp, 0, ',', '.') }}">
+                                          <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }'  class="form-control bg-light border-0" rows="1" placeholder="0 (Boleh kosong)" value="{{ number_format($inv->dp, 0, ',', '.') }}">
                                         @else
-                                          <input id="input-dp" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="dp" type="text" class="form-control bg-light border-0" rows="1" placeholder="0" value="0">
+                                          <input id="input-dp" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="dp" type="text" class="form-control bg-light border-0" rows="1" placeholder="0 (Boleh kosong)" value="0">
                                         @endif
                                       </div>
 

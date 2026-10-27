@@ -118,20 +118,7 @@ class PenjualanController extends Controller
                 'message' => $validator->errors()->first()
             ], 422);
         }
-
-        if (!$isTanpaHarga && ($request->jns_pem === 'Transfer DP' || !empty($request->dp))) {
-            $cleanNominalCheck = function($val) {
-                if ($val === null || $val === '') return 0;
-                $digits = preg_replace('/[^0-9]/', '', (string)$val);
-                return !empty($digits) ? intval($digits) : 0;
-            };
-            if ($cleanNominalCheck($request->dp) <= 0) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Nominal DP wajib diisi lebih dari Rp 0 untuk metode pembayaran DP.'
-                ], 422);
-            }
-        }
+        // DP bersifat opsional (dapat bernilai 0 atau kosong jika belum dibayarkan)
 
         // --- 1. VALIDASI & FILTERING STOK MULTI-MATERIAL ---
         if (!empty($request->barang_id)) {

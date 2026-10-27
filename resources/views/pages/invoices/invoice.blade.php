@@ -725,14 +725,9 @@ select.inv-dark-control option:checked {
 
     window.userEditedDp = false;
 
-    // Track ketika user mengedit nominal DP secara manual (misal customer nego)
+    // Track ketika user mengedit nominal DP secara manual (misal customer nego atau mengosongkan DP)
     $(document).on('input', '#input-dp', function () {
-        var rawVal = $(this).val();
-        if (rawVal && rawVal.toString().trim() !== '') {
-            window.userEditedDp = true;
-        } else {
-            window.userEditedDp = false;
-        }
+        window.userEditedDp = true;
         calcTotals();
     });
 
@@ -746,7 +741,6 @@ select.inv-dark-control option:checked {
         }
 
         if (val === 'Transfer DP') {
-            window.userEditedDp = false; // Reset agar langsung terhitung default 70%
             $('#div-dp-row').show();
             $('#div-label').show();
             $('#dp').show();
@@ -1038,21 +1032,9 @@ select.inv-dark-control option:checked {
                 $('#choices-payment-type').removeClass('is-invalid');
             }
 
-            if (jnsPem === 'Transfer DP' || $('#div-dp-row').is(':visible')) {
-                var dpInput = $('#input-dp');
-                var dpVal = parseFloat(dpInput.val() ? dpInput.val().toString().replace(/[.,]/g, '') : 0) || 0;
-                if (dpVal <= 0) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Data Belum Lengkap',
-                        text: 'Nominal DP wajib diisi lebih dari Rp 0 untuk metode pembayaran DP!',
-                        confirmButtonColor: '#5051F9'
-                    });
-                    dpInput.addClass('is-invalid').focus();
-                    return false;
-                } else {
-                    dpInput.removeClass('is-invalid');
-                }
+            // DP bersifat opsional (dapat bernilai 0 atau dikosongkan)
+            if ($('#input-dp').length) {
+                $('#input-dp').removeClass('is-invalid');
             }
         }
 
@@ -1145,8 +1127,8 @@ select.inv-dark-control option:checked {
             $('#div-label').show();
             $('#dp').show();
 
-            // Hitung otomatis 70% secara default jika belum diedit manual oleh user
-            if (!window.userEditedDp && totalAkhir > 0) {
+            // Hitung otomatis 70% secara default hanya jika kolom DP masih kosong dan belum diedit manual oleh user
+            if (!window.userEditedDp && totalAkhir > 0 && (!$('#input-dp').val() || $('#input-dp').val().trim() === '')) {
                 var defaultDp = Math.round(totalAkhir * 0.7);
                 $('#input-dp').val(defaultDp.toLocaleString('id-ID'));
             }
@@ -1306,8 +1288,23 @@ select.inv-dark-control option:checked {
                                         </div>
                                     </div>
 
-                                    <!-- Hidden Input Perusahaan for Autocomplete Compatibility -->
-                                    <input type="hidden" id="usaha" name="perusahaan" value="{{ old('perusahaan') }}">
+                                    <!-- Nama Perusahaan -->
+                                    <div class="row align-items-center mb-3">
+                                        <label for="usaha" class="col-sm-4 col-form-label inv-form-label">
+                                            Nama Perusahaan
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control inv-dark-control @error('perusahaan') is-invalid @enderror" id="usaha" name="perusahaan" placeholder="Nama Perusahaan / Instansi" value="{{ old('perusahaan') }}" list="companyList" autocomplete="off">
+                                            <datalist id="companyList">
+                                                @foreach ($kontak->pluck('perusahaan')->filter()->unique() as $comp)
+                                                    <option value="{{ $comp }}">{{ $comp }}</option>
+                                                @endforeach
+                                            </datalist>
+                                            @error('perusahaan')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
                                     <!-- Nomor Telepon -->
                                     <div class="row align-items-center mb-3">
@@ -1582,12 +1579,12 @@ select.inv-dark-control option:checked {
                                     <div class="row align-items-center mb-2" id="div-dp-row" style="display: none;">
                                         <div class="col-sm-4" id="div-label">
                                             <label for="input-dp" class="col-form-label text-warning fs-13 fw-semibold mb-0">
-                                                DP (70%) <span class="inv-required-mark">*</span>
+                                                DP (70%)
                                             </label>
-                                            <small class="text-muted d-block" style="font-size: 11px;">(Default 70%, dapat diedit jika nego)</small>
+                                            <small class="text-muted d-block" style="font-size: 11px;">(Default 70%, opsional / dapat dikosongkan)</small>
                                         </div>
                                         <div class="col-sm-8" id="dp">
-                                            <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' class="form-control inv-dark-control numeric text-warning fw-bold" placeholder="0" value="{{ old('dp') }}">
+                                            <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' class="form-control inv-dark-control numeric text-warning fw-bold" placeholder="0 (Boleh kosong)" value="{{ old('dp') }}">
                                         </div>
                                     </div>
 
@@ -1668,20 +1665,36 @@ select.inv-dark-control option:checked {
 </div>
 
 <script>
-    document.getElementById('customer').addEventListener('change', function() {
-        var selectedOption = this.value;
-        var dataList = document.getElementById('customerList').getElementsByTagName('option');
+    function syncCustomerDetails() {
+        var customerInput = document.getElementById('customer');
+        if (!customerInput) return;
+        var selectedOption = customerInput.value;
+        var dataListEl = document.getElementById('customerList');
+        if (!dataListEl) return;
+        var dataList = dataListEl.getElementsByTagName('option');
         for (var i = 0; i < dataList.length; i++) {
             var option = dataList[i];
             if (option.value === selectedOption) {
                 var usahaEl = document.getElementById('usaha');
-                if (usahaEl) usahaEl.value = option.getAttribute('data-company');
+                var company = option.getAttribute('data-company');
+                if (usahaEl && company && company !== 'null') {
+                    usahaEl.value = company;
+                }
                 var phoneEl = document.getElementById('phone-number');
-                if (phoneEl) phoneEl.value = option.getAttribute('data-phone');
+                var phone = option.getAttribute('data-phone');
+                if (phoneEl && phone && phone !== 'null') {
+                    phoneEl.value = phone;
+                }
                 break;
             }
         }
-    });
+    }
+
+    var customerInput = document.getElementById('customer');
+    if (customerInput) {
+        customerInput.addEventListener('change', syncCustomerDetails);
+        customerInput.addEventListener('input', syncCustomerDetails);
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
         let dateField = document.getElementById("date-field");
