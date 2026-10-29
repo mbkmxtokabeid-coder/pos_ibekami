@@ -12,7 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Auto-lock invoice yang telah di-unlock lebih dari 30 menit
+        $schedule->call(function () {
+            \App\Http\Controllers\InvoiceController::autoLockExpiredInvoices();
+        })->everyMinute();
     }
 
     /**

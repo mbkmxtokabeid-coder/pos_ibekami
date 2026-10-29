@@ -41,7 +41,11 @@ class Penjualan extends Model
         'alasan_batal',
         'alasan_hapus',
         'tanda_tangan',
+        'approved_at',
+    ];
 
+    protected $casts = [
+        'approved_at' => 'datetime',
     ];
     public function invoice()
     {

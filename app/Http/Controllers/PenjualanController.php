@@ -422,6 +422,8 @@ class PenjualanController extends Controller
             return redirect()->back();
         }
 
+        \App\Http\Controllers\InvoiceController::autoLockExpiredInvoices();
+
         $penjualan = Penjualan::find($id);
         if (!$penjualan) {
             Alert::error('Data tidak ditemukan');
@@ -429,7 +431,7 @@ class PenjualanController extends Controller
         }
 
         if ($role !== 'pemilik' && $penjualan->approval !== 'Unlock') {
-            Alert::error('Akses Terkunci', 'Akses hapus invoice #' . $penjualan->nomor_invoice . ' terkunci. Silakan minta persetujuan ke Pemilik terlebih dahulu.');
+            Alert::error('Akses Terkunci', 'Akses hapus invoice #' . $penjualan->nomor_invoice . ' terkunci atau batas waktu unlock 30 menit telah habis. Silakan minta persetujuan ke Pemilik terlebih dahulu.');
             return redirect()->back();
         }
 

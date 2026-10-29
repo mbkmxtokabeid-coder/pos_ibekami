@@ -25,18 +25,28 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class InvoiceController extends Controller
 {
+    /**
+     * Kunci kembali secara otomatis invoice yang telah di-unlock lebih dari 30 menit
+     */
+    public static function autoLockExpiredInvoices(): int
+    {
+        return DB::table('penjualan')
+            ->where('approval', 'Unlock')
+            ->where(function ($query) {
+                $query->whereNull('approved_at')
+                      ->orWhere('approved_at', '<=', now()->subMinutes(30));
+            })
+            ->update([
+                'approval' => 'Lock',
+                'approved_at' => null
+            ]);
+    }
+
     public function loadListInvoice()
     {
         Carbon::setLocale('id');
         
-         DB::table('penjualan')
-        ->where('approval', 'Unlock')
-        ->whereNotNull('approved_at')
-        ->where('approved_at', '<', now()->subHours(6))
-        ->update([
-            'approval' => 'Lock', // status lock
-            'approved_at' => null
-        ]);
+        self::autoLockExpiredInvoices();
         
         $yearNow = Carbon::now()->year;
         $monthNow = Carbon::now()->month;
@@ -198,6 +208,7 @@ class InvoiceController extends Controller
     public function getDatatableInvoices(Request $request)
     {
         Carbon::setLocale('id');
+        self::autoLockExpiredInvoices();
 
         $currentUser = Auth::user();
         $role = $currentUser->role ?? '';
@@ -226,6 +237,7 @@ class InvoiceController extends Controller
                 'tgl_penjualan',
                 'status',
                 'approval',
+                'approved_at',
                 'dp',
                 'total_pembayaran',
                 'total_harga',
@@ -352,11 +364,18 @@ class InvoiceController extends Controller
                 $htmlStatus = '<span class="tokabe-pill tokabe-pill-batal"><span class="tokabe-pill-dot">●</span> ' . e($inv->status) . '</span>';
             }
 
-            // 6. Col Approval (Pill with lock icon)
+            // 6. Col Approval (Pill with lock icon & countdown sisa waktu)
             if ($inv->approval === 'Lock') {
                 $htmlApproval = '<span class="tokabe-pill tokabe-pill-lock"><i class="las la-lock"></i> Lock</span>';
             } elseif ($inv->approval === 'Unlock') {
-                $htmlApproval = '<span class="tokabe-pill tokabe-pill-unlock"><i class="las la-lock-open"></i> Unlock</span>';
+                $sisaMenitText = '';
+                if (!empty($inv->approved_at)) {
+                    $approvedTime = Carbon::parse($inv->approved_at);
+                    $menitBerjalan = $approvedTime->diffInMinutes(now());
+                    $sisaMenit = max(0, 30 - (int)$menitBerjalan);
+                    $sisaMenitText = ' (' . $sisaMenit . 'm)';
+                }
+                $htmlApproval = '<span class="tokabe-pill tokabe-pill-unlock" title="Otomatis terkunci 30 menit setelah di-unlock"><i class="las la-lock-open"></i> Unlock' . $sisaMenitText . '</span>';
             } else {
                 $htmlApproval = '<span class="tokabe-pill tokabe-pill-belum"><i class="las la-lock"></i> ' . e($inv->approval) . '</span>';
             }
@@ -642,6 +661,8 @@ class InvoiceController extends Controller
 
     public function getCardsData(Request $request)
     {
+        self::autoLockExpiredInvoices();
+
         $timeframe = $request->query('timeframe', 'year');
         $mode = $request->query('mode');
         $date = $request->query('date');
@@ -890,9 +911,17 @@ class InvoiceController extends Controller
 
     public function editInvoice($id)
     {
+        self::autoLockExpiredInvoices();
+
         $inv = Penjualan::find($id);
         if (!$inv) {
             Alert::error('Invoice tidak ditemukan');
+            return redirect()->route('daftar_invoice');
+        }
+
+        $role = strtolower(auth()->user()->role ?? '');
+        if ($role !== 'pemilik' && $inv->approval !== 'Unlock') {
+            Alert::error('Akses Terkunci', 'Akses edit invoice #' . $inv->nomor_invoice . ' dalam kondisi terkunci (Lock) atau batas waktu unlock 30 menit telah habis. Silakan minta persetujuan ke Pemilik.');
             return redirect()->route('daftar_invoice');
         }
         $invoice = Invoice::find($inv->invoice);
@@ -960,9 +989,17 @@ class InvoiceController extends Controller
 
     public function updateInvoice(Request $request, $id)
     {
+        self::autoLockExpiredInvoices();
+
         $penjualan = Penjualan::find($id);
         if (!$penjualan) {
             Alert::error('Invoice tidak ditemukan');
+            return redirect()->route('daftar_invoice');
+        }
+
+        $role = strtolower(auth()->user()->role ?? '');
+        if ($role !== 'pemilik' && $penjualan->approval !== 'Unlock') {
+            Alert::error('Akses Terkunci', 'Batas waktu unlock 30 menit untuk invoice #' . $penjualan->nomor_invoice . ' telah habis dan invoice kembali terkunci. Silakan minta persetujuan ke Pemilik.');
             return redirect()->route('daftar_invoice');
         }
 
@@ -1494,7 +1531,7 @@ class InvoiceController extends Controller
         $inv->approved_at = now();
         $inv->save();
         
-        Alert::success('Invoice Sudah di-Unlock');
+        Alert::success('Invoice Sudah di-Unlock', 'Akses invoice #' . $inv->nomor_invoice . ' berhasil dibuka selama 30 menit. Setelah 30 menit, invoice akan otomatis terkunci kembali.');
         if (request()->headers->get('referer') && str_contains(request()->headers->get('referer'), 'invoice-approval')) {
             return redirect()->route('daftar_invoice');
         }
@@ -1562,10 +1599,18 @@ class InvoiceController extends Controller
 
         public function storeStatusBatal (Request $request, $id)
         {
+            self::autoLockExpiredInvoices();
+
+            $role = strtolower(Auth::user()->role ?? '');
             $invoice = Penjualan::find($id);
             if (!$invoice) {
                 Alert::error('Data tidak ditemukan');
                 return redirect()->route('daftar_invoice');
+            }
+
+            if ($role !== 'pemilik' && $invoice->approval !== 'Unlock') {
+                Alert::error('Akses Terkunci', 'Akses batalkan invoice #' . $invoice->nomor_invoice . ' terkunci atau batas waktu unlock 30 menit telah habis. Silakan minta persetujuan ke Pemilik.');
+                return redirect()->back();
             }
 
             DB::transaction(function () use ($invoice, $request) {
@@ -1589,6 +1634,8 @@ class InvoiceController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        self::autoLockExpiredInvoices();
+
         $role = strtolower(Auth::user()->role ?? '');
         if (!in_array($role, ['pemilik', 'admin', 'admintkb'])) {
             Alert::error('Akses Ditolak', 'Hanya Pemilik dan Admin yang memiliki hak akses menghapus invoice.');
