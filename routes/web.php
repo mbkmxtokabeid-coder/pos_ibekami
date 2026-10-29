@@ -331,3 +331,16 @@ Route::get('/invoice/public-download/{id}', [InvoiceController::class, 'publicDo
 Route::get('/test', function () {
     return view('pages.laporan.pdf');
 });
+
+// ROUTE CLEAR CACHE (Untuk Hosting)
+Route::get('/clear-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    return '<div style="font-family: sans-serif; text-align: center; margin-top: 50px;">
+        <h2 style="color: #10B981;">✓ Semua Cache Berhasil Dibersihkan!</h2>
+        <p>Cache View, Config, dan Route sudah di-reset ulang.</p>
+        <a href="' . url('/') . '" style="display: inline-block; padding: 10px 20px; background: #2563EB; color: #fff; text-decoration: none; border-radius: 6px;">Kembali ke Beranda</a>
+    </div>';
+});
