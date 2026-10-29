@@ -293,7 +293,7 @@
                                                                 $signatureUrl = $penjualan->tanda_tangan_url;
                                                             @endphp
                                                             @if($signatureUrl)
-                                                                <img src="{{ $signatureUrl }}" style="position: absolute; top: 0; left: 50%; transform: translateX(-30%); height: 90px; z-index: -1;" alt="TTD {{ $admin }}">
+                                                                <img src="{{ $signatureUrl }}" style="position: absolute; top: 0; left: 50%; transform: translateX(-30%); height: 90px; z-index: -1;" onerror="this.style.display='none'" alt="TTD {{ $admin }}">
                                                             @endif
                                                         </div>
                                                       @else

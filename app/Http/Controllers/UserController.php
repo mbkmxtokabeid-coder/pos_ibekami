@@ -219,10 +219,25 @@ class UserController extends Controller
     $extension = $file->getClientOriginalExtension();
     $fileName = 'ttd_' . $userId . '_' . time() . '_' . uniqid() . '.' . $extension;
 
-    $primaryDir = public_path('images/signatures');
-    $altDir = is_dir(base_path('public_html')) ? base_path('public_html/images/signatures') : null;
+    $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? null;
+    $targetDirs = array_unique(array_filter([
+      public_path('images/signatures'),
+      base_path('images/signatures'),
+      base_path('public/images/signatures'),
+      base_path('public_html/images/signatures'),
+      base_path('public_html/pos/images/signatures'),
+      dirname(base_path()) . '/public_html/pos/images/signatures',
+      dirname(base_path()) . '/pos/images/signatures',
+      $docRoot ? rtrim($docRoot, '/\\') . '/images/signatures' : null,
+      $docRoot ? rtrim($docRoot, '/\\') . '/pos/images/signatures' : null,
+      $docRoot ? dirname($docRoot) . '/pos/images/signatures' : null,
+    ]));
 
-    $targetDirs = array_filter([$primaryDir, $altDir]);
+    $primaryDir = public_path('images/signatures');
+    if (!file_exists($primaryDir)) {
+      @mkdir($primaryDir, 0755, true);
+    }
+
     foreach ($targetDirs as $dir) {
       if (!file_exists($dir)) {
         @mkdir($dir, 0755, true);
@@ -237,9 +252,14 @@ class UserController extends Controller
 
     $file->move($primaryDir, $fileName);
 
-    // Pastikan berkas juga tersedia di public_html jika direktori tersebut terpisah
-    if ($altDir && realpath($primaryDir) !== realpath($altDir)) {
-      @copy($primaryDir . '/' . $fileName, $altDir . '/' . $fileName);
+    // Salin ke semua target direktori lainnya (termasuk public_html/pos)
+    $sourceFile = $primaryDir . '/' . $fileName;
+    if (file_exists($sourceFile)) {
+      foreach ($targetDirs as $dir) {
+        if (realpath($dir) !== realpath($primaryDir)) {
+          @copy($sourceFile, $dir . '/' . $fileName);
+        }
+      }
     }
 
     return $fileName;

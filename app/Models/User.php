@@ -74,15 +74,25 @@ class User extends Authenticatable
 
         $cleanName = basename($fileName);
 
-        $baseDirs = array_filter([
+        // Ekstraksi admin ID dari nama file (misal: ttd_33_1793254451_6ae2e433c5f22.png => 33)
+        if (!$adminId && preg_match('/ttd_(\d+)_/i', $cleanName, $matchesId)) {
+            $adminId = (int)$matchesId[1];
+        }
+
+        $docRoot = $_SERVER['DOCUMENT_ROOT'] ?? null;
+        $baseDirs = array_filter(array_unique([
             public_path(),
             base_path(),
             base_path('public'),
             base_path('public_html'),
             base_path('public_html/pos'),
             dirname(base_path()) . '/public_html/pos',
-            $_SERVER['DOCUMENT_ROOT'] ?? null,
-        ]);
+            dirname(base_path()) . '/pos',
+            $docRoot,
+            $docRoot ? rtrim($docRoot, '/\\') . '/pos' : null,
+            $docRoot ? dirname($docRoot) . '/pos' : null,
+            $docRoot ? dirname($docRoot) . '/public_html/pos' : null,
+        ]));
 
         // 1. Cek file persis di subfolder images/signatures/
         foreach ($baseDirs as $dir) {
@@ -108,12 +118,13 @@ class User extends Authenticatable
             }
         }
 
-        // 4. Toleransi Otomatis: Jika nama file beda timestamp/hash (misal ttd_33_...),
-        // cari file tanda tangan milik admin ID tersebut yang ada di folder signatures
+        // 4. Toleransi Otomatis: Jika nama file beda timestamp/hash (misal ttd_33_1793254451 vs ttd_33_1793249957),
+        // cari file tanda tangan milik admin ID tersebut yang sudah ada di folder signatures
         if ($adminId) {
             foreach ($baseDirs as $dir) {
                 $sigDir = rtrim($dir, '/\\') . '/images/signatures';
                 if (is_dir($sigDir)) {
+                    // Cek pola ttd_{adminId}_*.*
                     $matches = glob($sigDir . '/ttd_' . $adminId . '_*.*');
                     if (!empty($matches)) {
                         usort($matches, function ($a, $b) {
@@ -123,8 +134,8 @@ class User extends Authenticatable
                         return self::formatSignatureUrl('images/signatures/' . $matchedFile);
                     }
 
-                    // Cek juga jika format namanya ttd_admin_33... atau ttd_zisca...
-                    $matchesCustom = glob($sigDir . '/*33*.*');
+                    // Cek juga jika ada file dengan ID tersebut
+                    $matchesCustom = glob($sigDir . '/*' . $adminId . '*.*');
                     if (!empty($matchesCustom)) {
                         return self::formatSignatureUrl('images/signatures/' . basename($matchesCustom[0]));
                     }
@@ -132,7 +143,21 @@ class User extends Authenticatable
             }
         }
 
-        // 5. Default URL jika file sudah di-upload ke server web
+        // 5. Fallback berdasarkan nama admin (misal Zisca / Namira) jika ada file di server
+        if ($adminName) {
+            $cleanAdmin = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $adminName));
+            foreach ($baseDirs as $dir) {
+                $sigDir = rtrim($dir, '/\\') . '/images/signatures';
+                if (is_dir($sigDir)) {
+                    $matchesName = glob($sigDir . '/*' . $cleanAdmin . '*.*');
+                    if (!empty($matchesName)) {
+                        return self::formatSignatureUrl('images/signatures/' . basename($matchesName[0]));
+                    }
+                }
+            }
+        }
+
+        // 6. Default URL jika file sudah di-upload ke server web
         return self::formatSignatureUrl('images/signatures/' . $cleanName);
     }
 

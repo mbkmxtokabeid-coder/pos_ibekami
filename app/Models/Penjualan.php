@@ -73,12 +73,13 @@ class Penjualan extends Model
         $adminId = is_numeric($this->admin) ? (int)$this->admin : null;
         $adminName = null;
         if (!$adminId && $this->admin) {
-            $adminUser = User::where('nama', $this->admin)->first();
+            $adminUser = User::whereRaw('LOWER(TRIM(nama)) = ?', [strtolower(trim($this->admin))])->first() 
+                ?? User::where('nama', 'LIKE', '%' . trim($this->admin) . '%')->first();
             if ($adminUser) {
                 $adminId = $adminUser->id;
                 $adminName = $adminUser->nama;
             } else {
-                $adminName = $this->admin;
+                $adminName = trim($this->admin);
             }
         }
 
