@@ -1017,6 +1017,8 @@ class InvoiceController extends Controller
         $penjualan->perusahaan = $request->perusahaan;
         $penjualan->no_telepon = $request->tlp;
         $penjualan->admin = $request->adm;
+        $adminUser = User::find($request->adm);
+        $penjualan->tanda_tangan = ($adminUser && $adminUser->tanda_tangan) ? $adminUser->tanda_tangan : ($request->adm == 8 ? 'ttd_namira.png' : null);
         $penjualan->order_by = $request->order;
         $penjualan->nama_sales = $request->sales;
         $penjualan->tgl_selesai = $request->tgl_selesai;
@@ -1155,14 +1157,14 @@ class InvoiceController extends Controller
         }
         $invoice = Invoice::where('id', $penjualan->invoice)->first();
         $penjualan_barang = PenjualanBarang::where('penjualan_id', $id)->get();
-        $admin_now = User::where('id', $penjualan->admin)->first();
+        $admin_now = User::find($penjualan->admin) ?? User::where('nama', $penjualan->admin)->first();
         // $jenisBarang = Barang::all();
         $barang = [];
         $hargaMod = [];
         $jumlahHarga = [];
         $totHargaMod = number_format($penjualan->total_harga ?? 0, 0, ',', '.');
         $sisaBayarMod = $penjualan->status === 'Lunas' ? '0' : number_format($penjualan->sisa_pembayaran ?? 0, 0, ',', '.');
-        $admin = $admin_now ? $admin_now->nama : 'Admin';
+        $admin = $admin_now ? $admin_now->nama : ($penjualan->admin ?: 'Admin');
         $tanggal =  $penjualan->tgl_penjualan;
         Carbon::setLocale('id');
 
@@ -1220,7 +1222,7 @@ class InvoiceController extends Controller
         $invoice = Invoice::where('id', $penjualan->invoice)->first();
         $namaInv = $penjualan->nomor_invoice;
         $penjualan_barang = PenjualanBarang::where('penjualan_id', $id)->get();
-        $admin_now = User::where('id', $penjualan->admin)->first();
+        $admin_now = User::find($penjualan->admin) ?? User::where('nama', $penjualan->admin)->first();
         // $jenisBarang = Barang::all();
         $barang = [];
         $hargaMod = [];
@@ -1229,7 +1231,7 @@ class InvoiceController extends Controller
         $totalHarga = number_format($penjualan->total_harga, 0, ',', '.');
         $sisaBayarMod = $penjualan->status === 'Lunas' ? '0' : number_format($penjualan->sisa_pembayaran, 0, ',', '.');
         
-        $admin = $admin_now ? $admin_now->nama : 'Admin';
+        $admin = $admin_now ? $admin_now->nama : ($penjualan->admin ?: 'Admin');
         $tanggal =  $penjualan->tgl_penjualan;
         Carbon::setLocale('id');
         $persen = '';
@@ -1361,7 +1363,7 @@ class InvoiceController extends Controller
         $invoice = Invoice::where('id', $penjualan->invoice)->first();
         $namaInv = $penjualan->nomor_invoice;
         $penjualan_barang = PenjualanBarang::where('penjualan_id', $id)->get();
-        $admin_now = User::where('id', $penjualan->admin)->first();
+        $admin_now = User::find($penjualan->admin) ?? User::where('nama', $penjualan->admin)->first();
         // $jenisBarang = Barang::all();
         $barang = [];
         $hargaMod = [];
@@ -1370,7 +1372,7 @@ class InvoiceController extends Controller
         $totalHarga = number_format($penjualan->total_harga, 0, ',', '.');
         $sisaBayarMod = $penjualan->status === 'Lunas' ? '0' : number_format($penjualan->sisa_pembayaran, 0, ',', '.');
         
-        $admin = $admin_now->nama;
+        $admin = $admin_now ? $admin_now->nama : ($penjualan->admin ?: 'Admin');
         $tanggal =  $penjualan->tgl_penjualan;
         Carbon::setLocale('id');
         $persen = '';
@@ -1460,6 +1462,14 @@ class InvoiceController extends Controller
         }
         $inv->status = 'Lunas';
         $inv->sisa_pembayaran = 0;
+        if (empty($inv->tanda_tangan) && $inv->admin) {
+            $creatorAdmin = User::find($inv->admin);
+            if ($creatorAdmin && $creatorAdmin->tanda_tangan) {
+                $inv->tanda_tangan = $creatorAdmin->tanda_tangan;
+            } elseif ($inv->admin == 8) {
+                $inv->tanda_tangan = 'ttd_namira.png';
+            }
+        }
         $inv->save();
         InvoiceUpdateLog::create([
             'invoice_id' => $inv->id,

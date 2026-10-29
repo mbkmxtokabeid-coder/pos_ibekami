@@ -208,6 +208,8 @@ class PenjualanController extends Controller
             $existingPenjualan->perusahaan = $request->perusahaan;
             $existingPenjualan->no_telepon = $request->tlp;
             $existingPenjualan->admin = $request->adm;
+            $adminUser = User::find($request->adm);
+            $existingPenjualan->tanda_tangan = ($adminUser && $adminUser->tanda_tangan) ? $adminUser->tanda_tangan : ($request->adm == 8 ? 'ttd_namira.png' : null);
             $existingPenjualan->order_by = $request->order;
             $existingPenjualan->nama_sales = $request->sales;
             $existingPenjualan->tgl_selesai = $request->tgl_selesai;
@@ -305,6 +307,9 @@ class PenjualanController extends Controller
             }
         } else {
             // Data belum ada, buat data baru
+            $adminUser = User::find($request->adm);
+            $sigSnapshot = ($adminUser && $adminUser->tanda_tangan) ? $adminUser->tanda_tangan : ($request->adm == 8 ? 'ttd_namira.png' : null);
+
             $penjualan = Penjualan::create([
                 'invoice' => $invoice->id,
                 'nomor_invoice' => $nmr_inv,
@@ -313,6 +318,7 @@ class PenjualanController extends Controller
                 'perusahaan' => $request->perusahaan,
                 'no_telepon' => $request->tlp,
                 'admin' => $request->adm,
+                'tanda_tangan' => $sigSnapshot,
                 'order_by' => $request->order,
                 'nama_sales' => $request->sales,
                 'tgl_selesai' => $request->tgl_selesai,

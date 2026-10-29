@@ -40,6 +40,7 @@ class Penjualan extends Model
         'sisa_pembayaran',
         'alasan_batal',
         'alasan_hapus',
+        'tanda_tangan',
 
     ];
     public function invoice()
@@ -61,6 +62,36 @@ class Penjualan extends Model
     public function InvoiceUpdateLog()
     {
         return $this->hasMany(InvoiceUpdateLog::class, 'invoice_id');
+    }
+
+    public function getTandaTanganUrlAttribute()
+    {
+        // 1. Prioritas utama: snapshot tanda tangan yang tersimpan pada invoice
+        if (!empty($this->tanda_tangan)) {
+            if (file_exists(public_path('images/signatures/' . $this->tanda_tangan))) {
+                return asset('images/signatures/' . $this->tanda_tangan);
+            }
+            if (file_exists(public_path('images/' . $this->tanda_tangan))) {
+                return asset('images/' . $this->tanda_tangan);
+            }
+        }
+
+        // 2. Hubungkan dengan akun admin pembuat invoice jika snapshot belum ada
+        $adminUser = $this->user;
+        if (!$adminUser && $this->admin) {
+            $adminUser = User::find($this->admin);
+        }
+
+        if ($adminUser) {
+            return $adminUser->tanda_tangan_url;
+        }
+
+        // 3. Fallback historis jika invoice lama tercatat atas nama Namira (id 8)
+        if ($this->admin == 8 && file_exists(public_path('images/ttd.png'))) {
+            return asset('images/ttd.png');
+        }
+
+        return null;
     }
 
     public function getNorekTextAttribute()

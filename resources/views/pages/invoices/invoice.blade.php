@@ -1328,9 +1328,19 @@ select.inv-dark-control option:checked {
                                             <select class="form-select inv-dark-control @error('adm') is-invalid @enderror" id="choices-admin" name="adm" required>
                                                 <option value="">Pilih Admin</option>
                                                 @foreach ($admin as $adm)
-                                                    <option value="{{ $adm->id }}" {{ (old('adm') == $adm->id || old('adm') == $adm->nama) ? 'selected' : '' }}>{{ $adm->nama }}</option>
+                                                    @php
+                                                        $hasSig = !empty($adm->tanda_tangan_url);
+                                                        $selectedAdminId = old('adm', (auth()->check() && auth()->user()->role === 'Admin') ? auth()->id() : '');
+                                                    @endphp
+                                                    <option value="{{ $adm->id }}" 
+                                                        data-has-signature="{{ $hasSig ? '1' : '0' }}"
+                                                        data-admin-name="{{ $adm->nama }}"
+                                                        {{ ($selectedAdminId == $adm->id || old('adm') == $adm->nama) ? 'selected' : '' }}>
+                                                        {{ $adm->nama }} {{ $hasSig ? '✓ (Ada TTD)' : '⚠️ (Belum ada TTD)' }}
+                                                    </option>
                                                 @endforeach
                                             </select>
+                                            <div id="admin-signature-alert" class="mt-2" style="display: none;"></div>
                                             @error('adm')
                                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
@@ -1920,10 +1930,47 @@ select.inv-dark-control option:checked {
         window.resetRowNumbers();
     };
 
+    function checkAdminSignature() {
+        var adminSelect = document.getElementById('choices-admin');
+        var alertContainer = document.getElementById('admin-signature-alert');
+        if (!adminSelect || !alertContainer) return;
+        
+        var selectedOption = adminSelect.options[adminSelect.selectedIndex];
+        if (!selectedOption || !selectedOption.value) {
+            alertContainer.style.display = 'none';
+            alertContainer.innerHTML = '';
+            return;
+        }
+        
+        var hasSig = selectedOption.getAttribute('data-has-signature') === '1';
+        var adminName = selectedOption.getAttribute('data-admin-name') || selectedOption.text;
+        
+        if (hasSig) {
+            alertContainer.style.display = 'block';
+            alertContainer.innerHTML = `
+                <div class="d-flex align-items-center text-success py-1 px-2 rounded mt-1" style="background-color: rgba(25, 135, 84, 0.1); border: 1px solid rgba(25, 135, 84, 0.2); font-size: 0.82rem;">
+                    <i class="ri-checkbox-circle-fill me-2 fs-6 text-success"></i>
+                    <span>Tanda tangan digital <strong>${adminName}</strong> tersedia & akan otomatis tampil saat invoice Lunas.</span>
+                </div>
+            `;
+        } else {
+            alertContainer.style.display = 'block';
+            alertContainer.innerHTML = `
+                <div class="d-flex align-items-center text-warning py-1 px-2 rounded mt-1" style="background-color: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); font-size: 0.82rem;">
+                    <i class="ri-alert-fill me-2 fs-6 text-warning"></i>
+                    <span><strong>Perhatian:</strong> Admin <strong>${adminName}</strong> belum memiliki tanda tangan digital. Invoice tidak akan menampilkan tanda tangan digital sebelum diunggah di menu Karyawan.</span>
+                </div>
+            `;
+        }
+    }
+
     $(document).ready(function() {
         if (typeof window.resetRowNumbers === 'function') {
             window.resetRowNumbers();
         }
+        
+        $('#choices-admin').on('change', checkAdminSignature);
+        checkAdminSignature();
     });
 </script>
 @endsection

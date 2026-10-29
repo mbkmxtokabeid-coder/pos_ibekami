@@ -537,6 +537,7 @@
                     <th>Email</th>
                     <th class="text-center">Role</th>
                     <th>Nomor Telepon</th>
+                    <th class="text-center">Tanda Tangan</th>
                     <th class="text-center">Status</th>
                     <th style="width: 100px; text-align: center;">Aksi</th>
                   </tr>
@@ -591,6 +592,23 @@
                           </a>
                         @else
                           <span class="text-muted">-</span>
+                        @endif
+                      </td>
+                      <td class="text-center">
+                        @if ($user->tanda_tangan_url)
+                          <a href="{{ $user->tanda_tangan_url }}" target="_blank" class="d-inline-flex align-items-center gap-1 text-decoration-none px-2 py-1 rounded-2" style="background: rgba(16, 185, 129, 0.12); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 11.5px; font-weight: 500;" title="Lihat Tanda Tangan {{ $user->nama }}">
+                            <i class="las la-signature fs-14"></i>
+                            <span>Ada TTD</span>
+                          </a>
+                        @else
+                          @if ($user->role == 'Admin')
+                            <span class="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-2" style="background: rgba(245, 158, 11, 0.12); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 11.5px; font-weight: 500;" title="Admin belum mengunggah tanda tangan digital">
+                              <i class="las la-exclamation-triangle fs-14"></i>
+                              <span>Belum Ada</span>
+                            </span>
+                          @else
+                            <span class="text-muted fs-12">-</span>
+                          @endif
                         @endif
                       </td>
                       <td class="text-center">
@@ -654,7 +672,7 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
       </div>
 
-      <form method="POST" action="{{ route('user.store') }}" id="formTambahKaryawan" class="needs-validation">
+      <form method="POST" action="{{ route('user.store') }}" id="formTambahKaryawan" class="needs-validation" enctype="multipart/form-data">
         @csrf
         <div class="tokabe-modal-body">
           <!-- Input Nama Karyawan -->
@@ -713,7 +731,7 @@
           </div>
 
           <!-- Input Nomor Telepon & Role -->
-          <div class="row g-3 mb-2">
+          <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label for="phone-number" class="form-label-modern">
                 Nomor Telepon
@@ -738,6 +756,31 @@
               @error('role')
                 <span class="error-help-block">{{ $message }}</span>
               @enderror
+            </div>
+          </div>
+
+          <!-- Tanda Tangan Digital (Khusus Admin / Karyawan) -->
+          <div class="p-3 rounded-3 mb-2" style="background: rgba(15, 23, 42, 0.6); border: 1.5px dashed #334155;">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <label class="form-label-modern mb-0" for="input-tanda-tangan-modal">
+                <i class="las la-signature text-primary me-1"></i>Tanda Tangan Digital (Khusus Admin)
+              </label>
+              <span class="badge" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; font-size: 10.5px;">Otomatis pada Invoice Lunas</span>
+            </div>
+            <p class="text-muted fs-11 mb-2">Unggah file PNG transparan (maks. 2MB). Opsional, dapat diunggah nanti.</p>
+            <div class="row align-items-center g-2">
+              <div class="col-sm-4 text-center">
+                <div class="p-2 rounded-2 d-inline-flex align-items-center justify-content-center" style="background: #0B1120; border: 1px solid #1E293B; width: 100%; min-height: 55px;">
+                  <img src="" id="preview-ttd-modal" alt="Preview TTD" style="max-height: 45px; max-width: 120px; object-fit: contain; display: none;">
+                  <span id="no-ttd-placeholder-modal" class="text-muted fs-11"><i class="las la-file-image"></i> Belum ada file</span>
+                </div>
+              </div>
+              <div class="col-sm-8">
+                <input type="file" class="form-control form-control-modern" name="tanda_tangan" id="input-tanda-tangan-modal" accept="image/png,image/jpeg,image/jpg,image/webp" onchange="previewTandaTanganModal(this)">
+                @error('tanda_tangan')
+                  <span class="error-help-block">{{ $message }}</span>
+                @enderror
+              </div>
             </div>
           </div>
         </div>
@@ -791,5 +834,16 @@
       }
     });
   });
+
+  function previewTandaTanganModal(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        $('#preview-ttd-modal').attr('src', e.target.result).show();
+        $('#no-ttd-placeholder-modal').hide();
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
 </script>
 @endsection

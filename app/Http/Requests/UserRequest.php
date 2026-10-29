@@ -21,14 +21,23 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'namaKaryawan' => 'required|min:2',
             'email' => 'required|email|min:2',
-            'password' => 'required|min:5',
-            're_password' => 'required|min:5|confirmed',
-            'no_telp' => 'required|regex:/^[0-9\+\s]+$/|min:5',
+            'no_telp' => 'nullable|regex:/^[0-9\+\s]+$/|min:5',
             'role' => 'required',
+            'tanda_tangan' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
         ];
+
+        if ($this->isMethod('post')) {
+            $rules['password'] = 'required|min:5';
+            $rules['re_password'] = 'required|min:5|same:password';
+        } else {
+            $rules['password'] = 'nullable|min:5';
+            $rules['re_password'] = 'nullable|min:5|same:password';
+        }
+
+        return $rules;
     }
     public function messages()
     {
@@ -40,13 +49,15 @@ class UserRequest extends FormRequest
             'email.min' => 'Kolom email minimal harus memiliki :min karakter.',
             'password.required' => 'Kolom password harus diisi.',
             'password.min' => 'Kolom password minimal harus memiliki :min karakter.',
-            're_password.confirmed' => 'Konfirmasi password tidak sesuai dengan password.',
+            're_password.same' => 'Konfirmasi password tidak sesuai dengan password.',
             're_password.required' => 'Kolom konfirmasi password harus diisi.',
             're_password.min' => 'Kolom konfirmasi password minimal harus memiliki :min karakter.',
-            'no_telp.required' => 'Kolom nomor telepon harus diisi.',
             'no_telp.regex' => 'Format nomor telepon tidak valid.',
             'no_telp.min' => 'Kolom nomor telepon minimal harus memiliki :min karakter.',
             'role.required' => 'Kolom role harus dipilih.',
+            'tanda_tangan.image' => 'File tanda tangan harus berupa gambar.',
+            'tanda_tangan.mimes' => 'Format file tanda tangan harus PNG, JPG, JPEG, atau WEBP (disarankan PNG transparan).',
+            'tanda_tangan.max' => 'Ukuran file tanda tangan maksimal 2 MB.',
         ];
     }
 }

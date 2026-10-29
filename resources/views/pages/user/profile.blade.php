@@ -397,7 +397,7 @@
 
           <!-- 3. Form Body -->
           <div class="card-body p-4">
-            <form method="POST" action="/invoice/profile/update/{{ Auth::user()->id }}" id="profileForm" class="needs-validation">
+            <form method="POST" action="/invoice/profile/update/{{ Auth::user()->id }}" id="profileForm" class="needs-validation" enctype="multipart/form-data">
               @csrf
               @method('put')
 
@@ -457,6 +457,63 @@
                 @enderror
               </div>
 
+              <!-- Tanda Tangan Digital Admin -->
+              <div class="mb-4 p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1.5px dashed #334155;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <label class="tokabe-label mb-0">
+                    <i class="las la-signature fs-16 text-indigo-400"></i>
+                    Tanda Tangan Digital Admin
+                  </label>
+                  <span class="badge" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 11px;">
+                    Otomatis tampil saat Invoice Lunas
+                  </span>
+                </div>
+                <p class="text-muted fs-12 mb-3">
+                  Tanda tangan digital ini akan otomatis disematkan pada setiap lembar invoice yang Anda terbitkan ketika invoice berstatus <strong>Lunas</strong>. Format yang didukung: PNG (transparan disarankan), JPG, JPEG, WEBP (maks. 2MB).
+                </p>
+
+                <div class="row align-items-center g-3">
+                  <div class="col-sm-5 text-center">
+                    <div class="p-2 rounded-2 d-inline-flex flex-column align-items-center justify-content-center" style="background: #0B1120; border: 1px solid #1E293B; min-width: 170px; min-height: 90px;">
+                      @if(Auth::user()->tanda_tangan_url)
+                        <img src="{{ Auth::user()->tanda_tangan_url }}" id="profile-preview-ttd" alt="Tanda Tangan {{ Auth::user()->nama }}" style="max-height: 75px; max-width: 160px; object-fit: contain;">
+                        <span class="text-success fs-11 mt-1 d-block" id="profile-status-ttd"><i class="las la-check-circle"></i> Tanda Tangan Aktif</span>
+                      @else
+                        <img src="" id="profile-preview-ttd" alt="Preview TTD" style="max-height: 75px; max-width: 160px; object-fit: contain; display: none;">
+                        <div id="profile-no-ttd-placeholder" class="text-muted fs-12 py-3">
+                          <i class="las la-file-signature fs-28 d-block mb-1 text-slate-500"></i>
+                          <span>Belum ada tanda tangan</span>
+                        </div>
+                      @endif
+                    </div>
+                  </div>
+
+                  <div class="col-sm-7" id="profile-ttd-actions" style="display: none;">
+                    <label class="form-label text-slate-300 fs-12 mb-1">Unggah Tanda Tangan Baru</label>
+                    <input type="file" class="form-control" name="tanda_tangan" id="profile-input-tanda-tangan" accept="image/png,image/jpeg,image/jpg,image/webp" onchange="previewProfileTandaTangan(this)">
+                    <span class="text-muted fs-11 mt-1 d-block">
+                      Pilih file baru untuk mengganti tanda tangan saat ini.
+                    </span>
+                    @if(Auth::user()->tanda_tangan)
+                      <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="hapus_tanda_tangan" value="1" id="profile_hapus_ttd">
+                        <label class="form-check-label fs-12 text-danger" for="profile_hapus_ttd">
+                          Hapus tanda tangan digital saat ini
+                        </label>
+                      </div>
+                    @endif
+                    @error('tanda_tangan')
+                      <span class="error-help-block">{{ $message }}</span>
+                    @enderror
+                  </div>
+
+                  <div class="col-sm-7 text-muted fs-12" id="profile-ttd-readonly-note">
+                    <i class="las la-info-circle me-1 text-primary"></i>
+                    Klik <strong>Edit Profil</strong> di bawah untuk mengunggah atau memperbarui tanda tangan digital Anda.
+                  </div>
+                </div>
+              </div>
+
               <!-- Action Buttons Strip -->
               <div class="pt-3 border-top border-secondary border-opacity-25 d-flex align-items-center justify-content-end gap-2">
                 <!-- Tombol Masuk Mode Edit (Tampil Awal) -->
@@ -507,7 +564,7 @@
 
     // Tombol Edit diklik: Buka kunci readonly
     $('#edit-button').on('click', function() {
-      var editableInputs = $('#profileForm input:not([name="_token"]):not([name="_method"])');
+      var editableInputs = $('#profileForm input:not([name="_token"]):not([name="_method"]):not([type="file"]):not([type="checkbox"])');
       
       editableInputs.removeAttr('readonly').removeClass('is-readonly');
       
@@ -518,12 +575,15 @@
       $('#mode-badge-readonly').hide();
       $('#mode-badge-editing').show();
       
+      $('#profile-ttd-actions').show();
+      $('#profile-ttd-readonly-note').hide();
+
       $('#namaKaryawan').focus();
     });
 
     // Tombol Batal diklik: Kembalikan ke mode readonly dan reset nilai
     $('#batal-button').on('click', function() {
-      var editableInputs = $('#profileForm input:not([name="_token"]):not([name="_method"])');
+      var editableInputs = $('#profileForm input:not([name="_token"]):not([name="_method"]):not([type="file"]):not([type="checkbox"])');
       
       editableInputs.attr('readonly', true).addClass('is-readonly');
       
@@ -532,6 +592,10 @@
       $('#email').val(initialValues.email);
       $('#password-input').val('');
       $('#phone-number').val(initialValues.no_telp);
+      $('#profile-input-tanda-tangan').val('');
+      if ($('#profile_hapus_ttd').length) {
+        $('#profile_hapus_ttd').prop('checked', false);
+      }
       
       $('#edit-button').show();
       $('#batal-button').hide();
@@ -539,7 +603,24 @@
       
       $('#mode-badge-readonly').show();
       $('#mode-badge-editing').hide();
+      
+      $('#profile-ttd-actions').hide();
+      $('#profile-ttd-readonly-note').show();
     });
   });
+
+  function previewProfileTandaTangan(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        $('#profile-preview-ttd').attr('src', e.target.result).show();
+        $('#profile-no-ttd-placeholder').hide();
+        if ($('#profile-status-ttd').length) {
+          $('#profile-status-ttd').html('<i class="las la-file-upload"></i> File Baru Dipilih').removeClass('text-success').addClass('text-info');
+        }
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
 </script>
 @endsection

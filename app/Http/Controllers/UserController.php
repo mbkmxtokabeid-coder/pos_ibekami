@@ -24,19 +24,21 @@ class UserController extends Controller
 
   public function storeUser(Request $request)
   {
-    $request->validate([
+    $userValidation = [
       'namaKaryawan' => 'required|string|max:255',
       'email' => 'required|string|email|max:255|unique:users,email',
       'password' => 'required|string|min:5',
       'role' => 'required|string',
-    ]);
+      'tanda_tangan' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
+    ];
+    $request->validate($userValidation);
 
     if ($request->re_password != $request->password) {
       Alert::error('Password tidak sama');
       return redirect()->back()->withInput();
     }
 
-    User::create([
+    $user = User::create([
       'nama' => $request->namaKaryawan,
       'email' => $request->email,
       'password' => Hash::make($request->password),
@@ -44,6 +46,12 @@ class UserController extends Controller
       'role' => $request->role,
       'status' => 'Aktif',
     ]);
+
+    if ($request->hasFile('tanda_tangan')) {
+      $sigName = $this->uploadSignature($request->file('tanda_tangan'), $user->id);
+      $user->tanda_tangan = $sigName;
+      $user->save();
+    }
 
     Alert::success('User Berhasil ditambahkan');
     return redirect()->route('user.index');
@@ -99,6 +107,7 @@ class UserController extends Controller
       'namaKaryawan' => 'required|string|max:255',
       'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
       'role' => 'required|string',
+      'tanda_tangan' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
     ]);
 
     $data = [
@@ -119,6 +128,19 @@ class UserController extends Controller
         return redirect()->back()->withInput();
       }
       $data['password'] = Hash::make($request->password);
+    }
+
+    // Kelola tanda tangan digital
+    if ($request->hasFile('tanda_tangan')) {
+      $data['tanda_tangan'] = $this->uploadSignature($request->file('tanda_tangan'), $user->id, $user->tanda_tangan);
+    } elseif ($request->boolean('hapus_tanda_tangan')) {
+      if ($user->tanda_tangan && !in_array($user->tanda_tangan, ['ttd_namira.png', 'ttd.png'])) {
+        $oldFile = public_path('images/signatures/' . $user->tanda_tangan);
+        if (file_exists($oldFile)) {
+          @unlink($oldFile);
+        }
+      }
+      $data['tanda_tangan'] = null;
     }
 
     $user->update($data);
@@ -148,6 +170,7 @@ class UserController extends Controller
     $request->validate([
       'namaKaryawan' => 'required|string|max:255',
       'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+      'tanda_tangan' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
     ]);
 
     $data = [
@@ -165,15 +188,51 @@ class UserController extends Controller
       $data['password'] = Hash::make($request->password);
     }
 
+    // Kelola upload tanda tangan
+    if ($request->hasFile('tanda_tangan')) {
+      $data['tanda_tangan'] = $this->uploadSignature($request->file('tanda_tangan'), $user->id, $user->tanda_tangan);
+    } elseif ($request->boolean('hapus_tanda_tangan')) {
+      if ($user->tanda_tangan && !in_array($user->tanda_tangan, ['ttd_namira.png', 'ttd.png'])) {
+        $oldFile = public_path('images/signatures/' . $user->tanda_tangan);
+        if (file_exists($oldFile)) {
+          @unlink($oldFile);
+        }
+      }
+      $data['tanda_tangan'] = null;
+    }
+
     $user->update($data);
 
     Alert::success('Profile berhasil di update');
-    if ($user->role === 'Pemilik' || $user->role === 'Admin') {
-      return redirect('/');
-    } elseif ($user->role === 'Produksi') {
-      return redirect('/daftar-spk');
-    } else {
-      return redirect('/stok-tinta');
+    return redirect()->route('auth.profile');
+  }
+
+  /**
+   * Helper untuk mengunggah gambar tanda tangan digital admin
+   */
+  private function uploadSignature($file, $userId, $existingFileName = null)
+  {
+    if (!$file) {
+      return null;
     }
+
+    $targetDir = public_path('images/signatures');
+    if (!file_exists($targetDir)) {
+      @mkdir($targetDir, 0755, true);
+    }
+
+    // Hapus file tanda tangan lama jika bukan template bawaan
+    if ($existingFileName && !in_array($existingFileName, ['ttd_namira.png', 'ttd.png'])) {
+      $oldFilePath = $targetDir . '/' . $existingFileName;
+      if (file_exists($oldFilePath)) {
+        @unlink($oldFilePath);
+      }
+    }
+
+    $extension = $file->getClientOriginalExtension();
+    $fileName = 'ttd_' . $userId . '_' . time() . '_' . uniqid() . '.' . $extension;
+    $file->move($targetDir, $fileName);
+
+    return $fileName;
   }
 }

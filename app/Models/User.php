@@ -25,6 +25,7 @@ class User extends Authenticatable
         'role',
         'status',
         'device_token',
+        'tanda_tangan',
     ];
 
     /**
@@ -50,5 +51,24 @@ class User extends Authenticatable
     public function getNameAttribute()
     {
         return $this->nama;
+    }
+
+    public function getTandaTanganUrlAttribute()
+    {
+        if (!empty($this->tanda_tangan)) {
+            if (file_exists(public_path('images/signatures/' . $this->tanda_tangan))) {
+                return asset('images/signatures/' . $this->tanda_tangan);
+            }
+            if (file_exists(public_path('images/' . $this->tanda_tangan))) {
+                return asset('images/' . $this->tanda_tangan);
+            }
+        }
+
+        // Fallback khusus untuk Namira jika belum mengunggah file baru
+        if (($this->id == 8 || stripos($this->nama, 'Namira') !== false) && file_exists(public_path('images/ttd.png'))) {
+            return asset('images/ttd.png');
+        }
+
+        return null;
     }
 }

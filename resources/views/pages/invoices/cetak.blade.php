@@ -182,10 +182,15 @@
           @if($penjualan->status == 'Lunas')
             <div style="position: relative; height: 110px; margin-top: 10px; margin-bottom: 10px;">
                 <!-- GAMBAR STEMPEL -->
-                <img src="{{asset('images/Logo IBEKA ID.png')}}" style="position: absolute; top: 15px; left: 50%; transform: translateX(-70%); height: 90px; z-index: -2;" alt="Stempel Lunas">
+                <img src="{{asset('images/Logo IBEKAMI.png')}}" style="position: absolute; top: 15px; left: 50%; transform: translateX(-70%); height: 90px; z-index: -2;" alt="Stempel Lunas">
                 
                 <!-- GAMBAR TTD -->
-                <img src="{{asset('images/ttd.png')}}" style="position: absolute; top: 0; left: 50%; transform: translateX(-30%); height: 90px; z-index: -1;" alt="TTD Lunas">
+                @php
+                    $signatureUrl = $penjualan->tanda_tangan_url;
+                @endphp
+                @if($signatureUrl)
+                    <img src="{{ $signatureUrl }}" style="position: absolute; top: 0; left: 50%; transform: translateX(-30%); height: 90px; z-index: -1;" alt="TTD {{ $admin }}">
+                @endif
             </div>
           @else
             <p><br><br><br><br><br><br></p>

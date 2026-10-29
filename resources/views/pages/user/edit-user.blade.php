@@ -220,7 +220,7 @@
 
           <!-- Form Body -->
           <div class="card-body p-4">
-            <form method="POST" action="{{ route('user.update', $user->id) }}" class="needs-validation">
+            <form method="POST" action="{{ route('user.update', $user->id) }}" class="needs-validation" enctype="multipart/form-data">
               @csrf
               @method('put')
 
@@ -311,6 +311,57 @@
                 </div>
               </div>
 
+              <!-- Tanda Tangan Digital (Khusus Admin / Karyawan) -->
+              <div class="mb-4 p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1.5px dashed #334155;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <label class="tokabe-label mb-0">
+                    <i class="las la-signature fs-16 text-indigo-400"></i>
+                    Tanda Tangan Digital
+                  </label>
+                  <span class="badge" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 11px;">
+                    Otomatis tampil saat Invoice Lunas
+                  </span>
+                </div>
+                <p class="text-muted fs-12 mb-3">
+                  Unggah gambar tanda tangan berlatar belakang transparan (format PNG direkomendasikan, maks. 2MB).
+                </p>
+
+                <div class="row align-items-center g-3">
+                  <div class="col-sm-5 text-center">
+                    <div class="p-2 rounded-2 d-inline-flex flex-column align-items-center justify-content-center" style="background: #0B1120; border: 1px solid #1E293B; min-width: 160px; min-height: 90px;">
+                      @if($user->tanda_tangan_url)
+                        <img src="{{ $user->tanda_tangan_url }}" id="preview-ttd" alt="Tanda Tangan {{ $user->nama }}" style="max-height: 70px; max-width: 150px; object-fit: contain;">
+                        <span class="text-success fs-11 mt-1 d-block" id="status-ttd"><i class="las la-check-circle"></i> Tanda Tangan Tersimpan</span>
+                      @else
+                        <img src="" id="preview-ttd" alt="Preview TTD" style="max-height: 70px; max-width: 150px; object-fit: contain; display: none;">
+                        <div id="no-ttd-placeholder" class="text-muted fs-12 py-3">
+                          <i class="las la-file-signature fs-28 d-block mb-1 text-slate-500"></i>
+                          <span>Belum ada tanda tangan</span>
+                        </div>
+                      @endif
+                    </div>
+                  </div>
+
+                  <div class="col-sm-7">
+                    <input type="file" class="form-control" name="tanda_tangan" id="input-tanda-tangan" accept="image/png,image/jpeg,image/jpg,image/webp" onchange="previewTandaTangan(this)">
+                    <span class="text-muted fs-11 mt-1 d-block">
+                      Pilih file baru untuk mengganti tanda tangan saat ini.
+                    </span>
+                    @if($user->tanda_tangan)
+                      <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="hapus_tanda_tangan" value="1" id="hapus_ttd">
+                        <label class="form-check-label fs-12 text-danger" for="hapus_ttd">
+                          Hapus tanda tangan digital saat ini
+                        </label>
+                      </div>
+                    @endif
+                    @error('tanda_tangan')
+                      <span class="error-help-block">{{ $message }}</span>
+                    @enderror
+                  </div>
+                </div>
+              </div>
+
               <!-- Action Buttons -->
               <div class="pt-3 border-top border-secondary border-opacity-25 d-flex align-items-center justify-content-end gap-2">
                 <a href="{{ route('user.index') }}" class="btn-tokabe-reset">
@@ -338,4 +389,19 @@
 @section('plugins')
 <script src="{{ asset('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
 <script src="{{ asset('js/pages/password-addon.init.js') }}"></script>
+<script>
+function previewTandaTangan(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      $('#preview-ttd').attr('src', e.target.result).show();
+      $('#no-ttd-placeholder').hide();
+      if ($('#status-ttd').length) {
+        $('#status-ttd').html('<i class="las la-file-upload"></i> File Baru Dipilih').removeClass('text-success').addClass('text-info');
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
 @endsection

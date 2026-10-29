@@ -220,7 +220,7 @@
 
           <!-- Form Body -->
           <div class="card-body p-4">
-            <form method="POST" action="{{ route('user.store') }}" class="needs-validation">
+            <form method="POST" action="{{ route('user.store') }}" class="needs-validation" enctype="multipart/form-data">
               @csrf
 
               <!-- Input Nama Karyawan -->
@@ -279,7 +279,7 @@
               </div>
 
               <!-- Input Nomor Telepon & Role -->
-              <div class="row g-3 mb-4">
+              <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <label for="phone-number" class="tokabe-label">
                     Nomor Telepon
@@ -304,6 +304,44 @@
                   @error('role')
                     <span class="error-help-block">{{ $message }}</span>
                   @enderror
+                </div>
+              </div>
+
+              <!-- Tanda Tangan Digital (Khusus Admin / Karyawan) -->
+              <div class="mb-4 p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1.5px dashed #334155;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <label class="tokabe-label mb-0">
+                    <i class="las la-signature fs-16 text-indigo-400"></i>
+                    Tanda Tangan Digital (Opsional)
+                  </label>
+                  <span class="badge" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 11px;">
+                    Otomatis tampil saat Invoice Lunas
+                  </span>
+                </div>
+                <p class="text-muted fs-12 mb-3">
+                  Unggah gambar tanda tangan berlatar belakang transparan (format PNG direkomendasikan, maks. 2MB).
+                </p>
+
+                <div class="row align-items-center g-3">
+                  <div class="col-sm-5 text-center">
+                    <div class="p-2 rounded-2 d-inline-flex flex-column align-items-center justify-content-center" style="background: #0B1120; border: 1px solid #1E293B; min-width: 160px; min-height: 90px;">
+                      <img src="" id="preview-ttd-add" alt="Preview TTD" style="max-height: 70px; max-width: 150px; object-fit: contain; display: none;">
+                      <div id="no-ttd-placeholder-add" class="text-muted fs-12 py-3">
+                        <i class="las la-file-signature fs-28 d-block mb-1 text-slate-500"></i>
+                        <span>Belum ada file dipilih</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-7">
+                    <input type="file" class="form-control" name="tanda_tangan" id="input-tanda-tangan-add" accept="image/png,image/jpeg,image/jpg,image/webp" onchange="previewTandaTanganAdd(this)">
+                    <span class="text-muted fs-11 mt-1 d-block">
+                      Dapat diunggah sekarang atau menyusul melalui halaman profil admin.
+                    </span>
+                    @error('tanda_tangan')
+                      <span class="error-help-block">{{ $message }}</span>
+                    @enderror
+                  </div>
                 </div>
               </div>
 
@@ -334,4 +372,16 @@
 @section('plugins')
 <script src="{{ asset('vendor/jsvalidation/js/jsvalidation.js') }}"></script>
 <script src="{{ asset('js/pages/password-addon.init.js') }}"></script>
+<script>
+function previewTandaTanganAdd(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      $('#preview-ttd-add').attr('src', e.target.result).show();
+      $('#no-ttd-placeholder-add').hide();
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
 @endsection

@@ -73,7 +73,7 @@
                                                 <div class="col-lg-6 col-6"></div>
                                                 <!--end col-->
                                                  <div class="col-lg-2 col-2 text-center d-flex flex-column align-items-center">
-                                                 <img src="{{asset('images/Logo IBEKA ID.png')}}" class="card-logo card-logo-dark" alt="logo dark" height="50">
+                                                 <img src="{{asset('images/Logo IBEKAMI.png')}}" class="card-logo card-logo-dark" alt="logo dark" height="50">
                                                  <a href="https://ibekami.id" class="link-primary mt-2" target="_blank" id="website">ibekami.id</a>
                                              </div>
 
@@ -283,7 +283,22 @@
                                                     <div style="position: absolute; right:340px;bottom: 10px;">
                                             
                                                       <h6 class="fw-normal">Medan,{{$formatTanggal}}</h6>
-                                                      <p><br><br><br><br><br><br></p>
+                                                      @if($penjualan->status == 'Lunas')
+                                                        <div style="position: relative; height: 110px; margin-top: 10px; margin-bottom: 10px;">
+                                                            <!-- GAMBAR STEMPEL -->
+                                                            <img src="{{asset('images/Logo IBEKAMI.png')}}" style="position: absolute; top: 15px; left: 50%; transform: translateX(-70%); height: 90px; z-index: -2;" alt="Stempel Lunas">
+                                                            
+                                                            <!-- GAMBAR TTD -->
+                                                            @php
+                                                                $signatureUrl = $penjualan->tanda_tangan_url;
+                                                            @endphp
+                                                            @if($signatureUrl)
+                                                                <img src="{{ $signatureUrl }}" style="position: absolute; top: 0; left: 50%; transform: translateX(-30%); height: 90px; z-index: -1;" alt="TTD {{ $admin }}">
+                                                            @endif
+                                                        </div>
+                                                      @else
+                                                        <p><br><br><br><br><br><br></p>
+                                                      @endif
                                                       <h6 class="fw-normal">{{$admin}}</h6>
                                                     </div>
                                                   </div>
