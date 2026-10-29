@@ -216,22 +216,31 @@ class UserController extends Controller
       return null;
     }
 
-    $targetDir = public_path('images/signatures');
-    if (!file_exists($targetDir)) {
-      @mkdir($targetDir, 0755, true);
-    }
+    $extension = $file->getClientOriginalExtension();
+    $fileName = 'ttd_' . $userId . '_' . time() . '_' . uniqid() . '.' . $extension;
 
-    // Hapus file tanda tangan lama jika bukan template bawaan
-    if ($existingFileName && !in_array($existingFileName, ['ttd_namira.png', 'ttd.png'])) {
-      $oldFilePath = $targetDir . '/' . $existingFileName;
-      if (file_exists($oldFilePath)) {
-        @unlink($oldFilePath);
+    $primaryDir = public_path('images/signatures');
+    $altDir = is_dir(base_path('public_html')) ? base_path('public_html/images/signatures') : null;
+
+    $targetDirs = array_filter([$primaryDir, $altDir]);
+    foreach ($targetDirs as $dir) {
+      if (!file_exists($dir)) {
+        @mkdir($dir, 0755, true);
+      }
+      if ($existingFileName && !in_array($existingFileName, ['ttd_namira.png', 'ttd.png'])) {
+        $oldFile = $dir . '/' . $existingFileName;
+        if (file_exists($oldFile)) {
+          @unlink($oldFile);
+        }
       }
     }
 
-    $extension = $file->getClientOriginalExtension();
-    $fileName = 'ttd_' . $userId . '_' . time() . '_' . uniqid() . '.' . $extension;
-    $file->move($targetDir, $fileName);
+    $file->move($primaryDir, $fileName);
+
+    // Pastikan berkas juga tersedia di public_html jika direktori tersebut terpisah
+    if ($altDir && realpath($primaryDir) !== realpath($altDir)) {
+      @copy($primaryDir . '/' . $fileName, $altDir . '/' . $fileName);
+    }
 
     return $fileName;
   }
