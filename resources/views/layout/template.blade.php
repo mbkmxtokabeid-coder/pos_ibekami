@@ -19,9 +19,9 @@
 <link rel="dns-prefetch" href="https://code.jquery.com">
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
-<!-- Preload & Load Google Font DM Sans with display=swap to prevent layout shift (CLS) -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Preload & Load Google Fonts Inter & JetBrains Mono + DM Sans with display=swap -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
 {{-- HEAD CSS  --}}
 @yield('head')
@@ -65,17 +65,17 @@
     }
 
     /* =========================================================
-       ULTRA-SMOOTH SHADCN THEMED SIDEBAR STYLING (IBEKAMI)
+       LINEAR CARBON × GOLDEN AMBER SIDEBAR STYLING (IBEKAMI)
        ========================================================= */
     :root {
-        --shadcn-sidebar-bg: #0d1117;
-        --shadcn-sidebar-surface: #161b22;
+        --shadcn-sidebar-bg: #09090B;
+        --shadcn-sidebar-surface: #111115;
         --shadcn-sidebar-border: rgba(255, 255, 255, 0.08);
-        --shadcn-sidebar-muted: #8b949e;
-        --shadcn-sidebar-text: #e6edf3;
-        --shadcn-sidebar-active-bg: rgba(56, 189, 248, 0.12);
-        --shadcn-sidebar-active-text: #38bdf8;
-        --shadcn-sidebar-hover-bg: rgba(255, 255, 255, 0.06);
+        --shadcn-sidebar-muted: #A1A1AA;
+        --shadcn-sidebar-text: #FAFAFA;
+        --shadcn-sidebar-active-bg: rgba(245, 158, 11, 0.14);
+        --shadcn-sidebar-active-text: #FBBF24;
+        --shadcn-sidebar-hover-bg: rgba(255, 255, 255, 0.05);
     }
 
     /* Layout Synchronized Transitions */
@@ -137,13 +137,14 @@
         width: 36px;
         height: 36px;
         min-width: 36px;
-        border-radius: 8px;
-        background: #1f2937;
+        border-radius: 10px;
+        background: rgba(245, 158, 11, 0.12);
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.32);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 4px 12px rgba(0, 0, 0, 0.4);
         margin-left: 8px;
         flex-shrink: 0;
     }
@@ -170,16 +171,18 @@
     }
     .org-name {
         font-size: 13.5px;
-        font-weight: 600;
-        color: #f0f6fc;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #FAFAFA;
         line-height: 1.2;
     }
     .org-badge-pro {
         font-size: 9px;
         font-weight: 700;
         letter-spacing: 0.05em;
-        color: #38bdf8;
-        background: rgba(56, 189, 248, 0.12);
+        color: #FBBF24;
+        background: rgba(245, 158, 11, 0.14);
+        border: 1px solid rgba(245, 158, 11, 0.28);
         padding: 1px 5px;
         border-radius: 4px;
         display: inline-block;
@@ -245,6 +248,17 @@
         background-color: var(--shadcn-sidebar-active-bg) !important;
         color: var(--shadcn-sidebar-active-text) !important;
         font-weight: 600 !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 0 0 1px rgba(245, 158, 11, 0.24) !important;
+    }
+    .navbar-menu .navbar-nav .nav-link.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 8px;
+        width: 3px;
+        border-radius: 0 3px 3px 0;
+        background: #FBBF24;
     }
     .navbar-menu .navbar-nav .nav-link.active i.menu-icon,
     .navbar-menu .navbar-nav .nav-link[aria-expanded="true"] i.menu-icon,
@@ -301,11 +315,11 @@
     }
     .navbar-menu .menu-title {
         padding: 10px 16px 4px 16px !important;
-        font-size: 11px !important;
+        font-size: 10.5px !important;
         font-weight: 700 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-        color: #4b5563 !important;
+        letter-spacing: 0.06em !important;
+        color: #71717A !important;
         white-space: nowrap;
         overflow: hidden;
     }
@@ -314,8 +328,8 @@
         font-weight: 700 !important;
         padding: 2px 6px !important;
         border-radius: 4px !important;
-        background: rgba(56, 189, 248, 0.15) !important;
-        color: #38bdf8 !important;
+        background: rgba(245, 158, 11, 0.15) !important;
+        color: #FBBF24 !important;
         letter-spacing: 0.04em !important;
         margin-left: auto !important;
         margin-right: 12px !important;
@@ -422,12 +436,12 @@
         transform: translateX(2px);
     }
     .navbar-menu .navbar-nav .sub-menu-list .nav-link.active {
-        color: #38bdf8 !important;
-        background: rgba(56, 189, 248, 0.12) !important;
+        color: #FBBF24 !important;
+        background: rgba(245, 158, 11, 0.14) !important;
         font-weight: 600 !important;
     }
     .navbar-menu .navbar-nav .sub-menu-list .nav-link.active .sub-menu-icon {
-        color: #38bdf8 !important;
+        color: #FBBF24 !important;
     }
 
     /* EXIT / CLOSING STATE: Fluid fade-out & subtle slide-up without clipping */
@@ -501,8 +515,8 @@
         height: 34px;
         min-width: 34px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #10b981, #06b6d4);
-        color: #ffffff;
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        color: #09090B;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -510,7 +524,7 @@
         font-size: 12px;
         margin-left: 9px;
         flex-shrink: 0;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.28);
     }
     .user-avatar-badge.size-sm {
         width: 28px;
@@ -564,12 +578,12 @@
         transition: none;
     }
     .shadcn-dropdown-menu .shadcn-menu-inner {
-        background: #161b22 !important;
-        border: 1px solid var(--shadcn-sidebar-border) !important;
+        background: rgba(17, 17, 21, 0.94) !important;
+        border: 1px solid rgba(255, 255, 255, 0.10) !important;
         border-radius: 12px !important;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+        backdrop-filter: blur(20px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
         overflow: hidden;
         opacity: 0;
         transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
@@ -725,7 +739,7 @@
         color: #ef4444 !important;
     }
     .swal2-popup.swal2-toast .swal2-timer-progress-bar {
-        background: linear-gradient(90deg, #38bdf8, #818cf8) !important;
+        background: linear-gradient(90deg, #F59E0B, #FBBF24) !important;
         height: 3px !important;
         border-radius: 0 0 12px 12px !important;
     }

@@ -1,287 +1,1506 @@
+@extends('layout.template')
+
 @section('head')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
-   IBEKAMI DASHBOARD — DESIGN SYSTEM & TOKENS (Match Tokabe Modern Dark UI)
+   IBEKAMI DASHBOARD — WARM OBSIDIAN & GOLDEN AMBER GLASSMORPHISM
+   (Matched to Ibekami Brand Logo Colors)
+   Supports Light Mode (.theme-light on body)
    ========================================================================== */
 
 :root {
-    /* 1. Surfaces & Backgrounds (Flat Dark Slate Palette) */
-    --bg-app: #0C0F14;
-    --bg-surface: #12161D;
-    --bg-surface-2: #181D26;
-    --bg-hover: rgba(255, 255, 255, 0.04);
-    --bg-active: #242C38;
+    --bg-canvas: #090807;
+    --bg-card: rgba(24, 20, 17, 0.76);
+    --bg-card-hover: rgba(30, 25, 21, 0.82);
+    --bg-subbox: rgba(255, 255, 255, 0.035);
+    --bg-track: rgba(255, 255, 255, 0.06);
 
-    /* 2. Borders (1px Precision, No Glow) */
-    --border-subtle: #232A35;
-    --border-default: #232A35;
-    --border-strong: #2F3744;
-    --border-focus: #6B73F0;
+    --border-glass: rgba(255, 255, 255, 0.085);
+    --border-glass-strong: rgba(245, 158, 11, 0.28);
+    --border-subtle: rgba(255, 255, 255, 0.05);
 
-    /* 3. Typography Colors */
-    --text-primary: #E8EBF0;
-    --text-secondary: #9AA4B2;
-    --text-tertiary: #6B7686;
-    --text-disabled: #4A5361;
+    --text-white: #FFFFFF;
+    --text-primary: #FAFAFA;
+    --text-secondary: #A1A1AA;
+    --text-muted-custom: #71717A;
 
-    /* 4. Single Accent Color (Indigo #6B73F0) */
-    --brand: #6B73F0;
-    --brand-hover: #7E85F4;
-    --brand-pressed: #5A62DB;
-    --brand-subtle: rgba(107, 115, 240, 0.12);
-    --brand-border: rgba(107, 115, 240, 0.28);
+    --accent-brand: #F59E0B;
+    --accent-brand-light: #FBBF24;
+    --accent-brand-deep: #EA580C;
+    --accent-emerald: #10B981;
+    --accent-emerald-light: #34D399;
+    --accent-amber: #F59E0B;
+    --accent-amber-light: #FBBF24;
+    --accent-danger: #EF4444;
+    --accent-coral: #FCA5A5;
 
-    /* 5. Chart Second Series & Semantic Status (10-14% Alpha Tints) */
-    --chart-series-2: #34C28B;
-
-    --success: #34C28B;
-    --success-subtle: rgba(52, 194, 139, 0.12);
-    --success-border: rgba(52, 194, 139, 0.28);
-    --success-text: #34C28B;
-
-    --warning: #E3A33B;
-    --warning-subtle: rgba(227, 163, 59, 0.12);
-    --warning-border: rgba(227, 163, 59, 0.28);
-    --warning-text: #E3A33B;
-
-    --danger: #E5586B;
-    --danger-subtle: rgba(229, 88, 107, 0.12);
-    --danger-border: rgba(229, 88, 107, 0.28);
-    --danger-text: #E5586B;
-
-    --info: #5B9DF0;
-    --info-subtle: rgba(91, 157, 240, 0.12);
-    --info-border: rgba(91, 157, 240, 0.28);
-    --info-text: #5B9DF0;
-
-    /* 6. Radii & Shadows (Flat, Minimalist) */
-    --radius-control: 8px;
-    --radius-card: 12px;
-    --radius-sm: 6px;
-    --radius-full: 9999px;
-
-    --shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.45);
-    --focus-ring: 0 0 0 2px rgba(107, 115, 240, 0.35);
-
-    /* 7. Motion & Easing Tokens */
-    --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-    --dur-enter: 360ms;
-    --dur-fast: 140ms;
+    --radius-card: 20px;
+    --radius-kpi: 16px;
+    --radius-box: 12px;
+    --radius-pill: 10px;
 }
 
-/* Layout Background & Footer Consistency */
-body,
-#layout-wrapper,
-.main-content,
-.page-content {
-    background-color: var(--bg-app) !important;
+/* ==========================================================================
+   THEME LIGHT OVERRIDES (Sesuai Desain Referensi PDF Claude)
+   ========================================================================== */
+body.theme-light {
+    color: #1E293B !important;
+}
+
+body.theme-light .ref-page-title {
+    color: #0F172A !important;
+}
+
+body.theme-light .ref-page-subtitle {
+    color: #64748B !important;
+}
+
+body.theme-light .ref-live-pill {
+    background: rgba(16, 185, 129, 0.08) !important;
+    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+    color: #059669 !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08) !important;
+}
+
+/* Theme Toggle Button */
+.ref-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #FBBF24;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 180ms ease;
+    outline: none;
+}
+.ref-theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+body.theme-light .ref-theme-toggle {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+body.theme-light .ref-theme-toggle:hover {
+    background: #F1F5F9 !important;
+    color: #0F172A !important;
+}
+
+/* Top Exec Cards in Light Mode */
+body.theme-light .top-exec-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important;
+}
+body.theme-light .top-exec-card:hover {
+    border-color: #CBD5E1 !important;
+    box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.09) !important;
+}
+body.theme-light .top-exec-card--highlight {
+    background: linear-gradient(170deg, #FFFFFF 0%, #FFFBEB 100%) !important;
+    border-color: #FDE68A !important;
+}
+body.theme-light .top-exec-label {
+    color: #64748B !important;
+}
+body.theme-light .top-exec-val {
+    color: #0F172A !important;
+}
+body.theme-light .top-exec-val--emerald {
+    color: #059669 !important;
+}
+body.theme-light .top-exec-val--danger {
+    color: #DC2626 !important;
+}
+body.theme-light .top-exec-sub {
+    color: #94A3B8 !important;
+}
+
+/* Glass Cards in Light Mode */
+body.theme-light .ref-glass-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.06), 0 2px 8px -2px rgba(15, 23, 42, 0.04) !important;
+}
+body.theme-light .ref-glass-card:hover {
+    border-color: #CBD5E1 !important;
+}
+body.theme-light .ref-card-title {
+    color: #0F172A !important;
+}
+body.theme-light .ref-card-subtitle {
+    color: #64748B !important;
+}
+
+/* Segmented Buttons in Light Mode */
+body.theme-light .segmented-control,
+body.theme-light .dash-segmented-group {
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+}
+body.theme-light .segmented-item,
+body.theme-light .dash-btn-filter {
+    color: #64748B !important;
+}
+body.theme-light .segmented-item:hover,
+body.theme-light .dash-btn-filter:hover {
+    color: #0F172A !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+}
+body.theme-light .segmented-item.active,
+body.theme-light .dash-btn-filter.active {
+    background: #FFFFFF !important;
+    color: #D97706 !important;
+    border: 1px solid #FCD34D !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.16) !important;
+}
+body.theme-light #btn-filter-belum-lunas.active {
+    background: #FEF2F2 !important;
+    color: #DC2626 !important;
+    border: 1px solid #FCA5A5 !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15) !important;
+}
+
+body.theme-light .btn-custom-filter {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #64748B !important;
+}
+body.theme-light .btn-custom-filter:hover,
+body.theme-light .btn-custom-filter.active,
+body.theme-light .btn-custom-filter.open {
+    background: #FFFBEB !important;
+    border-color: #FCD34D !important;
+    color: #D97706 !important;
+}
+
+/* Hero Section in Light Mode */
+body.theme-light .ref-hero-overline {
+    color: #64748B !important;
+}
+body.theme-light .ref-hero-amount {
+    color: #0F172A !important;
+}
+body.theme-light .ref-summary-box {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+}
+body.theme-light .ref-summary-box--net {
+    background: #FFFBEB !important;
+    border-color: #FDE68A !important;
+}
+body.theme-light .ref-summary-label {
+    color: #64748B !important;
+}
+body.theme-light .ref-summary-val {
+    color: #0F172A !important;
+}
+body.theme-light .ref-summary-val--expense {
+    color: #DC2626 !important;
+}
+
+body.theme-light .ref-chart-title {
+    color: #0F172A !important;
+}
+body.theme-light .ref-chart-unit,
+body.theme-light .ref-legend-item {
+    color: #64748B !important;
+}
+
+/* Right Donut Card in Light Mode */
+body.theme-light .ref-period-pill {
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+}
+body.theme-light .ref-status-row {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+}
+body.theme-light .ref-status-left {
+    color: #334155 !important;
+}
+body.theme-light .ref-status-amount {
+    color: #0F172A !important;
+}
+
+/* Standalone KPI Cards in Light Mode */
+body.theme-light .ref-kpi-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 4px 18px -4px rgba(15, 23, 42, 0.05) !important;
+}
+body.theme-light .ref-kpi-card:hover {
+    border-color: #CBD5E1 !important;
+}
+body.theme-light .ref-kpi-overline {
+    color: #64748B !important;
+}
+body.theme-light .ref-kpi-value,
+body.theme-light .ref-kpi-main-title {
+    color: #0F172A !important;
+}
+body.theme-light .ref-kpi-sub-count {
+    color: #64748B !important;
+}
+
+/* Jenis & Kategori in Light Mode */
+body.theme-light .ref-jenis-name {
+    color: #334155 !important;
+}
+body.theme-light .ref-jenis-track,
+body.theme-light .ref-vendor-track {
+    background: #E2E8F0 !important;
+}
+body.theme-light .ref-jenis-val {
+    color: #0F172A !important;
+}
+
+body.theme-light .ref-teal-badge {
+    background: #ECFDF5 !important;
+    border: 1px solid #A7F3D0 !important;
+    color: #059669 !important;
+}
+
+body.theme-light .ref-clean-table thead th {
+    background: #F8FAFC !important;
+    color: #64748B !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+body.theme-light .ref-clean-table tbody tr:hover {
+    background: #F8FAFC !important;
+}
+body.theme-light .ref-clean-table tbody td {
+    border-bottom: 1px solid #F1F5F9 !important;
+    color: #334155 !important;
+}
+body.theme-light .ref-clean-table tbody td .text-white {
+    color: #0F172A !important;
+}
+
+/* Custom Filter Panels & Inputs in Light Mode */
+body.theme-light .custom-filter-panel {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08) !important;
+}
+body.theme-light .dash-input,
+body.theme-light .dash-select {
+    background: #F8FAFC !important;
+    color: #0F172A !important;
+    border: 1px solid #CBD5E1 !important;
+    color-scheme: light !important;
+}
+body.theme-light .btn-dash-primary {
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
+}
+
+body.theme-light .ref-chart-scroll-wrapper {
+    scrollbar-color: rgba(245, 158, 11, 0.45) #F1F5F9 !important;
+}
+body.theme-light .ref-chart-scroll-wrapper::-webkit-scrollbar-track {
+    background: #F1F5F9 !important;
+}
+/* ApexCharts Tooltip, Center Text & Data Labels in Light Mode */
+body.theme-light .apexcharts-text tspan {
+    fill: #334155 !important;
+}
+body.theme-light .apexcharts-datalabel,
+body.theme-light .apexcharts-datalabel-label,
+body.theme-light .apexcharts-datalabel-value {
+    fill: #0F172A !important;
+}
+body.theme-light .apexcharts-pie-label {
+    fill: #0F172A !important;
+}
+body.theme-light .apexcharts-tooltip {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.1) !important;
+}
+body.theme-light .apexcharts-tooltip-title {
+    background: #F8FAFC !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    color: #0F172A !important;
+}
+body.theme-light .apexcharts-tooltip-text,
+body.theme-light .apexcharts-tooltip-text-label,
+body.theme-light .apexcharts-tooltip-text-value {
+    color: #0F172A !important;
+}
+body.theme-light .apexcharts-legend-text {
+    color: #334155 !important;
+}
+body.theme-light .apexcharts-yaxis-label,
+body.theme-light .apexcharts-xaxis-label {
+    fill: #475569 !important;
+    font-weight: 600 !important;
+}
+body.theme-light .apexcharts-gridline {
+    stroke: #E2E8F0 !important;
+}
+
+/* Data Labels on top of bar charts in Light Mode */
+body.theme-light .apexcharts-bar-area + text,
+body.theme-light .apexcharts-data-labels text {
+    fill: #1E293B !important;
+    font-weight: 700 !important;
+}
+
+/* Ensure all table cells have high contrast in Light Mode */
+body.theme-light .ref-clean-table tbody td {
+    color: #1E293B !important;
+}
+body.theme-light .ref-clean-table tbody td span {
+    color: #1E293B !important;
+}
+body.theme-light .ref-clean-table tbody td span.fw-bold,
+body.theme-light .ref-clean-table tbody td span.fw-semibold {
+    color: #0F172A !important;
+}
+
+/* Pills contrast in Light Mode */
+body.theme-light .ref-status-pill--emerald {
+    background: #ECFDF5 !important;
+    color: #047857 !important;
+    border: 1px solid #A7F3D0 !important;
+}
+body.theme-light .ref-status-pill--danger {
+    background: #FEF2F2 !important;
+    color: #B91C1C !important;
+    border: 1px solid #FECACA !important;
+}
+body.theme-light .ref-status-pill--slate {
+    background: #F1F5F9 !important;
+    color: #475569 !important;
+    border: 1px solid #CBD5E1 !important;
+}
+body.theme-light .ref-pct-pill {
+    background: #FFFBEB !important;
+    border: 1px solid #FDE68A !important;
+    color: #B45309 !important;
+}
+
+/* Top Exec Pills in Light Mode */
+body.theme-light .top-exec-pill--amber {
+    background: #FFFBEB !important;
+    border: 1px solid #FDE68A !important;
+    color: #B45309 !important;
+}
+body.theme-light .top-exec-pill--emerald {
+    background: #ECFDF5 !important;
+    border: 1px solid #A7F3D0 !important;
+    color: #047857 !important;
+}
+body.theme-light .top-exec-pill--danger {
+    background: #FEF2F2 !important;
+    border: 1px solid #FECACA !important;
+    color: #B91C1C !important;
+}
+body.theme-light .top-exec-pill--sky {
+    background: #F0F9FF !important;
+    border: 1px solid #BAE6FD !important;
+    color: #0369A1 !important;
+}
+
+/* Custom Tooltip in Donut Kategori in Light Mode */
+body.theme-light .dash-custom-tooltip {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #0F172A !important;
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.theme-light .ref-paid-pill {
+    background: #ECFDF5 !important;
+    border: 1px solid #A7F3D0 !important;
+    color: #059669 !important;
+}
+body.theme-light .ref-debt-pill {
+    background: #FEF2F2 !important;
+    border: 1px solid #FECACA !important;
+    color: #DC2626 !important;
+}
+
+/* ==========================================================================
+   SIDEBAR LIGHT MODE (Aktif Khusus Saat Halaman Dashboard Berada di Mode Light)
+   ========================================================================== */
+body.theme-light .app-menu.navbar-menu {
+    background: #FFFFFF !important;
+    border-right: 1px solid #E2E8F0 !important;
+    box-shadow: 2px 0 16px rgba(15, 23, 42, 0.04) !important;
+}
+
+body.theme-light .sidebar-org-box {
+    border-bottom: 1px solid #F1F5F9 !important;
+    background: #FFFFFF !important;
+}
+
+body.theme-light .org-trigger-btn {
+    color: #0F172A !important;
+}
+body.theme-light .org-trigger-btn:hover {
+    background: #F8FAFC !important;
+}
+body.theme-light .org-name {
+    color: #0F172A !important;
+}
+body.theme-light .org-badge-pro {
+    background: #FFFBEB !important;
+    color: #D97706 !important;
+    border: 1px solid #FDE68A !important;
+}
+body.theme-light .org-chevron,
+body.theme-light .user-chevron {
+    color: #94A3B8 !important;
+}
+
+body.theme-light .navbar-nav .menu-title {
+    color: #94A3B8 !important;
+}
+
+body.theme-light .navbar-nav .nav-link {
+    color: #475569 !important;
+    padding: 8px 12px !important;
+    margin: 4px 8px !important;
+    border-radius: 10px !important;
+    transition: all 180ms ease !important;
+}
+body.theme-light .navbar-nav .nav-link:hover {
+    color: #0F172A !important;
+    background: #F1F5F9 !important;
+}
+body.theme-light .navbar-nav .nav-link .icon-box {
+    background: transparent !important;
+    color: #64748B !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 28px !important;
+    height: 28px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-right: 12px !important;
+    font-size: 20px !important;
+}
+body.theme-light .navbar-nav .nav-link i.menu-icon {
+    color: #64748B !important;
+    transition: color 180ms ease, transform 180ms ease !important;
+}
+body.theme-light .navbar-nav .nav-link:hover i.menu-icon,
+body.theme-light .navbar-nav .nav-link:hover .icon-box {
+    background: transparent !important;
+    color: #D97706 !important;
+}
+body.theme-light .navbar-nav .nav-link:after {
+    color: #94A3B8 !important;
+}
+body.theme-light .navbar-nav .nav-link:hover:after {
+    color: #0F172A !important;
+}
+
+/* Collapsed rail mode centering */
+html[data-sidebar-size="sm-hover"] body.theme-light .navbar-menu:not(:hover) .navbar-nav .nav-link,
+html[data-sidebar-size="sm"] body.theme-light .navbar-menu .navbar-nav .nav-link {
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 4px auto !important;
+    width: 44px !important;
+    height: 44px !important;
+}
+html[data-sidebar-size="sm-hover"] body.theme-light .navbar-menu:not(:hover) .navbar-nav .nav-link .icon-box,
+html[data-sidebar-size="sm"] body.theme-light .navbar-menu .navbar-nav .nav-link .icon-box {
+    margin-right: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Active Menu Link in Light Mode */
+body.theme-light .navbar-nav .nav-link.active {
+    background: #FFFBEB !important;
+    color: #D97706 !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+}
+body.theme-light .navbar-nav .nav-link.active .icon-box,
+body.theme-light .navbar-nav .nav-link.active i.menu-icon {
+    background: transparent !important;
+    color: #F59E0B !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Expanded & Submenu State in Light Mode */
+body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"] {
+    background: #FFFBEB !important;
+    color: #D97706 !important;
+    font-weight: 600 !important;
+}
+body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"] .icon-box,
+body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"] i.menu-icon {
+    color: #F59E0B !important;
+}
+body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"]:after {
+    color: #D97706 !important;
+}
+
+/* Submenu in Light Mode - High Specificity */
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list:before {
+    background: #E2E8F0 !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link {
+    color: #475569 !important;
+    background: transparent !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link .menu-text {
+    color: inherit !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link i.sub-menu-icon {
+    color: #64748B !important;
+    transition: color 0.16s ease, transform 0.16s ease !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link:hover {
+    color: #0F172A !important;
+    background: #F1F5F9 !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link:hover .menu-text {
+    color: #0F172A !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link:hover i.sub-menu-icon {
+    color: #D97706 !important;
+    transform: scale(1.08);
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link.active {
+    color: #D97706 !important;
+    background: #FFFBEB !important;
+    font-weight: 600 !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link.active .menu-text {
+    color: #D97706 !important;
+}
+body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link.active i.sub-menu-icon {
+    color: #F59E0B !important;
+}
+
+/* User Account Footer in Light Mode */
+body.theme-light .sidebar-user-footer {
+    border-top: 1px solid #F1F5F9 !important;
+    background: #FFFFFF !important;
+}
+body.theme-light .user-trigger-btn {
+    color: #0F172A !important;
+}
+body.theme-light .user-trigger-btn:hover {
+    background: #F8FAFC !important;
+}
+body.theme-light .user-avatar-badge {
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25) !important;
+}
+body.theme-light .user-name {
+    color: #0F172A !important;
+    font-weight: 600 !important;
+}
+body.theme-light .user-role-label {
+    color: #64748B !important;
+}
+
+/* Dropdown Menu & Popovers in Light Mode */
+body.theme-light .shadcn-dropdown-menu,
+body.theme-light .dropdown-menu {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+body.theme-light .shadcn-dropdown-menu .shadcn-menu-inner,
+body.theme-light .dropdown-menu:not(.shadcn-dropdown-menu) {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+body.theme-light .shadcn-dropdown-menu .shadcn-menu-inner,
+body.theme-light .shadcn-dropdown-menu .shadcn-menu-inner span,
+body.theme-light .shadcn-dropdown-menu .shadcn-menu-inner div {
+    color: #1E293B !important;
+}
+body.theme-light .user-dropdown-header,
+body.theme-light .shadcn-dropdown-menu .border-bottom {
+    border-bottom: 1px solid #F1F5F9 !important;
+    border-color: #F1F5F9 !important;
+}
+body.theme-light .user-dropdown-header-name {
+    color: #0F172A !important;
+    font-weight: 700 !important;
+}
+body.theme-light .user-dropdown-header-role,
+body.theme-light .shadcn-dropdown-menu .text-muted {
+    color: #64748B !important;
+}
+body.theme-light .shadcn-dropdown-menu .dropdown-divider {
+    border-top: 1px solid #F1F5F9 !important;
+    border-color: #F1F5F9 !important;
+    opacity: 1 !important;
+}
+body.theme-light .shadcn-dropdown-menu .shadcn-item,
+body.theme-light .dropdown-menu .dropdown-item {
+    color: #334155 !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    padding: 8px 12px !important;
+}
+body.theme-light .shadcn-dropdown-menu .shadcn-item:hover,
+body.theme-light .dropdown-menu .dropdown-item:hover {
+    background: #F1F5F9 !important;
+    color: #0F172A !important;
+}
+body.theme-light .shadcn-dropdown-menu .shadcn-item.text-danger,
+body.theme-light .dropdown-menu .dropdown-item.text-danger {
+    color: #EF4444 !important;
+}
+body.theme-light .shadcn-dropdown-menu .shadcn-item.text-danger:hover,
+body.theme-light .dropdown-menu .dropdown-item.text-danger:hover {
+    background: #FEF2F2 !important;
+    color: #DC2626 !important;
+}
+body.theme-light .footer {
+    color: #94A3B8 !important;
+    border-top: 1px solid #E2E8F0 !important;
+}
+
+
+
+/* 1. Deep Warm Obsidian Canvas & Logo Golden-Orange Radial Glows */
+body {
+    background-color: var(--bg-canvas) !important;
+    background-image:
+        radial-gradient(circle 580px at 18% 16%, rgba(245, 158, 11, 0.18), transparent 70%),
+        radial-gradient(circle 520px at 88% 36%, rgba(234, 88, 12, 0.13), transparent 70%),
+        radial-gradient(circle 620px at 32% 80%, rgba(251, 191, 36, 0.14), transparent 72%) !important;
+    background-attachment: fixed !important;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    color: var(--text-primary) !important;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   VIEW TRANSITION API — CIRCULAR REVEAL THEME TRANSITION
+   ========================================================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none !important;
+    mix-blend-mode: normal !important;
+}
+
+::view-transition-old(root) {
+    z-index: 1 !important;
+}
+
+::view-transition-new(root) {
+    z-index: 9999 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+}
+
+/* Light Theme Canvas Overrides */
+body.theme-light,
+html[data-theme="light"] body,
+body.theme-light #layout-wrapper,
+html[data-theme="light"] #layout-wrapper,
+body.theme-light .main-content,
+html[data-theme="light"] .main-content,
+body.theme-light .page-content,
+html[data-theme="light"] .page-content {
+    background-color: #F8FAFC !important;
+    background-image: 
+        radial-gradient(circle 600px at 20% 12%, rgba(245, 158, 11, 0.06), transparent 70%),
+        radial-gradient(circle 550px at 85% 30%, rgba(16, 185, 129, 0.05), transparent 70%),
+        radial-gradient(circle 650px at 40% 85%, rgba(56, 189, 248, 0.05), transparent 72%) !important;
+    background-attachment: fixed !important;
+    color: #1E293B !important;
+}
+
+/* Theme Toggle Button & Micro-animation */
+.ref-theme-toggle {
+    cursor: pointer;
+    user-select: none;
+    transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+.ref-theme-toggle:active {
+    transform: scale(0.96);
+}
+.ref-theme-toggle #theme-toggle-icon {
+    display: inline-block;
+    transition: transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease;
+}
+.ref-theme-toggle.theme-switching #theme-toggle-icon {
+    transform: rotate(180deg) scale(0.65);
+    opacity: 0.2;
 }
 
 .footer {
-    background-color: var(--bg-app) !important;
-    color: var(--text-tertiary) !important;
+    background-color: transparent !important;
+    color: var(--text-muted-custom) !important;
     border-top: 1px solid var(--border-subtle) !important;
     box-shadow: none !important;
 }
 
-/* Base Dashboard Card */
-#card-aktivitas-pembayaran,
-#card-statistik-barang,
-#card-hutang-vendor {
-    background-color: var(--bg-surface) !important;
-    border: 1px solid var(--border-default) !important;
-    border-radius: var(--radius-card) !important;
-    color: #F1F5F9 !important;
-    margin-bottom: 24px;
-    box-shadow: none !important;
-    transition: border-color var(--dur-fast) ease;
-}
-#card-aktivitas-pembayaran:hover,
-#card-statistik-barang:hover,
-#card-hutang-vendor:hover {
-    border-color: var(--border-strong) !important;
-}
-
-#card-aktivitas-pembayaran .card-header,
-#card-statistik-barang .card-header,
-#card-hutang-vendor .card-header {
-    background: transparent !important;
-    padding: 20px 24px 16px 24px !important;
-    border-bottom: 1px solid var(--border-subtle) !important;
-}
-
-/* High-Contrast Typography */
-#card-aktivitas-pembayaran h4,
-#card-aktivitas-pembayaran h5,
-#card-statistik-barang h4,
-#card-statistik-barang h5,
-#card-hutang-vendor h4,
-#card-hutang-vendor h5,
-.card-title,
-.section-title {
-    color: #F8FAFC !important;
-    font-weight: 600 !important;
-}
-
-#card-aktivitas-pembayaran .text-light,
-#card-statistik-barang .text-light,
-#card-hutang-vendor .text-light {
-    color: #E2E8F0 !important;
-}
-
-#card-aktivitas-pembayaran .text-muted,
-#card-statistik-barang .text-muted,
-#card-hutang-vendor .text-muted {
-    color: #94A3B8 !important;
-}
-
-/* Section Sub-panels */
-.sub-panel {
-    background: var(--bg-surface-2) !important;
-    border: 1px solid var(--border-default) !important;
-    border-radius: var(--radius-card) !important;
-}
-
-/* Tabular Numerals */
-.tabular-nums, .price, .num, td.numeric, th.numeric, .stat-value,
-#hero-pendapatan-akumulasi, #pendapatan-akumulasi-val, #terbayar, #belumTerbayar, #batal,
-#stat-item-qty, #stat-item-nominal, #stat-item-top, #stat-item-dominant-tax,
-#tfoot-total-transaksi, #tfoot-total-qty, #tfoot-total-nominal {
+/* Tabular Numbers for Financial & Metric Alignment */
+.tabular-nums {
     font-variant-numeric: tabular-nums !important;
-    font-feature-settings: "tnum" 1, "cv11" 1 !important;
+    font-feature-settings: "tnum" 1 !important;
 }
 
-/* ==========================================================================
-   SEGMENTED CONTROL (Tokabe Standard)
-   ========================================================================== */
-.segmented-control {
-    display: inline-flex;
-    align-items: center;
-    background: var(--bg-surface-2);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-control);
-    padding: 3px;
-    gap: 2px;
+/* 2. Top Page Header ("Dashboard IBEKAMI") */
+.ref-header-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
 }
-.segmented-item {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    padding: 5px 12px;
-    border-radius: var(--radius-sm);
+.ref-page-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text-white);
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+}
+.ref-page-subtitle {
     font-size: 13px;
-    font-weight: 500;
-    line-height: 1.4;
-    transition: color var(--dur-fast) ease, background var(--dur-fast) ease, transform 80ms ease;
-    cursor: pointer;
-    white-space: nowrap;
-    text-decoration: none;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 0;
+}
+.ref-live-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.10);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    color: #6EE7B7;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.12);
 }
-.segmented-item:hover {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.04);
-}
-.segmented-item:active {
-    transform: scale(0.98);
-}
-.segmented-item.active,
-.segmented-item.btn-active {
-    background: #4F46E5 !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    border: 1px solid #6366F1 !important;
-    box-shadow: 0 1px 4px rgba(79, 70, 229, 0.35) !important;
+.ref-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 8px #10B981;
+    display: inline-block;
 }
 
-/* Legacy & Utility button support */
-.dash-btn-filter {
+/* 2b. Top 4 Executive Summary Cards (Matched to Reference Card Strip & Logo Palette) */
+.top-exec-card {
+    background: linear-gradient(165deg, rgba(28, 24, 20, 0.78) 0%, rgba(14, 12, 10, 0.88) 100%);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    padding: 20px 22px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 14px 32px -12px rgba(0, 0, 0, 0.6);
+    transition: transform 160ms ease, border-color 160ms ease;
+}
+.top-exec-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(245, 158, 11, 0.28);
+}
+.top-exec-card--highlight {
+    background:
+        radial-gradient(ellipse 80% 70% at 15% 0%, rgba(245, 158, 11, 0.14), transparent 70%),
+        linear-gradient(165deg, rgba(32, 26, 18, 0.84) 0%, rgba(15, 13, 10, 0.92) 100%);
+    border-color: rgba(245, 158, 11, 0.38);
+}
+.top-exec-card--highlight:hover {
+    border-color: rgba(251, 191, 36, 0.50);
+}
+.top-exec-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.top-exec-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94A3B8;
+}
+.top-exec-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 32px;
-    padding: 0 12px;
-    font-size: 12px;
-    font-weight: 500;
-    border-radius: 8px;
-    color: #94A3B8;
-    background: #181D26;
-    border: 1px solid #232A35;
-    cursor: pointer;
-    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 80ms ease;
-    user-select: none;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.25;
     white-space: nowrap;
 }
-.dash-btn-filter:hover {
-    background: #232A35;
-    color: #F1F5F9;
-    border-color: #2F3744;
+.top-exec-pill--amber {
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.34);
+    color: #FBBF24;
 }
-.dash-btn-filter:active {
-    transform: scale(0.98);
+.top-exec-pill--emerald {
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.34);
+    color: #34D399;
 }
-.dash-btn-filter.active,
-.dash-btn-filter.btn-active {
-    background: #4F46E5 !important;
-    color: #FFFFFF !important;
-    border-color: #6366F1 !important;
-    font-weight: 600 !important;
-    box-shadow: 0 1px 4px rgba(79, 70, 229, 0.35) !important;
+.top-exec-pill--danger {
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.36);
+    color: #F87171;
+}
+.top-exec-pill--sky {
+    background: rgba(56, 189, 248, 0.14);
+    border: 1px solid rgba(56, 189, 248, 0.34);
+    color: #38BDF8;
+}
+.top-exec-val {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0 0 10px 0;
+    color: #FFFFFF;
+}
+.top-exec-val--emerald {
+    color: #10B981;
+}
+.top-exec-val--amber {
+    color: #FBBF24;
+}
+.top-exec-val--danger {
+    color: #EF4444;
+}
+.top-exec-sub {
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748B;
+    margin: 0;
 }
 
-/* Custom Filter Submode Segmented Control (Match Tokabe / UI-UX-Pro-Max) */
-.payment-segmented-control {
+/* 3. Frosted Glass Card Surface (Warm Obsidian Glass) */
+.ref-glass-card {
+    background: linear-gradient(165deg, rgba(28, 24, 20, 0.76) 0%, rgba(14, 12, 10, 0.84) 100%) !important;
+    backdrop-filter: blur(24px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: var(--radius-card) !important;
+    padding: 24px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        0 20px 45px -15px rgba(0, 0, 0, 0.70) !important;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+.ref-glass-card:hover {
+    border-color: var(--border-glass-strong) !important;
+}
+
+.ref-card-title {
+    font-size: 16.5px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--text-white) !important;
+    margin: 0;
+}
+.ref-card-subtitle {
+    font-size: 12.5px;
+    color: var(--text-secondary) !important;
+    margin: 3px 0 0 0;
+}
+
+/* 4. Segmented Control with Glowing Logo Golden-Orange Active Pill */
+.segmented-control,
+.dash-segmented-group {
     display: inline-flex;
     align-items: center;
-    background: #0E1218 !important;
-    border: 1px solid #232A35 !important;
-    border-radius: 8px !important;
-    padding: 3px !important;
-    gap: 2px !important;
+    background: rgba(12, 10, 9, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 11px;
+    padding: 4px;
+    gap: 3px;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
 }
-.payment-segmented-control .payment-submode,
-.payment-segmented-control .barang-submode {
-    background: transparent !important;
-    border: 1px solid transparent !important;
-    color: #94A3B8 !important;
-    padding: 4px 12px !important;
-    height: 28px !important;
-    border-radius: 6px !important;
-    font-size: 12.5px !important;
-    font-weight: 500 !important;
-    line-height: 1.4 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    cursor: pointer !important;
-    white-space: nowrap !important;
-    text-decoration: none !important;
-    transition: color var(--dur-fast) ease, background var(--dur-fast) ease, transform 80ms ease !important;
-    box-shadow: none !important;
+.segmented-control::-webkit-scrollbar,
+.dash-segmented-group::-webkit-scrollbar {
+    display: none;
 }
-.payment-segmented-control .payment-submode:hover,
-.payment-segmented-control .barang-submode:hover {
-    color: #F1F5F9 !important;
-    background: rgba(255, 255, 255, 0.05) !important;
+.segmented-item,
+.dash-btn-filter {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    padding: 5px 13px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 150ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
-.payment-segmented-control .payment-submode:active,
-.payment-segmented-control .barang-submode:active {
-    transform: scale(0.98);
+.segmented-item:hover,
+.dash-btn-filter:hover {
+    color: var(--text-white);
+    background: rgba(255, 255, 255, 0.04);
 }
-.payment-segmented-control .payment-submode.active,
-.payment-segmented-control .barang-submode.active {
-    background: #1E2532 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+.segmented-item.active,
+.dash-btn-filter.active {
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
     color: #FFFFFF !important;
-    font-weight: 600 !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(253, 186, 116, 0.45) !important;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.42) !important;
+}
+#btn-filter-belum-lunas.active {
+    background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(252, 165, 165, 0.45) !important;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.45) !important;
 }
 
-/* Payment & Barang Control Active Toggle */
+/* Custom Filter Toggle Button */
+.btn-custom-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 150ms ease;
+}
+.btn-custom-filter:hover,
+.btn-custom-filter.open,
+.btn-custom-filter.active {
+    color: #FBBF24;
+    border-color: rgba(245, 158, 11, 0.45);
+    background: rgba(245, 158, 11, 0.14);
+}
+
+/* 5. Row 1 Left: Hero Pendapatan Akumulasi & 3 Summary Sub-Boxes */
+.ref-hero-overline {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.ref-hero-amount {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+    color: var(--text-white);
+    margin: 0 0 18px 0;
+}
+
+.ref-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+}
+@media (max-width: 767.98px) {
+    .ref-summary-grid {
+        grid-template-columns: 1fr;
+    }
+    .ref-hero-amount {
+        font-size: 28px;
+    }
+}
+.ref-summary-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 13px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.ref-summary-box--net {
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.16) 0%, rgba(234, 88, 12, 0.07) 100%);
+    border-color: rgba(245, 158, 11, 0.32);
+}
+.ref-summary-label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.ref-summary-val {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: -0.01em;
+}
+.ref-summary-val--expense {
+    color: var(--accent-coral) !important;
+}
+
+.ref-chart-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.ref-chart-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-white);
+}
+.ref-chart-unit {
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+.ref-legend-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+}
+.ref-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.ref-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.ref-chart-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(245, 158, 11, 0.42) rgba(255, 255, 255, 0.03);
+    cursor: grab;
+    -webkit-overflow-scrolling: touch;
+}
+.ref-chart-scroll-wrapper:active {
+    cursor: grabbing;
+}
+.ref-chart-scroll-wrapper::-webkit-scrollbar {
+    height: 7px;
+}
+.ref-chart-scroll-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 999px;
+}
+.ref-chart-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(245, 158, 11, 0.40);
+    border-radius: 999px;
+}
+.ref-chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(245, 158, 11, 0.68);
+}
+
+/* 6. Row 1 Right: Struktur Status Pembayaran */
+.ref-period-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #CBD5E1;
+}
+.ref-status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 12px;
+}
+.ref-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 15px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.032);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.ref-status-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #E2E8F0;
+}
+.ref-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.ref-status-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+.ref-status-amount {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-white);
+}
+.ref-status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 44px;
+}
+.ref-status-pill--emerald {
+    background: rgba(16, 185, 129, 0.16);
+    color: #34D399;
+    border: 1px solid rgba(52, 211, 153, 0.28);
+}
+.ref-status-pill--amber {
+    background: rgba(245, 158, 11, 0.16);
+    color: #FBBF24;
+    border: 1px solid rgba(251, 191, 36, 0.28);
+}
+.ref-status-pill--danger {
+    background: rgba(239, 68, 68, 0.16);
+    color: #F87171;
+    border: 1px solid rgba(248, 113, 113, 0.32);
+}
+.ref-status-pill--slate {
+    background: rgba(148, 163, 184, 0.14);
+    color: #94A3B8;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+/* 7. Row 2: 4 Standalone Glass KPI Cards */
+.ref-kpi-card {
+    background: linear-gradient(165deg, rgba(28, 24, 20, 0.74) 0%, rgba(14, 12, 10, 0.84) 100%);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-kpi);
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    height: 100%;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.09),
+        0 14px 32px -12px rgba(0, 0, 0, 0.55);
+    transition: transform 160ms ease, border-color 160ms ease;
+}
+.ref-kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-glass-strong);
+}
+.ref-kpi-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+}
+.ref-kpi-icon--indigo {
+    background: rgba(245, 158, 11, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.34);
+    color: #F59E0B;
+}
+.ref-kpi-icon--emerald {
+    background: rgba(16, 185, 129, 0.16);
+    border: 1px solid rgba(52, 211, 153, 0.30);
+    color: #34D399;
+}
+.ref-kpi-icon--amber {
+    background: rgba(168, 85, 247, 0.16);
+    border: 1px solid rgba(192, 132, 252, 0.32);
+    color: #C084FC;
+}
+.ref-kpi-icon--cyan {
+    background: rgba(56, 189, 248, 0.16);
+    border: 1px solid rgba(56, 189, 248, 0.32);
+    color: #38BDF8;
+}
+.ref-kpi-overline {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+    display: block;
+}
+.ref-kpi-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-white);
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+.ref-kpi-main-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-white);
+}
+.ref-kpi-sub-count {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-left: 4px;
+}
+
+/* 8. Row 3 Left: Custom Progress-Track Bars for Jenis Barang */
+.ref-jenis-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-top: 8px;
+}
+.ref-jenis-row {
+    display: grid;
+    grid-template-columns: 115px 1fr 52px;
+    align-items: center;
+    gap: 14px;
+}
+.ref-jenis-row.ref-jenis-row--nominal {
+    grid-template-columns: 115px 1fr 115px;
+}
+.ref-jenis-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #CBD5E1;
+}
+.ref-jenis-track {
+    width: 100%;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.055);
+    overflow: hidden;
+    position: relative;
+}
+.ref-jenis-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 950ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ref-jenis-val {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-white);
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* 9. Row 3 Right: Kategori Barang Donut & Table */
+.ref-teal-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(52, 211, 153, 0.28);
+    color: #34D399;
+    font-size: 11px;
+    font-weight: 700;
+}
+#table-kategori-container {
+    position: relative;
+    max-height: 210px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+}
+#table-kategori-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+#table-kategori-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 999px;
+}
+#table-kategori-container::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.25);
+    border-radius: 999px;
+}
+#table-kategori-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.45);
+}
+.ref-clean-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.ref-clean-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted-custom);
+    padding: 10px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: #161310 !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+    white-space: nowrap;
+}
+.ref-clean-table tbody tr {
+    transition: background-color 140ms ease;
+}
+.ref-clean-table tbody tr:hover {
+    background: rgba(245, 158, 11, 0.04);
+}
+.ref-clean-table tbody td {
+    padding: 11px 8px;
+    font-size: 12.5px;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+    white-space: nowrap;
+}
+.ref-clean-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.ref-pct-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(245, 158, 11, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.32);
+    color: #FBBF24;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* 10. Row 4: Pembelian Belum Dibayar per Vendor (Inline Progress Table) */
+.ref-vendor-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.055);
+    overflow: hidden;
+}
+.ref-vendor-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #EA580C 0%, #F59E0B 55%, #FBBF24 100%);
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.42);
+    transition: width 950ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ref-debt-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(248, 113, 113, 0.28);
+    color: #FCA5A5;
+    font-size: 12px;
+    font-weight: 700;
+}
+.ref-paid-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.16);
+    border: 1px solid rgba(52, 211, 153, 0.28);
+    color: #6EE7B7;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Custom Filter Panel Controls */
+.custom-filter-panel {
+    background: rgba(16, 13, 11, 0.90) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 12px !important;
+}
+.dash-input, .dash-select {
+    background: rgba(22, 19, 16, 0.96) !important;
+    color: var(--text-white) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    padding: 5px 10px !important;
+}
+.btn-dash-primary {
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(253, 186, 116, 0.4) !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 5px 14px !important;
+}
 .payment-ctrl, .barang-ctrl {
     display: none !important;
 }
@@ -294,1550 +1513,1051 @@ input.payment-ctrl.active, input.barang-ctrl.active {
     display: inline-block !important;
 }
 
-/* Sticky Category Table Header */
-#table-kategori-container {
-    position: relative;
-    max-height: 180px;
-    overflow-y: auto;
-}
-#table-kategori-container table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-}
-#table-kategori-container thead th {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 10 !important;
-    background-color: #181D26 !important;
-    color: var(--text-secondary, #94A3B8) !important;
-    border-top: none !important;
-    border-bottom: 1px solid var(--border-default, #232A35) !important;
-    box-shadow: 0 1px 0 var(--border-default, #232A35) !important;
-}
-
-/* Custom Filter Button (Standalone with Chevron) */
-.btn-custom-filter {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg-surface-2);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-control);
-    padding: 5px 12px;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.4;
-    transition: all var(--dur-fast) ease;
-    cursor: pointer;
-}
-.btn-custom-filter:hover {
-    color: var(--text-primary);
-    border-color: var(--border-strong);
-    background: rgba(255, 255, 255, 0.04);
-}
-.btn-custom-filter.active,
-.btn-custom-filter.open {
-    background: var(--brand-subtle);
-    border-color: var(--brand-border);
-    color: #ffffff;
-}
-.chevron-rotate {
-    transition: transform 200ms var(--ease-out-expo);
-}
-.btn-custom-filter.open .chevron-rotate {
-    transform: rotate(180deg);
-}
-
-/* Collapsible Filter Panel */
-.custom-filter-panel, .dash-filter-panel {
-    background: var(--bg-surface-2) !important;
-    border: 1px solid var(--border-default) !important;
-    border-radius: var(--radius-control) !important;
-    animation: filterSlideDown 220ms var(--ease-out-expo);
-}
-@keyframes filterSlideDown {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Custom Form Controls */
-.dash-input, .dash-select {
-    background: var(--bg-surface) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid var(--border-default) !important;
-    border-radius: var(--radius-control) !important;
-    font-size: 13px !important;
-    padding: 5px 10px !important;
-    transition: border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
-}
-.dash-input:focus, .dash-select:focus {
-    border-color: var(--brand) !important;
-    outline: none !important;
-    box-shadow: var(--focus-ring) !important;
-}
-.dash-select option {
-    background: var(--bg-surface-2);
-    color: var(--text-primary);
-}
-
-/* Single Accent Primary Button */
-.btn-dash-primary {
-    background: var(--brand) !important;
-    color: #ffffff !important;
-    border: 1px solid var(--brand-hover) !important;
-    border-radius: var(--radius-control) !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
-    padding: 5px 14px !important;
-    transition: background var(--dur-fast) ease, transform 80ms ease !important;
-}
-.btn-dash-primary:hover {
-    background: var(--brand-hover) !important;
-}
-.btn-dash-primary:active {
-    background: var(--brand-pressed) !important;
-    transform: scale(0.98);
-}
-
-/* Stat Typography Tokens */
-.stat-box {
-    background: var(--bg-surface-2) !important;
-    border: 1px solid var(--border-default) !important;
-    border-radius: var(--radius-card) !important;
-    padding: 18px 20px !important;
-    transition: border-color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-out-expo);
-}
-.stat-box:hover {
-    border-color: var(--border-strong) !important;
-    transform: translateY(-2px);
-}
-.stat-overline {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-tertiary);
-    margin-bottom: 6px;
-}
-.stat-value-big {
-    font-size: 26px;
-    font-weight: 700;
-    line-height: 1.2;
-    color: #ffffff;
-    margin-bottom: 4px;
-}
-
-/* Table Design (Dark Slate) */
-.dash-table-wrapper {
-    background: var(--bg-surface-2);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-}
-.dash-table {
-    color: #F1F5F9;
-    margin-bottom: 0;
-    width: 100%;
-}
-.dash-table thead th {
-    background: #12161D !important;
-    color: #CBD5E1 !important;
-    border-bottom: 1px solid var(--border-default) !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.06em !important;
-    text-transform: uppercase !important;
-    padding: 12px 14px !important;
-}
-.dash-table tbody tr {
-    height: 48px;
-    background: #181D26 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: background-color var(--dur-fast) ease;
-}
-.dash-table tbody tr:hover {
-    background-color: #232A35 !important;
-}
-.dash-table tbody td {
-    color: #F1F5F9 !important;
-    padding: 10px 14px;
-    font-size: 13px;
-    vertical-align: middle;
-}
-.dash-table tbody tr:hover td {
-    color: #FFFFFF !important;
-}
-.dash-table tfoot td {
-    color: #FFFFFF !important;
-    background: #12161D !important;
-    border-top: 2px solid var(--border-strong) !important;
-    padding: 12px 14px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-/* Subtle Status Pills & Badges (10-14% Alpha) */
-.badge-tint, .dash-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    font-size: 11px;
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    line-height: 1.3;
-}
-.badge-tint-success, .dash-badge--success {
-    background: var(--success-subtle) !important;
-    color: var(--success-text) !important;
-    border: 1px solid var(--success-border) !important;
-}
-.badge-tint-warning, .dash-badge--warning {
-    background: var(--warning-subtle) !important;
-    color: var(--warning-text) !important;
-    border: 1px solid var(--warning-border) !important;
-}
-.badge-tint-neutral, .dash-badge--neutral {
-    background: rgba(107, 118, 134, 0.12) !important;
-    color: var(--text-secondary) !important;
-    border: 1px solid rgba(107, 118, 134, 0.25) !important;
-}
-.badge-tint-danger, .dash-badge--danger {
-    background: var(--danger-subtle) !important;
-    color: var(--danger-text) !important;
-    border: 1px solid var(--danger-border) !important;
-}
-.badge-tint-brand, .dash-badge--brand {
-    background: var(--brand-subtle) !important;
-    color: #A5B4FC !important;
-    border: 1px solid var(--brand-border) !important;
-}
-
-/* Apexcharts Theme Override */
-.apexcharts-legend-text,
-.apexcharts-text {
-    fill: var(--text-tertiary) !important;
-    color: var(--text-tertiary) !important;
-    font-family: inherit !important;
-}
-.apexcharts-tooltip.apexcharts-theme-dark {
-    background: var(--bg-surface-2) !important;
-    border: 1px solid var(--border-default) !important;
-    border-radius: var(--radius-control) !important;
-    box-shadow: var(--shadow-dropdown) !important;
-    color: var(--text-primary) !important;
-    padding: 4px 6px;
-}
-.apexcharts-grid line {
-    stroke: var(--border-subtle) !important;
-}
-
-/* Animations */
-@keyframes motionEnter {
+/* ==========================================================================
+   11. PAGE ENTRANCE & FILTER CHANGE ANIMATIONS (Smooth, Graceful, Clearly Visible)
+   ========================================================================== */
+@keyframes dashEntranceUp {
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(28px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes dashFilterSwap {
+    0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes dashRowSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-12px) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+@keyframes dashPanelExpand {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
-.motion-card-1 {
-    animation: motionEnter var(--dur-enter) var(--ease-out-expo) 0ms both;
+
+/* Staggered Entrance When Entering Dashboard */
+.ref-header-bar {
+    animation: dashEntranceUp 850ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 80ms;
 }
-.motion-card-2 {
-    animation: motionEnter var(--dur-enter) var(--ease-out-expo) 70ms both;
+.top-exec-card {
+    animation: dashEntranceUp 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.motion-card-3 {
-    animation: motionEnter var(--dur-enter) var(--ease-out-expo) 140ms both;
+.row > div:nth-child(1) > .top-exec-card { animation-delay: 180ms; }
+.row > div:nth-child(2) > .top-exec-card { animation-delay: 300ms; }
+.row > div:nth-child(3) > .top-exec-card { animation-delay: 420ms; }
+.row > div:nth-child(4) > .top-exec-card { animation-delay: 540ms; }
+
+#card-aktivitas-pembayaran {
+    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 640ms;
+}
+.col-xl-5 > .ref-glass-card {
+    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 780ms;
+}
+
+.ref-kpi-card {
+    animation: dashEntranceUp 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.row > div:nth-child(1) > .ref-kpi-card { animation-delay: 880ms; }
+.row > div:nth-child(2) > .ref-kpi-card { animation-delay: 990ms; }
+.row > div:nth-child(3) > .ref-kpi-card { animation-delay: 1100ms; }
+.row > div:nth-child(4) > .ref-kpi-card { animation-delay: 1210ms; }
+
+#card-statistik-barang > div:nth-child(1) > .ref-glass-card {
+    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 1280ms;
+}
+#card-statistik-barang > div:nth-child(2) > .ref-glass-card {
+    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 1410ms;
+}
+
+#card-hutang-vendor {
+    animation: dashEntranceUp 980ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 1520ms;
+}
+
+/* Filter Transition Utility Classes */
+.dash-filter-swap {
+    animation: dashFilterSwap 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.dash-row-anim {
+    animation: dashRowSlide 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.custom-filter-panel {
+    animation: dashPanelExpand 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.dash-loading-dim {
+    opacity: 0.45;
+    transition: opacity 280ms ease;
+}
+
+/* Active Filter Button Micro-Press */
+.segmented-item:active,
+.dash-btn-filter:active,
+.btn-custom-filter:active {
+    transform: scale(0.96);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
+    .ref-header-bar,
+    .top-exec-card,
+    #card-aktivitas-pembayaran,
+    .col-xl-5 > .ref-glass-card,
+    .ref-kpi-card,
+    #card-statistik-barang > div > .ref-glass-card,
+    #card-hutang-vendor,
+    .dash-filter-swap,
+    .dash-row-anim,
+    .custom-filter-panel {
+        animation: none !important;
+        transition: none !important;
     }
-}
-
-/* ==========================================================================
-   STATISTIK BARANG - SUMMARY KPI CARDS (4 BAGIAN JADI CARD)
-   ========================================================================== */
-.dash-summary-card {
-    background: #151D2A !important;
-    border: 1.5px solid #28354A !important;
-    border-radius: 12px !important;
-    padding: 16px 18px !important;
-    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    position: relative;
-    overflow: hidden;
-    height: 100%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-}
-
-.dash-summary-card:hover {
-    background: #1A2436 !important;
-    border-color: #3B4B66 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35) !important;
-}
-
-.dash-kpi-card {
-    background: #151D2A !important;
-    border: 1.5px solid #28354A !important;
-    border-radius: 12px !important;
-    padding: 18px 20px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-    transition: all 0.2s ease !important;
-}
-
-.dash-kpi-card:hover {
-    border-color: #3B4B66 !important;
-}
-
-.dash-kpi-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
-}
-
-.dash-summary-card:hover .dash-kpi-icon {
-    transform: scale(1.08);
-}
-
-.dash-kpi-label {
-    font-size: 11.5px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    color: #94A3B8 !important;
-    margin-bottom: 4px !important;
-    line-height: 1.2 !important;
-    display: block;
-}
-
-.dash-kpi-val {
-    font-size: 19px !important;
-    font-weight: 700 !important;
-    line-height: 1.25 !important;
-    margin-bottom: 0 !important;
-    letter-spacing: -0.01em !important;
 }
 </style>
 @endsection
 
-@extends('layout.template')
 @section('content')
+<div class="page-content">
+    <div class="container-fluid">
 
-{{--
-    @extends('layout.menu')
-
-    <!-- ============================================================== -->
-    <!-- Start right Content here -->
-    <!-- ============================================================== -->
-    @section('content')
-    <div class="main-content">
-
-
-        {{-- @extends('layout.pagetitle') --}}
-
-        <div class="page-content">
-         <div class="container-fluid">
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Dashboard Ibekami</h4>
-
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                <li class="breadcrumb-item active">Dashboard</li>
-                            </ol>
-                        </div>
-
-                    </div>
-                </div>
-              </div>
-                    <!-- end row -->
-
-                    <!-- KARTU GABUNGAN: AKTIVITAS PEMBAYARAN & STRUKTUR STATUS PEMBAYARAN -->
-                    <div class="row motion-card-1">
-                        <div class="col-12">
-                            <div class="card" id="card-aktivitas-pembayaran">
-                                <div class="card-header border-0 pb-0">
-                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                                        <div>
-                                            <h4 class="card-title mb-1 d-flex align-items-center">
-                                                <i class="ri-line-chart-line me-2 fs-20" style="color: var(--brand);"></i>
-                                                Aktivitas Pembayaran & Struktur Status
-                                            </h4>
-                                            <p class="text-muted mb-0 fs-13">
-                                                Visualisasi arus penerimaan kas masuk serta perbandingan status pelunasan invoice
-                                            </p>
-                                        </div>
-
-                                        <!-- Filter Toolbar with Segmented Control & Custom Filter -->
-                                        <div class="d-flex flex-wrap align-items-center gap-2">
-                                            <div class="segmented-control" role="group">
-                                                <button type="button" class="segmented-item tombol" onclick="timeFrame('day')" id="btn-day" title="Filter Hari Ini">
-                                                    Hari Ini
-                                                </button>
-                                                <button type="button" class="segmented-item tombol" onclick="timeFrame('week')" id="btn-week" title="Filter Minggu Ini">
-                                                    Minggu Ini
-                                                </button>
-                                                <button type="button" class="segmented-item tombol" onclick="timeFrame('month')" id="btn-month" title="Filter Bulan Ini">
-                                                    Bulan Ini
-                                                </button>
-                                                <button type="button" class="segmented-item tombol active" onclick="timeFrame('year')" id="btn-year" title="Filter Tahun Ini">
-                                                    Tahun Ini
-                                                </button>
-                                                <button type="button" class="segmented-item tombol" onclick="timeFrame('lastYear')" id="btn-lastYear" title="Filter Tahun Lalu">
-                                                    Tahun Lalu
-                                                </button>
-                                            </div>
-
-                                            <button type="button" class="btn-custom-filter" onclick="togglePaymentCustomFilter()" id="btn-payment-custom-toggle" title="Filter Khusus Tanggal, Bulan, atau Rentang">
-                                                <i class="ri-filter-3-line"></i> Filter Kustom <i class="ri-arrow-down-s-line chevron-rotate" id="icon-toggle-payment-custom"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Panel Filter Kustom Payment Activity & Structure (Horizontal Single-Line Toolbar matching UI-UX-Pro-Max) -->
-                                    <div id="panel-custom-filter-payment" class="mt-3 custom-filter-panel d-flex flex-wrap align-items-center" style="display: none !important; background: #12161D; border: 1px solid #232A35; border-radius: 10px; padding: 8px 16px; gap: 12px;">
-                                        <div class="d-flex align-items-center me-1" style="color: #94A3B8;">
-                                            <i class="ri-filter-3-fill me-1" style="color: #6366F1; font-size: 15px;"></i>
-                                            <span class="text-uppercase fs-12 fw-bold" style="letter-spacing: 0.06em; color: #94A3B8;">PILIH SPESIFIK:</span>
-                                        </div>
-
-                                        <!-- Submode segmented buttons (Unified container matching Tokabe) -->
-                                        <div class="segmented-control payment-segmented-control" id="payment-submode-group" role="group">
-                                            <button type="button" class="segmented-item payment-submode active" id="btn-payment-mode-date" data-mode="date" onclick="setPaymentSubmode('date')">
-                                                <i class="ri-calendar-line"></i> Tanggal
-                                            </button>
-                                            <button type="button" class="segmented-item payment-submode" id="btn-payment-mode-month" data-mode="month" onclick="setPaymentSubmode('month')">
-                                                <i class="ri-calendar-line"></i> Bulan
-                                            </button>
-                                            <button type="button" class="segmented-item payment-submode" id="btn-payment-mode-year" data-mode="year" onclick="setPaymentSubmode('year')">
-                                                <i class="ri-calendar-line"></i> Tahun
-                                            </button>
-                                            <button type="button" class="segmented-item payment-submode" id="btn-payment-mode-range" data-mode="range" onclick="setPaymentSubmode('range')">
-                                                Rentang
-                                            </button>
-                                        </div>
-
-                                        <!-- Inline Inputs -->
-                                        <div class="d-inline-flex align-items-center gap-2" id="payment-inputs-container">
-                                            <!-- Date mode -->
-                                            <input type="date" id="payment-input-date" class="form-control form-control-sm dash-input payment-ctrl active" style="width: 145px; height: 34px; color-scheme: dark; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px; padding: 4px 10px;" value="{{ date('Y-m-d') }}">
-
-                                            <!-- Month mode -->
-                                            <div id="payment-ctrl-month" class="payment-ctrl">
-                                                <select id="payment-input-bulan" class="form-select form-select-sm dash-select" style="width: 125px; height: 34px; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px;">
-                                                    @for ($m = 1; $m <= 12; $m++)
-                                                        <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>
-                                                            {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
-                                                <select id="payment-input-tahun-month" class="form-select form-select-sm dash-select" style="width: 90px; height: 34px; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px;">
-                                                    @for ($y = (int)date('Y'); $y >= 2022; $y--)
-                                                        <option value="{{ $y }}">{{ $y }}</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-
-                                            <!-- Year mode -->
-                                            <div id="payment-ctrl-year" class="payment-ctrl">
-                                                <select id="payment-input-year" class="form-select form-select-sm dash-select" style="width: 100px; height: 34px; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px;">
-                                                    @for ($y = (int)date('Y'); $y >= 2022; $y--)
-                                                        <option value="{{ $y }}">{{ $y }}</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-
-                                            <!-- Range mode -->
-                                            <div id="payment-ctrl-range" class="payment-ctrl">
-                                                <input type="date" id="payment-range-start" class="form-control form-control-sm dash-input" style="width: 140px; height: 34px; color-scheme: dark; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px; padding: 4px 10px;" value="{{ date('Y-m-01') }}">
-                                                <span class="text-muted fs-12">s/d</span>
-                                                <input type="date" id="payment-range-end" class="form-control form-control-sm dash-input" style="width: 140px; height: 34px; color-scheme: dark; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px; padding: 4px 10px;" value="{{ date('Y-m-d') }}">
-                                            </div>
-                                        </div>
-
-                                        <!-- Tampilkan button -->
-                                        <button type="button" class="btn btn-dash-primary d-inline-flex align-items-center" id="btn-apply-payment-custom-filter" onclick="submitPaymentCustomFilter()" style="background: #6366F1 !important; border: 1px solid #7175F3 !important; color: #FFFFFF !important; height: 34px; padding: 0 16px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);">
-                                            <i class="ri-search-line me-1 fs-14"></i> Tampilkan
-                                        </button>
-
-                                        <!-- Close button -->
-                                        <button type="button" class="btn btn-link p-0 ms-auto text-decoration-none d-inline-flex align-items-center" onclick="togglePaymentCustomFilter()" title="Tutup Filter Khusus" style="color: #6366F1; line-height: 1;">
-                                            <i class="ri-close-line fs-20" style="color: #6366F1;"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="card-body pt-3 pb-3">
-                                    <div class="row g-4">
-                                        <!-- Kolom Kiri: Bar Chart Tren Pendapatan (8 Kolom) -->
-                                        <div class="col-xl-8 col-lg-7 border-end-xl" style="border-color: var(--border-subtle) !important;">
-                                            <div class="row gy-3 align-items-center mb-3">
-                                                @if (auth()->user()->role === 'Pemilik')
-                                                    <div class="col-md-5">
-                                                        <p class="stat-overline mb-1">
-                                                            PENDAPATAN AKUMULASI (S/D {{ strtoupper(\Carbon\Carbon::now()->locale('id')->isoFormat('DD MMM YYYY')) }})
-                                                        </p>
-                                                        <h3 class="fw-bold mb-0 tabular-nums text-white" style="font-size: 30px;" id="hero-pendapatan-akumulasi">Rp {{$jumlahPerTahun}}</h3>
-                                                        <span id="pendapatan-akumulasi-val" class="d-none">Rp {{$jumlahPerTahun}}</span>
-                                                    </div>
-                                                    <div class="col-md-7">
-                                                        <div class="p-3 rounded-3 border tabular-nums sub-panel" id="harga">
-                                                            Memuat rincian transaksi...
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div class="col-md-6">
-                                                        <p class="stat-overline mb-1">Hutang Belum Lunas (Tahun Ini)</p>
-                                                        <h4 class="fs-22 fw-bold mb-0 tabular-nums" style="color: var(--warning);">Rp {{$jumlahBBPerTahun}}</h4>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p class="stat-overline mb-1">Hutang Belum Lunas (Bulan Ini)</p>
-                                                        <h4 class="fs-22 fw-bold mb-0 tabular-nums" style="color: var(--danger);">Rp {{$jumlahBBPerBulan}}</h4>
-                                                    </div>
-                                                @endif
-                                            </div>
-
-                                            <div class="mb-2 d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <i class="ri-bar-chart-2-line me-1 fs-16" style="color: var(--chart-series-2);"></i>
-                                                    <span class="fw-semibold text-light fs-13">Tren Arus Penerimaan Kas</span>
-                                                </div>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <span class="fs-12 text-muted" id="badge-payment-period-text">Tahun Ini</span>
-                                                    <span class="d-none" id="tag-periode-kas">Tahun Ini</span>
-                                                    <div class="d-flex align-items-center gap-3">
-                                                        <span class="d-inline-flex align-items-center fs-12 text-muted">
-                                                            <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background-color: var(--brand);"></span> Pendapatan Bersih
-                                                        </span>
-                                                        <span class="d-inline-flex align-items-center fs-12 text-muted">
-                                                            <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background-color: var(--chart-series-2);"></span> Pendapatan Asli
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div id="stacked_column_chart" class="apex-charts" data-colors='["#6B73F0", "#34C28B"]' dir="ltr"></div>
-                                        </div>
-
-                                        <!-- Kolom Kanan: Donut Chart Struktur Status Pembayaran (4 Kolom) -->
-                                        <div class="col-xl-4 col-lg-5 ps-xl-3 d-flex flex-column justify-content-between">
-                                            <div>
-                                                <div class="d-flex align-items-center justify-content-between mb-2 pb-1 border-bottom" style="border-color: var(--border-subtle) !important;">
-                                                    <h5 class="fs-15 mb-0 fw-semibold" style="color: #F8FAFC !important;">
-                                                        <i class="ri-time-line me-1" style="color: var(--brand);"></i> Struktur Status Pembayaran
-                                                    </h5>
-                                                    <span class="badge-tint badge-tint-neutral" id="periode">
-                                                        Tahun Ini
-                                                    </span>
-                                                </div>
-
-                                                <div id="structure_widget" data-colors='["#34C28B", "#E3A33B", "#6B7686"]' class="apex-charts" dir="ltr"></div>
-                                                <div id="structure_widget_empty" class="text-center py-4 my-3 text-muted" style="display: none;">
-                                                    <i class="ri-pie-chart-line fs-36 d-block mb-2" style="opacity: 0.4; color: #94A3B8;"></i>
-                                                    <span class="fs-12 d-block text-secondary">Belum ada transaksi pembayaran pada periode ini.</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="px-1 pt-2 mt-auto">
-                                                <div class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color: var(--border-subtle) !important;">
-                                                    <div class="d-flex align-items-center">
-                                                        <span class="d-inline-block rounded-circle me-2" style="width: 8px; height: 8px; background: var(--success);"></span>
-                                                        <span class="fs-13 fw-medium" style="color: #E2E8F0 !important;">Terbayar</span>
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <span class="fw-bold fs-13 tabular-nums" style="color: #FFFFFF !important;" id="terbayar">Rp 0</span>
-                                                        <span class="badge-tint badge-tint-success" id="persenTerbayar">0.00%</span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color: var(--border-subtle) !important;">
-                                                    <div class="d-flex align-items-center">
-                                                        <span class="d-inline-block rounded-circle me-2" style="width: 8px; height: 8px; background: var(--warning);"></span>
-                                                        <span class="fs-13 fw-medium" style="color: #E2E8F0 !important;">Belum Bayar</span>
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <span class="fw-bold fs-13 tabular-nums" style="color: #FFFFFF !important;" id="belumTerbayar">Rp 0</span>
-                                                        <span class="badge-tint badge-tint-warning" id="persenBlmTerbayar">0.00%</span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-between align-items-center py-2">
-                                                    <div class="d-flex align-items-center">
-                                                        <span class="d-inline-block rounded-circle me-2" style="width: 8px; height: 8px; background: #6B7686;"></span>
-                                                        <span class="fs-13 fw-medium" style="color: #E2E8F0 !important;">Batal</span>
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <span class="fw-bold fs-13 tabular-nums" style="color: #CBD5E1 !important;" id="batal">Rp 0</span>
-                                                        <span class="badge-tint badge-tint-neutral" id="persenBatal">0.00%</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end row -->
-
-                    <!-- SECTION: GRAFIK JENIS & KATEGORI BARANG YANG DIBELI DENGAN FILTER -->
-                    <div class="row mt-2">
-                        <div class="col-12">
-                            <div class="card" id="card-statistik-barang">
-                                <div class="card-header border-0 pb-1">
-                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                                        <div>
-                                            <h4 class="card-title mb-1 d-flex align-items-center">
-                                                <i class="ri-bar-chart-grouped-line text-primary me-2 fs-20"></i>
-                                                Statistik Jenis & Kategori Barang yang Dibeli
-                                            </h4>
-                                            <p class="text-muted mb-0 fs-13">
-                                                Analisis produk terlaris dan proporsi kategori barang berdasarkan transaksi invoice penjualan
-                                            </p>
-                                        </div>
-
-                                        <!-- Filter Preset Buttons (Matching Card 1) -->
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="segmented-control" role="group">
-                                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('today', this)" id="btn-barang-today" title="Filter Hari Ini">
-                                                    Hari Ini
-                                                </button>
-                                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('week', this)" id="btn-barang-week" title="Filter Minggu Ini">
-                                                    Minggu Ini
-                                                </button>
-                                                <button type="button" class="segmented-item btn-filter-barang active" onclick="filterBarang('month', this)" id="btn-barang-month" title="Filter Bulan Ini">
-                                                    Bulan Ini
-                                                </button>
-                                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('year', this)" id="btn-barang-year" title="Filter Tahun Ini">
-                                                    Tahun Ini
-                                                </button>
-                                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('last_year', this)" id="btn-barang-lastyear" title="Filter Tahun Lalu">
-                                                    Tahun Lalu
-                                                </button>
-                                            </div>
-
-                                            <button type="button" class="btn-custom-filter" onclick="toggleCustomFilter()" id="btn-barang-custom" title="Filter Khusus Tanggal, Bulan, atau Rentang">
-                                                <i class="ri-filter-3-line"></i> Filter Kustom <i class="ri-arrow-down-s-line chevron-rotate" id="icon-toggle-custom"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Panel Filter Kustom Statistik Barang (Horizontal Single-Line Toolbar matching UI-UX-Pro-Max) -->
-                                    <div id="panel-custom-filter" class="mt-3 custom-filter-panel d-flex flex-wrap align-items-center" style="display: none !important; background: #12161D; border: 1px solid #232A35; border-radius: 10px; padding: 8px 16px; gap: 12px;">
-                                        <div class="d-flex align-items-center me-1" style="color: #94A3B8;">
-                                            <i class="ri-filter-3-fill me-1" style="color: #6366F1; font-size: 15px;"></i>
-                                            <span class="text-uppercase fs-12 fw-bold" style="letter-spacing: 0.06em; color: #94A3B8;">PILIH SPESIFIK:</span>
-                                        </div>
-
-                                        <!-- Submode segmented buttons -->
-                                        <div class="segmented-control payment-segmented-control" id="barang-submode-group" role="group">
-                                            <button type="button" class="segmented-item barang-submode active" id="btn-barang-mode-date" data-mode="date" onclick="setBarangSubmode('date')">
-                                                <i class="ri-calendar-line"></i> Tanggal
-                                            </button>
-                                            <button type="button" class="segmented-item barang-submode" id="btn-barang-mode-month" data-mode="month" onclick="setBarangSubmode('month')">
-                                                <i class="ri-calendar-line"></i> Bulan
-                                            </button>
-                                            <button type="button" class="segmented-item barang-submode" id="btn-barang-mode-year" data-mode="year" onclick="setBarangSubmode('year')">
-                                                <i class="ri-calendar-line"></i> Tahun
-                                            </button>
-                                            <button type="button" class="segmented-item barang-submode" id="btn-barang-mode-range" data-mode="range" onclick="setBarangSubmode('range')">
-                                                Rentang
-                                            </button>
-                                        </div>
-
-                                        <!-- Inline Inputs -->
-                                        <div class="d-inline-flex align-items-center gap-2" id="barang-inputs-container">
-                                            <!-- Date mode -->
-                                            <input type="date" id="barang-input-date" class="form-control form-control-sm dash-input barang-ctrl active" style="width: 145px; height: 34px; color-scheme: dark; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px; padding: 4px 10px;" value="{{ date('Y-m-d') }}">
-
-                                            <!-- Month mode -->
-                                            <div id="barang-ctrl-month" class="barang-ctrl">
-                                                <select id="barang-input-bulan" class="form-select form-select-sm dash-select" style="width: 125px; height: 34px; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px;">
-                                                    @for ($m = 1; $m <= 12; $m++)
-                                                        <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>
-                                                            {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
-                                                <select id="barang-input-tahun-month" class="form-select form-select-sm dash-select" style="width: 90px; height: 34px; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px;">
-                                                    @for ($y = (int)date('Y'); $y >= 2022; $y--)
-                                                        <option value="{{ $y }}">{{ $y }}</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-
-                                            <!-- Year mode -->
-                                            <div id="barang-ctrl-year" class="barang-ctrl">
-                                                <select id="barang-input-year" class="form-select form-select-sm dash-select" style="width: 100px; height: 34px; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px;">
-                                                    @for ($y = (int)date('Y'); $y >= 2022; $y--)
-                                                        <option value="{{ $y }}">{{ $y }}</option>
-                                                    @endfor
-                                                </select>
-                                            </div>
-
-                                            <!-- Range mode -->
-                                            <div id="barang-ctrl-range" class="barang-ctrl">
-                                                <input type="date" id="barang-range-start" class="form-control form-control-sm dash-input" style="width: 140px; height: 34px; color-scheme: dark; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px; padding: 4px 10px;" value="{{ date('Y-m-01') }}">
-                                                <span class="text-muted fs-12">s/d</span>
-                                                <input type="date" id="barang-range-end" class="form-control form-control-sm dash-input" style="width: 140px; height: 34px; color-scheme: dark; background: #0E1218; border: 1px solid #28313E; border-radius: 8px; color: #F1F5F9; font-size: 13px; padding: 4px 10px;" value="{{ date('Y-m-d') }}">
-                                            </div>
-                                        </div>
-
-                                        <!-- Tampilkan button -->
-                                        <button type="button" class="btn btn-dash-primary d-inline-flex align-items-center" id="btn-apply-barang-custom" onclick="applyCustomFilter()" style="background: #6366F1 !important; border: 1px solid #7175F3 !important; color: #FFFFFF !important; height: 34px; padding: 0 16px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);">
-                                            <i class="ri-search-line me-1 fs-14"></i> Tampilkan
-                                        </button>
-
-                                        <!-- Close button -->
-                                        <button type="button" class="btn btn-link p-0 ms-auto text-decoration-none d-inline-flex align-items-center" onclick="toggleCustomFilter()" title="Tutup Filter Khusus" style="color: #6366F1; line-height: 1;">
-                                            <i class="ri-close-line fs-20" style="color: #6366F1;"></i>
-                                        </button>
-                                    </div>
-
-                                    <!-- Active Filter Banner & Status -->
-                                    <div class="d-flex align-items-center justify-content-between mt-3 pt-2" style="border-top: 1px solid var(--dash-border-subtle);">
-                                        <div class="d-flex align-items-center">
-                                            <span class="text-muted fs-13 me-2">Periode Aktif:</span>
-                                            <span class="dash-badge dash-badge--brand fs-12" id="badge-periode-barang">
-                                                <i class="ri-calendar-event-line align-middle me-1"></i> <span id="label-periode-barang">Memuat data...</span>
-                                            </span>
-                                        </div>
-                                        <div id="spinner-barang" class="spinner-border spinner-border-sm text-primary" role="status" style="display: none;">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Summary Cards Section (KPI) -->
-                                <div class="card-body pt-2 pb-3">
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-6 col-xl-3">
-                                            <div class="dash-summary-card">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="dash-kpi-icon" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.35); color: #818CF8;">
-                                                        <i class="ri-shopping-bag-3-line"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3 overflow-hidden">
-                                                        <span class="dash-kpi-label">Total Qty Terjual</span>
-                                                        <h4 class="dash-kpi-val text-white tabular-nums text-truncate" id="summary-total-qty">0 Pcs</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 col-xl-3">
-                                            <div class="dash-summary-card">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="dash-kpi-icon" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #34D399;">
-                                                        <i class="ri-money-dollar-circle-line"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3 overflow-hidden">
-                                                        <span class="dash-kpi-label">Nilai Penjualan</span>
-                                                        <h4 class="dash-kpi-val text-success tabular-nums text-truncate" id="summary-total-nominal">Rp 0</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 col-xl-3">
-                                            <div class="dash-summary-card">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="dash-kpi-icon" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #FBBF24;">
-                                                        <i class="ri-trophy-line"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3 overflow-hidden">
-                                                        <span class="dash-kpi-label">Jenis Terpopuler</span>
-                                                        <h4 class="dash-kpi-val text-white text-truncate fs-15" id="summary-top-jenis" title="-">-</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 col-xl-3">
-                                            <div class="dash-summary-card">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="dash-kpi-icon" style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.35); color: #38BDF8;">
-                                                        <i class="ri-folders-line"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3 overflow-hidden">
-                                                        <span class="dash-kpi-label">Kategori Terlaris</span>
-                                                        <h4 class="dash-kpi-val text-white text-truncate fs-15" id="summary-top-kategori" title="-">-</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Charts Row: Jenis Barang & Kategori Barang -->
-                                    <div class="row g-3">
-                                        <!-- Chart 1: Jenis Barang (Top 10) -->
-                                        <div class="col-xl-7">
-                                            <div class="dash-kpi-card h-100">
-                                                <div class="d-flex align-items-center justify-content-between mb-3 pb-2" style="border-bottom: 1px solid var(--dash-border-subtle);">
-                                                    <h5 class="fs-15 mb-0 fw-semibold text-truncate text-light">
-                                                        <i class="ri-bar-chart-fill text-primary me-1"></i> Grafik Jenis Barang yang Dibeli (Top 10)
-                                                    </h5>
-                                                    <div class="segmented-control" role="group">
-                                                        <button type="button" class="segmented-item active" id="btn-metric-qty" onclick="switchJenisMetric('qty')">Qty (Pcs)</button>
-                                                        <button type="button" class="segmented-item" id="btn-metric-nominal" onclick="switchJenisMetric('nominal')">Nilai (Rp)</button>
-                                                    </div>
-                                                </div>
-                                                <div id="chart_jenis_empty" class="text-center py-5 text-muted" style="display: none;">
-                                                    <i class="ri-inbox-line fs-36 text-secondary d-block mb-2"></i>
-                                                    <span class="fs-14">Tidak ada data transaksi jenis barang pada periode ini.</span>
-                                                </div>
-                                                <div id="chart_jenis_barang" class="apex-charts" style="min-height: 380px;"></div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Chart 2: Kategori Barang (Donut & Table) -->
-                                        <div class="col-xl-5">
-                                            <div class="dash-kpi-card h-100 d-flex flex-column">
-                                                <div class="d-flex align-items-center justify-content-between mb-3 pb-2" style="border-bottom: 1px solid var(--dash-border-subtle);">
-                                                    <h5 class="fs-15 mb-0 fw-semibold text-truncate text-light">
-                                                        <i class="ri-pie-chart-2-fill text-info me-1"></i> Grafik Kategori Barang
-                                                    </h5>
-                                                    <span class="dash-badge dash-badge--neutral" id="badge-total-kategori">0 Kategori</span>
-                                                </div>
-                                                <div id="chart_kategori_empty" class="text-center py-5 text-muted" style="display: none;">
-                                                    <i class="ri-inbox-line fs-36 text-secondary d-block mb-2"></i>
-                                                    <span class="fs-14">Tidak ada data transaksi kategori pada periode ini.</span>
-                                                </div>
-                                                <div id="chart_kategori_barang" class="apex-charts" style="min-height: 290px;"></div>
-
-                                                <!-- Table Rincian Kategori -->
-                                                <div class="table-responsive dash-scroll mt-auto pt-2" id="table-kategori-container" style="max-height: 180px; overflow-y: auto;">
-                                                    <table class="table dash-table table-nowrap align-middle mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Kategori</th>
-                                                                <th class="text-end">Qty</th>
-                                                                <th class="text-end">Nilai (Rp)</th>
-                                                                <th class="text-end">%</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="table-kategori-body" class="fs-12">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- END SECTION GRAFIK JENIS & KATEGORI -->
-                    <!-- END SECTION GRAFIK JENIS & KATEGORI -->
-
-                    <div class="row">
-                        <!-- SECTION HUTANG PEMBELIAN VENDOR & DAFTAR TAGIHAN (1 FRAME) -->
-                        <div class="col-12">
-                            <div class="card" id="card-hutang-vendor">
-                                <div class="card-header border-0 align-items-center d-flex flex-wrap gap-2 justify-content-between pb-2 pt-3">
-                                    <div>
-                                        <h4 class="card-title mb-1 d-flex align-items-center">
-                                            <span class="avatar-title bg-info-subtle text-info rounded p-1 me-2 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
-                                                <i class="ri-shopping-bag-3-fill fs-16"></i>
-                                            </span>
-                                            <span id="pembelian-chart-title">Grafik Pembelian belum Dibayar per Vendor</span>
-                                        </h4>
-                                        <p class="text-muted mb-0 fs-13" id="pembelian-chart-subtitle">
-                                            Ringkasan sisa tagihan pembelian belum dibayar per nama vendor.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="card-body pt-1">
-                                    <div class="row g-3">
-                                        <!-- Kolom Kiri: Grafik Sisa Hutang Vendor -->
-                                        <div class="col-xl-7 pe-xl-3 border-end" style="border-color: var(--dash-border-subtle) !important;">
-
-                                            <!-- Grafik Utama (Semua Vendor atau Global Jenis Invoice) -->
-                                            <div id="chart-pembelian-invoice" class="apex-charts" dir="ltr" style="min-height: 400px;"></div>
-
-                                            <!-- Wadah Dua Grafik Ketika Single Vendor Dipilih -->
-                                            <div id="vendor-single-charts-container" class="d-none">
-                                                <div class="row g-2">
-                                                    <!-- Grafik 1: Status Pembayaran (3 Batang) -->
-                                                    <div class="col-md-6 col-12">
-                                                        <div class="dash-kpi-card h-100 p-2.5">
-                                                            <div class="d-flex align-items-center justify-content-between mb-2 pb-2" style="border-bottom: 1px solid var(--dash-border-subtle);">
-                                                                <div class="d-flex align-items-center gap-1">
-                                                                    <i class="ri-bar-chart-2-line text-info fs-14"></i>
-                                                                    <span class="fs-12 fw-semibold text-light ms-1">Status Pembayaran</span>
-                                                                </div>
-                                                                <span class="dash-badge dash-badge--neutral">Ringkasan</span>
-                                                            </div>
-                                                            <div id="chart-pembelian-single-status" class="apex-charts" dir="ltr"></div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Grafik 2: Detail vendor -->
-                                                    <div class="col-md-6 col-12">
-                                                        <div class="dash-kpi-card h-100 p-2.5">
-                                                            <div class="d-flex align-items-center justify-content-between mb-2 pb-2" style="border-bottom: 1px solid var(--dash-border-subtle);">
-                                                                <div class="d-flex align-items-center gap-1">
-                                                                    <i class="ri-file-list-3-line text-primary fs-14"></i>
-                                                                    <span class="fs-12 fw-semibold text-light ms-1">Jenis Invoice Digunakan</span>
-                                                                </div>
-                                                                <span class="dash-badge dash-badge--brand" id="badge-vendor-jenis-count">0 Jenis</span>
-                                                            </div>
-                                                            <div id="chart-pembelian-single-jenis" class="apex-charts" dir="ltr"></div>
-                                                            <div id="chart-pembelian-single-jenis-empty" class="text-center text-muted py-5 fs-12 d-none">
-                                                                Belum ada data jenis invoice untuk vendor ini.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div id="chart-pembelian-invoice-empty" class="text-center text-muted py-5 d-none">
-                                                Belum ada data pembelian yang belum dibayar untuk filter ini.
-                                            </div>
-                                        </div>
-
-                                        <!-- Kolom Kanan: Daftar Tagihan Vendor -->
-                                        <div class="col-xl-5 ps-xl-3 d-flex flex-column justify-content-between">
-                                            <div>
-                                                <div class="d-flex align-items-center justify-content-between mb-3 pb-2" style="border-bottom: 1px solid var(--dash-border-subtle);">
-                                                    <h5 class="fs-14 mb-0 fw-semibold text-truncate text-light">
-                                                        <i class="ri-file-list-3-line text-primary me-1"></i> Daftar Vendor
-                                                    </h5>
-                                                    <div class="d-flex align-items-center gap-1.5">
-                                                        <div class="dash-segmented-group" aria-label="Filter status vendor">
-                                                            <button type="button" class="dash-btn-filter active" id="btn-filter-belum-lunas" onclick="setVendorStatusFilter('belum_lunas')">Belum Lunas</button>
-                                                            <button type="button" class="dash-btn-filter" id="btn-filter-lunas" onclick="setVendorStatusFilter('lunas')">Lunas</button>
-                                                            <button type="button" class="dash-btn-filter" id="btn-filter-semua-status" onclick="setVendorStatusFilter('all')">Semua</button>
-                                                        </div>
-                                                        <button type="button" class="dash-btn-filter active" id="btnSemuaVendor" onclick="resetToAllVendors()" title="Tampilkan grafik semua vendor">
-                                                            <i class="ri-bar-chart-fill me-1"></i> Semua Vendor
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-                                                <div class="table-responsive dash-scroll" style="max-height: 400px; overflow-y: auto;">
-                                                    <table class="table dash-table align-middle mb-0" id="tableDaftarVendor">
-                                                        <thead class="text-uppercase" style="position: sticky; top: 0; z-index: 2;">
-                                                            <tr>
-                                                                <th scope="col" style="width: 45%;">Nama Vendor</th>
-                                                                <th scope="col" class="text-end" style="width: 28%;">Total Beli</th>
-                                                                <th scope="col" class="text-end" style="width: 27%;">Sisa Hutang</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="vendor-tagihan-tbody" class="fs-12">
-                                                            <!-- Dynamic rows injected by renderVendorTable() -->
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-
-                                    
-
-
-                                    
-{{--
-                                </div>
-                            </div>
-                        </div> --}}
-                    </div>
-                    <!-- end row -->
-
-                </div>
-                <!-- container-fluid -->
+        <!-- TOP HEADER: Dashboard IBEKAMI -->
+        <div class="ref-header-bar">
+            <div>
+                <h1 class="ref-page-title">Dashboard IBEKAMI</h1>
+                <p class="ref-page-subtitle">Ringkasan keuangan, penjualan, dan hutang vendor</p>
             </div>
-            <!-- End Page-content -->
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="ref-theme-toggle" id="btn-theme-toggle" onclick="toggleDashboardTheme()" title="Beralih Mode Tampilan">
+                    <i class="ri-sun-line fs-14" id="theme-toggle-icon"></i>
+                    <span id="theme-toggle-text">Mode Terang</span>
+                </button>
+                <span class="ref-live-pill">
+                    <span class="ref-live-dot"></span>
+                    <span>Data terbaru · s/d {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d M Y') }}</span>
+                </span>
+            </div>
+        </div>
 
-            @extends('layout.footer')
-        {{-- </div> --}}
-        <!-- end main content-->
-        @endsection
+        @php
+            $totalAkumulasiTahunTop = ($datasInYear[0] ?? 0) + ($datasInYear[1] ?? 0) + ($datasInYear[2] ?? 0);
+            $pctTerbayarTop = $totalAkumulasiTahunTop > 0 ? number_format((($datasInYear[0] ?? 0) / $totalAkumulasiTahunTop) * 100, 1, ',', '.') : '0';
+            $pctPiutangTop = $totalAkumulasiTahunTop > 0 ? number_format((($datasInYear[1] ?? 0) / $totalAkumulasiTahunTop) * 100, 1, ',', '.') : '0';
+        @endphp
 
+        <!-- TOP 4 EXECUTIVE SUMMARY CARDS (Matched to Uploaded Reference Image) -->
+        <div class="row g-3 mb-4">
+            <!-- Card 1: PENDAPATAN AKUMULASI -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="top-exec-card top-exec-card--highlight">
+                    <div class="top-exec-head">
+                        <span class="top-exec-label">PENDAPATAN AKUMULASI</span>
+                        <span class="top-exec-pill top-exec-pill--amber tabular-nums" id="top-kpi-yoy-badge">
+                            {{ ($percentageInYear >= 0 ? '+' : '') . $percentageInYear }}% YoY
+                        </span>
+                    </div>
+                    <h3 class="top-exec-val tabular-nums" id="top-kpi-akumulasi">
+                        Rp {{ number_format($totalAkumulasiTahunTop, 0, ',', '.') }}
+                    </h3>
+                    <p class="top-exec-sub" id="top-kpi-akumulasi-sub">
+                        Periode berjalan s/d {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d M Y') }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 2: INVOICE TERBAYAR (LUNAS) -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="top-exec-card">
+                    <div class="top-exec-head">
+                        <span class="top-exec-label">INVOICE TERBAYAR (LUNAS)</span>
+                        <span class="top-exec-pill top-exec-pill--emerald tabular-nums" id="top-kpi-terbayar-pct">
+                            {{ $pctTerbayarTop }}%
+                        </span>
+                    </div>
+                    <h3 class="top-exec-val top-exec-val--emerald tabular-nums" id="top-kpi-terbayar">
+                        Rp {{ number_format($datasInYear[0] ?? 0, 0, ',', '.') }}
+                    </h3>
+                    <p class="top-exec-sub" id="top-kpi-terbayar-sub">
+                        {{ number_format($countLunasYear ?? 0, 0, ',', '.') }} transaksi selesai
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3: PIUTANG BELUM LUNAS -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="top-exec-card">
+                    <div class="top-exec-head">
+                        <span class="top-exec-label">PIUTANG BELUM LUNAS</span>
+                        <span class="top-exec-pill top-exec-pill--danger tabular-nums" id="top-kpi-piutang-pct">
+                            {{ $pctPiutangTop }}%
+                        </span>
+                    </div>
+                    <h3 class="top-exec-val top-exec-val--danger tabular-nums" id="top-kpi-piutang">
+                        Rp {{ number_format($datasInYear[1] ?? 0, 0, ',', '.') }}
+                    </h3>
+                    <p class="top-exec-sub" id="top-kpi-piutang-sub">
+                        {{ number_format($countBlmLunasYear ?? 0, 0, ',', '.') }} invoice menunggu pelunasan
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 4: TOTAL PRODUK TERJUAL -->
+            <div class="col-xl-3 col-sm-6">
+                <div class="top-exec-card">
+                    <div class="top-exec-head">
+                        <span class="top-exec-label">TOTAL PRODUK TERJUAL</span>
+                        <span class="top-exec-pill top-exec-pill--sky text-truncate" id="top-kpi-produk-badge" style="max-width: 135px;">
+                            Top: -
+                        </span>
+                    </div>
+                    <h3 class="top-exec-val tabular-nums" id="top-kpi-produk-qty">
+                        0 Pcs
+                    </h3>
+                    <p class="top-exec-sub" id="top-kpi-produk-sub">
+                        Dari 0 kategori barang aktif
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 1: AKTIVITAS PEMBAYARAN (LEFT) & STRUKTUR STATUS PEMBAYARAN (RIGHT) -->
+        <div class="row g-4 mb-4">
+            <!-- Left Card: Aktivitas Pembayaran -->
+            <div class="col-xl-7">
+                <div class="ref-glass-card h-100 d-flex flex-column justify-content-between" id="card-aktivitas-pembayaran">
+                    <div>
+                        <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
+                            <div>
+                                <h4 class="ref-card-title">Aktivitas Pembayaran</h4>
+                                <p class="ref-card-subtitle">Arus kas masuk dan status pelunasan invoice</p>
+                            </div>
+                        </div>
+
+                        <!-- Filter Segmented Bar -->
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
+                            <div class="segmented-control" role="group">
+                                <button type="button" class="segmented-item tombol" onclick="timeFrame('day')" id="btn-day">Hari Ini</button>
+                                <button type="button" class="segmented-item tombol" onclick="timeFrame('week')" id="btn-week">Minggu Ini</button>
+                                <button type="button" class="segmented-item tombol" onclick="timeFrame('month')" id="btn-month">Bulan Ini</button>
+                                <button type="button" class="segmented-item tombol active" onclick="timeFrame('year')" id="btn-year">Tahun Ini</button>
+                                <button type="button" class="segmented-item tombol" onclick="timeFrame('lastYear')" id="btn-lastYear">Tahun Lalu</button>
+                            </div>
+                            <button type="button" class="btn-custom-filter" onclick="togglePaymentCustomFilter()" id="btn-payment-custom-toggle" title="Filter Kustom">
+                                <i class="ri-equalizer-line"></i> Filter Kustom <i class="ri-arrow-down-s-line chevron-rotate" id="icon-toggle-payment-custom"></i>
+                            </button>
+                        </div>
+
+                        <!-- Collapsible Custom Filter Panel -->
+                        <div id="panel-custom-filter-payment" class="mb-3 custom-filter-panel d-flex flex-wrap align-items-center" style="display: none !important; padding: 10px 14px; gap: 10px;">
+                            <div class="segmented-control payment-segmented-control" id="payment-submode-group" role="group">
+                                <button type="button" class="segmented-item payment-submode active" data-mode="date" onclick="setPaymentSubmode('date')">Tanggal</button>
+                                <button type="button" class="segmented-item payment-submode" data-mode="month" onclick="setPaymentSubmode('month')">Bulan</button>
+                                <button type="button" class="segmented-item payment-submode" data-mode="year" onclick="setPaymentSubmode('year')">Tahun</button>
+                                <button type="button" class="segmented-item payment-submode" data-mode="range" onclick="setPaymentSubmode('range')">Rentang</button>
+                            </div>
+                            <div class="d-inline-flex align-items-center gap-2" id="payment-inputs-container">
+                                <input type="date" id="payment-input-date" class="form-control form-control-sm dash-input payment-ctrl active" style="width: 140px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                <div id="payment-ctrl-month" class="payment-ctrl">
+                                    <select id="payment-input-bulan" class="form-select form-select-sm dash-select" style="width: 120px; height: 32px;">
+                                        @for ($m = 1; $m <= 12; $m++)
+                                            <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>
+                                                {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select id="payment-input-tahun-month" class="form-select form-select-sm dash-select" style="width: 86px; height: 32px;">
+                                        @for ($y = (int)date('Y'); $y >= 2022; $y--)
+                                            <option value="{{ $y }}">{{ $y }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div id="payment-ctrl-year" class="payment-ctrl">
+                                    <select id="payment-input-year" class="form-select form-select-sm dash-select" style="width: 95px; height: 32px;">
+                                        @for ($y = (int)date('Y'); $y >= 2022; $y--)
+                                            <option value="{{ $y }}">{{ $y }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div id="payment-ctrl-range" class="payment-ctrl">
+                                    <input type="date" id="payment-range-start" class="form-control form-control-sm dash-input" style="width: 135px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-01') }}">
+                                    <span class="text-secondary fs-12">s/d</span>
+                                    <input type="date" id="payment-range-end" class="form-control form-control-sm dash-input" style="width: 135px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-dash-primary" onclick="submitPaymentCustomFilter()">Tampilkan</button>
+                        </div>
+
+                        <!-- Hero Metric: PENDAPATAN AKUMULASI -->
+                        @php
+                            $totalAkumulasiTahun = ($datasInYear[0] ?? 0) + ($datasInYear[1] ?? 0) + ($datasInYear[2] ?? 0);
+                        @endphp
+                        <div class="ref-hero-overline">PENDAPATAN AKUMULASI</div>
+                        <h2 class="ref-hero-amount tabular-nums" id="hero-pendapatan-akumulasi">Rp {{ number_format($totalAkumulasiTahun, 0, ',', '.') }}</h2>
+
+                        <!-- 3 Horizontal Sub-Cards (#harga) -->
+                        <div id="harga">
+                            <div class="ref-summary-grid">
+                                <div class="ref-summary-box">
+                                    <span class="ref-summary-label">Total Pendapatan</span>
+                                    <span class="ref-summary-val tabular-nums">Rp {{ $jumlahPerTahun }}</span>
+                                </div>
+                                <div class="ref-summary-box">
+                                    <span class="ref-summary-label">Total Beban</span>
+                                    <span class="ref-summary-val ref-summary-val--expense tabular-nums">Rp 0</span>
+                                </div>
+                                <div class="ref-summary-box ref-summary-box--net">
+                                    <span class="ref-summary-label">Pendapatan Bersih</span>
+                                    <span class="ref-summary-val tabular-nums">Rp {{ $jumlahPerTahun }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bar Chart Section -->
+                    <div class="mt-1">
+                        <div class="ref-chart-header">
+                            <span class="ref-chart-title" id="tren-arus-kas-title">
+                                Tren Arus Kas {{ date('Y') }} <span class="ref-chart-unit">(Juta Rp)</span>
+                            </span>
+                            <span class="d-none" id="badge-payment-period-text">Tahun Ini</span>
+                            <span class="d-none" id="tag-periode-kas">Tahun Ini</span>
+                            <div class="ref-legend-group" id="payment-chart-legend">
+                                <span class="ref-legend-item">
+                                    <span class="ref-legend-dot" style="background: #F59E0B; box-shadow: 0 0 8px rgba(245, 158, 11, 0.65);"></span>
+                                    Pendapatan Bersih
+                                </span>
+                                <span class="ref-legend-item">
+                                    <span class="ref-legend-dot" style="background: #34D399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.65);"></span>
+                                    Pendapatan Asli
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ref-chart-scroll-wrapper" id="payment_chart_scroll_wrapper">
+                            <div id="stacked_column_chart" class="apex-charts" data-colors='["#F59E0B", "#34D399"]' dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Card: Struktur Status Pembayaran -->
+            <div class="col-xl-5">
+                <div class="ref-glass-card h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h4 class="ref-card-title">Struktur Status Pembayaran</h4>
+                        <span class="ref-period-pill" id="periode">Tahun Ini</span>
+                    </div>
+
+                    <div class="my-auto py-2">
+                        <div id="structure_widget" data-colors='["#34D399", "#EF4444", "#64748B"]' class="apex-charts" dir="ltr"></div>
+                        <div id="structure_widget_empty" class="text-center py-5 text-secondary" style="display: none;">
+                            <i class="ri-pie-chart-line fs-36 d-block mb-2 opacity-50"></i>
+                            <span class="fs-12">Belum ada transaksi pembayaran pada periode ini.</span>
+                        </div>
+                    </div>
+
+                    <!-- 3 Individual Rounded Status Boxes -->
+                    <div class="ref-status-list">
+                        <div class="ref-status-row">
+                            <div class="ref-status-left">
+                                <span class="ref-status-dot" style="background: #34D399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);"></span>
+                                <span>Terbayar</span>
+                            </div>
+                            <div class="ref-status-right">
+                                <span class="ref-status-amount tabular-nums" id="terbayar">Rp {{ number_format($datasInYear[0] ?? 0, 0, ',', '.') }}</span>
+                                <span class="ref-status-pill ref-status-pill--emerald tabular-nums" id="persenTerbayar">94,7%</span>
+                            </div>
+                        </div>
+
+                        <div class="ref-status-row">
+                            <div class="ref-status-left">
+                                <span class="ref-status-dot" style="background: #EF4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.65);"></span>
+                                <span>Belum Bayar</span>
+                            </div>
+                            <div class="ref-status-right">
+                                <span class="ref-status-amount tabular-nums" style="color: #F87171;" id="belumTerbayar">Rp {{ number_format($datasInYear[1] ?? 0, 0, ',', '.') }}</span>
+                                <span class="ref-status-pill ref-status-pill--danger tabular-nums" id="persenBlmTerbayar">5,3%</span>
+                            </div>
+                        </div>
+
+                        <div class="ref-status-row">
+                            <div class="ref-status-left">
+                                <span class="ref-status-dot" style="background: #64748B;"></span>
+                                <span>Batal</span>
+                            </div>
+                            <div class="ref-status-right">
+                                <span class="ref-status-amount tabular-nums" id="batal">Rp {{ number_format($datasInYear[2] ?? 0, 0, ',', '.') }}</span>
+                                <span class="ref-status-pill ref-status-pill--slate tabular-nums" id="persenBatal">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: 4 STANDALONE KPI CARDS -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-sm-6">
+                <div class="ref-kpi-card">
+                    <div class="ref-kpi-icon ref-kpi-icon--indigo">
+                        <i class="ri-shopping-bag-3-line"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="ref-kpi-overline">TOTAL QTY TERJUAL</span>
+                        <h3 class="ref-kpi-value tabular-nums text-truncate" id="summary-total-qty">0 Pcs</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="ref-kpi-card">
+                    <div class="ref-kpi-icon ref-kpi-icon--emerald">
+                        <i class="ri-money-dollar-circle-line"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="ref-kpi-overline">NILAI PENJUALAN</span>
+                        <h3 class="ref-kpi-value tabular-nums text-truncate" id="summary-total-nominal">Rp 0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="ref-kpi-card">
+                    <div class="ref-kpi-icon ref-kpi-icon--amber">
+                        <i class="ri-trophy-line"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="ref-kpi-overline">JENIS TERPOPULER</span>
+                        <div class="text-truncate" id="summary-top-jenis">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6">
+                <div class="ref-kpi-card">
+                    <div class="ref-kpi-icon ref-kpi-icon--cyan">
+                        <i class="ri-stack-line"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <span class="ref-kpi-overline">KATEGORI TERLARIS</span>
+                        <div class="text-truncate" id="summary-top-kategori">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 3: JENIS BARANG YANG DIBELI (LEFT) & KATEGORI BARANG (RIGHT) -->
+        <div class="row g-4 mb-4" id="card-statistik-barang">
+            <!-- Left Card: Jenis Barang yang Dibeli -->
+            <div class="col-xl-6">
+                <div class="ref-glass-card h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
+                            <div>
+                                <h4 class="ref-card-title">Jenis Barang yang Dibeli</h4>
+                                <p class="ref-card-subtitle" id="jenis-barang-subtitle">
+                                    Top 8 berdasarkan jumlah · {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('F Y') }}
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="segmented-control" role="group">
+                                    <button type="button" class="segmented-item active" id="btn-metric-qty" onclick="switchJenisMetric('qty')">Qty (Pcs)</button>
+                                    <button type="button" class="segmented-item" id="btn-metric-nominal" onclick="switchJenisMetric('nominal')">Nilai (Rp)</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Optional Quick Period Filter Strip for Barang -->
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <div class="segmented-control" role="group">
+                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('today', this)" id="btn-barang-today">Hari Ini</button>
+                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('week', this)" id="btn-barang-week">Minggu Ini</button>
+                                <button type="button" class="segmented-item btn-filter-barang active" onclick="filterBarang('month', this)" id="btn-barang-month">Bulan Ini</button>
+                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('year', this)" id="btn-barang-year">Tahun Ini</button>
+                                <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('last_year', this)" id="btn-barang-lastyear">Tahun Lalu</button>
+                            </div>
+                            <button type="button" class="btn-custom-filter" onclick="toggleCustomFilter()" id="btn-barang-custom">
+                                <i class="ri-equalizer-line"></i> Kustom
+                            </button>
+                        </div>
+
+                        <!-- Collapsible Custom Filter Panel for Barang -->
+                        <div id="panel-custom-filter" class="mb-3 custom-filter-panel d-flex flex-wrap align-items-center" style="display: none !important; padding: 10px 14px; gap: 10px;">
+                            <div class="segmented-control payment-segmented-control" id="barang-submode-group" role="group">
+                                <button type="button" class="segmented-item barang-submode active" data-mode="date" onclick="setBarangSubmode('date')">Tanggal</button>
+                                <button type="button" class="segmented-item barang-submode" data-mode="month" onclick="setBarangSubmode('month')">Bulan</button>
+                                <button type="button" class="segmented-item barang-submode" data-mode="year" onclick="setBarangSubmode('year')">Tahun</button>
+                                <button type="button" class="segmented-item barang-submode" data-mode="range" onclick="setBarangSubmode('range')">Rentang</button>
+                            </div>
+                            <div class="d-inline-flex align-items-center gap-2" id="barang-inputs-container">
+                                <input type="date" id="barang-input-date" class="form-control form-control-sm dash-input barang-ctrl active" style="width: 135px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                <div id="barang-ctrl-month" class="barang-ctrl">
+                                    <select id="barang-input-bulan" class="form-select form-select-sm dash-select" style="width: 115px; height: 32px;">
+                                        @for ($m = 1; $m <= 12; $m++)
+                                            <option value="{{ $m }}" {{ $m == date('n') ? 'selected' : '' }}>
+                                                {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select id="barang-input-tahun-month" class="form-select form-select-sm dash-select" style="width: 84px; height: 32px;">
+                                        @for ($y = (int)date('Y'); $y >= 2022; $y--)
+                                            <option value="{{ $y }}">{{ $y }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div id="barang-ctrl-year" class="barang-ctrl">
+                                    <select id="barang-input-year" class="form-select form-select-sm dash-select" style="width: 90px; height: 32px;">
+                                        @for ($y = (int)date('Y'); $y >= 2022; $y--)
+                                            <option value="{{ $y }}">{{ $y }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div id="barang-ctrl-range" class="barang-ctrl">
+                                    <input type="date" id="barang-range-start" class="form-control form-control-sm dash-input" style="width: 130px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-01') }}">
+                                    <span class="text-secondary fs-12">s/d</span>
+                                    <input type="date" id="barang-range-end" class="form-control form-control-sm dash-input" style="width: 130px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-dash-primary" onclick="applyCustomFilter()">Tampilkan</button>
+                        </div>
+                        <span class="d-none" id="label-periode-barang"></span>
+
+                        <!-- Custom Progress-Track Horizontal List -->
+                        <div id="chart_jenis_empty" class="text-center py-5 text-secondary" style="display: none;">
+                            <i class="ri-inbox-line fs-36 d-block mb-2 opacity-50"></i>
+                            <span class="fs-13">Tidak ada data transaksi jenis barang pada periode ini.</span>
+                        </div>
+                        <div id="chart_jenis_barang" class="pt-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Card: Kategori Barang -->
+            <div class="col-xl-6">
+                <div class="ref-glass-card h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h4 class="ref-card-title">Kategori Barang</h4>
+                        <span class="ref-teal-badge" id="badge-total-kategori">0 Kategori</span>
+                    </div>
+
+                    <div id="chart_kategori_empty" class="text-center py-5 text-secondary" style="display: none;">
+                        <i class="ri-inbox-line fs-36 d-block mb-2 opacity-50"></i>
+                        <span class="fs-13">Tidak ada data transaksi kategori pada periode ini.</span>
+                    </div>
+                    <div id="chart_kategori_barang" class="apex-charts my-1" style="min-height: 205px;"></div>
+
+                    <!-- Table Rincian Kategori -->
+                    <div class="table-responsive mt-2" id="table-kategori-container" style="max-height: 210px; overflow-y: auto;">
+                        <table class="ref-clean-table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>KATEGORI</th>
+                                    <th class="text-center">QTY</th>
+                                    <th class="text-end">NILAI</th>
+                                    <th class="text-end">%</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-kategori-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 4: PEMBELIAN BELUM DIBAYAR PER VENDOR (FULL-WIDTH INLINE PROGRESS TABLE) -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="ref-glass-card" id="card-hutang-vendor">
+                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+                        <div>
+                            <h4 class="ref-card-title" id="pembelian-chart-title">Pembelian Belum Dibayar per Vendor</h4>
+                            <p class="ref-card-subtitle" id="pembelian-chart-subtitle">
+                                Sisa tagihan pembelian yang belum lunas, diurutkan dari yang terbesar
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="dash-segmented-group" aria-label="Filter status vendor">
+                                <button type="button" class="dash-btn-filter active" id="btn-filter-belum-lunas" onclick="setVendorStatusFilter('belum_lunas')">Belum Lunas</button>
+                                <button type="button" class="dash-btn-filter" id="btn-filter-lunas" onclick="setVendorStatusFilter('lunas')">Lunas</button>
+                                <button type="button" class="dash-btn-filter" id="btn-filter-semua-status" onclick="setVendorStatusFilter('all')">Semua</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="ref-clean-table align-middle mb-0" id="tableDaftarVendor">
+                            <thead>
+                                <tr>
+                                    <th style="width: 24%;">VENDOR</th>
+                                    <th style="width: 44%;">PROPORSI SISA HUTANG</th>
+                                    <th class="text-end" style="width: 16%;">TOTAL BELI</th>
+                                    <th class="text-end" style="width: 16%;">SISA HUTANG</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vendor-tagihan-tbody">
+                                <!-- Dynamic rows injected by renderVendorTable() -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@endsection
 
 @section('plugins')
     <!-- apexcharts -->
     <script src="{{asset('libs/apexcharts/apexcharts.min.js')}}"></script>
 
+    <!-- Dashboard Data Injection (Isolated to prevent any script breakage) -->
+    <script id="dashboard-data-init">
+        window.hourArrayJS = {!! json_encode($hourArray ?? []) !!};
+        window.dateArrayJS = {!! json_encode($dateArray ?? []) !!};
+        window.dateArrayLastYearJS = {!! json_encode($dateArrayLastYear ?? []) !!};
+        window.weekArrayJS = {!! json_encode($weekArray ?? []) !!};
+        window.monthArrayJS = {!! json_encode($monthArray ?? []) !!};
+        window.monthArrayLastYearJS = {!! json_encode($monthArrayLastYear ?? []) !!};
+        window.totalJamArrayJS = {!! json_encode($totalJamArray ?? []) !!};
+        window.totalHarianArrayJS = {!! json_encode($totalHarianArray ?? []) !!};
+        window.totalHarianLastYearArrayJS = {!! json_encode($totalHarianArrayLastYear ?? []) !!};
+        window.totalMingguanArrayJS = {!! json_encode($totalMingguanArray ?? []) !!};
+        window.totalBulananArrayJS = {!! json_encode($totalBulananArray ?? []) !!};
+        window.totalBulananArrayLastYearJS = {!! json_encode($totalBulananArrayLastYear ?? []) !!};
+        window.totalPerHari = {!! json_encode($jumlahPerHari ?? []) !!};
+        window.totalPerMinggu = {!! json_encode($jumlahPerMinggu ?? []) !!};
+        window.totalPerBulan = {!! json_encode($jumlahPerBulan ?? []) !!};
+        window.totalPerTahun = {!! json_encode($jumlahPerTahun ?? []) !!};
 
-    <!-- Dashboard init -->
-    <script>
-        const hourArrayJS = {!! json_encode($hourArray) !!};
-        const dateArrayJS = {!! json_encode($dateArray) !!};
-        const dateArrayLastYearJS = {!! json_encode($dateArrayLastYear) !!};
-        const weekArrayJS = {!! json_encode($weekArray) !!};
-        const monthArrayJS = {!! json_encode($monthArray) !!};
-        const monthArrayLastYearJS = {!! json_encode($monthArrayLastYear) !!};
-        const totalJamArrayJS = {!! json_encode($totalJamArray) !!};
-        const totalHarianArrayJS = {!! json_encode($totalHarianArray) !!};
-        const totalHarianLastYearArrayJS = {!! json_encode($totalHarianArrayLastYear) !!};
-        const totalMingguanArrayJS = {!! json_encode($totalMingguanArray) !!};
-        const totalBulananArrayJS = {!! json_encode($totalBulananArray) !!};
-        const totalBulananArrayLastYearJS = {!! json_encode($totalBulananArrayLastYear) !!};
-        const totalPerHari = {!! json_encode($jumlahPerHari) !!};
-        const totalPerMinggu = {!! json_encode($jumlahPerMinggu) !!};
-        const totalPerBulan = {!! json_encode($jumlahPerBulan) !!};
-        const totalPerTahun = {!! json_encode($jumlahPerTahun) !!};
         // Week
-        const datasWeekJS = {!! json_encode($datasInWeek) !!};
-        const percentInWeekJS = {!! json_encode($percentageInWeek) !!};
-        const percentNotPaidWeekJS = {!! json_encode($percentageNotPaidWeek) !!};
-        const percentCanceledWeekJS = {!! json_encode($percentageCanceledWeek) !!};
+        window.datasWeekJS = {!! json_encode($datasInWeek ?? []) !!};
+        window.percentInWeekJS = {!! json_encode($percentageInWeek ?? []) !!};
+        window.percentNotPaidWeekJS = {!! json_encode($percentageNotPaidWeek ?? []) !!};
+        window.percentCanceledWeekJS = {!! json_encode($percentageCanceledWeek ?? []) !!};
+
         // Month
-        const datasMonthJS = {!! json_encode($datasInMonth) !!};
-        const percentInMonthJS = {!! json_encode($percentageInMonth) !!};
-        const percentNotPaidMonthJS = {!! json_encode($percentageNotPaidMonth) !!};
-        const percentCanceledMonthJS = {!! json_encode($percentageCanceledMonth) !!};
+        window.datasMonthJS = {!! json_encode($datasInMonth ?? []) !!};
+        window.percentInMonthJS = {!! json_encode($percentageInMonth ?? []) !!};
+        window.percentNotPaidMonthJS = {!! json_encode($percentageNotPaidMonth ?? []) !!};
+        window.percentCanceledMonthJS = {!! json_encode($percentageCanceledMonth ?? []) !!};
+
         // Year
-        const datasYearJS = {!! json_encode($datasInYear) !!};
-        const percentInYearJS = {!! json_encode($percentageInYear) !!};
-        const percentNotPaidYearJS = {!! json_encode($percentageNotPaidYear) !!};
-        const percentCanceledYearJS = {!! json_encode($percentageCanceledYear) !!};
+        window.datasYearJS = {!! json_encode($datasInYear ?? []) !!};
+        window.percentInYearJS = {!! json_encode($percentageInYear ?? []) !!};
+        window.percentNotPaidYearJS = {!! json_encode($percentageNotPaidYear ?? []) !!};
+        window.percentCanceledYearJS = {!! json_encode($percentageCanceledYear ?? []) !!};
 
-// ✅ TAMBAHKAN BAGIAN INI (Last Year)
-        const datasLastYearJS = {!! json_encode($datasInLastYear) !!};
-        const percentInLastYearJS = {!! json_encode($percentageInLastYear) !!};
-        const percentNotPaidLastYearJS = {!! json_encode($percentageNotPaidLastYear) !!};
-        const percentCanceledLastYearJS = {!! json_encode($percentageCanceledLastYear) !!};
-        //PO
+        // Last Year
+        window.datasLastYearJS = {!! json_encode($datasInLastYear ?? []) !!};
+        window.percentInLastYearJS = {!! json_encode($percentageInLastYear ?? []) !!};
+        window.percentNotPaidLastYearJS = {!! json_encode($percentageNotPaidLastYear ?? []) !!};
+        window.percentCanceledLastYearJS = {!! json_encode($percentageCanceledLastYear ?? []) !!};
 
-        const hourArrayJSPO = {!! json_encode($hourArrayPO) !!};
-        const dateArrayJSPO = {!! json_encode($dateArrayPO) !!};
-        const weekArrayJSPO = {!! json_encode($weekArrayPO) !!};
-        const monthArrayJSPO = {!! json_encode($monthArrayPO) !!};
-        const totalJamArrayJSPO = {!! json_encode($totalJamArrayPO) !!};
-        const totalHarianArrayJSPO = {!! json_encode($totalHarianArrayPO) !!};
-        const totalMingguanArrayJSPO = {!! json_encode($totalMingguanArrayPO) !!};
-        const totalBulananArrayJSPO = {!! json_encode($totalBulananArrayPO) !!};
-        const totalPerHariPO = {!! json_encode($jumlahPerHariPO) !!};
-        const totalPerMingguPO = {!! json_encode($jumlahPerMingguPO) !!};
-        const totalPerBulanPO = {!! json_encode($jumlahPerBulanPO) !!};
-        const totalPerTahunPO = {!! json_encode($jumlahPerTahunPO) !!};
-       
-        const lunasTodayPO = {!! json_encode($jumlahPOLunasToday) !!};
-        const blmLunasTodayPO = {!! json_encode($jumlahPOBlmLunasToday) !!};
+        // PO
+        window.hourArrayJSPO = {!! json_encode($hourArrayPO ?? []) !!};
+        window.dateArrayJSPO = {!! json_encode($dateArrayPO ?? []) !!};
+        window.weekArrayJSPO = {!! json_encode($weekArrayPO ?? []) !!};
+        window.monthArrayJSPO = {!! json_encode($monthArrayPO ?? []) !!};
+        window.totalJamArrayJSPO = {!! json_encode($totalJamArrayPO ?? []) !!};
+        window.totalHarianArrayJSPO = {!! json_encode($totalHarianArrayPO ?? []) !!};
+        window.totalMingguanArrayJSPO = {!! json_encode($totalMingguanArrayPO ?? []) !!};
+        window.totalBulananArrayJSPO = {!! json_encode($totalBulananArrayPO ?? []) !!};
+        window.totalPerHariPO = {!! json_encode($jumlahPerHariPO ?? []) !!};
+        window.totalPerMingguPO = {!! json_encode($jumlahPerMingguPO ?? []) !!};
+        window.totalPerBulanPO = {!! json_encode($jumlahPerBulanPO ?? []) !!};
+        window.totalPerTahunPO = {!! json_encode($jumlahPerTahunPO ?? []) !!};
 
-        const lunasWeekPO = {!! json_encode($jumlahPOLunasWeek) !!};
-        const blmLunasWeekPO = {!! json_encode($jumlahPOBlmLunasWeek) !!};
+        window.lunasTodayPO = {!! json_encode($jumlahPOLunasToday ?? 0) !!};
+        window.blmLunasTodayPO = {!! json_encode($jumlahPOBlmLunasToday ?? 0) !!};
+        window.lunasWeekPO = {!! json_encode($jumlahPOLunasWeek ?? 0) !!};
+        window.blmLunasWeekPO = {!! json_encode($jumlahPOBlmLunasWeek ?? 0) !!};
+        window.lunasMonthPO = {!! json_encode($jumlahPOLunasMonth ?? 0) !!};
+        window.blmLunasMonthPO = {!! json_encode($jumlahPOBlmLunasMonth ?? 0) !!};
+        window.lunasYearPO = {!! json_encode($jumlahPOLunasYear ?? 0) !!};
+        window.blmLunasYearPO = {!! json_encode($jumlahPOBlmLunasYear ?? 0) !!};
 
-        const lunasMonthPO = {!! json_encode($jumlahPOLunasMonth) !!};
-        const blmLunasMonthPO = {!! json_encode($jumlahPOBlmLunasMonth) !!};
+        window.countLunasYearJS = {!! json_encode($countLunasYear ?? 0) !!};
+        window.countBlmLunasYearJS = {!! json_encode($countBlmLunasYear ?? 0) !!};
+        window.countLunasMonthJS = {!! json_encode($countLunasMonth ?? 0) !!};
+        window.countBlmLunasMonthJS = {!! json_encode($countBlmLunasMonth ?? 0) !!};
+        window.countLunasWeekJS = {!! json_encode($countLunasWeek ?? 0) !!};
+        window.countBlmLunasWeekJS = {!! json_encode($countBlmLunasWeek ?? 0) !!};
+        window.countLunasLastYearJS = {!! json_encode($countLunasLastYear ?? 0) !!};
+        window.countBlmLunasLastYearJS = {!! json_encode($countBlmLunasLastYear ?? 0) !!};
+        window.countLunasTodayJS = {!! json_encode($countLunasToday ?? 0) !!};
+        window.countBlmLunasTodayJS = {!! json_encode($countBlmLunasToday ?? 0) !!};
 
-        const lunasYearPO = {!! json_encode($jumlahPOLunasYear) !!};
-        const blmLunasYearPO = {!! json_encode($jumlahPOBlmLunasYear) !!};
-        
-        const namaVendor = {!! json_encode($datavendor) !!};
-        const totalSisa = {!! json_encode($datasisa) !!};
-        const allVendorData = {!! json_encode($vendorList) !!};
-        const dataPembelianInvoiceJS = {!! json_encode($dataPembelianInvoice ?? []) !!};
-        const daftarTagihanVendorJS = {!! json_encode($daftarTagihanVendor ?? []) !!};
+        window.namaVendor = {!! json_encode($datavendor ?? []) !!};
+        window.totalSisa = {!! json_encode($datasisa ?? []) !!};
+        window.allVendorData = {!! json_encode($vendorList ?? []) !!};
+        window.dataPembelianInvoiceJS = {!! json_encode($dataPembelianInvoice ?? []) !!};
+        window.daftarTagihanVendorJS = {!! json_encode($daftarTagihanVendor ?? []) !!};
 
-        let pembelianInvoiceChart = null;
-        let singleStatusChart = null;
-        let singleJenisChart = null;
-        let selectedVendorFilter = 'all';
-        let vendorStatusFilter = 'belum_lunas';
-        let pembelianGroupBy = 'vendor';
+        // Aliases for global scope
+        var hourArrayJS = window.hourArrayJS;
+        var dateArrayJS = window.dateArrayJS;
+        var dateArrayLastYearJS = window.dateArrayLastYearJS;
+        var weekArrayJS = window.weekArrayJS;
+        var monthArrayJS = window.monthArrayJS;
+        var monthArrayLastYearJS = window.monthArrayLastYearJS;
+        var totalJamArrayJS = window.totalJamArrayJS;
+        var totalHarianArrayJS = window.totalHarianArrayJS;
+        var totalHarianLastYearArrayJS = window.totalHarianLastYearArrayJS;
+        var totalMingguanArrayJS = window.totalMingguanArrayJS;
+        var totalBulananArrayJS = window.totalBulananArrayJS;
+        var totalBulananArrayLastYearJS = window.totalBulananArrayLastYearJS;
+        var totalPerHari = window.totalPerHari;
+        var totalPerMinggu = window.totalPerMinggu;
+        var totalPerBulan = window.totalPerBulan;
+        var totalPerTahun = window.totalPerTahun;
+        var datasWeekJS = window.datasWeekJS;
+        var percentInWeekJS = window.percentInWeekJS;
+        var percentNotPaidWeekJS = window.percentNotPaidWeekJS;
+        var percentCanceledWeekJS = window.percentCanceledWeekJS;
+        var datasMonthJS = window.datasMonthJS;
+        var percentInMonthJS = window.percentInMonthJS;
+        var percentNotPaidMonthJS = window.percentNotPaidMonthJS;
+        var percentCanceledMonthJS = window.percentCanceledMonthJS;
+        var datasYearJS = window.datasYearJS;
+        var percentInYearJS = window.percentInYearJS;
+        var percentNotPaidYearJS = window.percentNotPaidYearJS;
+        var percentCanceledYearJS = window.percentCanceledYearJS;
+        var datasLastYearJS = window.datasLastYearJS;
+        var percentInLastYearJS = window.percentInLastYearJS;
+        var percentNotPaidLastYearJS = window.percentNotPaidLastYearJS;
+        var percentCanceledLastYearJS = window.percentCanceledLastYearJS;
+        var hourArrayJSPO = window.hourArrayJSPO;
+        var dateArrayJSPO = window.dateArrayJSPO;
+        var weekArrayJSPO = window.weekArrayJSPO;
+        var monthArrayJSPO = window.monthArrayJSPO;
+        var totalJamArrayJSPO = window.totalJamArrayJSPO;
+        var totalHarianArrayJSPO = window.totalHarianArrayJSPO;
+        var totalMingguanArrayJSPO = window.totalMingguanArrayJSPO;
+        var totalBulananArrayJSPO = window.totalBulananArrayJSPO;
+        var totalPerHariPO = window.totalPerHariPO;
+        var totalPerMingguPO = window.totalPerMingguPO;
+        var totalPerBulanPO = window.totalPerBulanPO;
+        var totalPerTahunPO = window.totalPerTahunPO;
+        var lunasTodayPO = window.lunasTodayPO;
+        var blmLunasTodayPO = window.blmLunasTodayPO;
+        var lunasWeekPO = window.lunasWeekPO;
+        var blmLunasWeekPO = window.blmLunasWeekPO;
+        var lunasMonthPO = window.lunasMonthPO;
+        var blmLunasMonthPO = window.blmLunasMonthPO;
+        var lunasYearPO = window.lunasYearPO;
+        var blmLunasYearPO = window.blmLunasYearPO;
+        var countLunasYearJS = window.countLunasYearJS;
+        var countBlmLunasYearJS = window.countBlmLunasYearJS;
+        var countLunasMonthJS = window.countLunasMonthJS;
+        var countBlmLunasMonthJS = window.countBlmLunasMonthJS;
+        var countLunasWeekJS = window.countLunasWeekJS;
+        var countBlmLunasWeekJS = window.countBlmLunasWeekJS;
+        var countLunasLastYearJS = window.countLunasLastYearJS;
+        var countBlmLunasLastYearJS = window.countBlmLunasLastYearJS;
+        var countLunasTodayJS = window.countLunasTodayJS;
+        var countBlmLunasTodayJS = window.countBlmLunasTodayJS;
+        var namaVendor = window.namaVendor;
+        var totalSisa = window.totalSisa;
+        var allVendorData = window.allVendorData;
+        var dataPembelianInvoiceJS = window.dataPembelianInvoiceJS;
+        var daftarTagihanVendorJS = window.daftarTagihanVendorJS;
+    </script>
 
-        function destroyAllPembelianCharts() {
-            if (pembelianInvoiceChart) {
-                pembelianInvoiceChart.destroy();
-                pembelianInvoiceChart = null;
-            }
-            if (singleStatusChart) {
-                singleStatusChart.destroy();
-                singleStatusChart = null;
-            }
-            if (singleJenisChart) {
-                singleJenisChart.destroy();
-                singleJenisChart = null;
-            }
-        }
-
-        function setPembelianGroupBy(mode) {
-            pembelianGroupBy = mode;
-            const titleEl = document.getElementById('pembelian-chart-title');
-            const subEl = document.getElementById('pembelian-chart-subtitle');
-            if (titleEl) {
-                titleEl.textContent = mode === 'vendor' 
-                    ? 'Grafik Pembelian belum Dibayar per Vendor'
-                    : 'Grafik Pembelian berdasarkan Jenis Invoice';
-            }
-            if (subEl) {
-                subEl.textContent = mode === 'vendor'
-                    ? 'Ringkasan sisa tagihan pembelian belum dibayar per nama vendor.'
-                    : 'Ringkasan transaksi pembelian belum dibayar ke vendor.';
-            }
-            renderPembelianInvoiceChart();
-        }
-
-        function resetToAllVendors() {
-            if (pembelianGroupBy !== 'vendor') {
-                pembelianGroupBy = 'vendor';
-            }
-            selectedVendorFilter = 'all';
-            const titleEl = document.getElementById('pembelian-chart-title');
-            const subEl = document.getElementById('pembelian-chart-subtitle');
-            if (titleEl) {
-                titleEl.textContent = 'Grafik Pembelian belum Dibayar per Vendor';
-            }
-            if (subEl) {
-                subEl.textContent = 'Ringkasan sisa tagihan pembelian belum dibayar per nama vendor.';
-            }
-            renderPembelianInvoiceChart();
-            renderVendorTable();
-        }
-
-        function toggleVendorFilter(vendorName) {
-            if (pembelianGroupBy !== 'vendor') {
-                setPembelianGroupBy('vendor');
-            }
-            if (selectedVendorFilter === vendorName) {
-                selectedVendorFilter = 'all';
-            } else {
-                selectedVendorFilter = vendorName;
-            }
-            renderPembelianInvoiceChart();
-            renderVendorTable();
-        }
+    <!-- Dashboard UI & Theme Logic -->
+    <script>
+        var vendorStatusFilter = 'belum_lunas';
 
         function setVendorStatusFilter(status) {
             vendorStatusFilter = status;
-            ['belum-lunas', 'lunas', 'semua-status'].forEach((name) => {
-                const button = document.getElementById(`btn-filter-${name}`);
+            ['belum-lunas', 'lunas', 'semua-status'].forEach(function(name) {
+                var button = document.getElementById('btn-filter-' + name);
                 if (!button) return;
-                const isActive = (name === 'belum-lunas' && status === 'belum_lunas') ||
-                                 (name === 'lunas' && status === 'lunas') ||
-                                 (name === 'semua-status' && status === 'all');
+                var isActive = (name === 'belum-lunas' && status === 'belum_lunas') ||
+                               (name === 'lunas' && status === 'lunas') ||
+                               (name === 'semua-status' && status === 'all');
                 button.classList.toggle('active', isActive);
             });
             renderVendorTable();
         }
 
         function renderVendorTable() {
-            const tbody = document.getElementById('vendor-tagihan-tbody');
+            var tbody = document.getElementById('vendor-tagihan-tbody');
             if (!tbody) return;
 
-            const visibleVendors = (daftarTagihanVendorJS || []).filter((row) => {
-                const isLunas = Number(row.sisa_tagihan) <= 0;
+            var list = window.daftarTagihanVendorJS || [];
+            var filteredVendors = list.filter(function(row) {
+                var isLunas = Number(row.sisa_tagihan) <= 0;
                 return vendorStatusFilter === 'all' || (vendorStatusFilter === 'lunas' ? isLunas : !isLunas);
             });
 
-            if (visibleVendors.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-muted">Tidak ada data tagihan vendor.</td></tr>`;
+            // Urutkan dari sisa tagihan terbesar ke terkecil
+            var sortedVendors = filteredVendors.slice().sort(function(a, b) {
+                var diffSisa = Number(b.sisa_tagihan || 0) - Number(a.sisa_tagihan || 0);
+                if (diffSisa !== 0) return diffSisa;
+                return Number(b.total_pembelian || 0) - Number(a.total_pembelian || 0);
+            });
+
+            if (sortedVendors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-secondary">Tidak ada data tagihan vendor.</td></tr>';
                 return;
             }
 
-            const currentSelected = selectedVendorFilter;
-            const btnSemua = document.getElementById('btnSemuaVendor');
-            if (btnSemua) {
-                btnSemua.classList.toggle('active', currentSelected === 'all');
-                if (currentSelected === 'all') {
-                    btnSemua.innerHTML = '<i class="ri-bar-chart-fill me-1"></i> Semua Vendor';
-                } else {
-                    btnSemua.innerHTML = '<i class="ri-refresh-line me-1"></i> Semua Vendor';
-                }
-            }
+            var maxSisa = Math.max.apply(Math, sortedVendors.map(function(r) { return Number(r.sisa_tagihan) || 0; })) || 1;
 
-            let html = '';
-            visibleVendors.forEach((row) => {
-                const isSelected = (currentSelected === row.nama_vendor);
-                const formattedTotal = Number(row.total_pembelian).toLocaleString('id-ID');
-                const formattedSisa = Number(row.sisa_tagihan).toLocaleString('id-ID');
-                const escapedVendor = row.nama_vendor.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                const isLunas = Number(row.sisa_tagihan) <= 0;
+            var html = '';
+            sortedVendors.forEach(function(row, idx) {
+                var sisaVal = Number(row.sisa_tagihan) || 0;
+                var totalVal = Number(row.total_pembelian) || 0;
+                var formattedTotal = totalVal.toLocaleString('id-ID');
+                var formattedSisa = sisaVal.toLocaleString('id-ID');
+                var isLunas = sisaVal <= 0;
+                var pct = isLunas ? 0 : Math.max(1.8, Math.min(100, (sisaVal / maxSisa) * 100));
+                var delayMs = Math.min(idx * 65, 520);
 
-                html += `
-                    <tr class="${isSelected ? 'table-active' : ''}" onclick="toggleVendorFilter('${escapedVendor}')" title="Klik untuk filter ${row.nama_vendor}" style="cursor: pointer;">
-                        <td>
-                            <p class="text-body fw-semibold align-middle mb-0 text-truncate" style="max-width: 170px;">${row.nama_vendor}</p>
-                        </td>
-                        <td class="text-end text-muted tabular-nums">
-                            Rp ${formattedTotal}
-                        </td>
-                        <td class="text-end">
-                            ${isLunas ? '<span class="dash-badge dash-badge--success">Lunas</span>' : '<span class="dash-badge dash-badge--danger tabular-nums">Rp ' + formattedSisa + '</span>'}
-                        </td>
-                    </tr>
-                `;
+                html += '<tr class="dash-row-anim" style="animation-delay: ' + delayMs + 'ms;">' +
+                    '<td><span class="fw-bold text-white">' + (row.nama_vendor || '-') + '</span></td>' +
+                    '<td><div class="ref-vendor-track"><div class="ref-vendor-fill" data-target-width="' + pct.toFixed(1) + '%" style="width: 0%;"></div></div></td>' +
+                    '<td class="text-end tabular-nums" style="color: #94A3B8;">Rp ' + formattedTotal + '</td>' +
+                    '<td class="text-end">' +
+                    (isLunas
+                        ? '<span class="ref-paid-pill">Lunas</span>'
+                        : '<span class="ref-debt-pill tabular-nums">Rp ' + formattedSisa + '</span>') +
+                    '</td>' +
+                '</tr>';
             });
 
             tbody.innerHTML = html;
+            tbody.querySelectorAll('.ref-vendor-fill').forEach(function(bar, idx) {
+                setTimeout(function() {
+                    bar.style.width = bar.getAttribute('data-target-width') || '0%';
+                }, 120 + Math.min(idx * 65, 520));
+            });
         }
 
-        function renderPembelianInvoiceChart() {
-            renderVendorTable();
-            const filter = 'all';
-            const jenisFilter = 'all';
-            const vendorFilter = selectedVendorFilter;
+        // ==========================================================================
+        // CIRCULAR REVEAL THEME TRANSITION (View Transitions API)
+        // ==========================================================================
+        var isThemeTransitioning = false;
 
-            const singleContainer = document.getElementById('vendor-single-charts-container');
-            const mainChartEl = document.getElementById('chart-pembelian-invoice');
-            const emptyEl = document.getElementById('chart-pembelian-invoice-empty');
-            // MODE 1: Single Vendor (Ketika vendor tertentu dipilih / diklik)
-            if (pembelianGroupBy === 'vendor' && vendorFilter !== 'all') {
-                const selectedVendor = daftarTagihanVendorJS.find(r => r.nama_vendor === vendorFilter);
-                const totalPembelian = selectedVendor ? Number(selectedVendor.total_pembelian) || 0 : 0;
-                const terbayar = selectedVendor ? Number(selectedVendor.terbayar) || 0 : 0;
-                const sisa = selectedVendor ? Number(selectedVendor.sisa_tagihan) || 0 : 0;
+        function setThemeDOM(theme) {
+            var isLight = theme === 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.classList.toggle('theme-light', isLight);
+            document.body.classList.toggle('theme-light', isLight);
+            try {
+                localStorage.setItem('ibekami_dash_theme', theme);
+            } catch (e) {
+                console.warn('localStorage is not available:', e);
+            }
+        }
 
-                const singleValues = [totalPembelian, terbayar, sisa];
-                const hasData = singleValues.some(v => v > 0);
+        function updateButtonUI(theme) {
+            var isLight = theme === 'light';
+            var btnText = document.getElementById('theme-toggle-text');
+            var btnIcon = document.getElementById('theme-toggle-icon');
+            if (btnText) btnText.textContent = isLight ? 'Mode Gelap' : 'Mode Terang';
+            if (btnIcon) btnIcon.className = isLight ? 'ri-moon-line fs-14' : 'ri-sun-line fs-14';
+        }
 
-                destroyAllPembelianCharts();
+        function updateAllChartsTheme(theme) {
+            var isLight = theme === 'light';
+            var labelColor = isLight ? '#64748B' : '#94A3B8';
+            var gridColor = isLight ? '#E2E8F0' : 'rgba(255, 255, 255, 0.05)';
+            var promises = [];
 
-                if (emptyEl) emptyEl.classList.toggle('d-none', hasData);
-                if (mainChartEl) mainChartEl.classList.add('d-none');
+            if (window.chart) {
+                try {
+                    var p1 = window.chart.updateOptions({
+                        xaxis: { labels: { style: { colors: labelColor } } },
+                        yaxis: { labels: { style: { colors: labelColor } } },
+                        grid: { borderColor: gridColor },
+                        tooltip: { theme: isLight ? 'light' : 'dark' }
+                    }, false, false);
+                    if (p1 && typeof p1.then === 'function') promises.push(p1);
+                } catch (e) {}
+            }
 
-                if (!hasData) {
-                    if (singleContainer) singleContainer.classList.add('d-none');
-                    return;
-                }
-
-                if (singleContainer) singleContainer.classList.remove('d-none');
-
-                // 1. Render Grafik 3 Batang: Status Pembayaran (Total Pembelian, Sudah Dibayar, Sisa Hutang)
-                singleStatusChart = new ApexCharts(document.querySelector('#chart-pembelian-single-status'), {
-                    chart: {
-                        type: 'bar',
-                        height: 285,
-                        toolbar: { show: false },
-                        animations: { enabled: true, speed: 300 }
-                    },
-                    plotOptions: {
-                        bar: {
-                            distributed: true,
-                            borderRadius: 4,
-                            borderRadiusApplication: 'end',
-                            columnWidth: '45%',
-                            dataLabels: { position: 'top' }
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        offsetY: -20,
-                        formatter: function (val) {
-                            if (!val || val === 0) return 'Rp 0';
-                            if (val >= 1000000000) return 'Rp ' + (val / 1000000000).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' M';
-                            if (val >= 1000000) return 'Rp ' + (val / 1000000).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' Jt';
-                            if (val >= 1000) return 'Rp ' + (val / 1000).toLocaleString('id-ID', { maximumFractionDigits: 0 }) + ' Rb';
-                            return 'Rp ' + Number(val).toLocaleString('id-ID');
-                        },
-                        style: {
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            colors: ['#F1F5F9']
-                        }
-                    },
-                    series: [{
-                        name: 'Nominal',
-                        data: singleValues
-                    }],
-                    xaxis: {
-                        categories: ['Total Pembelian', 'Sudah Dibayar', 'Sisa Hutang'],
-                        labels: {
-                            rotate: -15,
-                            rotateAlways: false,
-                            style: { colors: '#94A3B8', fontSize: '11px', fontWeight: 500 }
-                        },
-                        axisBorder: { show: false },
-                        axisTicks: { show: false }
-                    },
-                    yaxis: {
-                        labels: {
-                            formatter: function (value) {
-                                if (value >= 1000000000) return 'Rp ' + (value / 1000000000).toFixed(0) + ' M';
-                                if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(0) + ' Jt';
-                                if (value >= 1000) return 'Rp ' + (value / 1000).toFixed(0) + ' Rb';
-                                return 'Rp ' + Number(value).toLocaleString('id-ID');
-                            },
-                            style: { colors: '#94A3B8', fontSize: '10px' }
-                        }
-                    },
-                    grid: {
-                        borderColor: '#1E293B',
-                        strokeDashArray: 3
-                    },
-                    tooltip: {
-                        theme: 'dark',
-                        y: {
-                            formatter: function (value) {
-                                return 'Rp ' + Number(value).toLocaleString('id-ID');
-                            }
-                        }
-                    },
-                    colors: ['#818CF8', '#34D399', '#F87171'],
-                    legend: { show: false }
-                });
-                singleStatusChart.render();
-
-                // 2. Render Grafik Berdasarkan Jenis Invoice Vendor yang Dipilih
-                const vendorRows = dataPembelianInvoiceJS.filter(row => {
-                    if (row.vendor !== vendorFilter) return false;
-                    if (jenisFilter !== 'all' && row.label !== jenisFilter) return false;
-                    if (filter === 'tanpa_pajak') return row.total_ppn === 0 && row.total_pph === 0;
-                    if (filter === 'ppn_pph') return row.total_ppn > 0 && row.total_pph > 0;
-                    if (filter === 'ppn') return row.total_ppn > 0 && row.total_pph === 0;
-                    return true;
-                });
-
-                const jenisMap = {};
-                vendorRows.forEach(row => {
-                    const lbl = row.label || 'Tanpa Jenis';
-                    if (!jenisMap[lbl]) {
-                        jenisMap[lbl] = {
-                            label: lbl,
-                            total_nominal: 0,
-                            total_pembelian: 0,
-                            terbayar: 0,
-                            total_transaksi: 0
-                        };
-                    }
-                    jenisMap[lbl].total_nominal += (Number(row.total_nominal) || 0);
-                    jenisMap[lbl].total_pembelian += (Number(row.total_pembelian) || 0);
-                    jenisMap[lbl].terbayar += (Number(row.terbayar) || 0);
-                    jenisMap[lbl].total_transaksi += (Number(row.total_transaksi) || 0);
-                });
-
-                const sortedJenis = Object.values(jenisMap)
-                    .filter(j => j.total_nominal > 0 || j.total_pembelian > 0)
-                    .sort((a, b) => b.total_nominal - a.total_nominal);
-
-                const badgeJenisCount = document.getElementById('badge-vendor-jenis-count');
-                if (badgeJenisCount) {
-                    badgeJenisCount.textContent = `${sortedJenis.length} Jenis`;
-                }
-
-                const singleJenisEl = document.getElementById('chart-pembelian-single-jenis');
-                const singleJenisEmptyEl = document.getElementById('chart-pembelian-single-jenis-empty');
-
-                if (sortedJenis.length === 0) {
-                    if (singleJenisEl) singleJenisEl.classList.add('d-none');
-                    if (singleJenisEmptyEl) singleJenisEmptyEl.classList.remove('d-none');
-                } else {
-                    if (singleJenisEl) singleJenisEl.classList.remove('d-none');
-                    if (singleJenisEmptyEl) singleJenisEmptyEl.classList.add('d-none');
-
-                    const jenisLabels = sortedJenis.map(j => j.label);
-                    const jenisValues = sortedJenis.map(j => j.total_nominal);
-                    const jenisColors = ['#818CF8', '#38BDF8', '#34D399', '#FBBF24', '#F472B6', '#A78BFA'];
-
-                    singleJenisChart = new ApexCharts(document.querySelector('#chart-pembelian-single-jenis'), {
-                        chart: {
-                            type: 'bar',
-                            height: 285,
-                            toolbar: { show: false },
-                            animations: { enabled: true, speed: 300 }
-                        },
+            if (window.chartKategori) {
+                try {
+                    var p2 = window.chartKategori.updateOptions({
+                        legend: { labels: { colors: isLight ? '#334155' : '#CBD5E1' } },
                         plotOptions: {
-                            bar: {
-                                distributed: true,
-                                borderRadius: 4,
-                                borderRadiusApplication: 'end',
-                                columnWidth: jenisLabels.length <= 2 ? '35%' : '45%',
-                                dataLabels: { position: 'top' }
-                            }
-                        },
-                        dataLabels: {
-                            enabled: true,
-                            offsetY: -20,
-                            formatter: function (val) {
-                                if (!val || val === 0) return 'Rp 0';
-                                if (val >= 1000000000) return 'Rp ' + (val / 1000000000).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' M';
-                                if (val >= 1000000) return 'Rp ' + (val / 1000000).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' Jt';
-                                if (val >= 1000) return 'Rp ' + (val / 1000).toLocaleString('id-ID', { maximumFractionDigits: 0 }) + ' Rb';
-                                return 'Rp ' + Number(val).toLocaleString('id-ID');
-                            },
-                            style: { fontSize: '11px', fontWeight: '600', colors: ['#F1F5F9'] }
-                        },
-                        series: [{
-                            name: 'Sisa Belum Dibayar',
-                            data: jenisValues
-                        }],
-                        xaxis: {
-                            categories: jenisLabels,
-                            labels: {
-                                rotate: -15,
-                                rotateAlways: false,
-                                style: { colors: '#94A3B8', fontSize: '11px', fontWeight: 500 }
-                            },
-                            axisBorder: { show: false },
-                            axisTicks: { show: false }
-                        },
-                        yaxis: {
-                            labels: {
-                                formatter: function (value) {
-                                    if (value >= 1000000000) return 'Rp ' + (value / 1000000000).toFixed(0) + ' M';
-                                    if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(0) + ' Jt';
-                                    if (value >= 1000) return 'Rp ' + (value / 1000).toFixed(0) + ' Rb';
-                                    return 'Rp ' + Number(value).toLocaleString('id-ID');
-                                },
-                                style: { colors: '#94A3B8', fontSize: '10px' }
-                            }
-                        },
-                        grid: {
-                            borderColor: '#1E293B',
-                            strokeDashArray: 3
-                        },
-                        tooltip: {
-                            theme: 'dark',
-                            y: {
-                                formatter: function (value) {
-                                    return 'Rp ' + Number(value).toLocaleString('id-ID');
+                            pie: {
+                                donut: {
+                                    labels: {
+                                        value: { color: isLight ? '#0F172A' : '#FFFFFF' },
+                                        name: { color: isLight ? '#64748B' : '#94A3B8' },
+                                        total: { color: isLight ? '#64748B' : '#94A3B8' }
+                                    }
                                 }
                             }
-                        },
-                        colors: jenisColors,
-                        legend: { show: false }
-                    });
-                    singleJenisChart.render();
-                }
+                        }
+                    }, false, false);
+                    if (p2 && typeof p2.then === 'function') promises.push(p2);
+                } catch (e) {}
+            }
+
+            if (window.charts) {
+                try {
+                    var p3 = window.charts.updateOptions({
+                        plotOptions: {
+                            pie: {
+                                donut: {
+                                    labels: {
+                                        value: { color: isLight ? '#0F172A' : '#FFFFFF' },
+                                        name: { color: isLight ? '#64748B' : '#94A3B8' },
+                                        total: { color: isLight ? '#64748B' : '#94A3B8' }
+                                    }
+                                }
+                            }
+                        }
+                    }, false, false);
+                    if (p3 && typeof p3.then === 'function') promises.push(p3);
+                } catch (e) {}
+            }
+
+            if (typeof syncStickyPaymentYAxis === 'function') {
+                syncStickyPaymentYAxis();
+            }
+
+            if (promises.length > 0) {
+                return Promise.all(promises);
+            }
+            return Promise.resolve();
+        }
+
+        function toggleDashboardTheme(event) {
+            if (isThemeTransitioning) return;
+            isThemeTransitioning = true;
+
+            var current = 'dark';
+            try {
+                current = localStorage.getItem('ibekami_dash_theme') || (document.body.classList.contains('theme-light') ? 'light' : 'dark');
+            } catch (e) {
+                current = document.body.classList.contains('theme-light') ? 'light' : 'dark';
+            }
+            var targetTheme = current === 'light' ? 'dark' : 'light';
+
+            var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var supportsViewTransition = typeof document.startViewTransition === 'function';
+
+            if (!supportsViewTransition || prefersReducedMotion) {
+                setThemeDOM(targetTheme);
+                updateAllChartsTheme(targetTheme);
+                updateButtonUI(targetTheme);
+                isThemeTransitioning = false;
                 return;
             }
 
-            // MODE 2: Normal (Semua Vendor atau Berdasarkan Jenis Invoice Global)
-            if (singleContainer) {
-                singleContainer.classList.add('d-none');
+            var btn = document.getElementById('btn-theme-toggle');
+            if (btn) btn.classList.add('theme-switching');
+
+            var x = window.innerWidth / 2;
+            var y = window.innerHeight / 2;
+            if (btn) {
+                var rect = btn.getBoundingClientRect();
+                x = rect.left + rect.width / 2;
+                y = rect.top + rect.height / 2;
             }
+            var endRadius = Math.hypot(
+                Math.max(x, window.innerWidth - x),
+                Math.max(y, window.innerHeight - y)
+            );
 
-            destroyAllPembelianCharts();
-
-            const rows = dataPembelianInvoiceJS.filter(row => {
-                if (jenisFilter !== 'all' && row.label !== jenisFilter) return false;
-                if (vendorFilter !== 'all' && row.vendor !== vendorFilter) return false;
-                if (filter === 'tanpa_pajak') return row.total_ppn === 0 && row.total_pph === 0;
-                if (filter === 'ppn_pph') return row.total_ppn > 0 && row.total_pph > 0;
-                if (filter === 'ppn') return row.total_ppn > 0 && row.total_pph === 0;
-                return true;
-            });
-
-            let visibleLabels = [];
-            let values = [];
-
-            if (pembelianGroupBy === 'vendor') {
-                const vendorTotals = {};
-                rows.forEach(item => {
-                    const v = item.vendor || 'Tanpa Vendor';
-                    vendorTotals[v] = (vendorTotals[v] || 0) + item.total_nominal;
+            try {
+                var transition = document.startViewTransition(function() {
+                    setThemeDOM(targetTheme);
+                    updateAllChartsTheme(targetTheme);
+                    updateButtonUI(targetTheme);
                 });
-                visibleLabels = Object.keys(vendorTotals).sort((a, b) => vendorTotals[b] - vendorTotals[a]);
-                values = visibleLabels.map(v => {
-                    return rows.filter(item => item.vendor === v).reduce((total, item) => total + item.total_nominal, 0);
-                });
-            } else {
-                const labels = ['Barang', 'Jasa', 'Barang dan Jasa', 'Jasa Iklan', 'Tanpa Pajak'];
-                visibleLabels = jenisFilter === 'all' ? labels : [jenisFilter];
-                values = visibleLabels.map(label => {
-                    return rows.filter(item => item.label === label).reduce((total, item) => total + item.total_nominal, 0);
-                });
-            }
 
-            const hasData = rows.length > 0 && values.some(v => v > 0);
-            if (emptyEl) emptyEl.classList.toggle('d-none', hasData);
-            if (mainChartEl) mainChartEl.classList.toggle('d-none', !hasData);
+                if (transition && typeof transition.ready !== 'undefined') {
+                    Promise.resolve(transition.ready).then(function() {
+                        var anim = document.documentElement.animate(
+                            {
+                                clipPath: [
+                                    'circle(0px at ' + x + 'px ' + y + 'px)',
+                                    'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
+                                ]
+                            },
+                            {
+                                duration: 650,
+                                easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                                pseudoElement: '::view-transition-new(root)'
+                            }
+                        );
 
-            if (!hasData) return;
-
-            pembelianInvoiceChart = new ApexCharts(document.querySelector('#chart-pembelian-invoice'), {
-                chart: {
-                    type: 'bar',
-                    height: 380,
-                    toolbar: { show: false },
-                    animations: { enabled: true, speed: 350 }
-                },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        columnWidth: visibleLabels.length > 5 ? '48%' : (visibleLabels.length <= 2 ? '28%' : '38%'),
-                        dataLabels: { position: 'top' }
-                    }
-                },
-                dataLabels: {
-                    enabled: true,
-                    offsetY: -22,
-                    formatter: function (val) {
-                        if (!val || val === 0) return 'Rp 0';
-                        if (val >= 1000000000) return 'Rp ' + (val / 1000000000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + ' M';
-                        if (val >= 1000000) return 'Rp ' + (val / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + ' Jt';
-                        if (val >= 1000) return 'Rp ' + (val / 1000).toLocaleString('id-ID', { maximumFractionDigits: 0 }) + ' Rb';
-                        return 'Rp ' + Number(val).toLocaleString('id-ID');
-                    },
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        colors: ['#F1F5F9']
-                    }
-                },
-                series: [{ name: 'Sisa Belum Dibayar', data: values }],
-                xaxis: {
-                    categories: visibleLabels,
-                    labels: {
-                        rotate: pembelianGroupBy === 'vendor' ? -35 : 0,
-                        rotateAlways: pembelianGroupBy === 'vendor',
-                        trim: false,
-                        maxHeight: 110,
-                        style: { colors: '#94A3B8', fontSize: '11px' }
-                    },
-                    axisBorder: { show: false },
-                    axisTicks: { show: false }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function (value) {
-                            if (value >= 1000000000) return 'Rp ' + (value / 1000000000).toFixed(1) + ' M';
-                            if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(0) + ' Jt';
-                            return 'Rp ' + Number(value).toLocaleString('id-ID');
-                        },
-                        style: { colors: '#94A3B8', fontSize: '11px' }
-                    }
-                },
-                grid: {
-                    borderColor: '#1E293B',
-                    strokeDashArray: 3
-                },
-                colors: pembelianGroupBy === 'vendor' ? ['#818CF8'] : ['#818CF8', '#38BDF8', '#34D399', '#FBBF24', '#F472B6'],
-                tooltip: {
-                    theme: 'dark',
-                    y: {
-                        formatter: function (value) {
-                            return 'Rp ' + Number(value).toLocaleString('id-ID');
+                        if (anim && typeof anim.finished !== 'undefined') {
+                            Promise.resolve(anim.finished).then(function() {
+                                if (btn) setTimeout(function() { btn.classList.remove('theme-switching'); }, 80);
+                                isThemeTransitioning = false;
+                            }).catch(function() {
+                                if (btn) btn.classList.remove('theme-switching');
+                                isThemeTransitioning = false;
+                            });
+                        } else {
+                            setTimeout(function() {
+                                if (btn) btn.classList.remove('theme-switching');
+                                isThemeTransitioning = false;
+                            }, 650);
                         }
-                    }
+                    }).catch(function() {
+                        if (btn) btn.classList.remove('theme-switching');
+                        isThemeTransitioning = false;
+                    });
+                } else {
+                    if (btn) btn.classList.remove('theme-switching');
+                    isThemeTransitioning = false;
                 }
-            });
-            pembelianInvoiceChart.render();
+            } catch (err) {
+                console.warn('View transition fallback:', err);
+                setThemeDOM(targetTheme);
+                updateAllChartsTheme(targetTheme);
+                updateButtonUI(targetTheme);
+                if (btn) btn.classList.remove('theme-switching');
+                isThemeTransitioning = false;
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPembelianInvoiceChart();
+        // Restore saved theme on page load (Default to light)
+        document.addEventListener('DOMContentLoaded', function() {
+            var saved = 'light';
+            try {
+                saved = localStorage.getItem('ibekami_dash_theme') || 'light';
+            } catch (e) {
+                saved = 'light';
+            }
+            setThemeDOM(saved);
+            updateButtonUI(saved);
+            updateAllChartsTheme(saved);
             renderVendorTable();
         });
     </script>
     <script src="{{asset('js/halaman/dashboard.js')}}"></script>
     <script src="{{asset('js/halaman/dashboard-barang.js')}}"></script>
-
-
 @endsection
-
-
-{{-- </body> --}}
-
-{{-- </html> --}}

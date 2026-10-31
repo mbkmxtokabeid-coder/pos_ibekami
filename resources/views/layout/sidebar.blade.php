@@ -312,14 +312,14 @@
             </button>
             <div class="dropdown-menu dropdown-menu-dark shadcn-dropdown-menu">
                 <div class="shadcn-menu-inner">
-                    <div class="px-3 py-2.5 border-bottom border-secondary border-opacity-25" style="border-bottom-color: rgba(255, 255, 255, 0.1) !important;">
+                    <div class="px-3 py-2.5 border-bottom border-secondary border-opacity-25 user-dropdown-header">
                         <div class="d-flex align-items-center gap-2">
                             <div class="user-avatar-badge size-sm">
                                 <span class="avatar-fallback">{{ strtoupper(substr(Auth::user()->nama ?? 'U', 0, 1)) }}</span>
                             </div>
                             <div class="text-start overflow-hidden">
-                                <span class="fw-bold fs-13 d-block text-truncate" style="color: #FFFFFF !important; letter-spacing: -0.01em;">{{ Auth::user()->nama ?? 'User' }}</span>
-                                <span class="fs-11 d-block text-truncate" style="color: #94A3B8 !important;">{{ Auth::user()->role ?? 'Staff' }}</span>
+                                <span class="fw-bold fs-13 d-block text-truncate user-dropdown-header-name" style="letter-spacing: -0.01em;">{{ Auth::user()->nama ?? 'User' }}</span>
+                                <span class="fs-11 d-block text-truncate user-dropdown-header-role">{{ Auth::user()->role ?? 'Staff' }}</span>
                             </div>
                         </div>
                     </div>

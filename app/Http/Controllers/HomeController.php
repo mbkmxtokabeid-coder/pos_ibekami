@@ -105,6 +105,9 @@ class HomeController extends Controller
             $startOfYear = Carbon::now()->startOfYear()->format('Y-m-d 00:00:00');
             $endOfYear = Carbon::now()->endOfYear()->format('Y-m-d 23:59:59');
 
+            $startOfLastYear = Carbon::now()->subYear()->startOfYear()->format('Y-m-d 00:00:00');
+            $endOfLastYear = Carbon::now()->subYear()->endOfYear()->format('Y-m-d 23:59:59');
+
             $scalars = DB::table('penjualan')
                 ->whereNull('deleted_at')
                 ->selectRaw("
@@ -112,6 +115,17 @@ class HomeController extends Controller
                     COALESCE(SUM(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPerTahun,
                     COALESCE(SUM(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as s_jumlahBBPerTahun,
                     COALESCE(SUM(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' AND status = 'Belum Lunas' THEN sisa_pembayaran ELSE 0 END), 0) as s_jumlahBBPerBulan,
+
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' AND status = 'Lunas' THEN 1 END) as s_countLunasYear,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfYear}' AND '{$endOfYear}' AND status = 'Belum Lunas' THEN 1 END) as s_countBlmLunasYear,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' AND status = 'Lunas' THEN 1 END) as s_countLunasMonth,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfMonth}' AND '{$endOfMonth}' AND status = 'Belum Lunas' THEN 1 END) as s_countBlmLunasMonth,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfWeek}' AND '{$endOfWeek}' AND status = 'Lunas' THEN 1 END) as s_countLunasWeek,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfWeek}' AND '{$endOfWeek}' AND status = 'Belum Lunas' THEN 1 END) as s_countBlmLunasWeek,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfLastYear}' AND '{$endOfLastYear}' AND status = 'Lunas' THEN 1 END) as s_countLunasLastYear,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan BETWEEN '{$startOfLastYear}' AND '{$endOfLastYear}' AND status = 'Belum Lunas' THEN 1 END) as s_countBlmLunasLastYear,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan >= '{$today} 00:00:00' AND tgl_penjualan <= '{$today} 23:59:59' AND status = 'Lunas' THEN 1 END) as s_countLunasToday,
+                    COUNT(CASE WHEN jenis_pembayaran <> 'PO' AND tgl_penjualan >= '{$today} 00:00:00' AND tgl_penjualan <= '{$today} 23:59:59' AND status = 'Belum Lunas' THEN 1 END) as s_countBlmLunasToday,
 
                     COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPO,
                     COALESCE(SUM(CASE WHEN jenis_pembayaran = 'PO' AND status = 'Lunas' THEN total_pembayaran ELSE 0 END), 0) as s_jumlahPOLunas,
@@ -142,6 +156,17 @@ class HomeController extends Controller
 
             $jumlahBBPerTahun = number_format($scalars->s_jumlahBBPerTahun ?? 0, 0, ',', '.');
             $jumlahBBPerBulan = number_format($scalars->s_jumlahBBPerBulan ?? 0, 0, ',', '.');
+
+            $countLunasYear = (int) ($scalars->s_countLunasYear ?? 0);
+            $countBlmLunasYear = (int) ($scalars->s_countBlmLunasYear ?? 0);
+            $countLunasMonth = (int) ($scalars->s_countLunasMonth ?? 0);
+            $countBlmLunasMonth = (int) ($scalars->s_countBlmLunasMonth ?? 0);
+            $countLunasWeek = (int) ($scalars->s_countLunasWeek ?? 0);
+            $countBlmLunasWeek = (int) ($scalars->s_countBlmLunasWeek ?? 0);
+            $countLunasLastYear = (int) ($scalars->s_countLunasLastYear ?? 0);
+            $countBlmLunasLastYear = (int) ($scalars->s_countBlmLunasLastYear ?? 0);
+            $countLunasToday = (int) ($scalars->s_countLunasToday ?? 0);
+            $countBlmLunasToday = (int) ($scalars->s_countBlmLunasToday ?? 0);
 
             // Data PO
             $dataPerjamPO = $this->POController->getPenjualanPO();
@@ -294,6 +319,9 @@ class HomeController extends Controller
                 'invoicePO','jumlahPO', 'jumlahPOLunas', 'jumlahPOBlmLunas', 
                 'jumlahPOLunasToday', 'jumlahPOBlmLunasToday', 'jumlahPOLunasWeek', 'jumlahPOBlmLunasWeek', 
                 'jumlahPOLunasMonth', 'jumlahPOBlmLunasMonth', 'jumlahPOLunasYear', 'jumlahPOBlmLunasYear',
+                'countLunasYear', 'countBlmLunasYear', 'countLunasMonth', 'countBlmLunasMonth',
+                'countLunasWeek', 'countBlmLunasWeek', 'countLunasLastYear', 'countBlmLunasLastYear',
+                'countLunasToday', 'countBlmLunasToday',
                 'datavendor', 'datasisa', 'vendorList', 'dataPembelianInvoice', 'daftarTagihanVendor'
             );
         });
@@ -1037,16 +1065,24 @@ class HomeController extends Controller
                     [
                         'name' => 'Pendapatan',
                         'data' => $seriesData,
-                        'color' => '#2DD4BF'
+                        'color' => '#34D399'
                     ]
                 ]
             ];
 
             $incomeTextHtml = '
-                <div class="d-flex flex-column gap-1.5">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <span class="text-muted fs-12">Total Transaksi Hari Ini</span>
-                        <span class="fw-bold text-light fs-13 tabular-nums">Rp ' . number_format($totalFaktual, 0, ',', '.') . '</span>
+                <div class="ref-summary-grid">
+                    <div class="ref-summary-box">
+                        <span class="ref-summary-label">Total Transaksi Hari Ini</span>
+                        <span class="ref-summary-val">Rp ' . number_format($totalFaktual, 0, ',', '.') . '</span>
+                    </div>
+                    <div class="ref-summary-box">
+                        <span class="ref-summary-label">Estimasi Beban</span>
+                        <span class="ref-summary-val text-coral">Rp 0</span>
+                    </div>
+                    <div class="ref-summary-box ref-summary-box--net">
+                        <span class="ref-summary-label">Pendapatan Bersih</span>
+                        <span class="ref-summary-val">Rp ' . number_format($totalFaktual, 0, ',', '.') . '</span>
                     </div>
                 </div>';
 
@@ -1105,18 +1141,18 @@ class HomeController extends Controller
 
             $periodName = $periodLabel ?: 'Periode Ini';
             $incomeTextHtml = '
-                <div class="d-flex flex-column gap-1.5">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <span class="text-muted fs-12">Total Transaksi Faktual Lunas</span>
-                        <span class="fw-bold text-light fs-13 tabular-nums">Rp ' . number_format($totalTransaksiAsli, 0, ',', '.') . '</span>
+                <div class="ref-summary-grid">
+                    <div class="ref-summary-box">
+                        <span class="ref-summary-label">Total Pendapatan</span>
+                        <span class="ref-summary-val">Rp ' . number_format($totalTransaksiAsli, 0, ',', '.') . '</span>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between">
-                        <span class="text-muted fs-12">Total Beban Operasional</span>
-                        <span class="fw-bold text-light fs-13 tabular-nums">Rp ' . number_format(abs($totalNegatif), 0, ',', '.') . '</span>
+                    <div class="ref-summary-box">
+                        <span class="ref-summary-label">Total Beban</span>
+                        <span class="ref-summary-val text-coral">Rp ' . number_format(abs($totalNegatif), 0, ',', '.') . '</span>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between pt-1" style="border-top: 1px solid rgba(255,255,255,0.06);">
-                        <span class="fs-12" style="color: #818CF8;">Pendapatan Bersih</span>
-                        <span class="fw-bold fs-13 tabular-nums" style="color: #818CF8;">Rp ' . number_format($netIncome, 0, ',', '.') . '</span>
+                    <div class="ref-summary-box ref-summary-box--net">
+                        <span class="ref-summary-label">Pendapatan Bersih</span>
+                        <span class="ref-summary-val">Rp ' . number_format($netIncome, 0, ',', '.') . '</span>
                     </div>
                 </div>';
 
@@ -1165,29 +1201,29 @@ class HomeController extends Controller
                     [
                         'name' => 'Pendapatan Bersih',
                         'data' => $withFormulaArray,
-                        'color' => '#6366F1'
+                        'color' => '#F59E0B'
                     ],
                     [
                         'name' => 'Pendapatan Asli',
                         'data' => $originalArray,
-                        'color' => '#2DD4BF'
+                        'color' => '#34D399'
                     ]
                 ]
             ];
 
             $incomeTextHtml = '
-                <div class="d-flex flex-column gap-1.5">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <span class="text-muted fs-12">Total Pendapatan (' . $tahun . ')</span>
-                        <span class="fw-bold text-light fs-13 tabular-nums">Rp ' . number_format($totalOriginal, 0, ',', '.') . '</span>
+                <div class="ref-summary-grid">
+                    <div class="ref-summary-box">
+                        <span class="ref-summary-label">Total Pendapatan</span>
+                        <span class="ref-summary-val">Rp ' . number_format($totalOriginal, 0, ',', '.') . '</span>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between">
-                        <span class="text-muted fs-12">Total Beban (' . $tahun . ')</span>
-                        <span class="fw-bold text-light fs-13 tabular-nums">Rp ' . number_format(abs($totalBeban), 0, ',', '.') . '</span>
+                    <div class="ref-summary-box">
+                        <span class="ref-summary-label">Total Beban</span>
+                        <span class="ref-summary-val text-coral">Rp ' . number_format(abs($totalBeban), 0, ',', '.') . '</span>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between pt-1" style="border-top: 1px solid rgba(255,255,255,0.06);">
-                        <span class="fs-12" style="color: #818CF8;">Pendapatan Bersih (' . $tahun . ')</span>
-                        <span class="fw-bold fs-13 tabular-nums" style="color: #818CF8;">Rp ' . number_format($totalWithFormula, 0, ',', '.') . '</span>
+                    <div class="ref-summary-box ref-summary-box--net">
+                        <span class="ref-summary-label">Pendapatan Bersih</span>
+                        <span class="ref-summary-val">Rp ' . number_format($totalWithFormula, 0, ',', '.') . '</span>
                     </div>
                 </div>';
         }

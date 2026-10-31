@@ -68,24 +68,197 @@ function formatCenterDonut(val) {
 }
 window.formatCenterDonut = formatCenterDonut;
 
+// Helper animasi transisi filter & angka bergulir halus (Count-Up)
+function triggerFilterSwap(target) {
+  if (!target) return;
+  const elements = typeof target === 'string'
+    ? document.querySelectorAll(target)
+    : (target instanceof Element ? [target] : Array.from(target));
+  elements.forEach((el, idx) => {
+    if (!el) return;
+    el.classList.remove('dash-filter-swap');
+    void el.offsetWidth;
+    el.style.animationDelay = (idx * 75) + 'ms';
+    el.classList.add('dash-filter-swap');
+  });
+}
+window.triggerFilterSwap = triggerFilterSwap;
+
+function animateDashNumber(elOrId, targetVal, prefix = 'Rp ', suffix = '', duration = 950) {
+  const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+  if (!el) return;
+  const endVal = Number(targetVal) || 0;
+  const prevRaw = el.getAttribute('data-current-val');
+  let startVal = prevRaw !== null ? Number(prevRaw) : 0;
+  if (Math.abs(endVal - startVal) < Math.max(1, Math.abs(endVal) * 0.05)) {
+    startVal = Math.round(endVal * 0.15);
+  }
+  el.setAttribute('data-current-val', String(endVal));
+
+  triggerFilterSwap(el);
+
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const sign = endVal < 0 ? '-' : '';
+    el.textContent = sign + prefix + Math.abs(Math.round(endVal)).toLocaleString('id-ID') + suffix;
+    return;
+  }
+
+  if (el._dashAnimFrame) cancelAnimationFrame(el._dashAnimFrame);
+  const startTime = performance.now();
+  const animDuration = Math.max(duration || 950, 850);
+
+  function step(now) {
+    const progress = Math.min(1, (now - startTime) / animDuration);
+    const eased = 1 - Math.pow(1 - progress, 4);
+    const current = Math.round(startVal + (endVal - startVal) * eased);
+    const sign = current < 0 ? '-' : '';
+    el.textContent = sign + prefix + Math.abs(current).toLocaleString('id-ID') + suffix;
+    if (progress < 1) {
+      el._dashAnimFrame = requestAnimationFrame(step);
+    }
+  }
+  el._dashAnimFrame = requestAnimationFrame(step);
+}
+window.animateDashNumber = animateDashNumber;
+
+// Helper untuk merender 3 kartu ringkasan (Total Pendapatan, Total Beban, Pendapatan Bersih)
+function renderRefSummaryGrid(labelPendapatan, valPendapatan, labelBeban, valBeban, labelBersih, valBersih) {
+  const pVal = Number(valPendapatan || 0);
+  const bVal = Number(Math.abs(valBeban || 0));
+  const nVal = Number(valBersih || 0);
+  setTimeout(() => {
+    const boxes = document.querySelectorAll('#harga .ref-summary-val');
+    if (boxes[0]) animateDashNumber(boxes[0], pVal, 'Rp ', '', 900);
+    if (boxes[1]) animateDashNumber(boxes[1], bVal, 'Rp ', '', 900);
+    if (boxes[2]) animateDashNumber(boxes[2], nVal, 'Rp ', '', 900);
+  }, 30);
+  return `
+    <div class="ref-summary-grid">
+      <div class="ref-summary-box dash-row-anim" style="animation-delay: 0ms;">
+        <span class="ref-summary-label">${labelPendapatan}</span>
+        <span class="ref-summary-val tabular-nums" data-current-val="0">Rp 0</span>
+      </div>
+      <div class="ref-summary-box dash-row-anim" style="animation-delay: 90ms;">
+        <span class="ref-summary-label">${labelBeban}</span>
+        <span class="ref-summary-val ref-summary-val--expense tabular-nums" data-current-val="0">Rp 0</span>
+      </div>
+      <div class="ref-summary-box ref-summary-box--net dash-row-anim" style="animation-delay: 180ms;">
+        <span class="ref-summary-label">${labelBersih}</span>
+        <span class="ref-summary-val tabular-nums" data-current-val="0">Rp 0</span>
+      </div>
+    </div>
+  `;
+}
+window.renderRefSummaryGrid = renderRefSummaryGrid;
+
+// Helper untuk mengatur lebar dinamis grafik agar bisa di-scroll ke samping dengan jelas
+function setPaymentChartScrollableWidth(categoryCount, minPxPerItem = 64) {
+  const wrapper = document.getElementById('payment_chart_scroll_wrapper');
+  const chartEl = document.getElementById('stacked_column_chart');
+  if (!chartEl) return '100%';
+  const wrapperWidth = wrapper ? wrapper.clientWidth : (chartEl.parentElement ? chartEl.parentElement.clientWidth : 620);
+  const count = Math.max(1, Number(categoryCount) || 1);
+  const targetWidth = count * minPxPerItem;
+  if (targetWidth > wrapperWidth) {
+    chartEl.style.minWidth = targetWidth + 'px';
+    chartEl.style.width = targetWidth + 'px';
+    if (wrapper) wrapper.scrollLeft = 0;
+    setTimeout(syncStickyPaymentYAxis, 60);
+    setTimeout(syncStickyPaymentYAxis, 220);
+    return targetWidth;
+  } else {
+    chartEl.style.minWidth = '100%';
+    chartEl.style.width = '100%';
+    if (wrapper) wrapper.scrollLeft = 0;
+    setTimeout(syncStickyPaymentYAxis, 60);
+    return '100%';
+  }
+}
+window.setPaymentChartScrollableWidth = setPaymentChartScrollableWidth;
+
+// Menjaga Y-Axis tetap menempel (sticky) di sebelah kiri saat grafik di-scroll ke samping
+function syncStickyPaymentYAxis() {
+  const wrapper = document.getElementById('payment_chart_scroll_wrapper');
+  const svg = document.querySelector('#stacked_column_chart svg');
+  const yaxis = document.querySelector('#stacked_column_chart .apexcharts-yaxis');
+  if (!wrapper || !svg || !yaxis) return;
+
+  const currentTransform = yaxis.getAttribute('transform') || '';
+  if (!yaxis.dataset.baseX) {
+    const m = currentTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+    yaxis.dataset.baseX = m ? parseFloat(m[1]) : 44;
+    yaxis.dataset.baseY = m ? parseFloat(m[2]) : 0;
+  }
+
+  let bg = yaxis.querySelector('.yaxis-sticky-bg');
+  const isLight = document.body.classList.contains('theme-light');
+  if (!bg) {
+    bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('class', 'yaxis-sticky-bg');
+    bg.setAttribute('x', -65);
+    bg.setAttribute('y', 0);
+    bg.setAttribute('width', 80);
+    bg.setAttribute('height', 295);
+    yaxis.insertBefore(bg, yaxis.firstChild);
+  }
+  bg.setAttribute('fill', isLight ? '#FFFFFF' : '#14110E');
+  bg.setAttribute('opacity', wrapper.scrollLeft > 2 ? '0.96' : '0');
+
+  if (yaxis.parentNode === svg && svg.lastElementChild !== yaxis) {
+    svg.appendChild(yaxis);
+  }
+
+  const baseX = parseFloat(yaxis.dataset.baseX) || 44;
+  const baseY = parseFloat(yaxis.dataset.baseY) || 0;
+  yaxis.setAttribute('transform', `translate(${baseX + wrapper.scrollLeft}, ${baseY})`);
+}
+window.syncStickyPaymentYAxis = syncStickyPaymentYAxis;
+
+// Aktifkan fitur drag-to-scroll (geser dengan mouse) & sticky Y-axis pada wrapper grafik
+document.addEventListener('DOMContentLoaded', function () {
+  const wrapper = document.getElementById('payment_chart_scroll_wrapper');
+  if (!wrapper) return;
+  let isDown = false;
+  let startX = 0;
+  let scrollLeft = 0;
+
+  wrapper.addEventListener('scroll', syncStickyPaymentYAxis, { passive: true });
+
+  wrapper.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - wrapper.offsetLeft;
+    scrollLeft = wrapper.scrollLeft;
+  });
+  wrapper.addEventListener('mouseleave', () => { isDown = false; });
+  wrapper.addEventListener('mouseup', () => { isDown = false; });
+  wrapper.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - wrapper.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    wrapper.scrollLeft = scrollLeft - walk;
+  });
+});
+
 // CHART BAR UNTUK UMUM (DILUAR PO)
 var options,
   chart,
-  linechartBasicColors = ['#6B73F0', '#34C28B'],
+  linechartBasicColors = ['#F59E0B', '#34D399'],
   barchartColors =
     (linechartBasicColors &&
       ((options = {
         chart: {
-          height: 350,
+          height: 295,
           type: "bar",
+          fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
           toolbar: { show: false },
           zoom: { enabled: false },
         },
         plotOptions: {
           bar: {
             horizontal: false,
-            columnWidth: "45%",
-            borderRadius: 3,
+            columnWidth: "46%",
+            borderRadius: 5,
             endingShape: "rounded",
           },
         },
@@ -100,31 +273,47 @@ var options,
         xaxis: {
           categories: typeof hourArrayJS !== 'undefined' ? hourArrayJS : [],
           labels: {
-            style: { colors: '#94A3B8', fontSize: '11px' }
+            style: { colors: '#94A3B8', fontSize: '11px', fontWeight: 500 }
           },
           axisBorder: { show: false },
           axisTicks: { show: false }
         },
         yaxis: {
-          tickAmount: 6,
+          tickAmount: 4,
           axisBorder: { show: false },
           axisTicks: { show: false },
           labels: {
             show: true,
-            style: { colors: '#94A3B8', fontSize: '11px' },
+            style: { colors: '#64748B', fontSize: '11px', fontWeight: 500 },
             formatter: function (val) {
+              if (val === 0) return "0";
+              if (Math.abs(val) >= 1000000) {
+                return (val / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 0 });
+              }
               return formatYAxisIndo(val);
             },
           },
         },
         grid: {
-          borderColor: '#232A35',
+          borderColor: 'rgba(255, 255, 255, 0.05)',
+          strokeDashArray: 0,
           xaxis: { lines: { show: false } },
           yaxis: { lines: { show: true } },
         },
         colors: linechartBasicColors,
         legend: { show: false },
-        fill: { opacity: 1 },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'vertical',
+            shadeIntensity: 0.2,
+            inverseColors: false,
+            opacityFrom: 1,
+            opacityTo: 0.85,
+            stops: [0, 100]
+          }
+        },
         tooltip: {
           theme: 'dark',
           y: {
@@ -141,30 +330,32 @@ var options,
 if (chart) window.chart = chart;
 
 var options, charts,
-  donutchartColors = ["#34C28B", "#E3A33B", "#6B7686"],
-  initDonutSeries = (typeof datasMonthJS !== 'undefined' && Array.isArray(datasMonthJS))
-    ? [Number(datasMonthJS[0]) || 0, Number(datasMonthJS[1]) || 0, Number(datasMonthJS[2]) || 0]
+  donutchartColors = ["#34D399", "#EF4444", "#64748B"],
+  initDonutSeries = (typeof datasYearJS !== 'undefined' && Array.isArray(datasYearJS))
+    ? [Number(datasYearJS[0]) || 0, Number(datasYearJS[1]) || 0, Number(datasYearJS[2]) || 0]
     : [0, 0, 0],
   initDonutSum = initDonutSeries.reduce((a, b) => a + b, 0),
   chartColors =
     (donutchartColors &&
       ((options = {
-        chart: { height: 300, type: "donut" },
+        chart: { height: 260, type: "donut", fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif" },
         series: initDonutSeries,
         labels: ["Terbayar", "Belum Bayar", "Batal"],
         colors: donutchartColors,
+        stroke: { width: 0 },
         plotOptions: {
           pie: {
             donut: {
               size: "74%",
               labels: {
                 show: true,
-                name: { show: true, fontSize: '12px', fontWeight: 500, color: '#94A3B8', offsetY: -6 },
+                name: { show: true, fontSize: '12px', fontWeight: 500, color: (typeof document !== 'undefined' && document.body.classList.contains('theme-light')) ? '#64748B' : '#94A3B8', offsetY: -8 },
                 value: {
                   show: true,
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  color: '#FFFFFF',
+                  fontSize: '22px',
+                  fontWeight: 800,
+                  fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
+                  color: (typeof document !== 'undefined' && document.body.classList.contains('theme-light')) ? '#0F172A' : '#FFFFFF',
                   offsetY: 6,
                   formatter: function (val) {
                     return formatCenterDonut(val);
@@ -175,7 +366,7 @@ var options, charts,
                   label: 'Total Tagihan',
                   fontSize: '12px',
                   fontWeight: 500,
-                  color: '#94A3B8',
+                  color: (typeof document !== 'undefined' && document.body.classList.contains('theme-light')) ? '#64748B' : '#94A3B8',
                   formatter: function (w) {
                     const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
                     return formatCenterDonut(sum);
@@ -198,7 +389,7 @@ var options, charts,
         responsive: [
           {
             breakpoint: 600,
-            options: { chart: { height: 240 }, legend: { show: false } },
+            options: { chart: { height: 230 }, legend: { show: false } },
           },
         ],
       }),
@@ -222,7 +413,8 @@ function timeFrame(period) {
   const elementHarga = document.getElementById('harga');
   const tagKas = document.getElementById('tag-periode-kas');
   const badgeKas = document.getElementById('badge-payment-period-text');
-  const buttons = document.querySelectorAll('.segmented-item.tombol, .segmented-item, .dash-btn-filter.tombol, .tombol');
+  const chartTitleEl = document.getElementById('tren-arus-kas-title');
+  const buttons = document.querySelectorAll('.segmented-item.tombol, .dash-btn-filter.tombol, .tombol');
   buttons.forEach(btn => btn.classList.remove('active'));
   const selectedButton = document.getElementById('btn-' + period);
   if (selectedButton) {
@@ -246,11 +438,11 @@ function timeFrame(period) {
   const lastYear = currentYear - 1;
 
   let periodLabel = 'Bulan Ini';
-  if (period === 'day') periodLabel = 'Hari Ini (' + now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ')';
+  if (period === 'day') periodLabel = 'Hari Ini';
   else if (period === 'week') periodLabel = 'Minggu Ini';
-  else if (period === 'month') periodLabel = 'Bulan Ini (' + now.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }) + ')';
-  else if (period === 'year') periodLabel = 'Tahun Ini (' + currentYear + ')';
-  else if (period === 'lastYear') periodLabel = 'Tahun Lalu (' + lastYear + ')';
+  else if (period === 'month') periodLabel = 'Bulan Ini';
+  else if (period === 'year') periodLabel = 'Tahun Ini';
+  else if (period === 'lastYear') periodLabel = 'Tahun Lalu';
 
   if (tagKas) tagKas.innerText = periodLabel;
   if (badgeKas) badgeKas.innerText = periodLabel;
@@ -258,7 +450,10 @@ function timeFrame(period) {
   const bulanIndoList = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
   if (period === 'day') {
+    if (chartTitleEl) chartTitleEl.innerHTML = `Tren Arus Kas Hari Ini <span class="ref-chart-unit">(Rp)</span>`;
+    const dayChartWidth = setPaymentChartScrollableWidth((hourArrayJS || []).length, 62);
     chart.updateOptions({
+      chart: { width: dayChartWidth },
       dataLabels: { enabled: false },
       labels: hourArrayJS,
       series: [
@@ -269,7 +464,7 @@ function timeFrame(period) {
             let localTime = new Date(utcTime.setHours(utcTime.getHours() + 7));
             return { x: localTime.toISOString().slice(11, 16), y: value };
           }),
-          color: '#34C28B',
+          color: '#F59E0B',
         },
       ],
       xaxis: {
@@ -288,24 +483,24 @@ function timeFrame(period) {
       },
       yaxis: {
         min: 0,
-        tickAmount: 5,
+        tickAmount: 4,
         axisBorder: { show: false },
         axisTicks: { show: false },
         labels: {
           show: true,
-          style: { colors: '#94A3B8', fontSize: '11px' },
+          style: { colors: '#64748B', fontSize: '11px' },
           formatter: function (val) {
             return formatYAxisIndo(val);
           },
         },
       },
       grid: {
-        borderColor: '#232A35'
+        borderColor: 'rgba(255, 255, 255, 0.05)'
       },
       plotOptions: {
         bar: {
           distributed: true,
-          borderRadius: 3,
+          borderRadius: 5,
           columnWidth: "45%",
           endingShape: "rounded",
         },
@@ -313,26 +508,16 @@ function timeFrame(period) {
     });
 
     if (elementHarga) {
-      elementHarga.innerHTML = `
-        <div class="d-flex flex-column gap-2">
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Total Transaksi Hari Ini</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(totalPerHari || 0).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Estimasi Beban</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp 0</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between pt-1" style="border-top: 1px solid rgba(255, 255, 255, 0.06);">
-            <span class="fs-12" style="color: #6B73F0;">Pendapatan Bersih</span>
-            <span class="fw-bold fs-13 tabular-nums" style="color: #6B73F0;">Rp ${Number(totalPerHari || 0).toLocaleString('id-ID')}</span>
-          </div>
-        </div>
-      `;
+      elementHarga.innerHTML = renderRefSummaryGrid(
+        'Total Pendapatan', totalPerHari || 0,
+        'Total Beban', 0,
+        'Pendapatan Bersih', totalPerHari || 0
+      );
     }
   }
 
   else if (period === 'week') {
+    if (chartTitleEl) chartTitleEl.innerHTML = `Tren Arus Kas Minggu Ini <span class="ref-chart-unit">(Juta Rp)</span>`;
     let today = new Date();
     let dayOfWeek = today.getDay();
 
@@ -374,9 +559,10 @@ function timeFrame(period) {
     let yaxisMaxWeek = maxValWeek > 0 ? (maxValWeek > 5000000 ? maxValWeek * 1.15 : 5000000) : 5000000;
     let yaxisMinWeek = minValWeek < 0 ? (minValWeek <= -1000000 ? minValWeek * 1.2 : -1000000) : 0;
 
+    const weekChartWidth = setPaymentChartScrollableWidth(fullWeekDates.length, 85);
     chart.updateOptions({
+      chart: { width: weekChartWidth },
       dataLabels: { enabled: false },
-      labels: fullWeekDates,
       series: [{
         name: "Pendapatan",
         data: finalWeeklyData,
@@ -392,29 +578,29 @@ function timeFrame(period) {
       yaxis: {
         min: yaxisMinWeek,
         max: yaxisMaxWeek,
-        tickAmount: 6,
+        tickAmount: 4,
         forceNiceScale: true,
         axisBorder: { show: false },
         axisTicks: { show: false },
         labels: {
-          style: { colors: '#94A3B8', fontSize: '11px' },
+          style: { colors: '#64748B', fontSize: '11px' },
           formatter: function (val) {
             return formatYAxisIndo(val);
           },
         },
       },
       grid: {
-        borderColor: '#232A35'
+        borderColor: 'rgba(255, 255, 255, 0.05)'
       },
-      colors: ['#34C28B'],
+      colors: ['#F59E0B'],
       plotOptions: {
         bar: {
-          borderRadius: 3,
+          borderRadius: 5,
           columnWidth: "45%",
           colors: {
             ranges: [
-              { from: -1000000000, to: -1, color: '#E5586B' },
-              { from: 0, to: 5000000000, color: '#34C28B' }
+              { from: -1000000000, to: -1, color: '#F87171' },
+              { from: 0, to: 5000000000, color: '#F59E0B' }
             ]
           }
         }
@@ -422,24 +608,14 @@ function timeFrame(period) {
     });
 
     if (elementHarga) {
-      elementHarga.innerHTML = `
-        <div class="d-flex flex-column gap-2">
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Total Transaksi Minggu Ini</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(totalTransaksiAsli || 0).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Beban Operasional</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(Math.abs(totalNegatif || 0)).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between pt-1" style="border-top: 1px solid rgba(255, 255, 255, 0.06);">
-            <span class="fs-12" style="color: #6B73F0;">Pendapatan Bersih</span>
-            <span class="fw-bold fs-13 tabular-nums" style="color: #6B73F0;">Rp ${Number(netIncome || 0).toLocaleString('id-ID')}</span>
-          </div>
-        </div>
-      `;
+      elementHarga.innerHTML = renderRefSummaryGrid(
+        'Total Pendapatan', totalTransaksiAsli || 0,
+        'Total Beban', Math.abs(totalNegatif || 0),
+        'Pendapatan Bersih', netIncome || 0
+      );
     }
   } else if (period === 'month') {
+    if (chartTitleEl) chartTitleEl.innerHTML = `Tren Arus Kas Bulan Ini <span class="ref-chart-unit">(Juta Rp)</span>`;
     let now = new Date();
     let currentYear = now.getFullYear();
     let currentMonth = ("0" + (now.getMonth() + 1)).slice(-2);
@@ -471,20 +647,23 @@ function timeFrame(period) {
 
     let maxValMonth = Math.max(...filteredTotalHarianArray, 0);
     let minValMonth = Math.min(...filteredTotalHarianArray, 0);
-    // Keep max at 5.000.000 so that minus bars stay low and short at the bottom
-    let yaxisMaxMonth = maxValMonth > 0 ? (maxValMonth > 5000000 ? maxValMonth * 1.15 : 5000000) : 5000000;
-    let yaxisMinMonth = minValMonth < 0 ? (minValMonth <= -1000000 ? minValMonth * 1.2 : -1000000) : 0;
+    let yaxisMaxMonth = maxValMonth > 0 ? Math.ceil((maxValMonth * 1.12) / 2000000) * 2000000 : 4000000;
+    let yaxisMinMonth = minValMonth < 0 ? (minValMonth < -1500000 ? Math.floor((minValMonth * 1.15) / 1000000) * 1000000 : -2000000) : 0;
 
+    const monthChartWidth = setPaymentChartScrollableWidth(fullDateArray.length, 62);
     chart.updateOptions({
+      chart: { width: monthChartWidth },
       series: [{
-        name: "Pendapatan",
+        name: "Pendapatan Bersih",
         data: filteredTotalHarianArray
       }],
       xaxis: {
         type: 'category',
         categories: fullDateArray,
         labels: {
-          style: { colors: '#94A3B8', fontSize: '11px' },
+          rotate: 0,
+          hideOverlappingLabels: false,
+          style: { colors: '#94A3B8', fontSize: '11px', fontWeight: 600 },
           formatter: function (value) {
             return value.split("-")[2];
           }
@@ -493,51 +672,59 @@ function timeFrame(period) {
       yaxis: {
         min: yaxisMinMonth,
         max: yaxisMaxMonth,
-        tickAmount: 6,
-        forceNiceScale: true,
+        tickAmount: 4,
+        forceNiceScale: false,
         labels: {
-          style: { colors: '#94A3B8', fontSize: '11px' },
+          style: { colors: '#64748B', fontSize: '11px' },
           formatter: function (val) {
             return formatYAxisIndo(val);
           }
         }
       },
       grid: {
-        borderColor: '#232A35'
+        borderColor: 'rgba(255, 255, 255, 0.05)'
       },
-      colors: ['#34C28B'],
+      colors: ['#F59E0B'],
       plotOptions: {
         bar: {
-          borderRadius: 3,
-          columnWidth: "45%",
+          borderRadius: 4,
+          columnWidth: "56%",
+          dataLabels: {
+            position: 'top'
+          },
           colors: {
             ranges: [
-              { from: -1000000000, to: -1, color: '#E5586B' },
-              { from: 0, to: 5000000000, color: '#34C28B' }
+              { from: -1000000000, to: -1, color: '#F87171' },
+              { from: 0, to: 5000000000, color: '#F59E0B' }
             ]
           }
         }
       },
-      dataLabels: { enabled: false }
+      dataLabels: {
+        enabled: true,
+        offsetY: -18,
+        style: {
+          fontSize: '10px',
+          fontWeight: 600,
+          colors: ['#CBD5E1']
+        },
+        formatter: function (val) {
+          if (!val || val === 0 || val === -500000) return '';
+          const abs = Math.abs(val);
+          const sign = val < 0 ? '-' : '';
+          if (abs >= 1000000) return sign + (abs / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + 'jt';
+          if (abs >= 1000) return sign + Math.round(abs / 1000) + 'rb';
+          return sign + abs;
+        }
+      }
     });
 
     if (elementHarga) {
-      elementHarga.innerHTML = `
-        <div class="d-flex flex-column gap-2">
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Total Transaksi Bulan Ini</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(totalTransaksiAsli || 0).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Beban Operasional</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(Math.abs(totalNegatif || 0)).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between pt-1" style="border-top: 1px solid rgba(255, 255, 255, 0.06);">
-            <span class="fs-12" style="color: #6B73F0;">Pendapatan Bersih</span>
-            <span class="fw-bold fs-13 tabular-nums" style="color: #6B73F0;">Rp ${Number(totalIncome || 0).toLocaleString('id-ID')}</span>
-          </div>
-        </div>
-      `;
+      elementHarga.innerHTML = renderRefSummaryGrid(
+        'Total Pendapatan', totalTransaksiAsli || 0,
+        'Total Beban', Math.abs(totalNegatif || 0),
+        'Pendapatan Bersih', totalIncome || 0
+      );
     }
   }
   else if (period === 'year') {
@@ -545,6 +732,8 @@ function timeFrame(period) {
     let currentYear = now.getFullYear();
     let currentMonth = now.getMonth() + 1;
     let currentDate = now.getDate();
+
+    if (chartTitleEl) chartTitleEl.innerHTML = `Tren Arus Kas ${currentYear} <span class="ref-chart-unit">(Juta Rp)</span>`;
 
     let fullMonthArray = Array.from({ length: currentMonth }, (_, i) =>
       `${currentYear}-${("0" + (i + 1)).slice(-2)}`
@@ -584,17 +773,20 @@ function timeFrame(period) {
       value + totalNegatifPerBulan[index]
     );
 
-    let maxValYear = Math.max(...totalBulananArray, ...totalWithFormulaArray, 0);
-    let minValYear = Math.min(...totalWithFormulaArray, 0);
-    let yaxisMaxYear = maxValYear > 0 ? (maxValYear > 5000000 ? maxValYear * 1.15 : 5000000) : 5000000;
-    let yaxisMinYear = minValYear < 0 ? (minValYear <= -1000000 ? minValYear * 1.2 : -1000000) : 0;
+    // Untuk visualisasi bar chart sesuai referensi (baseline 0 ke atas)
+    let chartNetArray = totalWithFormulaArray.map(v => Math.max(0, v));
 
+    let maxValYear = Math.max(...totalBulananArray, ...chartNetArray, 0);
+    let yaxisMaxYear = maxValYear > 150000000 ? 200000000 : (maxValYear > 5000000 ? Math.ceil(maxValYear / 50000000) * 50000000 : 50000000);
+
+    const yearChartWidth = setPaymentChartScrollableWidth(fullMonthArray.length, 68);
     chart.updateOptions({
-      colors: ['#6B73F0', '#34C28B'],
+      chart: { width: yearChartWidth },
+      colors: ['#F59E0B', '#34D399'],
       series: [
         {
           name: "Pendapatan Bersih",
-          data: totalWithFormulaArray,
+          data: chartNetArray,
         },
         {
           name: "Pendapatan Asli",
@@ -605,7 +797,7 @@ function timeFrame(period) {
         type: 'category',
         categories: fullMonthArray,
         labels: {
-          style: { colors: '#94A3B8', fontSize: '11px' },
+          style: { colors: '#94A3B8', fontSize: '11px', fontWeight: 500 },
           formatter: function (value) {
             const mIdx = parseInt(value.split("-")[1], 10) - 1;
             return bulanIndoList[mIdx] || value;
@@ -613,32 +805,33 @@ function timeFrame(period) {
         }
       },
       yaxis: {
-        min: yaxisMinYear,
+        min: 0,
         max: yaxisMaxYear,
-        tickAmount: 6,
-        forceNiceScale: true,
+        tickAmount: 4,
+        forceNiceScale: false,
         labels: {
-          style: { colors: '#94A3B8', fontSize: '11px' },
+          style: { colors: '#64748B', fontSize: '11px', fontWeight: 500 },
           formatter: function (val) {
-            return formatYAxisIndo(val);
+            if (val === 0) return "0";
+            return Math.round(val / 1000000).toString();
           }
         }
       },
       grid: {
-        borderColor: '#232A35',
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        strokeDashArray: 0,
         xaxis: { lines: { show: false } },
         yaxis: { lines: { show: true } }
       },
       plotOptions: {
         bar: {
           horizontal: false,
-          borderRadius: 3,
-          columnWidth: "45%",
+          distributed: false,
+          borderRadius: 5,
+          columnWidth: "46%",
           endingShape: "rounded",
           colors: {
-            ranges: [
-              { from: -1000000000, to: -1, color: '#E5586B' }
-            ]
+            ranges: []
           }
         }
       },
@@ -650,27 +843,18 @@ function timeFrame(period) {
       const totalNegatifTahunIni = totalNegatifPerBulan.reduce((acc, val) => acc + val, 0);
       const totalWithFormulaTahunIni = totalOriginalTahunIni + totalNegatifTahunIni;
 
-      elementHarga.innerHTML = `
-        <div class="d-flex flex-column gap-2">
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Total Pendapatan (${currentYear})</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(totalOriginalTahunIni || 0).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Total Beban (${currentYear})</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(Math.abs(totalNegatifTahunIni || 0)).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between pt-1" style="border-top: 1px solid rgba(255, 255, 255, 0.06);">
-            <span class="fs-12" style="color: #6B73F0;">Pendapatan Bersih (${currentYear})</span>
-            <span class="fw-bold fs-13 tabular-nums" style="color: #6B73F0;">Rp ${Number(totalWithFormulaTahunIni || 0).toLocaleString('id-ID')}</span>
-          </div>
-        </div>
-      `;
+      elementHarga.innerHTML = renderRefSummaryGrid(
+        'Total Pendapatan', totalOriginalTahunIni || 0,
+        'Total Beban', Math.abs(totalNegatifTahunIni || 0),
+        'Pendapatan Bersih', totalWithFormulaTahunIni || 0
+      );
     }
   } else if (period === 'lastYear') {
 
     let now = new Date();
     let lastYear = now.getFullYear() - 1;
+
+    if (chartTitleEl) chartTitleEl.innerHTML = `Tren Arus Kas ${lastYear} <span class="ref-chart-unit">(Juta Rp)</span>`;
 
     let fullMonthArrayLastYear = Array.from({ length: 12 }, (_, i) =>
       `${lastYear}-${("0" + (i + 1)).slice(-2)}`
@@ -702,17 +886,18 @@ function timeFrame(period) {
       val + totalNegatifPerBulanLastYear[index]
     );
 
-    let maxValLastYear = Math.max(...totalBulananArrayLastYear, ...totalWithFormulaArrayLastYear, 0);
-    let minValLastYear = Math.min(...totalWithFormulaArrayLastYear, 0);
-    let yaxisMaxLastYear = maxValLastYear > 0 ? (maxValLastYear > 5000000 ? maxValLastYear * 1.15 : 5000000) : 5000000;
-    let yaxisMinLastYear = minValLastYear < 0 ? (minValLastYear <= -1000000 ? minValLastYear * 1.2 : -1000000) : 0;
+    let chartNetLastYear = totalWithFormulaArrayLastYear.map(v => Math.max(0, v));
+    let maxValLastYear = Math.max(...totalBulananArrayLastYear, ...chartNetLastYear, 0);
+    let yaxisMaxLastYear = maxValLastYear > 150000000 ? 200000000 : (maxValLastYear > 5000000 ? Math.ceil(maxValLastYear / 50000000) * 50000000 : 50000000);
 
+    const lastYearChartWidth = setPaymentChartScrollableWidth(fullMonthArrayLastYear.length, 68);
     chart.updateOptions({
-      colors: ['#6B73F0', '#34C28B'],
+      chart: { width: lastYearChartWidth },
+      colors: ['#F59E0B', '#34D399'],
       series: [
         {
           name: "Pendapatan Bersih",
-          data: totalWithFormulaArrayLastYear,
+          data: chartNetLastYear,
         },
         {
           name: "Pendapatan Asli",
@@ -722,7 +907,7 @@ function timeFrame(period) {
       xaxis: {
         categories: fullMonthArrayLastYear,
         labels: {
-          style: { colors: '#94A3B8', fontSize: '11px' },
+          style: { colors: '#94A3B8', fontSize: '11px', fontWeight: 500 },
           formatter: value => {
             const mIdx = parseInt(value.split("-")[1], 10) - 1;
             return bulanIndoList[mIdx] || value;
@@ -730,30 +915,33 @@ function timeFrame(period) {
         }
       },
       yaxis: {
-        min: yaxisMinLastYear,
+        min: 0,
         max: yaxisMaxLastYear,
-        tickAmount: 6,
-        forceNiceScale: true,
+        tickAmount: 4,
+        forceNiceScale: false,
         labels: {
-          style: { colors: '#94A3B8', fontSize: '11px' },
-          formatter: val => formatYAxisIndo(val)
+          style: { colors: '#64748B', fontSize: '11px', fontWeight: 500 },
+          formatter: val => {
+            if (val === 0) return "0";
+            return Math.round(val / 1000000).toString();
+          }
         }
       },
       grid: {
-        borderColor: '#232A35',
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        strokeDashArray: 0,
         xaxis: { lines: { show: false } },
         yaxis: { lines: { show: true } }
       },
       plotOptions: {
         bar: {
           horizontal: false,
-          borderRadius: 3,
-          columnWidth: "45%",
+          distributed: false,
+          borderRadius: 5,
+          columnWidth: "46%",
           endingShape: "rounded",
           colors: {
-            ranges: [
-              { from: -1000000000, to: -1, color: '#E5586B' }
-            ]
+            ranges: []
           }
         }
       },
@@ -765,22 +953,11 @@ function timeFrame(period) {
       const totalNegatifTahunLalu = totalNegatifPerBulanLastYear.reduce((acc, val) => acc + val, 0);
       const totalWithFormulaTahunLalu = totalOriginalTahunLalu + totalNegatifTahunLalu;
 
-      elementHarga.innerHTML = `
-        <div class="d-flex flex-column gap-2">
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Total Pendapatan (${lastYear})</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(totalOriginalTahunLalu || 0).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-muted fs-12">Total Beban (${lastYear})</span>
-            <span class="fw-bold text-light fs-13 tabular-nums">Rp ${Number(Math.abs(totalNegatifTahunLalu || 0)).toLocaleString('id-ID')}</span>
-          </div>
-          <div class="d-flex align-items-center justify-content-between pt-1" style="border-top: 1px solid rgba(255, 255, 255, 0.06);">
-            <span class="fs-12" style="color: #6B73F0;">Pendapatan Bersih (${lastYear})</span>
-            <span class="fw-bold fs-13 tabular-nums" style="color: #6B73F0;">Rp ${Number(totalWithFormulaTahunLalu || 0).toLocaleString('id-ID')}</span>
-          </div>
-        </div>
-      `;
+      elementHarga.innerHTML = renderRefSummaryGrid(
+        'Total Pendapatan', totalOriginalTahunLalu || 0,
+        'Total Beban', Math.abs(totalNegatifTahunLalu || 0),
+        'Pendapatan Bersih', totalWithFormulaTahunLalu || 0
+      );
     }
   }
 }
@@ -793,6 +970,7 @@ function timeRange(period) {
   const persenTerbayarElement = document.getElementById('persenTerbayar');
   const persenBlmTerbayarElement = document.getElementById('persenBlmTerbayar');
   const persenBatalElement = document.getElementById('persenBatal');
+  const heroAkumulasiEl = document.getElementById('hero-pendapatan-akumulasi');
 
   function updateDonutState(series) {
     const s0 = Number(series[0]) || 0;
@@ -810,11 +988,63 @@ function timeRange(period) {
       if (window.charts || charts) {
         (window.charts || charts).updateOptions({
           series: [s0, s1, s2],
-          colors: ["#34C28B", "#E3A33B", "#6B7686"]
+          colors: ["#34D399", "#EF4444", "#64748B"]
         });
       }
     }
+    if (heroAkumulasiEl) {
+      animateDashNumber(heroAkumulasiEl, sum, 'Rp ', '', 420);
+    }
+
+    // Hitung proporsi persentase terhadap Total Tagihan seperti pada referensi desain (94,7%, 5,3%, 0%)
+    const pct0 = sum > 0 ? ((s0 / sum) * 100) : 0;
+    const pct1 = sum > 0 ? ((s1 / sum) * 100) : 0;
+    const pct2 = sum > 0 ? ((s2 / sum) * 100) : 0;
+
+    if (persenTerbayarElement) {
+      persenTerbayarElement.className = 'ref-status-pill ref-status-pill--emerald tabular-nums';
+      persenTerbayarElement.innerText = (pct0 === 0 ? '0%' : pct0.toFixed(1).replace('.', ',') + '%');
+    }
+    if (persenBlmTerbayarElement) {
+      persenBlmTerbayarElement.className = 'ref-status-pill ref-status-pill--danger tabular-nums';
+      persenBlmTerbayarElement.innerText = (pct1 === 0 ? '0%' : pct1.toFixed(1).replace('.', ',') + '%');
+    }
+    if (persenBatalElement) {
+      persenBatalElement.className = 'ref-status-pill ref-status-pill--slate tabular-nums';
+      persenBatalElement.innerText = (pct2 === 0 ? '0%' : pct2.toFixed(1).replace('.', ',') + '%');
+    }
+
+    if (terbayarElement) animateDashNumber(terbayarElement, s0, 'Rp ', '', 420);
+    if (belumTerbayarElement) animateDashNumber(belumTerbayarElement, s1, 'Rp ', '', 420);
+    if (batalElement) animateDashNumber(batalElement, s2, 'Rp ', '', 420);
+
+    // Sinkronisasi ke Top 4 Executive Summary Cards (Card 1, 2, 3)
+    const topAkumulasiEl = document.getElementById('top-kpi-akumulasi');
+    const topTerbayarEl = document.getElementById('top-kpi-terbayar');
+    const topTerbayarPctEl = document.getElementById('top-kpi-terbayar-pct');
+    const topPiutangEl = document.getElementById('top-kpi-piutang');
+    const topPiutangPctEl = document.getElementById('top-kpi-piutang-pct');
+
+    if (topAkumulasiEl) animateDashNumber(topAkumulasiEl, sum, 'Rp ', '', 420);
+    if (topTerbayarEl) animateDashNumber(topTerbayarEl, s0, 'Rp ', '', 420);
+    if (topTerbayarPctEl) {
+      topTerbayarPctEl.innerText = (pct0 === 0 ? '0%' : pct0.toFixed(1).replace('.', ',') + '%');
+      triggerFilterSwap(topTerbayarPctEl);
+    }
+    if (topPiutangEl) animateDashNumber(topPiutangEl, s1, 'Rp ', '', 420);
+    if (topPiutangPctEl) {
+      topPiutangPctEl.innerText = (pct1 === 0 ? '0%' : pct1.toFixed(1).replace('.', ',') + '%');
+      triggerFilterSwap(topPiutangPctEl);
+    }
+
+    triggerFilterSwap('.ref-status-row');
+    triggerFilterSwap('#periode');
+    triggerFilterSwap('#tren-arus-kas-title');
+    triggerFilterSwap('#payment_chart_scroll_wrapper');
   }
+
+  const topTerbayarSubEl = document.getElementById('top-kpi-terbayar-sub');
+  const topPiutangSubEl = document.getElementById('top-kpi-piutang-sub');
 
   switch (period) {
     case 'day':
@@ -826,104 +1056,76 @@ function timeRange(period) {
       break;
 
     case 'lastYear':
-      if (typeof datasLastYearJS !== 'undefined') {
-        updateDonutState(datasLastYearJS);
-      }
       if (periodeElement) periodeElement.innerText = 'Tahun Lalu';
       if (terbayarElement) terbayarElement.innerText = 'Rp ' + Number(datasLastYearJS[0] || 0).toLocaleString('id-ID');
       if (belumTerbayarElement) belumTerbayarElement.innerText = 'Rp ' + Number(datasLastYearJS[1] || 0).toLocaleString('id-ID');
       if (batalElement) batalElement.innerText = 'Rp ' + Number(datasLastYearJS[2] || 0).toLocaleString('id-ID');
-      
-      if (persenTerbayarElement) formatPersentaseTerbayar(percentInLastYearJS);
-      if (persenBlmTerbayarElement) formatPersentase(percentNotPaidLastYearJS);
-      if (persenBatalElement) formatPersentaseBatal(percentCanceledLastYearJS);
+      if (topTerbayarSubEl && typeof countLunasLastYearJS !== 'undefined') topTerbayarSubEl.innerText = Number(countLunasLastYearJS).toLocaleString('id-ID') + ' transaksi selesai';
+      if (topPiutangSubEl && typeof countBlmLunasLastYearJS !== 'undefined') topPiutangSubEl.innerText = Number(countBlmLunasLastYearJS).toLocaleString('id-ID') + ' invoice menunggu pelunasan';
+      if (typeof datasLastYearJS !== 'undefined') {
+        updateDonutState(datasLastYearJS);
+      }
       break;
       
     case 'year':
-      if (typeof datasYearJS !== 'undefined') {
-        updateDonutState(datasYearJS);
-      }
       if (periodeElement) periodeElement.innerText = 'Tahun Ini';
       if (terbayarElement) terbayarElement.innerText = 'Rp ' + Number(datasYearJS[0] || 0).toLocaleString('id-ID');
       if (belumTerbayarElement) belumTerbayarElement.innerText = 'Rp ' + Number(datasYearJS[1] || 0).toLocaleString('id-ID');
       if (batalElement) batalElement.innerText = 'Rp ' + Number(datasYearJS[2] || 0).toLocaleString('id-ID');
-      if (persenTerbayarElement) formatPersentaseTerbayar(percentInYearJS);
-      if (persenBlmTerbayarElement) formatPersentase(percentNotPaidYearJS);
-      if (persenBatalElement) formatPersentaseBatal(percentCanceledYearJS);
+      if (topTerbayarSubEl && typeof countLunasYearJS !== 'undefined') topTerbayarSubEl.innerText = Number(countLunasYearJS).toLocaleString('id-ID') + ' transaksi selesai';
+      if (topPiutangSubEl && typeof countBlmLunasYearJS !== 'undefined') topPiutangSubEl.innerText = Number(countBlmLunasYearJS).toLocaleString('id-ID') + ' invoice menunggu pelunasan';
+      if (typeof datasYearJS !== 'undefined') {
+        updateDonutState(datasYearJS);
+      }
       break;
 
     case 'month':
-      if (typeof datasMonthJS !== 'undefined') {
-        updateDonutState(datasMonthJS);
-      }
       if (periodeElement) periodeElement.innerText = 'Bulan Ini';
       if (terbayarElement) terbayarElement.innerText = 'Rp ' + Number(datasMonthJS[0] || 0).toLocaleString('id-ID');
       if (belumTerbayarElement) belumTerbayarElement.innerText = 'Rp ' + Number(datasMonthJS[1] || 0).toLocaleString('id-ID');
       if (batalElement) batalElement.innerText = 'Rp ' + Number(datasMonthJS[2] || 0).toLocaleString('id-ID');
-      if (persenTerbayarElement) formatPersentaseTerbayar(percentInMonthJS);
-      if (persenBlmTerbayarElement) formatPersentase(percentNotPaidMonthJS);
-      if (persenBatalElement) formatPersentaseBatal(percentCanceledMonthJS);
+      if (topTerbayarSubEl && typeof countLunasMonthJS !== 'undefined') topTerbayarSubEl.innerText = Number(countLunasMonthJS).toLocaleString('id-ID') + ' transaksi selesai';
+      if (topPiutangSubEl && typeof countBlmLunasMonthJS !== 'undefined') topPiutangSubEl.innerText = Number(countBlmLunasMonthJS).toLocaleString('id-ID') + ' invoice menunggu pelunasan';
+      if (typeof datasMonthJS !== 'undefined') {
+        updateDonutState(datasMonthJS);
+      }
       break;
 
     default:
-      if (typeof datasWeekJS !== 'undefined') {
-        updateDonutState(datasWeekJS);
-      }
       if (periodeElement) periodeElement.innerText = 'Minggu Ini';
       if (terbayarElement) terbayarElement.innerText = 'Rp ' + Number(datasWeekJS[0] || 0).toLocaleString('id-ID');
       if (belumTerbayarElement) belumTerbayarElement.innerText = 'Rp ' + Number(datasWeekJS[1] || 0).toLocaleString('id-ID');
       if (batalElement) batalElement.innerText = 'Rp ' + Number(datasWeekJS[2] || 0).toLocaleString('id-ID');
-      if (persenTerbayarElement) formatPersentaseTerbayar(percentInWeekJS);
-      if (persenBlmTerbayarElement) formatPersentase(percentNotPaidWeekJS);
-      if (persenBatalElement) formatPersentaseBatal(percentCanceledWeekJS);
+      if (topTerbayarSubEl && typeof countLunasWeekJS !== 'undefined') topTerbayarSubEl.innerText = Number(countLunasWeekJS).toLocaleString('id-ID') + ' transaksi selesai';
+      if (topPiutangSubEl && typeof countBlmLunasWeekJS !== 'undefined') topPiutangSubEl.innerText = Number(countBlmLunasWeekJS).toLocaleString('id-ID') + ' invoice menunggu pelunasan';
+      if (typeof datasWeekJS !== 'undefined') {
+        updateDonutState(datasWeekJS);
+      }
       break;
   }
 }
 
 function formatPersentaseTerbayar(persen) {
   const el = document.getElementById('persenTerbayar');
-  const p = parseFloat(persen);
   if (!el) return persen + '%';
-  if (isNaN(p) || p === 0) {
-    el.className = 'badge-tint badge-tint-neutral tabular-nums';
-    el.innerHTML = '0.00%';
-  } else if (p < 0) {
-    el.className = 'badge-tint badge-tint-danger tabular-nums';
-    el.innerHTML = `${persen}%`;
-  } else {
-    el.className = 'badge-tint badge-tint-success tabular-nums';
-    el.innerHTML = `+${persen}%`;
-  }
+  el.className = 'ref-status-pill ref-status-pill--emerald tabular-nums';
+  el.innerHTML = `${persen}%`;
   return el.innerHTML;
 }
 
 function formatPersentase(persen) {
   const el = document.getElementById('persenBlmTerbayar');
   if (!el) return persen + '%';
-  const p = parseFloat(persen);
-  if (isNaN(p) || p === 0) {
-    el.className = 'badge-tint badge-tint-neutral tabular-nums';
-    el.innerHTML = '0.00%';
-  } else if (p > 0) {
-    el.className = 'badge-tint badge-tint-warning tabular-nums';
-    el.innerHTML = `${persen}%`;
-  } else {
-    el.className = 'badge-tint badge-tint-warning tabular-nums';
-    el.innerHTML = `${persen}%`;
-  }
+  el.className = 'ref-status-pill ref-status-pill--amber tabular-nums';
+  el.innerHTML = `${persen}%`;
   return el.innerHTML;
 }
 
 function formatPersentaseBatal(persen) {
   const el = document.getElementById('persenBatal');
   if (!el) return persen + '%';
-  el.className = 'badge-tint badge-tint-neutral tabular-nums';
-  const p = parseFloat(persen);
-  if (isNaN(p) || p === 0) {
-    el.innerHTML = '0.00%';
-  } else {
-    el.innerHTML = `${persen}%`;
-  }
+  el.className = 'ref-status-pill ref-status-pill--slate tabular-nums';
+  el.innerHTML = `${persen}%`;
   return el.innerHTML;
 }
 
@@ -979,7 +1181,7 @@ function submitPaymentCustomFilter() {
   }
 
   // Deactivate preset buttons and activate custom button
-  document.querySelectorAll('.segmented-item.tombol, .segmented-item, .dash-btn-filter.tombol, .tombol').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.segmented-item.tombol, .dash-btn-filter.tombol, .tombol').forEach(b => b.classList.remove('active'));
   const btnCustom = document.getElementById('btn-payment-custom-toggle') || document.getElementById('btn-payment-custom');
   if (btnCustom) btnCustom.classList.add('active', 'open');
 
@@ -1312,7 +1514,7 @@ function buildVendorChartOptions(filtered) {
           }
         }
       },
-      colors: ['#3b82f6', '#10b981', '#5051F9'], // Biru (Total), Hijau (Terbayar), Ungu/Indigo (Sisa Hutang)
+      colors: ['#F59E0B', '#10B981', '#EF4444'], // Golden Amber (Total), Emerald (Terbayar), Crimson Rose (Sisa Hutang)
       dataLabels: {
         enabled: true,
         offsetY: -22,
@@ -1383,7 +1585,7 @@ function buildVendorChartOptions(filtered) {
         }
       }
     },
-    colors: ['#5051F9'], // Warna ungu/indigo cerah elegan sesuai screenshot referensi
+    colors: ['#EF4444'], // Crimson Rose untuk Sisa Tagihan (Hutang Vendor)
     dataLabels: {
       enabled: true,
       offsetY: -20,
