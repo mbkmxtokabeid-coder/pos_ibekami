@@ -27,6 +27,8 @@
 @yield('head')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <!-- Layout config Js -->
 <script src="{{asset('js/layout.js')}}"></script>
 <!-- Bootstrap Css -->
@@ -770,8 +772,16 @@
     /* ==========================================================================
        FLATPICKR SOLID DARK THEME (ANTI-TRANSPARAN)
        ========================================================================== */
-    .flatpickr-calendar {
+    .flatpickr-calendar,
+    .flatpickr-innerContainer,
+    .flatpickr-rContainer,
+    .flatpickr-days,
+    .dayContainer {
         background: #0F172A !important; /* Solid Slate 900 */
+        background-color: #0F172A !important;
+        opacity: 1 !important;
+    }
+    .flatpickr-calendar {
         border: 1.5px solid #334155 !important;
         border-radius: 12px !important;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;

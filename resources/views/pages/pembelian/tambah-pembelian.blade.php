@@ -1,7 +1,8 @@
 @extends('layout.template')
 
 @section('head')
-<link rel="stylesheet" href="{{ asset('libs/flatpickr/flatpickr.min.css') }}" type="text/css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
   /* ==========================================================================
      DESIGN SYSTEM & UI/UX PRO MAX (ACCESSIBILITY & VISIBILITY REFINED)
@@ -348,12 +349,19 @@
     font-weight: 600 !important;
     font-size: 12px !important;
   }
-  .flatpickr-days {
+  .flatpickr-calendar,
+  .flatpickr-innerContainer,
+  .flatpickr-rContainer,
+  .flatpickr-days,
+  .dayContainer {
     background: #0F172A !important;
+    background-color: #0F172A !important;
+    opacity: 1 !important;
+  }
+  .flatpickr-days {
     width: 100% !important;
   }
   .dayContainer {
-    background: #0F172A !important;
     min-width: 100% !important;
     max-width: 100% !important;
   }
@@ -828,19 +836,20 @@
       });
     });
     // Inisialisasi Flatpickr Kalender Interaktif
-    flatpickr("#tanggal_input", {
-      dateFormat: "Y-m-d",
-      altInput: true,
-      altFormat: "d/m/Y",
-      allowInput: true
-    });
-    flatpickr("#tanggal_jto_input", {
-      dateFormat: "Y-m-d",
-      altInput: true,
-      altFormat: "d/m/Y",
-      allowInput: true
-    });
+    if (typeof flatpickr !== 'undefined') {
+      flatpickr("#tanggal_input", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d/m/Y",
+        allowInput: true
+      });
+      flatpickr("#tanggal_jto_input", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d/m/Y",
+        allowInput: true
+      });
+    }
   });
 </script>
-<script src="{{ asset('libs/flatpickr/flatpickr.min.js') }}"></script>
 @endsection
