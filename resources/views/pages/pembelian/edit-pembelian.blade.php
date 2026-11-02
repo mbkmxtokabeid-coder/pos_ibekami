@@ -1,4 +1,7 @@
+@extends('layout.template')
+
 @section('head')
+<link rel="stylesheet" href="{{ asset('libs/flatpickr/flatpickr.min.css') }}" type="text/css" />
 <style>
   /* ==========================================================================
      DESIGN SYSTEM & UI/UX PRO MAX (ACCESSIBILITY & VISIBILITY REFINED)
@@ -313,10 +316,113 @@
     border-radius: 12px !important;
     color: #F8FAFC !important;
   }
+
+  /* Flatpickr Solid Theme (Anti-Transparan) */
+  .flatpickr-calendar {
+    background: #0F172A !important;
+    border: 1.5px solid #334155 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+    overflow: hidden !important;
+    z-index: 99999 !important;
+  }
+  .flatpickr-calendar.arrowTop:before,
+  .flatpickr-calendar.arrowTop:after {
+    border-bottom-color: #1E293B !important;
+  }
+  .flatpickr-calendar.arrowBottom:before,
+  .flatpickr-calendar.arrowBottom:after {
+    border-top-color: #0F172A !important;
+  }
+  .flatpickr-months {
+    background: #1E293B !important;
+    border-bottom: 1.5px solid #334155 !important;
+    padding: 6px 4px !important;
+  }
+  .flatpickr-months .flatpickr-month {
+    color: #F8FAFC !important;
+    fill: #F8FAFC !important;
+    height: 38px !important;
+  }
+  .flatpickr-current-month {
+    color: #F8FAFC !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    padding-top: 4px !important;
+  }
+  .flatpickr-current-month .cur-month {
+    font-weight: 700 !important;
+    color: #F8FAFC !important;
+  }
+  .flatpickr-current-month input.cur-year {
+    font-weight: 700 !important;
+    color: #F8FAFC !important;
+  }
+  .flatpickr-months .flatpickr-prev-month,
+  .flatpickr-months .flatpickr-next-month {
+    color: #94A3B8 !important;
+    fill: #94A3B8 !important;
+    padding: 8px !important;
+  }
+  .flatpickr-months .flatpickr-prev-month:hover,
+  .flatpickr-months .flatpickr-next-month:hover {
+    color: #F59E0B !important;
+    fill: #F59E0B !important;
+  }
+  .flatpickr-weekdays {
+    background: #1E293B !important;
+    border-bottom: 1px solid #334155 !important;
+  }
+  span.flatpickr-weekday {
+    color: #94A3B8 !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+  }
+  .flatpickr-days {
+    background: #0F172A !important;
+    width: 100% !important;
+  }
+  .dayContainer {
+    background: #0F172A !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+  .flatpickr-day {
+    color: #E2E8F0 !important;
+    border-radius: 8px !important;
+    border: 1px solid transparent !important;
+    font-weight: 500 !important;
+    background: transparent !important;
+    transition: all 0.15s ease !important;
+  }
+  .flatpickr-day:hover {
+    background: #1E293B !important;
+    border-color: #475569 !important;
+    color: #FFFFFF !important;
+  }
+  .flatpickr-day.today {
+    border-color: #F59E0B !important;
+    color: #FBBF24 !important;
+    background: rgba(245, 158, 11, 0.15) !important;
+  }
+  .flatpickr-day.today:hover {
+    background: rgba(245, 158, 11, 0.25) !important;
+    color: #FFFFFF !important;
+  }
+  .flatpickr-day.selected,
+  .flatpickr-day.selected:hover {
+    background: #10B981 !important;
+    border-color: #10B981 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+  }
+  .flatpickr-day.prevMonthDay,
+  .flatpickr-day.nextMonthDay {
+    color: #475569 !important;
+  }
 </style>
 @endsection
-
-@extends('layout.template')
 
 @section('content')
 <!-- Delete Modal -->
@@ -444,14 +550,20 @@
               <div class="mb-3 row align-items-center">
                 <label for="tanggal_input" class="col-lg-4 form-label-modern">Tanggal Pembelian <span class="required-star">*</span></label>
                 <div class="col-lg-8">
-                  <input type="date" name="tgl" id="tanggal_input" class="form-control form-control-modern" value="{{ old('tgl', $pembelian->tanggal) }}" required aria-required="true">
+                  <div class="position-relative">
+                    <input type="text" name="tgl" id="tanggal_input" class="form-control form-control-modern" value="{{ old('tgl', $pembelian->tanggal) }}" placeholder="Pilih Tanggal Pembelian" required aria-required="true" style="cursor: pointer; padding-right: 38px;">
+                    <i class="ri-calendar-2-line position-absolute text-muted" style="right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px;"></i>
+                  </div>
                 </div>
               </div>
 
               <div class="mb-3 row align-items-center">
                 <label for="tanggal_jto_input" class="col-lg-4 form-label-modern">Tanggal Jatuh Tempo</label>
                 <div class="col-lg-8">
-                  <input type="date" name="tgl_jto" id="tanggal_jto_input" class="form-control form-control-modern" value="{{ old('tgl_jto', $pembelian->tgl_jto) }}">
+                  <div class="position-relative">
+                    <input type="text" name="tgl_jto" id="tanggal_jto_input" class="form-control form-control-modern" value="{{ old('tgl_jto', $pembelian->tgl_jto) }}" placeholder="Pilih Tanggal Jatuh Tempo" style="cursor: pointer; padding-right: 38px;">
+                    <i class="ri-calendar-2-line position-absolute text-muted" style="right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px;"></i>
+                  </div>
                 </div>
               </div>
 
@@ -813,6 +925,20 @@
         }
       });
     });
+    // Inisialisasi Flatpickr Kalender Interaktif
+    flatpickr("#tanggal_input", {
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "d/m/Y",
+      allowInput: true
+    });
+    flatpickr("#tanggal_jto_input", {
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "d/m/Y",
+      allowInput: true
+    });
   });
 </script>
+<script src="{{ asset('libs/flatpickr/flatpickr.min.js') }}"></script>
 @endsection
