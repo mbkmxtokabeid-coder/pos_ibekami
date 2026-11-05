@@ -1148,7 +1148,13 @@ class InvoiceController extends Controller
             $item->qty = $request->qty[$key];
             $item->satuan = $request->satuan[$key];
             $item->hargaBarang = $cleanNominal($request->hrg[$key] ?? 0);
-            $item->jumlah_harga = $cleanNominal($request->jlh_hrg[$key] ?? 0);
+            $submitedJumlah = $cleanNominal($request->jlh_hrg[$key] ?? 0);
+            $calculatedJumlah = round($item->hargaBarang * (float)($item->qty ?? 0));
+            if ($submitedJumlah <= 0 || ($calculatedJumlah > 0 && abs($submitedJumlah - $calculatedJumlah) > 10)) {
+                $item->jumlah_harga = $calculatedJumlah;
+            } else {
+                $item->jumlah_harga = $submitedJumlah;
+            }
             
             // Simpan Material, Qty, P x L sebagai JSON String
             $item->material_id = !empty($matIds) ? json_encode(array_values($matIds)) : null;

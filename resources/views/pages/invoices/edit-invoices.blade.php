@@ -394,16 +394,16 @@
                                     </select>
                                    </td>
                                    <td>
-                                    <input type="text" class="form-control product-price bg-light border-0" id="productRate-{{$index+1}}" name="hrg[{{$index}}]" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' placeholder="0" onchange="autoCalc(this)" value="{{ number_format($jual->hargaBarang, 0, ',', '.') }}" required/>
+                                    <input type="text" class="form-control product-price bg-light border-0" id="productRate-{{$index+1}}" name="hrg[{{$index}}]" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' placeholder="0" oninput="autoCalc(this)" onchange="autoCalc(this)" value="{{ $jual->hargaBarang }}" required/>
                                     </td>
                                     <td>
                                      <div class="input-step">
-                                      <input type="number" class="text-center" id="product-qty-{{$index+1}}" value="{{$jual->qty}}" name="qty[{{$index}}]" onchange="autoCalc(this)">
+                                      <input type="number" class="text-center" id="product-qty-{{$index+1}}" value="{{$jual->qty}}" name="qty[{{$index}}]" oninput="autoCalc(this)" onchange="autoCalc(this)">
                                      </div>
                                     </td>
                                     <td class="text-end">
                                      <div>
-                                      <input type="text" class="form-control bg-light border-0 product-line-price" id="productPrice-{{$index+1}}" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="jlh_hrg[{{$index}}]" placeholder="0" value="{{ number_format($jual->jumlah_harga, 0, ',', '.') }}" onchange="autoCalc(this)" readonly/>
+                                      <input type="text" class="form-control bg-light border-0 product-line-price" id="productPrice-{{$index+1}}" name="jlh_hrg[{{$index}}]" placeholder="0" value="{{ number_format($jual->jumlah_harga, 0, ',', '.') }}" readonly/>
                                      </div>
                                     </td>
                                     <td class="product-removal"><a href="javascript:void(0)" class="btn btn-success">Delete</a>
@@ -819,11 +819,11 @@
                 </select>
             </td>
             <td>
-                <input type="text" class="form-control product-price bg-light border-0" id="productRate-${count}" name="hrg[${count}]" placeholder="Rp. 0.000" onchange="autoCalc(this)" required />
+                <input type="text" class="form-control product-price bg-light border-0" id="productRate-${count}" name="hrg[${count}]" placeholder="Rp. 0.000" oninput="autoCalc(this)" onchange="autoCalc(this)" required />
             </td>
             <td>
                 <div class="input-step">
-                    <input type="number" class="text-center" id="product-qty-${count}" value="1" name="qty[${count}]" onchange="autoCalc(this)">
+                    <input type="number" class="text-center" id="product-qty-${count}" value="1" name="qty[${count}]" oninput="autoCalc(this)" onchange="autoCalc(this)">
                 </div>
             </td>
             <td class="text-end">
