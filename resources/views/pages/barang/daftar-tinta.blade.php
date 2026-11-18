@@ -333,20 +333,36 @@
     padding: 14px 16px !important;
   }
   .dataTables_wrapper .dataTables_length select {
-    background-color: #0F172A !important;
-    border: 1px solid #334155 !important;
-    color: #F1F5F9 !important;
+    background-color: var(--ibk-input-bg, #0F172A) !important;
+    border: 1px solid var(--ibk-border, #334155) !important;
+    color: var(--ibk-text, #F8FAFC) !important;
     border-radius: 6px !important;
-    padding: 4px 10px !important;
+    min-width: 68px !important;
+    height: 32px !important;
+    padding: 3px 28px 3px 10px !important;
     outline: none !important;
-  }
+    cursor: pointer !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 8px center !important;
+    background-size: 11px 9px !important;
+}
+body.theme-light .dataTables_wrapper .dataTables_length select {
+    background-color: #FFFFFF !important;
+    border-color: #CBD5E1 !important;
+    color: #0F172A !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+}
   .dataTables_wrapper .dataTables_filter input {
     background-color: #0F172A !important;
     border: 1px solid #334155 !important;
     color: #F1F5F9 !important;
     border-radius: 8px !important;
     padding: 6px 12px !important;
-    margin-left: 8px !important;
+    margin-left: 0 !important;
     outline: none !important;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }

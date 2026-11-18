@@ -193,6 +193,17 @@ class InvoiceController extends Controller
             rsort($availableYears);
         }
 
+        // Ambil hanya user yang pernah membuat invoice (tercatat di tabel penjualan)
+        $adminIds = Penjualan::whereNotNull('admin')
+            ->distinct()
+            ->pluck('admin')
+            ->filter();
+
+        $adminList = User::whereIn('id', $adminIds)
+            ->select('id', 'nama')
+            ->orderBy('nama')
+            ->get();
+
         return view('pages.invoices.daftar-invoice', compact(
             'penjualan', 'jlhInvoice', 'lunas', 'belumLunas', 'batal', 'totalLunasThn',
             'jumlahBatal', 'jumlahInvoice', 'jumlahBBPerTahun', 'jumlahBBPerBulan',
@@ -201,7 +212,7 @@ class InvoiceController extends Controller
             'countAllSettledPO', 'jumlahBBPerBulanPO',
             'ppnTotal', 'ppnTotalCount', 'ppn01', 'ppn01Count', 'ppn02', 'ppn02Count',
             'ppn03', 'ppn03Count', 'ppn04', 'ppn04Count', 'pphTotal', 'pphTotalCount', 'availableYears',
-            'jenisInvoiceList', 'materialsMap'
+            'jenisInvoiceList', 'materialsMap', 'adminList'
         ));
     }
 
@@ -256,8 +267,45 @@ class InvoiceController extends Controller
             ]);
 
         // Filter Jenis Invoice
-        if ($request->filled('jenis')) {
+        if ($request->filled('jenis') && $request->input('jenis') !== '') {
             $query->where('invoice', $request->input('jenis'));
+        }
+
+        // Filter Status Invoice (Semua, Lunas, Belum Lunas, Batal)
+        if ($request->filled('status') && $request->input('status') !== 'Semua') {
+            $query->where('status', $request->input('status'));
+        }
+
+        // Filter Order By (Fleksibel & Case-tolerant)
+        if ($request->filled('order_by') && $request->input('order_by') !== '') {
+            $orderByVal = trim($request->input('order_by'));
+            if ($orderByVal === 'Walk in' || $orderByVal === 'Walk In' || $orderByVal === 'Toko') {
+                $query->where(function ($q) {
+                    $q->where('order_by', 'like', '%Walk%')
+                      ->orWhere('order_by', 'like', '%Toko%');
+                });
+            } elseif ($orderByVal === 'WhatsApp' || $orderByVal === 'WhatsApp/Online') {
+                $query->where('order_by', 'like', '%WhatsApp%');
+            } else {
+                $query->where('order_by', 'like', "%{$orderByVal}%");
+            }
+        }
+
+        // Filter Tipe Pembayaran (Cash, Transfer, DP, PO)
+        if ($request->filled('pembayaran') && $request->input('pembayaran') !== '') {
+            $pemVal = trim($request->input('pembayaran'));
+            if ($pemVal === 'DP') {
+                $query->where('jenis_pembayaran', 'like', '%DP%');
+            } elseif ($pemVal === 'PO') {
+                $query->where('jenis_pembayaran', 'like', '%PO%');
+            } else {
+                $query->where('jenis_pembayaran', 'like', "%{$pemVal}%");
+            }
+        }
+
+        // Filter Admin
+        if ($request->filled('admin_id') && $request->input('admin_id') !== '') {
+            $query->where('admin', $request->input('admin_id'));
         }
 
         // Search global
@@ -574,55 +622,66 @@ class InvoiceController extends Controller
 
             // 12. Col Aksi (Sleek 3-dots button ⋮)
             $htmlAksi = '<div class="dropdown text-center tokabe-action-dropdown">';
-            $htmlAksi .= '<button class="btn btn-tokabe-action-dots" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="window" data-bs-popper-config=\'{"strategy":"fixed"}\' title="Menu Aksi">';
+            $htmlAksi .= '<button class="btn btn-tokabe-action-dots" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Menu Aksi" aria-label="Menu Aksi Invoice">';
             $htmlAksi .= '<i class="las la-ellipsis-v"></i>';
             $htmlAksi .= '</button>';
-            $htmlAksi .= '<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg">';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print me-2 text-primary"></i>Cetak Nota (ASLI)</a></li>';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print me-2 text-danger"></i>Cetak Nota (COPY)</a></li>';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download me-2 text-info"></i>Download Invoice</a></li>';
+            $htmlAksi .= '<ul class="dropdown-menu dropdown-menu-end shadow-lg tokabe-action-menu">';
+            
+            // Grup 1: Cetak & Dokumen
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (ASLI)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (COPY)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download me-2"></i>Download Invoice</a></li>';
 
             if (!empty($no_hp_cust)) {
-                $htmlAksi .= '<li><a class="dropdown-item text-success" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</a></li>';
             }
 
+            // Divider Grup 1 -> Grup 2
+            $htmlAksi .= '<li><hr class="dropdown-divider"></li>';
+
+            // Grup 2: Manajemen & Operasional
             if ($isOwner) {
                 if ($inv->approval === 'Unlock') {
-                    $htmlAksi .= '<li><a class="dropdown-item text-warning" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-lock me-2"></i>Lock Invoice</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-lock me-2"></i>Lock Invoice</a></li>';
                 } else {
-                    $htmlAksi .= '<li><a class="dropdown-item text-success" href="' . url('ubah-status-unlock/' . $inv->id) . '"><i class="las la-lock-open me-2"></i>Unlock Invoice</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-unlock/' . $inv->id) . '"><i class="las la-lock-open me-2"></i>Unlock Invoice</a></li>';
                 }
             }
 
             if ($isAdmin && $inv->approval !== 'Unlock') {
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Unlock (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLink2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Unlock (Owner 2)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLink . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Unlock (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLink2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Unlock (Owner 2)</a></li>';
             }
 
-            $htmlAksi .= '<li><a class="dropdown-item btn-buat-spk" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#buatSpkModal"><i class="las la-clipboard-list me-2 text-primary"></i>Buat SPK Baru</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item btn-buat-spk" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#buatSpkModal"><i class="las la-clipboard-list me-2"></i>Buat SPK Baru</a></li>';
 
             if ($isAdmin && $inv->status !== 'Lunas') {
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Pelunasan (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item text-warning fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Pelunasan (Owner 2)</a></li>';
-            }
-
-            if ($isAdmin) {
-                if ($inv->status !== 'Batal') {
-                    $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 1)</a></li>';
-                    $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkBatal2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-success"></i>Request Batal (Owner 2)</a></li>';
-                }
-                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkDelete1 . '" target="_blank"><i class="lab la-whatsapp me-2 text-danger"></i>Request Delete (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item text-danger fw-semibold" href="' . $waLinkDelete2 . '" target="_blank"><i class="lab la-whatsapp me-2 text-danger"></i>Request Delete (Owner 2)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkLunas1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Pelunasan (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Pelunasan (Owner 2)</a></li>';
             }
 
             $canManage = !$isAdmin || $inv->approval === 'Unlock';
             if ($canManage) {
-                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen me-2 text-info"></i>Edit Invoice</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-history me-2 text-secondary"></i>Riwayat Log</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen me-2"></i>Edit Invoice</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-history me-2"></i>Riwayat Log</a></li>';
+            }
+
+            if ($isAdmin) {
                 if ($inv->status !== 'Batal') {
-                    $htmlAksi .= '<li><button type="button" class="dropdown-item text-warning" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-times-circle me-2"></i>Invoice Batal</button></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkBatal1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Batal (Owner 1)</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkBatal2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Batal (Owner 2)</a></li>';
                 }
-                $htmlAksi .= '<li><button type="button" class="dropdown-item text-danger" onclick="confirmHapus(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-trash me-2"></i>Hapus Invoice</button></li>';
+                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkDelete1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Delete (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkDelete2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Delete (Owner 2)</a></li>';
+            }
+
+            // Divider Grup 2 -> Grup 3
+            if ($canManage && ($inv->status !== 'Batal' || true)) {
+                $htmlAksi .= '<li><hr class="dropdown-divider"></li>';
+                if ($inv->status !== 'Batal') {
+                    $htmlAksi .= '<li><button type="button" class="dropdown-item dropdown-item-batal" onclick="confirmBatal(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-times-circle me-2"></i>Invoice Batal</button></li>';
+                }
+                $htmlAksi .= '<li><button type="button" class="dropdown-item dropdown-item-hapus" onclick="confirmHapus(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-trash me-2"></i>Hapus Invoice</button></li>';
             }
             $htmlAksi .= '</ul></div>';
 

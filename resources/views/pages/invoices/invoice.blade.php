@@ -12,10 +12,240 @@
    WCAG AA/AAA compliant contrast ratios (7:1+), pristine alignment, zero clutter
    ========================================================================== */
 
-/* Flatpickr Calendar - Solid Opaque Dark Theme & High Elevation */
+/* View Transition API Circular Reveal Styles */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+    z-index: 1;
+}
+::view-transition-new(root) {
+    z-index: 999999;
+}
+
+/* Theme Toggle Button (Identik Dashboard) */
+.ref-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #F5EFE6;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    outline: none !important;
+    text-decoration: none !important;
+}
+.ref-theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+    color: #FBBF24;
+}
+.ref-theme-toggle:active {
+    transform: scale(0.96);
+}
+.ref-theme-toggle #theme-toggle-icon {
+    display: inline-block;
+    transition: transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease;
+}
+.ref-theme-toggle.theme-switching #theme-toggle-icon {
+    transform: rotate(180deg) scale(0.65);
+    opacity: 0.2;
+}
+
+/* Theme Toggle (Light) */
+body.theme-light .ref-theme-toggle {
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #334155 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+body.theme-light .ref-theme-toggle:hover {
+    background: #FFF7ED !important;
+    border-color: #FDBA74 !important;
+    color: #C2410C !important;
+}
+
+/* Solid Dark & Light Canvas */
+html:not(.theme-light) body,
+html.theme-dark body {
+    background-color: #0C0A09 !important;
+    background-image: none !important;
+    color: #FAFAFA !important;
+}
+html.theme-light body,
+body.theme-light {
+    background-color: #F8FAFC !important;
+    background-image: none !important;
+    color: #0F172A !important;
+}
+
+#layout-wrapper, .main-content, .page-content {
+    background-color: transparent !important;
+}
+
+/* Sembunyikan semua scrollbar bawaan (tetap bisa di-scroll dengan mousewheel / touch gesture) */
+*,
+*::before,
+*::after,
+html,
+body,
+#layout-wrapper,
+.main-content,
+.page-content,
+.card,
+.inv-main-card,
+.table-responsive,
+.choices__list {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#layout-wrapper::-webkit-scrollbar,
+.main-content::-webkit-scrollbar,
+.page-content::-webkit-scrollbar,
+.card::-webkit-scrollbar,
+.inv-main-card::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar,
+.choices__list::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+}
+
+/* Choices.js Dropdown Styling (Warm Obsidian & Amber Highlight) */
+.choices {
+    margin-bottom: 0 !important;
+}
+.choices__inner {
+    background-color: rgba(18, 14, 10, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAFA !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+    min-height: 40px !important;
+    padding: 4px 10px !important;
+}
+.is-focused .choices__inner,
+.is-open .choices__inner {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18) !important;
+}
+.choices__list--single {
+    padding: 4px 16px 4px 4px !important;
+    color: #FAFAFA !important;
+}
+.choices__list--single .choices__item {
+    color: #FAFAFA !important;
+}
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
+    background: #181411 !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+    padding: 6px !important;
+    z-index: 99999 !important;
+}
+.choices__list--dropdown .choices__input {
+    background: #14100D !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 6px !important;
+    color: #FAFAFA !important;
+    padding: 8px 12px !important;
+    margin-bottom: 6px !important;
+    font-size: 13px !important;
+}
+.choices__list--dropdown .choices__input:focus {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25) !important;
+}
+.choices__list--dropdown .choices__item--selectable {
+    color: #F5EFE6 !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    transition: all 0.15s ease !important;
+}
+.choices__list--dropdown .choices__item--selectable:hover,
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.22), rgba(234, 88, 12, 0.28)) !important;
+    color: #F59E0B !important;
+    font-weight: 600 !important;
+}
+.choices__placeholder {
+    color: #78716C !important;
+    opacity: 1 !important;
+}
+
+/* Choices.js Light Mode */
+body.theme-light .choices__inner {
+    background-color: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #0F172A !important;
+}
+body.theme-light .is-focused .choices__inner,
+body.theme-light .is-open .choices__inner {
+    border-color: #EA580C !important;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15) !important;
+}
+body.theme-light .choices__list--single,
+body.theme-light .choices__list--single .choices__item {
+    color: #0F172A !important;
+}
+body.theme-light .choices__list--dropdown,
+body.theme-light .choices__list[aria-expanded] {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
+}
+body.theme-light .choices__list--dropdown .choices__input {
+    background: #F8FAFC !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #0F172A !important;
+}
+body.theme-light .choices__list--dropdown .choices__input:focus {
+    border-color: #EA580C !important;
+    box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.15) !important;
+}
+body.theme-light .choices__list--dropdown .choices__item--selectable {
+    color: #334155 !important;
+}
+body.theme-light .choices__list--dropdown .choices__item--selectable:hover,
+body.theme-light .choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background: #FFF7ED !important;
+    color: #C2410C !important;
+}
+body.theme-light .choices__placeholder {
+    color: #94A3B8 !important;
+}
+
+/* Page Title Heading */
+.inv-page-title {
+    color: #FAFAFA !important;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 18px;
+    margin: 0;
+}
+body.theme-light .inv-page-title {
+    color: #1E293B !important;
+}
+
+/* Flatpickr Calendar - Solid Opaque Warm Obsidian Theme */
 .flatpickr-calendar {
-    background: #1c222d !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    background: #181411 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 12px !important;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
     z-index: 999999 !important;
@@ -24,67 +254,67 @@
 }
 .flatpickr-calendar::before,
 .flatpickr-calendar::after {
-    border-bottom-color: #151a23 !important;
+    border-bottom-color: #14100D !important;
 }
 .flatpickr-months {
-    background: #151a23 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: #14100D !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     padding: 6px 0 !important;
 }
 .flatpickr-months .flatpickr-month {
-    color: #ffffff !important;
-    fill: #ffffff !important;
+    color: #FAFAFA !important;
+    fill: #FAFAFA !important;
     height: 38px !important;
 }
 .flatpickr-current-month {
     font-size: 14px !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
+    color: #FAFAFA !important;
     padding-top: 4px !important;
 }
 .flatpickr-current-month .cur-month {
-    color: #ffffff !important;
+    color: #FAFAFA !important;
     font-weight: 700 !important;
 }
 .flatpickr-current-month input.cur-year {
-    color: #ffffff !important;
+    color: #FAFAFA !important;
     font-weight: 700 !important;
 }
 .flatpickr-months .flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month {
-    color: #ffffff !important;
-    fill: #ffffff !important;
+    color: #FAFAFA !important;
+    fill: #FAFAFA !important;
     padding: 6px 10px !important;
 }
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {
-    fill: #38bdf8 !important;
+    fill: #F59E0B !important;
 }
 span.flatpickr-weekday {
-    background: #151a23 !important;
-    color: #94a3b8 !important;
+    background: #14100D !important;
+    color: #A1A1AA !important;
     font-size: 12px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
 }
 .flatpickr-weekdays {
-    background: #151a23 !important;
+    background: #14100D !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     height: 32px !important;
 }
 .flatpickr-days {
-    background: #1c222d !important;
+    background: #181411 !important;
     width: 100% !important;
 }
 .dayContainer {
-    background: #1c222d !important;
+    background: #181411 !important;
     padding: 6px 4px !important;
     min-width: 100% !important;
     max-width: 100% !important;
 }
 .flatpickr-day {
-    color: #f1f5f9 !important;
+    color: #FAFAFA !important;
     border-radius: 8px !important;
     font-weight: 500 !important;
     font-size: 13.5px !important;
@@ -93,62 +323,130 @@ span.flatpickr-weekday {
     margin: 1px 0 !important;
 }
 .flatpickr-day:hover {
-    background: rgba(80, 81, 249, 0.25) !important;
-    border-color: rgba(80, 81, 249, 0.4) !important;
-    color: #ffffff !important;
+    background: rgba(245, 158, 11, 0.22) !important;
+    border-color: rgba(245, 158, 11, 0.45) !important;
+    color: #FFFFFF !important;
 }
 .flatpickr-day.selected,
 .flatpickr-day.selected:hover {
-    background: #5051F9 !important;
-    border-color: #5051F9 !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    border-color: #F59E0B !important;
+    color: #1A0F05 !important;
     font-weight: 700 !important;
-    box-shadow: 0 2px 8px rgba(80, 81, 249, 0.5) !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
 }
 .flatpickr-day.today {
-    border-color: #38bdf8 !important;
-    color: #38bdf8 !important;
+    border-color: #F59E0B !important;
+    color: #F59E0B !important;
     font-weight: 700 !important;
 }
 .flatpickr-day.today:hover {
-    background: rgba(56, 189, 248, 0.2) !important;
-    color: #ffffff !important;
+    background: rgba(245, 158, 11, 0.25) !important;
+    color: #FFFFFF !important;
 }
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay {
-    color: #475569 !important;
+    color: #71717A !important;
 }
 .flatpickr-day.prevMonthDay:hover,
 .flatpickr-day.nextMonthDay:hover {
     background: rgba(255, 255, 255, 0.05) !important;
-    color: #94a3b8 !important;
+    color: #A1A1AA !important;
 }
 .flatpickr-day.flatpickr-disabled,
 .flatpickr-day.flatpickr-disabled:hover {
-    color: #334155 !important;
+    color: #52525B !important;
 }
 .flatpickr-calendar .numInputWrapper span.arrowUp:after {
-    border-bottom-color: #f1f5f9 !important;
+    border-bottom-color: #FAFAFA !important;
 }
 .flatpickr-calendar .numInputWrapper span.arrowDown:after {
-    border-top-color: #f1f5f9 !important;
+    border-top-color: #FAFAFA !important;
 }
 .flatpickr-calendar .numInputWrapper:hover {
     background: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Main Card Container */
-.inv-main-card {
-    background-color: #161b22 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 14px !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
-    overflow: hidden;
+/* Flatpickr Calendar (Light Mode) */
+body.theme-light .flatpickr-calendar {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12) !important;
+}
+body.theme-light .flatpickr-months {
+    background: #F8FAFC !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+body.theme-light .flatpickr-months .flatpickr-month {
+    color: #0F172A !important;
+    fill: #0F172A !important;
+}
+body.theme-light .flatpickr-current-month,
+body.theme-light .flatpickr-current-month .cur-month,
+body.theme-light .flatpickr-current-month input.cur-year {
+    color: #0F172A !important;
+}
+body.theme-light .flatpickr-months .flatpickr-prev-month,
+body.theme-light .flatpickr-months .flatpickr-next-month {
+    color: #64748B !important;
+    fill: #64748B !important;
+}
+body.theme-light .flatpickr-months .flatpickr-prev-month:hover svg,
+body.theme-light .flatpickr-months .flatpickr-next-month:hover svg {
+    fill: #EA580C !important;
+}
+body.theme-light span.flatpickr-weekday {
+    background: #F8FAFC !important;
+    color: #64748B !important;
+}
+body.theme-light .flatpickr-weekdays {
+    background: #F8FAFC !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+body.theme-light .flatpickr-days,
+body.theme-light .dayContainer {
+    background: #FFFFFF !important;
+}
+body.theme-light .flatpickr-day {
+    color: #1E293B !important;
+}
+body.theme-light .flatpickr-day:hover {
+    background: #FFF7ED !important;
+    border-color: #FDBA74 !important;
+    color: #C2410C !important;
+}
+body.theme-light .flatpickr-day.selected,
+body.theme-light .flatpickr-day.selected:hover {
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    border-color: #EA580C !important;
+    color: #FFFFFF !important;
+}
+body.theme-light .flatpickr-day.today {
+    border-color: #EA580C !important;
+    color: #EA580C !important;
+}
+body.theme-light .flatpickr-day.prevMonthDay,
+body.theme-light .flatpickr-day.nextMonthDay {
+    color: #94A3B8 !important;
 }
 
-/* Form Labels - High Contrast & Visibility (WCAG AAA Compliant) */
+/* Main Card Container (Solid Dark & Light Surface) */
+.inv-main-card {
+    background: #14110F !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35) !important;
+    overflow: hidden;
+}
+body.theme-light .inv-main-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Form Labels - High Contrast & Visibility */
 .inv-form-label {
-    color: #e6edf3 !important;
+    color: #FAFAFA !important;
     font-size: 13.5px !important;
     font-weight: 600 !important;
     margin-bottom: 6px;
@@ -164,25 +462,28 @@ span.flatpickr-weekday {
     font-weight: 700 !important;
     margin-left: 2px;
 }
+body.theme-light .inv-form-label {
+    color: #1E293B !important;
+}
 
-/* Interactive Controls (Editable Inputs, Selects, Textareas) */
+/* Interactive Controls (Editable Inputs, Selects, Textareas) - Warm Obsidian */
 .inv-dark-control {
-    background-color: #1e2530 !important;
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
-    color: #ffffff !important;
+    background-color: rgba(18, 14, 10, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FAFAFA !important;
     border-radius: 8px !important;
     font-size: 13.5px !important;
     height: 40px !important;
     transition: all 0.15s ease-in-out !important;
 }
 .inv-dark-control:hover {
-    border-color: rgba(255, 255, 255, 0.3) !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
 }
 .inv-dark-control:focus {
-    background-color: #1e2530 !important;
-    border-color: #5051F9 !important;
-    box-shadow: 0 0 0 3px rgba(80, 81, 249, 0.35) !important;
-    color: #ffffff !important;
+    background-color: rgba(24, 18, 14, 0.96) !important;
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.28) !important;
+    color: #FFFFFF !important;
     outline: none !important;
 }
 .inv-dark-control.is-invalid {
@@ -190,7 +491,7 @@ span.flatpickr-weekday {
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
 }
 .inv-dark-control::placeholder {
-    color: #94a3b8 !important;
+    color: #71717A !important;
     opacity: 1 !important;
 }
 textarea.inv-dark-control {
@@ -198,9 +499,28 @@ textarea.inv-dark-control {
     min-height: 56px !important;
 }
 
+/* Controls (Light Mode) */
+body.theme-light .inv-dark-control {
+    background-color: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #0F172A !important;
+}
+body.theme-light .inv-dark-control:hover {
+    border-color: #94A3B8 !important;
+}
+body.theme-light .inv-dark-control:focus {
+    background-color: #FFFFFF !important;
+    border-color: #EA580C !important;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2) !important;
+    color: #0F172A !important;
+}
+body.theme-light .inv-dark-control::placeholder {
+    color: #94A3B8 !important;
+}
+
 /* Select Dropdown & Options Accessibility */
 select.inv-dark-control {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23FAFAFA' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
     background-repeat: no-repeat !important;
     background-position: right 0.75rem center !important;
     background-size: 14px 10px !important;
@@ -208,25 +528,36 @@ select.inv-dark-control {
     cursor: pointer;
 }
 select.inv-dark-control option {
-    background-color: #1e2530 !important;
-    color: #ffffff !important;
+    background-color: #181411 !important;
+    color: #FAFAFA !important;
     padding: 10px 14px !important;
     font-size: 13.5px !important;
 }
 select.inv-dark-control option:hover,
 select.inv-dark-control option:focus,
 select.inv-dark-control option:checked {
-    background-color: #5051F9 !important;
-    color: #ffffff !important;
+    background-color: #F59E0B !important;
+    color: #1A0F05 !important;
+}
+body.theme-light select.inv-dark-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+body.theme-light select.inv-dark-control option {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+}
+body.theme-light select.inv-dark-control option:checked {
+    background-color: #FFF7ED !important;
+    color: #C2410C !important;
 }
 
-/* Readonly Inputs - Clear, Legible, Distinguishable */
+/* Readonly Inputs - Warm Obsidian Glass */
 .inv-dark-control:disabled,
 .inv-dark-control[readonly],
 .inv-readonly {
-    background-color: #131822 !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    color: #e2e8f0 !important;
+    background-color: rgba(12, 10, 8, 0.88) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #D4D4D8 !important;
     font-weight: 500 !important;
     cursor: default !important;
     user-select: all;
@@ -235,32 +566,50 @@ select.inv-dark-control option:checked {
     font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
 }
 .inv-readonly-highlight {
-    background-color: #131822 !important;
-    border: 1px solid rgba(56, 189, 248, 0.35) !important;
-    color: #38bdf8 !important;
+    background-color: rgba(245, 158, 11, 0.08) !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    color: #FBBF24 !important;
     font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
     font-weight: 700 !important;
+}
+body.theme-light .inv-dark-control:disabled,
+body.theme-light .inv-dark-control[readonly],
+body.theme-light .inv-readonly {
+    background-color: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+}
+body.theme-light .inv-readonly-highlight {
+    background-color: #FFF7ED !important;
+    border: 1px solid #FDBA74 !important;
+    color: #C2410C !important;
 }
 
 /* Addon % for PPN & PPh */
 .inv-dark-addon {
-    background-color: #283141 !important;
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    background-color: rgba(24, 20, 16, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-left: none !important;
-    color: #cbd5e1 !important;
+    color: #D4D4D8 !important;
     font-size: 13px !important;
     font-weight: 600 !important;
     border-top-right-radius: 8px !important;
     border-bottom-right-radius: 8px !important;
     padding: 0 14px !important;
 }
+body.theme-light .inv-dark-addon {
+    background-color: #F1F5F9 !important;
+    border: 1px solid #CBD5E1 !important;
+    border-left: none !important;
+    color: #475569 !important;
+}
 
-/* Logo Box matching Tokabe Reference */
+/* Logo Box */
 .inv-logo-card {
     width: 220px;
     height: 110px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    background: rgba(24, 20, 17, 0.6);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -272,6 +621,11 @@ select.inv-dark-control option:checked {
     max-width: 180px;
     object-fit: contain;
 }
+body.theme-light .inv-logo-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
 
 /* Table Styling */
 .inv-dark-table {
@@ -279,12 +633,12 @@ select.inv-dark-control option:checked {
 }
 .inv-dark-table thead th {
     background-color: transparent !important;
-    color: #cbd5e1 !important;
+    color: #A1A1AA !important;
     font-size: 12px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.085) !important;
     padding: 12px 10px !important;
 }
 .inv-dark-table tbody tr {
@@ -294,7 +648,7 @@ select.inv-dark-control option:checked {
 .inv-dark-table tbody > tr > th {
     vertical-align: top !important;
     padding: 12px 10px !important;
-    color: #f1f5f9;
+    color: #FAFAFA;
     border: none !important;
 }
 .inv-dark-table th.product-id,
@@ -321,12 +675,30 @@ select.inv-dark-control option:checked {
     line-height: 1;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
+body.theme-light .inv-dark-table thead th {
+    background-color: #F8FAFC !important;
+    color: #64748B !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+body.theme-light .inv-dark-table tbody tr {
+    border-bottom: 1px solid #F1F5F9 !important;
+}
+body.theme-light .inv-dark-table tbody > tr > td,
+body.theme-light .inv-dark-table tbody > tr > th {
+    color: #1E293B !important;
+}
+body.theme-light .product-id-badge {
+    background: #F1F5F9 !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #334155 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
 
-/* Material Sub-Card Box */
+/* Material Sub-Card Box (Warm Obsidian) */
 .material-box-wrapper {
-    background-color: #121720;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-left: 3px solid #38bdf8;
+    background-color: rgba(18, 14, 10, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-left: 3px solid #F59E0B !important;
     border-radius: 8px;
     padding: 10px 12px;
     margin-top: 8px;
@@ -342,20 +714,48 @@ select.inv-dark-control option:checked {
 .material-box-title {
     font-size: 11.5px;
     font-weight: 600;
-    color: #38bdf8;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: #F59E0B;
+    text-transform: none;
+    letter-spacing: normal;
+}
+.btn-tambah-material {
+    color: #F59E0B !important;
+    transition: all 0.15s ease !important;
+}
+.btn-tambah-material:hover {
+    color: #FBBF24 !important;
+}
+body.theme-light .material-box-wrapper {
+    background-color: #FFFBEB !important;
+    border: 1px solid #FDE68A !important;
+    border-left: 3px solid #EA580C !important;
+}
+body.theme-light .material-box-title {
+    color: #B45309 !important;
+}
+body.theme-light .btn-tambah-material {
+    color: #EA580C !important;
+}
+body.theme-light .btn-tambah-material:hover {
+    color: #C2410C !important;
 }
 
 /* Bank Account Card Badge */
 .bank-account-badge {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.12) !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
     border-radius: 8px;
-    padding: 9px 14px;
-    display: flex;
+    padding: 10px 15px;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+.bank-account-badge .bank-account-text {
+    color: #34D399;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
 }
 .badge-dot-green {
     width: 8px;
@@ -364,6 +764,21 @@ select.inv-dark-control option:checked {
     border-radius: 50%;
     display: inline-block;
     flex-shrink: 0;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+}
+body.theme-light .bank-account-badge {
+    background: #ECFDF5 !important;
+    border: 1px solid #A7F3D0 !important;
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.08) !important;
+}
+body.theme-light .bank-account-badge .bank-account-text,
+body.theme-light .bank-account-badge span,
+body.theme-light .bank-account-badge .text-white {
+    color: #065F46 !important;
+}
+body.theme-light .badge-dot-green {
+    background-color: #059669 !important;
+    box-shadow: 0 0 5px rgba(5, 150, 105, 0.4) !important;
 }
 
 /* Action Buttons */
@@ -387,15 +802,20 @@ select.inv-dark-control option:checked {
     border-color: #ef4444 !important;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
 }
+body.theme-light .btn-hapus-item {
+    background-color: #FEE2E2 !important;
+    border-color: #FCA5A5 !important;
+    color: #DC2626 !important;
+}
 
 .btn-add-item-custom {
-    background-color: transparent !important;
-    border: 1px solid #38bdf8 !important;
-    color: #38bdf8 !important;
-    border-radius: 6px !important;
-    padding: 6px 16px !important;
+    background-color: rgba(245, 158, 11, 0.08) !important;
+    border: 1px solid #F59E0B !important;
+    color: #F59E0B !important;
+    border-radius: 8px !important;
+    padding: 7px 18px !important;
     font-size: 13px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     transition: all 0.15s ease !important;
     display: inline-flex;
     align-items: center;
@@ -403,27 +823,79 @@ select.inv-dark-control option:checked {
     cursor: pointer;
 }
 .btn-add-item-custom:hover {
-    background-color: #38bdf8 !important;
-    color: #0d1117 !important;
-    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3) !important;
+    background-color: #F59E0B !important;
+    color: #1A0F05 !important;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3) !important;
+}
+body.theme-light .btn-add-item-custom {
+    background-color: #FFF7ED !important;
+    border-color: #EA580C !important;
+    color: #EA580C !important;
+}
+body.theme-light .btn-add-item-custom:hover {
+    background-color: #EA580C !important;
+    color: #FFFFFF !important;
 }
 
 .btn-save-custom {
-    background-color: #5051F9 !important;
-    border: 1px solid #5051F9 !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, #F97316 0%, #F59E0B 100%) !important;
+    border: 1px solid transparent !important;
+    color: #1A0F05 !important;
     border-radius: 8px !important;
-    padding: 8px 24px !important;
+    padding: 9px 26px !important;
     font-size: 13.5px !important;
-    font-weight: 600 !important;
-    box-shadow: 0 2px 10px rgba(80, 81, 249, 0.35) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4) !important;
     transition: all 0.15s ease !important;
     cursor: pointer;
 }
 .btn-save-custom:hover {
-    background-color: #4041e2 !important;
-    border-color: #4041e2 !important;
-    box-shadow: 0 4px 14px rgba(80, 81, 249, 0.5) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.55) !important;
+    color: #1A0F05 !important;
+}
+body.theme-light .btn-save-custom {
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35) !important;
+}
+body.theme-light .btn-save-custom:hover {
+    color: #FFFFFF !important;
+}
+
+.btn-save-draft-custom {
+    background-color: rgba(245, 158, 11, 0.12) !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    color: #FBBF24 !important;
+    border-radius: 8px !important;
+    padding: 8px 18px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.15s ease !important;
+    cursor: pointer;
+}
+.btn-save-draft-custom:hover {
+    background-color: rgba(245, 158, 11, 0.22) !important;
+    border-color: #F59E0B !important;
+    color: #FDE68A !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25) !important;
+}
+body.theme-light .btn-save-draft-custom {
+    background-color: #FFFBEB !important;
+    border: 1px solid #FCD34D !important;
+    color: #D97706 !important;
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.08) !important;
+}
+body.theme-light .btn-save-draft-custom:hover {
+    background-color: #FEF3C7 !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2) !important;
 }
 
 .btn-reset-draft-custom {
@@ -442,10 +914,50 @@ select.inv-dark-control option:checked {
     color: #ffffff !important;
     border-color: #ef4444 !important;
 }
+body.theme-light .btn-save-draft-custom {
+    background-color: rgba(245, 158, 11, 0.12) !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    color: #FBBF24 !important;
+    border-radius: 8px !important;
+    padding: 8px 18px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.15s ease !important;
+    cursor: pointer;
+}
+.btn-save-draft-custom:hover {
+    background-color: rgba(245, 158, 11, 0.22) !important;
+    border-color: #F59E0B !important;
+    color: #FDE68A !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25) !important;
+}
+body.theme-light .btn-save-draft-custom {
+    background-color: #FFFBEB !important;
+    border: 1px solid #FCD34D !important;
+    color: #D97706 !important;
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.08) !important;
+}
+body.theme-light .btn-save-draft-custom:hover {
+    background-color: #FEF3C7 !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2) !important;
+}
+
+.btn-reset-draft-custom {
+    background-color: #FEE2E2 !important;
+    border-color: #FCA5A5 !important;
+    color: #DC2626 !important;
+}
 
 .btn-batal-custom {
-    background-color: #1e2430 !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
     color: #cbd5e1 !important;
     border-radius: 8px !important;
     padding: 8px 18px !important;
@@ -458,9 +970,18 @@ select.inv-dark-control option:checked {
     cursor: pointer;
 }
 .btn-batal-custom:hover {
-    background-color: #2b3342 !important;
+    background-color: rgba(255, 255, 255, 0.14) !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.25) !important;
+}
+body.theme-light .btn-batal-custom {
+    background-color: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #475569 !important;
+}
+body.theme-light .btn-batal-custom:hover {
+    background-color: #F1F5F9 !important;
+    color: #0F172A !important;
 }
 
 /* Tanpa Harga State Class */
@@ -771,7 +1292,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Data Belum Lengkap',
                 text: 'Silakan pilih Jenis Invoice!',
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             $('#choices-invoice').addClass('is-invalid').focus();
             return false;
@@ -786,7 +1307,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Data Belum Lengkap',
                 text: 'Nama Customer wajib diisi!',
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             $('#customer').addClass('is-invalid').focus();
             return false;
@@ -801,7 +1322,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Data Belum Lengkap',
                 text: 'Nomor Telepon wajib diisi!',
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             $('#phone-number').addClass('is-invalid').focus();
             return false;
@@ -816,7 +1337,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Data Belum Lengkap',
                 text: 'Nama Admin wajib dipilih!',
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             $('#choices-admin').addClass('is-invalid').focus();
             return false;
@@ -831,7 +1352,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Data Belum Lengkap',
                 text: 'Order Dari wajib dipilih!',
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             $('#choices-orderBy').addClass('is-invalid').focus();
             return false;
@@ -847,7 +1368,7 @@ select.inv-dark-control option:checked {
                     icon: 'warning',
                     title: 'Data Belum Lengkap',
                     text: 'Nama Sales wajib diisi ketika Order Dari adalah Sales!',
-                    confirmButtonColor: '#5051F9'
+                    confirmButtonColor: '#EA580C'
                 });
                 $('#colFormLabelNamaSales').addClass('is-invalid').focus();
                 return false;
@@ -863,7 +1384,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Data Belum Lengkap',
                 text: 'Target Penyelesaian wajib diisi!',
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             $('#dateInput').addClass('is-invalid').focus();
             return false;
@@ -878,7 +1399,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Item Kosong',
                 text: 'Minimal harus ada 1 item barang dalam invoice!',
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             return false;
         }
@@ -1005,7 +1526,7 @@ select.inv-dark-control option:checked {
                 icon: 'warning',
                 title: 'Data Item Belum Lengkap',
                 text: itemErrorMsg,
-                confirmButtonColor: '#5051F9'
+                confirmButtonColor: '#EA580C'
             });
             if (firstInvalidEl && firstInvalidEl.length) {
                 firstInvalidEl.focus();
@@ -1024,7 +1545,7 @@ select.inv-dark-control option:checked {
                     icon: 'warning',
                     title: 'Data Belum Lengkap',
                     text: 'Silakan pilih Jenis Pembayaran (Payment Method)!',
-                    confirmButtonColor: '#5051F9'
+                    confirmButtonColor: '#EA580C'
                 });
                 $('#choices-payment-type').addClass('is-invalid').focus();
                 return false;
@@ -1190,12 +1711,16 @@ select.inv-dark-control option:checked {
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between mb-3">
-                    <h4 class="mb-sm-0 text-white fw-bold text-uppercase" style="letter-spacing: 0.5px;">TAMBAH INVOICE IBEKAMI</h4>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
+                    <h4 class="mb-sm-0 inv-page-title">Tambah Invoice Ibekami</h4>
+                    <div class="page-title-right d-flex align-items-center gap-2">
+                        <ol class="breadcrumb m-0 me-2 d-none d-md-flex">
                             <li class="breadcrumb-item"><a href="{{ route('daftar_invoice') }}" class="text-muted">Invoice</a></li>
                             <li class="breadcrumb-item active text-muted">Tambah Invoice</li>
                         </ol>
+                        <button type="button" class="ref-theme-toggle" id="btn-theme-toggle" onclick="toggleDashboardTheme(event)" title="Beralih Mode Tampilan" aria-label="Ganti Tema Tampilan">
+                            <i class="ri-sun-line fs-14" id="theme-toggle-icon"></i>
+                            <span id="theme-toggle-text">Mode Terang</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1499,7 +2024,7 @@ select.inv-dark-control option:checked {
                                                 </div>
                                             </div>
 
-                                            <button type="button" class="btn btn-link text-info text-decoration-none p-0 mt-2 add-material btn-tambah-material fs-12 fw-semibold">
+                                            <button type="button" class="btn btn-link text-decoration-none p-0 mt-2 add-material btn-tambah-material fs-12 fw-semibold">
                                                 <i class="ri-add-circle-line me-1"></i> Tambah Material Lainnya
                                             </button>
                                         </td>
@@ -1578,7 +2103,7 @@ select.inv-dark-control option:checked {
                                             <div class="bank-account-badge">
                                                 <span class="badge-dot-green"></span>
                                                 <input class="d-none" type="radio" name="norek" id="flexRadioDefault1" value="BNI" checked>
-                                                <span class="text-white fs-12 fw-semibold">
+                                                <span class="bank-account-text fs-12 fw-semibold">
                                                     BSI &nbsp;|&nbsp; A/N : Yusni Kurniasih &nbsp;|&nbsp; No. Rek : 2845999999
                                                 </span>
                                             </div>
@@ -1640,11 +2165,11 @@ select.inv-dark-control option:checked {
                         </div>
 
                         <!-- Alert Tanpa Harga -->
-                        <div id="alert-tanpa-harga" class="alert alert-info border-0 shadow-sm mt-3" style="display: none; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3);">
+                        <div id="alert-tanpa-harga" class="alert alert-warning border-0 shadow-sm mt-3" style="display: none; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);">
                             <div class="d-flex align-items-center">
-                                <i class="ri-information-line fs-20 me-2 text-info"></i>
+                                <i class="ri-information-line fs-20 me-2 text-warning"></i>
                                 <div>
-                                    <h6 class="alert-heading mb-1 text-info fw-bold">Jenis Invoice Tanpa Harga</h6>
+                                    <h6 class="alert-heading mb-1 text-warning fw-bold">Jenis Invoice Tanpa Harga</h6>
                                     <p class="mb-0 text-muted fs-13">Kolom harga dan detail pembayaran dinonaktifkan. Anda dapat langsung menyimpan invoice ini tanpa nominal.</p>
                                 </div>
                             </div>
@@ -1655,8 +2180,11 @@ select.inv-dark-control option:checked {
                             <button type="submit" id="simpan" class="btn btn-save-custom btn-load">
                                 <span class="d-flex align-items-center">
                                     <span id="loading-spinner" class="spinner-border spinner-border-sm flex-shrink-0 me-2" role="status" style="display: none;"></span>
-                                    <i class="ri-save-line me-1 fs-15"></i> Simpan
+                                    <i class="ri-file-add-line me-1 fs-15"></i> Buat Invoice
                                 </span>
+                            </button>
+                            <button type="button" id="btn-save-draft" class="btn btn-save-draft-custom">
+                                <i class="ri-draft-line me-1 fs-15"></i> Simpan Draf
                             </button>
                             <button type="button" id="btn-reset-draft" class="btn btn-reset-draft-custom">
                                 <i class="ri-delete-bin-line me-1"></i> Reset Draf
@@ -1865,7 +2393,7 @@ select.inv-dark-control option:checked {
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-link text-info text-decoration-none p-0 mt-2 add-material btn-tambah-material fs-12 fw-semibold">
+                <button type="button" class="btn btn-link text-decoration-none p-0 mt-2 add-material btn-tambah-material fs-12 fw-semibold">
                     <i class="ri-add-circle-line me-1"></i> Tambah Material Lainnya
                 </button>
             </td>
@@ -1964,7 +2492,133 @@ select.inv-dark-control option:checked {
         }
     }
 
+    // Theme Management (Synchronized with Dashboard & Daftar Invoice)
+    function initInvoiceTheme() {
+        var savedTheme = 'dark';
+        try {
+            savedTheme = localStorage.getItem('ibekami_dash_theme') || (document.body.classList.contains('theme-light') ? 'light' : 'dark');
+        } catch(e) {
+            savedTheme = 'dark';
+        }
+        applyThemeDOM(savedTheme);
+    }
+
+    function applyThemeDOM(theme) {
+        var isLight = theme === 'light';
+        if (document.body) {
+            document.body.classList.toggle('theme-light', isLight);
+            document.body.classList.toggle('theme-dark', !isLight);
+        }
+        document.documentElement.classList.toggle('theme-light', isLight);
+        document.documentElement.classList.toggle('theme-dark', !isLight);
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-layout-mode', theme);
+        document.documentElement.setAttribute('data-sidebar', isLight ? 'light' : 'dark');
+        try {
+            localStorage.setItem('ibekami_dash_theme', theme);
+            sessionStorage.setItem('data-layout-mode', theme);
+            sessionStorage.setItem('data-sidebar', isLight ? 'light' : 'dark');
+        } catch(e) {}
+
+        var btnText = document.getElementById('theme-toggle-text');
+        var btnIcon = document.getElementById('theme-toggle-icon');
+        if (btnText) btnText.textContent = isLight ? 'Mode Gelap' : 'Mode Terang';
+        if (btnIcon) {
+            btnIcon.className = isLight ? 'ri-moon-line fs-14' : 'ri-sun-line fs-14';
+        }
+    }
+
+    var isThemeTransitioning = false;
+    function toggleDashboardTheme(event) {
+        if (isThemeTransitioning) return;
+        isThemeTransitioning = true;
+
+        var current = 'dark';
+        try {
+            current = localStorage.getItem('ibekami_dash_theme') || (document.body.classList.contains('theme-light') ? 'light' : 'dark');
+        } catch (e) {
+            current = document.body.classList.contains('theme-light') ? 'light' : 'dark';
+        }
+        var targetTheme = current === 'light' ? 'dark' : 'light';
+
+        var supportsViewTransition = typeof document.startViewTransition === 'function';
+        var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (!supportsViewTransition || prefersReducedMotion) {
+            applyThemeDOM(targetTheme);
+            try {
+                localStorage.setItem('ibekami_dash_theme', targetTheme);
+            } catch(e) {}
+            isThemeTransitioning = false;
+            return;
+        }
+
+        var btn = document.getElementById('btn-theme-toggle');
+        if (btn) btn.classList.add('theme-switching');
+
+        var x = window.innerWidth / 2;
+        var y = window.innerHeight / 2;
+        if (event && event.clientX && event.clientY) {
+            x = event.clientX;
+            y = event.clientY;
+        } else if (btn) {
+            var rect = btn.getBoundingClientRect();
+            x = rect.left + rect.width / 2;
+            y = rect.top + rect.height / 2;
+        }
+
+        var endRadius = Math.hypot(
+            Math.max(x, window.innerWidth - x),
+            Math.max(y, window.innerHeight - y)
+        );
+
+        try {
+            var transition = document.startViewTransition(function() {
+                applyThemeDOM(targetTheme);
+                try {
+                    localStorage.setItem('ibekami_dash_theme', targetTheme);
+                } catch(e) {}
+            });
+
+            if (transition && typeof transition.ready !== 'undefined') {
+                Promise.resolve(transition.ready).then(function() {
+                    document.documentElement.animate(
+                        {
+                            clipPath: [
+                                'circle(0px at ' + x + 'px ' + y + 'px)',
+                                'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
+                            ]
+                        },
+                        {
+                            duration: 500,
+                            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+                            pseudoElement: '::view-transition-new(root)'
+                        }
+                    ).finished.finally(function() {
+                        if (btn) btn.classList.remove('theme-switching');
+                        isThemeTransitioning = false;
+                    });
+                }).catch(function() {
+                    if (btn) btn.classList.remove('theme-switching');
+                    isThemeTransitioning = false;
+                });
+            } else {
+                if (btn) btn.classList.remove('theme-switching');
+                isThemeTransitioning = false;
+            }
+        } catch (err) {
+            applyThemeDOM(targetTheme);
+            try {
+                localStorage.setItem('ibekami_dash_theme', targetTheme);
+            } catch(e) {}
+            if (btn) btn.classList.remove('theme-switching');
+            isThemeTransitioning = false;
+        }
+    }
+
     $(document).ready(function() {
+        initInvoiceTheme();
+
         if (typeof window.resetRowNumbers === 'function') {
             window.resetRowNumbers();
         }

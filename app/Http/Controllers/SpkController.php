@@ -44,11 +44,16 @@ class SpkController extends Controller
         $belum_selesai = Spk::where('status_spk', 'Belum Selesai')->count();
         $belum_proses = Spk::where('status_kerja', 'Belum Diproses')->count();
 
+        $tglSekarang = Carbon::now('Asia/Jakarta');
         foreach ($spk as $item) {
             if ($item->status_spk == 'Belum Selesai') {
                 if ($item->status_kerja != 'Selesai') {
-                    $tglSekarang = Carbon::now('Asia/Jakarta');
-                    $target = Carbon::parse($item->target_selesai);
+                    $target = !empty($item->target_selesai) ? Carbon::parse($item->target_selesai) : null;
+                    if (!$target) {
+                        $item->timeline = '-';
+                        $item->color = 'default';
+                        continue;
+                    }
 
                     $diff = $tglSekarang->diff($target);
                     $item->timeline = '';

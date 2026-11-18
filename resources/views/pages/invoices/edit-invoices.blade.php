@@ -10,6 +10,547 @@
   .error-help-block{
     color: #ca131e;
   }
+
+  /* View Transition API Circular Reveal */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+  }
+  ::view-transition-old(root) {
+      z-index: 1;
+  }
+  ::view-transition-new(root) {
+      z-index: 999999;
+  }
+
+  /* Theme Toggle Button (Identik Dashboard) */
+  .ref-theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #F5EFE6;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      outline: none !important;
+      text-decoration: none !important;
+  }
+  .ref-theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+      color: #FBBF24;
+  }
+  .ref-theme-toggle:active {
+      transform: scale(0.96);
+  }
+  .ref-theme-toggle #theme-toggle-icon {
+      display: inline-block;
+      transition: transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease;
+  }
+  .ref-theme-toggle.theme-switching #theme-toggle-icon {
+      transform: rotate(180deg) scale(0.65);
+      opacity: 0.2;
+  }
+
+  /* Theme Toggle (Light) */
+  body.theme-light .ref-theme-toggle {
+      background: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #334155 !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  }
+  body.theme-light .ref-theme-toggle:hover {
+      background: #FFF7ED !important;
+      border-color: #FDBA74 !important;
+      color: #C2410C !important;
+  }
+
+  /* Solid Dark & Light Canvas */
+  html:not(.theme-light) body,
+  html.theme-dark body {
+      background-color: #0C0A09 !important;
+      background-image: none !important;
+      color: #FAFAFA !important;
+  }
+  html.theme-light body,
+  body.theme-light {
+      background-color: #F8FAFC !important;
+      background-image: none !important;
+      color: #0F172A !important;
+  }
+
+  #layout-wrapper, .main-content, .page-content {
+      background-color: transparent !important;
+  }
+
+  /* Sembunyikan semua scrollbar bawaan (tetap bisa di-scroll dengan mousewheel / touch gesture) */
+  *,
+  *::before,
+  *::after,
+  html,
+  body,
+  #layout-wrapper,
+  .main-content,
+  .page-content,
+  .card,
+  .table-responsive,
+  .choices__list {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+  }
+  *::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  #layout-wrapper::-webkit-scrollbar,
+  .main-content::-webkit-scrollbar,
+  .page-content::-webkit-scrollbar,
+  .card::-webkit-scrollbar,
+  .table-responsive::-webkit-scrollbar,
+  .choices__list::-webkit-scrollbar {
+      width: 0 !important;
+      height: 0 !important;
+      display: none !important;
+      background: transparent !important;
+  }
+
+  /* Choices.js Dropdown Styling (Warm Obsidian & Amber Highlight) */
+  .choices {
+      margin-bottom: 0 !important;
+  }
+  .choices__inner {
+      background-color: rgba(18, 14, 10, 0.85) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #FAFAFA !important;
+      border-radius: 8px !important;
+      font-size: 13.5px !important;
+      min-height: 40px !important;
+      padding: 4px 10px !important;
+  }
+  .is-focused .choices__inner,
+  .is-open .choices__inner {
+      border-color: rgba(245, 158, 11, 0.6) !important;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18) !important;
+  }
+  .choices__list--single {
+      padding: 4px 16px 4px 4px !important;
+      color: #FAFAFA !important;
+  }
+  .choices__list--single .choices__item {
+      color: #FAFAFA !important;
+  }
+  .choices__list--dropdown,
+  .choices__list[aria-expanded] {
+      background: #181411 !important;
+      border: 1px solid rgba(245, 158, 11, 0.35) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+      padding: 6px !important;
+      z-index: 99999 !important;
+  }
+  .choices__list--dropdown .choices__input {
+      background: #14100D !important;
+      border: 1px solid rgba(255, 255, 255, 0.14) !important;
+      border-radius: 6px !important;
+      color: #FAFAFA !important;
+      padding: 8px 12px !important;
+      margin-bottom: 6px !important;
+      font-size: 13px !important;
+  }
+  .choices__list--dropdown .choices__input:focus {
+      border-color: #F59E0B !important;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25) !important;
+  }
+  .choices__list--dropdown .choices__item--selectable {
+      color: #F5EFE6 !important;
+      border-radius: 6px !important;
+      padding: 8px 12px !important;
+      font-size: 13px !important;
+      transition: all 0.15s ease !important;
+  }
+  .choices__list--dropdown .choices__item--selectable:hover,
+  .choices__list--dropdown .choices__item--selectable.is-highlighted {
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.22), rgba(234, 88, 12, 0.28)) !important;
+      color: #F59E0B !important;
+      font-weight: 600 !important;
+  }
+  .choices__placeholder {
+      color: #78716C !important;
+      opacity: 1 !important;
+  }
+
+  /* Choices.js Light Mode */
+  body.theme-light .choices__inner {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+  }
+  body.theme-light .is-focused .choices__inner,
+  body.theme-light .is-open .choices__inner {
+      border-color: #EA580C !important;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15) !important;
+  }
+  body.theme-light .choices__list--single,
+  body.theme-light .choices__list--single .choices__item {
+      color: #0F172A !important;
+  }
+  body.theme-light .choices__list--dropdown,
+  body.theme-light .choices__list[aria-expanded] {
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
+  }
+  body.theme-light .choices__list--dropdown .choices__input {
+      background: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+  }
+  body.theme-light .choices__list--dropdown .choices__input:focus {
+      border-color: #EA580C !important;
+      box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.15) !important;
+  }
+  body.theme-light .choices__list--dropdown .choices__item--selectable {
+      color: #334155 !important;
+  }
+  body.theme-light .choices__list--dropdown .choices__item--selectable:hover,
+  body.theme-light .choices__list--dropdown .choices__item--selectable.is-highlighted {
+      background: #FFF7ED !important;
+      color: #C2410C !important;
+  }
+  body.theme-light .choices__placeholder {
+      color: #94A3B8 !important;
+  }
+
+  /* Page Title */
+  .inv-page-title {
+      color: #FAFAFA !important;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      font-size: 18px;
+      margin: 0;
+  }
+  body.theme-light .inv-page-title {
+      color: #1E293B !important;
+  }
+
+  /* Main Card & Containers (Solid Dark & Light Surface) */
+  .card {
+      background: #14110F !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35) !important;
+  }
+  body.theme-light .card {
+      background-color: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  /* Form Labels */
+  label, .col-form-label {
+      color: #FAFAFA !important;
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.2px;
+  }
+  body.theme-light label, body.theme-light .col-form-label {
+      color: #1E293B !important;
+  }
+
+  /* Inputs & Form Controls (Warm Obsidian) */
+  .form-control, .form-select, select.form-control {
+      background-color: rgba(18, 14, 10, 0.85) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #FAFAFA !important;
+      border-radius: 8px !important;
+      font-size: 13.5px !important;
+      height: 40px !important;
+      transition: all 0.15s ease-in-out !important;
+  }
+  .form-control:hover, .form-select:hover {
+      border-color: rgba(245, 158, 11, 0.4) !important;
+  }
+  .form-control:focus, .form-select:focus {
+      background-color: rgba(24, 18, 14, 0.96) !important;
+      border-color: #F59E0B !important;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.28) !important;
+      color: #FFFFFF !important;
+      outline: none !important;
+  }
+  .form-control::placeholder {
+      color: #71717A !important;
+  }
+  textarea.form-control {
+      height: auto !important;
+      min-height: 56px !important;
+  }
+
+  /* Inputs (Light Mode) */
+  body.theme-light .form-control,
+  body.theme-light .form-select,
+  body.theme-light select.form-control {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+  }
+  body.theme-light .form-control:hover,
+  body.theme-light .form-select:hover {
+      border-color: #94A3B8 !important;
+  }
+  body.theme-light .form-control:focus,
+  body.theme-light .form-select:focus {
+      background-color: #FFFFFF !important;
+      border-color: #EA580C !important;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2) !important;
+      color: #0F172A !important;
+  }
+  body.theme-light .form-control::placeholder {
+      color: #94A3B8 !important;
+  }
+
+  /* Select Options */
+  select.form-control option, select.form-select option {
+      background-color: #181411 !important;
+      color: #FAFAFA !important;
+  }
+  select.form-control option:checked, select.form-select option:checked {
+      background-color: #F59E0B !important;
+      color: #1A0F05 !important;
+  }
+
+  /* Readonly Inputs - Warm Obsidian Glass */
+  .form-control[readonly], .form-control:disabled {
+      background-color: rgba(12, 10, 8, 0.88) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      color: #D4D4D8 !important;
+  }
+  body.theme-light .form-control[readonly],
+  body.theme-light .form-control:disabled {
+      background-color: #F8FAFC !important;
+      border: 1px solid #E2E8F0 !important;
+      color: #475569 !important;
+  }
+
+  /* Readonly Highlights */
+  #noInvoice, #invoicenoInput {
+      font-family: "JetBrains Mono", ui-monospace, monospace !important;
+      font-weight: 700 !important;
+      color: #FBBF24 !important;
+      border-color: rgba(245, 158, 11, 0.45) !important;
+      background-color: rgba(245, 158, 11, 0.08) !important;
+  }
+  body.theme-light #noInvoice, body.theme-light #invoicenoInput {
+      color: #C2410C !important;
+      border-color: #FDBA74 !important;
+      background-color: #FFF7ED !important;
+  }
+
+  /* Table Items */
+  .invoice-table thead th {
+      background-color: transparent !important;
+      color: #A1A1AA !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.085) !important;
+      padding: 12px 10px !important;
+  }
+  .invoice-table tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+  .invoice-table tbody td {
+      vertical-align: top !important;
+      padding: 12px 10px !important;
+      color: #FAFAFA !important;
+  }
+  body.theme-light .invoice-table thead th {
+      background-color: #F8FAFC !important;
+      color: #64748B !important;
+      border-bottom: 1px solid #E2E8F0 !important;
+  }
+  body.theme-light .invoice-table tbody tr {
+      border-bottom: 1px solid #F1F5F9 !important;
+  }
+  body.theme-light .invoice-table tbody td {
+      color: #1E293B !important;
+  }
+
+  /* Action Buttons */
+  #update, .btn-update-invoice {
+      background: linear-gradient(135deg, #F97316 0%, #F59E0B 100%) !important;
+      border: 1px solid transparent !important;
+      color: #1A0F05 !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
+      padding: 9px 26px !important;
+      box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4) !important;
+      transition: all 0.15s ease !important;
+      cursor: pointer;
+  }
+  #update:hover, .btn-update-invoice:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.55) !important;
+      color: #1A0F05 !important;
+  }
+  body.theme-light #update, body.theme-light .btn-update-invoice {
+      background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.35) !important;
+  }
+  body.theme-light #update:hover, body.theme-light .btn-update-invoice:hover {
+      color: #FFFFFF !important;
+  }
+
+  #add-item {
+      background-color: rgba(245, 158, 11, 0.08) !important;
+      border: 1px solid #F59E0B !important;
+      color: #F59E0B !important;
+      border-radius: 8px !important;
+      padding: 7px 18px !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      transition: all 0.15s ease !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+  }
+  #add-item:hover {
+      background-color: #F59E0B !important;
+      color: #1A0F05 !important;
+  }
+  body.theme-light #add-item {
+      background-color: #FFF7ED !important;
+      border-color: #EA580C !important;
+      color: #EA580C !important;
+  }
+  body.theme-light #add-item:hover {
+      background-color: #EA580C !important;
+      color: #FFFFFF !important;
+  }
+
+  .btn-cancel-ibekami {
+      background-color: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      color: #cbd5e1 !important;
+      border-radius: 8px !important;
+      padding: 8px 18px !important;
+      font-size: 13.5px !important;
+      font-weight: 500 !important;
+      text-decoration: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      transition: all 0.15s ease !important;
+  }
+  .btn-cancel-ibekami:hover {
+      background-color: rgba(255, 255, 255, 0.14) !important;
+      color: #ffffff !important;
+  }
+  body.theme-light .btn-cancel-ibekami {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #475569 !important;
+  }
+  body.theme-light .btn-cancel-ibekami:hover {
+      background-color: #F1F5F9 !important;
+      color: #0F172A !important;
+  }
+
+  /* Flatpickr Styling - Solid Opaque Warm Obsidian Theme */
+  .flatpickr-calendar {
+      background: #181411 !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-radius: 12px !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+      z-index: 999999 !important;
+  }
+  .flatpickr-months {
+      background: #14100D !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+  .flatpickr-current-month {
+      color: #FAFAFA !important;
+  }
+  .flatpickr-days, .dayContainer {
+      background: #181411 !important;
+  }
+  .flatpickr-day {
+      color: #FAFAFA !important;
+  }
+  .flatpickr-day.selected {
+      background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+      border-color: #F59E0B !important;
+      color: #1A0F05 !important;
+  }
+  body.theme-light .flatpickr-calendar {
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12) !important;
+  }
+  body.theme-light .flatpickr-months {
+      background: #F8FAFC !important;
+  }
+  body.theme-light .flatpickr-current-month {
+      color: #0F172A !important;
+  }
+  body.theme-light .flatpickr-days, body.theme-light .dayContainer {
+      background: #FFFFFF !important;
+  }
+  body.theme-light .flatpickr-day {
+      color: #1E293B !important;
+  }
+  body.theme-light .flatpickr-day.selected {
+      background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+      border-color: #EA580C !important;
+      color: #FFFFFF !important;
+  }
+
+  /* Bank Account Card Badge */
+  .bank-account-badge {
+      background: rgba(16, 185, 129, 0.12) !important;
+      border: 1px solid rgba(16, 185, 129, 0.3) !important;
+      border-radius: 8px;
+      padding: 10px 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+  }
+  .bank-account-badge .bank-account-text {
+      color: #34D399;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+  }
+  .badge-dot-green {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+  }
+  body.theme-light .bank-account-badge {
+      background: #ECFDF5 !important;
+      border: 1px solid #A7F3D0 !important;
+      box-shadow: 0 1px 3px rgba(16, 185, 129, 0.08) !important;
+  }
+  body.theme-light .bank-account-badge .bank-account-text,
+  body.theme-light .bank-account-badge span,
+  body.theme-light .bank-account-badge .text-white {
+      color: #065F46 !important;
+  }
+  body.theme-light .badge-dot-green {
+      background-color: #059669 !important;
+      box-shadow: 0 0 5px rgba(5, 150, 105, 0.4) !important;
+  }
 </style>
 @endsection
 @extends('layout.template')
@@ -21,14 +562,21 @@
                     <!-- start page title -->
                     <div class="row">
                         <div class="col-12">
-                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                                <h4 class="mb-sm-0">Edit Invoice</h4>
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between mb-3">
+                                <h4 class="mb-sm-0 inv-page-title">Edit Invoice #{{ $kode }}{{ $nomor_unik }}</h4>
 
-                                <div class="page-title-right">
-                                    <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Invoice</a></li>
-                                        <li class="breadcrumb-item active">Edit Invoice</li>
+                                <div class="page-title-right d-flex align-items-center gap-2">
+                                    <ol class="breadcrumb m-0 me-2 d-none d-md-flex">
+                                        <li class="breadcrumb-item"><a href="{{ route('daftar_invoice') }}" class="text-muted">Invoice</a></li>
+                                        <li class="breadcrumb-item active text-muted">Edit Invoice</li>
                                     </ol>
+                                    <button type="button" class="ref-theme-toggle" id="btn-theme-toggle" onclick="toggleDashboardTheme(event)" title="Beralih Mode Tampilan" aria-label="Ganti Tema Tampilan">
+                                        <i class="ri-sun-line fs-14" id="theme-toggle-icon"></i>
+                                        <span id="theme-toggle-text">Mode Terang</span>
+                                    </button>
+                                    <a href="{{ route('daftar_invoice') }}" class="btn-cancel-ibekami px-3 py-1 text-decoration-none" style="font-size: 13px; font-weight: 500;">
+                                        <i class="ri-arrow-left-line me-1"></i> Kembali
+                                    </a>
                                 </div>
 
                             </div>
@@ -451,12 +999,13 @@
                                     </div>
                                     <div class="row mb-2 col-lg-12">
                                       <div class="col lg-12" style="{{ ($inv->no_rek !== null) ? 'display: block' : 'display: none' }};">
-                                        <div class="form-check mb-2 col-lg-12" id="alamatPembayaran" >
-                                          <input class="form-check-input " type="radio" name="norek" id="flexRadioDefault1" value="BNI" {{ ($inv->no_rek ==='BNI') ? 'checked' : '' }}>
-                                          <label class="form-check-label" for="flexRadioDefault1">
+                                        <div class="bank-account-badge mb-2" id="alamatPembayaran">
+                                          <span class="badge-dot-green"></span>
+                                          <input class="d-none" type="radio" name="norek" id="flexRadioDefault1" value="BNI" {{ ($inv->no_rek ==='BNI') ? 'checked' : '' }}>
+                                          <span class="bank-account-text fs-12 fw-semibold">
                                             {{ $inv->norek_text }}
-                                          </label>
-                                          </div>
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
                                   <div class="row mb-1">
@@ -524,6 +1073,8 @@
                                <!--end row-->
                                <div class="hstack gap-2 justify-content-start d-print-none mt-4">
                                 <button type="submit" id="update" class="btn btn-info"><i class="ri-printer-line align-bottom me-1"></i>Update</button>
+                                <button type="button" id="btn-save-draft" class="btn btn-warning"><i class="ri-draft-line align-bottom me-1"></i>Simpan Draf</button>
+                                <button type="button" id="btn-reset-draft" class="btn btn-outline-danger"><i class="ri-delete-bin-line align-bottom me-1"></i>Reset Draf</button>
                                 <a href="{{ route('daftar_invoice') }}" class="btn btn-secondary btn-cancel-ibekami"><i class="ri-close-line align-bottom me-1"></i>Batal</a>
                                </div>
                              </div>
@@ -907,6 +1458,133 @@
             adminSelectEl.addEventListener('change', checkAdminSignature);
             checkAdminSignature();
         }
+
+        // Initialize Theme Synchronization
+        initInvoiceTheme();
     });
+
+    // Theme Management (Synchronized with Dashboard & Daftar Invoice)
+    function initInvoiceTheme() {
+        var savedTheme = 'dark';
+        try {
+            savedTheme = localStorage.getItem('ibekami_dash_theme') || (document.body.classList.contains('theme-light') ? 'light' : 'dark');
+        } catch(e) {
+            savedTheme = 'dark';
+        }
+        applyThemeDOM(savedTheme);
+    }
+
+    function applyThemeDOM(theme) {
+        var isLight = theme === 'light';
+        if (document.body) {
+            document.body.classList.toggle('theme-light', isLight);
+            document.body.classList.toggle('theme-dark', !isLight);
+        }
+        document.documentElement.classList.toggle('theme-light', isLight);
+        document.documentElement.classList.toggle('theme-dark', !isLight);
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-layout-mode', theme);
+        document.documentElement.setAttribute('data-sidebar', isLight ? 'light' : 'dark');
+        try {
+            localStorage.setItem('ibekami_dash_theme', theme);
+            sessionStorage.setItem('data-layout-mode', theme);
+            sessionStorage.setItem('data-sidebar', isLight ? 'light' : 'dark');
+        } catch(e) {}
+
+        var btnText = document.getElementById('theme-toggle-text');
+        var btnIcon = document.getElementById('theme-toggle-icon');
+        if (btnText) btnText.textContent = isLight ? 'Mode Gelap' : 'Mode Terang';
+        if (btnIcon) {
+            btnIcon.className = isLight ? 'ri-moon-line fs-14' : 'ri-sun-line fs-14';
+        }
+    }
+
+    var isThemeTransitioning = false;
+    function toggleDashboardTheme(event) {
+        if (isThemeTransitioning) return;
+        isThemeTransitioning = true;
+
+        var current = 'dark';
+        try {
+            current = localStorage.getItem('ibekami_dash_theme') || (document.body.classList.contains('theme-light') ? 'light' : 'dark');
+        } catch (e) {
+            current = document.body.classList.contains('theme-light') ? 'light' : 'dark';
+        }
+        var targetTheme = current === 'light' ? 'dark' : 'light';
+
+        var supportsViewTransition = typeof document.startViewTransition === 'function';
+        var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (!supportsViewTransition || prefersReducedMotion) {
+            applyThemeDOM(targetTheme);
+            try {
+                localStorage.setItem('ibekami_dash_theme', targetTheme);
+            } catch(e) {}
+            isThemeTransitioning = false;
+            return;
+        }
+
+        var btn = document.getElementById('btn-theme-toggle');
+        if (btn) btn.classList.add('theme-switching');
+
+        var x = window.innerWidth / 2;
+        var y = window.innerHeight / 2;
+        if (event && event.clientX && event.clientY) {
+            x = event.clientX;
+            y = event.clientY;
+        } else if (btn) {
+            var rect = btn.getBoundingClientRect();
+            x = rect.left + rect.width / 2;
+            y = rect.top + rect.height / 2;
+        }
+
+        var endRadius = Math.hypot(
+            Math.max(x, window.innerWidth - x),
+            Math.max(y, window.innerHeight - y)
+        );
+
+        try {
+            var transition = document.startViewTransition(function() {
+                applyThemeDOM(targetTheme);
+                try {
+                    localStorage.setItem('ibekami_dash_theme', targetTheme);
+                } catch(e) {}
+            });
+
+            if (transition && typeof transition.ready !== 'undefined') {
+                Promise.resolve(transition.ready).then(function() {
+                    document.documentElement.animate(
+                        {
+                            clipPath: [
+                                'circle(0px at ' + x + 'px ' + y + 'px)',
+                                'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
+                            ]
+                        },
+                        {
+                            duration: 500,
+                            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+                            pseudoElement: '::view-transition-new(root)'
+                        }
+                    ).finished.finally(function() {
+                        if (btn) btn.classList.remove('theme-switching');
+                        isThemeTransitioning = false;
+                    });
+                }).catch(function() {
+                    if (btn) btn.classList.remove('theme-switching');
+                    isThemeTransitioning = false;
+                });
+            } else {
+                if (btn) btn.classList.remove('theme-switching');
+                isThemeTransitioning = false;
+            }
+        } catch (err) {
+            applyThemeDOM(targetTheme);
+            try {
+                localStorage.setItem('ibekami_dash_theme', targetTheme);
+            } catch(e) {}
+            if (btn) btn.classList.remove('theme-switching');
+            isThemeTransitioning = false;
+        }
+    }
 </script>
 @endsection

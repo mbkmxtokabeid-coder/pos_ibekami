@@ -1,464 +1,521 @@
 @extends('layout.template')
 
 @section('head')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<style>
-  /* ==========================================================================
-     DESIGN SYSTEM & UI/UX PRO MAX (ACCESSIBILITY & VISIBILITY REFINED)
-     Theme: Dark Slate Pro (WCAG 2.2 AA Compliant)
-     ========================================================================== */
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-  .num, .price, .numeric, input.numeric {
-    font-variant-numeric: tabular-nums !important;
-    font-feature-settings: "tnum" 1, "cv11" 1 !important;
-  }
+  <style>
+    /* ==========================================================================
+       TOKABE EDIT PEMBELIAN — DUAL THEME DESIGN SYSTEM (DASHBOARD MATCHED)
+       ========================================================================== */
 
-  /* Page Header Title & Breadcrumb (§16.2) */
-  .page-title-box h4 {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: #F8FAFC !important;
-  }
-  .breadcrumb .breadcrumb-item a {
-    color: #94A3B8 !important;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.15s ease;
-  }
-  .breadcrumb .breadcrumb-item a:hover {
-    color: #60A5FA !important;
-  }
-  .breadcrumb .breadcrumb-item.active {
-    color: #E2E8F0 !important;
-    font-weight: 600;
-  }
+    :root {
+      /* Mode Gelap (Default) — Dashboard Identical Warm Stone & Charcoal */
+      --ibk-bg: #0C0A09;
+      --ibk-surface: #14110F;
+      --ibk-surface-hover: #1A1613;
+      --ibk-card-bg: #14110F;
+      --ibk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      --ibk-border: rgba(255, 255, 255, 0.08);
+      --ibk-border-subtle: rgba(255, 255, 255, 0.04);
+      --ibk-text: #FAFAFA;
+      --ibk-text-muted: #A1A1AA;
+      --ibk-text-dim: #71717A;
 
-  /* Form Container Cards (§12.1) */
-  .tokabe-form-card {
-    background: #151D2A !important;
-    border: 1.5px solid #28354A !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
-    margin-bottom: 24px;
-    overflow: hidden;
-  }
-  .tokabe-form-header {
-    background: #1A2436 !important;
-    border-bottom: 1.5px solid #28354A !important;
-    padding: 18px 24px !important;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .tokabe-form-title {
-    font-size: 15.5px;
-    font-weight: 700;
-    color: #F8FAFC !important;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+      /* Brand Accent — Golden Amber / Tokabe Orange */
+      --ibk-brand: #F59E0B;
+      --ibk-brand-deep: #EA580C;
+      --ibk-brand-soft: rgba(245, 158, 11, 0.12);
+      --ibk-brand-border: rgba(245, 158, 11, 0.24);
+      --ibk-brand-text: #FBBF24;
+      --ibk-brand-btn-bg: #EA580C;
+      --ibk-brand-btn-text: #FFFFFF;
 
-  /* Form Labels & Controls (§10.1) - High Contrast & Visible Borders */
-  .form-label-modern {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: #F1F5F9 !important;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-  }
-  .form-label-modern .required-star {
-    color: #EF4444 !important;
-    font-weight: bold;
-    margin-left: 4px;
-  }
-  .form-control-modern,
-  .form-select-modern {
-    background-color: #0B1120 !important;
-    border: 1.5px solid #3B4B66 !important;
-    color: #F8FAFC !important;
-    border-radius: 8px !important;
-    height: 42px !important;
-    font-size: 14px !important;
-    padding: 8px 14px !important;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-  }
-  .form-control-modern::placeholder {
-    color: #94A3B8 !important;
-    opacity: 1;
-  }
-  .form-control-modern:hover:not(:disabled),
-  .form-select-modern:hover:not(:disabled) {
-    border-color: #64748B !important;
-  }
-  .form-control-modern:focus,
-  .form-select-modern:focus {
-    border-color: #6366F1 !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35) !important;
-    outline: none !important;
-    background-color: #0B1120 !important;
-  }
-  .form-control-modern:disabled,
-  .form-control-modern[readonly] {
-    background-color: #1A2436 !important;
-    color: #E2E8F0 !important;
-    border-color: #28354A !important;
-    font-weight: 500;
-    cursor: default;
-  }
+      /* Semantics */
+      --ibk-success: #10B981;
+      --ibk-success-soft: rgba(16, 185, 129, 0.14);
+      --ibk-success-border: rgba(16, 185, 129, 0.28);
+      --ibk-danger: #EF4444;
+      --ibk-danger-soft: rgba(239, 68, 68, 0.14);
+      --ibk-danger-border: rgba(239, 68, 68, 0.28);
 
-  /* Buttons */
-  .btn-add-item {
-    background: #059669 !important;
-    border: 1.5px solid #10B981 !important;
-    color: #FFFFFF !important;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 13.5px;
-    padding: 7px 16px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.15s ease;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);
-  }
-  .btn-add-item:hover {
-    background: #10B981 !important;
-    border-color: #34D399 !important;
-    color: #FFFFFF !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
-  }
-  .btn-add-item:focus-visible {
-    outline: 2px solid #6EE7B7 !important;
-    outline-offset: 2px;
-  }
-  .btn-form-cancel {
-    background-color: #1E293B !important;
-    border: 1.5px solid #334155 !important;
-    color: #E2E8F0 !important;
-    border-radius: 8px !important;
-    font-size: 13.5px !important;
-    font-weight: 600 !important;
-    padding: 9px 22px !important;
-    text-decoration: none !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.15s ease;
-  }
-  .btn-form-cancel:hover {
-    background-color: #334155 !important;
-    color: #FFFFFF !important;
-    border-color: #475569 !important;
-  }
-  .btn-form-cancel:focus-visible {
-    outline: 2px solid #94A3B8 !important;
-    outline-offset: 2px;
-  }
-  .btn-form-submit {
-    background-color: #4F46E5 !important;
-    border: 1.5px solid #6366F1 !important;
-    color: #FFFFFF !important;
-    border-radius: 8px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    padding: 9px 26px !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.15s ease;
-    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
-  }
-  .btn-form-submit:hover {
-    background-color: #4338CA !important;
-    border-color: #818CF8 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.45);
-  }
-  .btn-form-submit:focus-visible {
-    outline: 2px solid #A5B4FC !important;
-    outline-offset: 2px;
-  }
-  .btn-form-danger {
-    background-color: rgba(239, 68, 68, 0.15) !important;
-    border: 1.5px solid rgba(239, 68, 68, 0.4) !important;
-    color: #FCA5A5 !important;
-    border-radius: 8px !important;
-    font-size: 13.5px !important;
-    font-weight: 600 !important;
-    padding: 9px 20px !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.15s ease;
-  }
-  .btn-form-danger:hover {
-    background-color: #EF4444 !important;
-    border-color: #EF4444 !important;
-    color: #FFFFFF !important;
-  }
-  .btn-form-danger:focus-visible {
-    outline: 2px solid #F87171 !important;
-    outline-offset: 2px;
-  }
+      /* Inputs & Dropdowns */
+      --ibk-input-bg: rgba(255, 255, 255, 0.04);
+      --ibk-input-border: rgba(255, 255, 255, 0.12);
+      --ibk-input-text: #FAFAFA;
+      --ibk-input-placeholder: #71717A;
+      --ibk-popover-bg: #181412;
 
-  /* Table Rincian Barang - High Readability */
-  .tokabe-items-table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: 100% !important;
-    margin-bottom: 0 !important;
-  }
-  .tokabe-items-table thead th {
-    background-color: #101726 !important;
-    color: #CBD5E1 !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    border-top: none !important;
-    border-bottom: 2px solid #28354A !important;
-    padding: 13px 14px !important;
-    vertical-align: middle;
-  }
-  .tokabe-items-table tbody td {
-    border-bottom: 1px solid #222D3F !important;
-    padding: 10px 12px !important;
-    vertical-align: middle;
-    background-color: #151D2A !important;
-  }
-  .tokabe-items-table .form-control-modern,
-  .tokabe-items-table .form-select-modern {
-    height: 40px !important;
-    font-size: 13.5px !important;
-    padding: 6px 12px !important;
-  }
-  .tokabe-items-table .jumlah-harga {
-    background-color: #162032 !important;
-    border: 1.5px solid #28354A !important;
-    color: #38BDF8 !important;
-    font-weight: 700 !important;
-  }
-  .btn-row-delete {
-    width: 38px;
-    height: 38px;
-    background: rgba(239, 68, 68, 0.15);
-    border: 1.5px solid rgba(239, 68, 68, 0.4);
-    color: #FCA5A5;
-    border-radius: 8px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-    cursor: pointer;
-  }
-  .btn-row-delete:hover:not(:disabled) {
-    background: #EF4444;
-    border-color: #EF4444;
-    color: #FFFFFF;
-  }
-  .btn-row-delete:focus-visible {
-    outline: 2px solid #F87171;
-    outline-offset: 2px;
-  }
-  .btn-row-delete:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-    border-color: #28354A;
-  }
+      /* Table */
+      --ibk-th-bg: #14110F;
+      --ibk-th-text: #A1A1AA;
+      --ibk-td-border: rgba(255, 255, 255, 0.06);
 
-  /* Summary Table */
-  .summary-card {
-    background: #101726 !important;
-    border: 1.5px solid #28354A !important;
-    border-radius: 12px !important;
-    overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
-  }
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 13px 18px;
-    border-bottom: 1px solid #222D3F;
-    font-size: 13.5px;
-  }
-  .summary-row:last-child {
-    border-bottom: none;
-  }
-  .input-group-addon-modern {
-    background-color: #1E293B !important;
-    border: 1.5px solid #3B4B66 !important;
-    border-right: none !important;
-    color: #CBD5E1 !important;
-    font-size: 13.5px !important;
-    font-weight: 700 !important;
-    padding: 0 14px !important;
-    display: flex;
-    align-items: center;
-    border-top-left-radius: 8px !important;
-    border-bottom-left-radius: 8px !important;
-  }
-  .input-group .form-control-modern {
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
-  }
+      /* Modal */
+      --ibk-modal-bg: #181412;
+      --ibk-modal-border: var(--ibk-border);
+    }
 
-  /* Modern Confirm Delete Modal */
-  .tokabe-modal-content {
-    background: #151D2A !important;
-    border: 1.5px solid #28354A !important;
-    border-radius: 12px !important;
-    color: #F8FAFC !important;
-  }
+    body.theme-light,
+    html.theme-light,
+    html[data-layout-mode="light"] {
+      /* Mode Terang — Dashboard Neutral Slate (#F8FAFC / #FFFFFF) */
+      --ibk-bg: #F8FAFC;
+      --ibk-surface: #FFFFFF;
+      --ibk-surface-hover: #F8FAFC;
+      --ibk-card-bg: #FFFFFF;
+      --ibk-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --ibk-border: #E2E8F0;
+      --ibk-border-subtle: #F1F5F9;
+      --ibk-text: #0F172A;
+      --ibk-text-muted: #64748B;
+      --ibk-text-dim: #94A3B8;
 
-  /* Flatpickr Solid Theme (Anti-Transparan) */
-  .flatpickr-calendar {
-    background: #0F172A !important;
-    border: 1.5px solid #334155 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
-    overflow: hidden !important;
-    z-index: 99999 !important;
-  }
-  .flatpickr-calendar.arrowTop:before,
-  .flatpickr-calendar.arrowTop:after {
-    border-bottom-color: #1E293B !important;
-  }
-  .flatpickr-calendar.arrowBottom:before,
-  .flatpickr-calendar.arrowBottom:after {
-    border-top-color: #0F172A !important;
-  }
-  .flatpickr-months {
-    background: #1E293B !important;
-    border-bottom: 1.5px solid #334155 !important;
-    padding: 6px 4px !important;
-  }
-  .flatpickr-months .flatpickr-month {
-    color: #F8FAFC !important;
-    fill: #F8FAFC !important;
-    height: 38px !important;
-  }
-  .flatpickr-current-month {
-    color: #F8FAFC !important;
-    font-weight: 700 !important;
-    font-size: 15px !important;
-    padding-top: 4px !important;
-  }
-  .flatpickr-current-month .cur-month {
-    font-weight: 700 !important;
-    color: #F8FAFC !important;
-  }
-  .flatpickr-current-month input.cur-year {
-    font-weight: 700 !important;
-    color: #F8FAFC !important;
-  }
-  .flatpickr-months .flatpickr-prev-month,
-  .flatpickr-months .flatpickr-next-month {
-    color: #94A3B8 !important;
-    fill: #94A3B8 !important;
-    padding: 8px !important;
-  }
-  .flatpickr-months .flatpickr-prev-month:hover,
-  .flatpickr-months .flatpickr-next-month:hover {
-    color: #F59E0B !important;
-    fill: #F59E0B !important;
-  }
-  .flatpickr-weekdays {
-    background: #1E293B !important;
-    border-bottom: 1px solid #334155 !important;
-  }
-  span.flatpickr-weekday {
-    color: #94A3B8 !important;
-    font-weight: 600 !important;
-    font-size: 12px !important;
-  }
-  .flatpickr-calendar,
-  .flatpickr-innerContainer,
-  .flatpickr-rContainer,
-  .flatpickr-days,
-  .dayContainer {
-    background: #0F172A !important;
-    background-color: #0F172A !important;
-    opacity: 1 !important;
-  }
-  .flatpickr-days {
-    width: 100% !important;
-  }
-  .dayContainer {
-    min-width: 100% !important;
-    max-width: 100% !important;
-  }
-  .flatpickr-day {
-    color: #E2E8F0 !important;
-    border-radius: 8px !important;
-    border: 1px solid transparent !important;
-    font-weight: 500 !important;
-    background: transparent !important;
-    transition: all 0.15s ease !important;
-  }
-  .flatpickr-day:hover {
-    background: #1E293B !important;
-    border-color: #475569 !important;
-    color: #FFFFFF !important;
-  }
-  .flatpickr-day.today {
-    border-color: #F59E0B !important;
-    color: #FBBF24 !important;
-    background: rgba(245, 158, 11, 0.15) !important;
-  }
-  .flatpickr-day.today:hover {
-    background: rgba(245, 158, 11, 0.25) !important;
-    color: #FFFFFF !important;
-  }
-  .flatpickr-day.selected,
-  .flatpickr-day.selected:hover {
-    background: #10B981 !important;
-    border-color: #10B981 !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
-  }
-  .flatpickr-day.prevMonthDay,
-  .flatpickr-day.nextMonthDay {
-    color: #475569 !important;
-  }
-</style>
+      /* Brand Accent (Light) */
+      --ibk-brand: #EA580C;
+      --ibk-brand-deep: #C2410C;
+      --ibk-brand-soft: #FFF7ED;
+      --ibk-brand-border: #FED7AA;
+      --ibk-brand-text: #EA580C;
+      --ibk-brand-btn-bg: #EA580C;
+      --ibk-brand-btn-text: #FFFFFF;
+
+      /* Semantics (Light) */
+      --ibk-success: #059669;
+      --ibk-success-soft: #ECFDF5;
+      --ibk-success-border: #A7F3D0;
+      --ibk-danger: #DC2626;
+      --ibk-danger-soft: #FEF2F2;
+      --ibk-danger-border: #FECACA;
+
+      /* Inputs & Dropdowns (Light) */
+      --ibk-input-bg: #FFFFFF;
+      --ibk-input-border: #CBD5E1;
+      --ibk-input-text: #0F172A;
+      --ibk-input-placeholder: #94A3B8;
+      --ibk-popover-bg: #FFFFFF;
+
+      /* Table (Light) */
+      --ibk-th-bg: #F8FAFC;
+      --ibk-th-text: #64748B;
+      --ibk-td-border: #E2E8F0;
+
+      /* Modal (Light) */
+      --ibk-modal-bg: #FFFFFF;
+      --ibk-modal-border: #E2E8F0;
+    }
+
+    /* Tabular Numerics */
+    .num, .price, .numeric, input.numeric {
+      font-variant-numeric: tabular-nums !important;
+      font-feature-settings: "tnum" 1, "cv11" 1 !important;
+    }
+
+    /* Page Wrapper with safe bottom clearance */
+    .form-page-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 120px);
+      padding-bottom: 85px !important;
+      margin-bottom: 24px !important;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      color: var(--ibk-text);
+    }
+
+    /* Header Section */
+    .ibk-page-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .ibk-page-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ibk-text);
+      margin: 0;
+      letter-spacing: -0.015em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ibk-page-subtitle {
+      font-size: 13px;
+      color: var(--ibk-text-muted);
+      margin-top: 4px;
+    }
+
+    /* Buttons */
+    .ibk-btn-primary {
+      background-color: var(--ibk-brand-btn-bg) !important;
+      color: var(--ibk-brand-btn-text) !important;
+      border: 1px solid var(--ibk-brand-deep) !important;
+      font-weight: 600;
+      font-size: 13.5px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none !important;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 3px rgba(234, 88, 12, 0.25);
+      cursor: pointer;
+    }
+    .ibk-btn-primary:hover {
+      background-color: var(--ibk-brand-deep) !important;
+      color: #FFFFFF !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
+    }
+    .ibk-btn-back {
+      background: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      color: var(--ibk-text-muted) !important;
+      border-radius: 8px !important;
+      font-size: 13px !important;
+      font-weight: 500;
+      padding: 8px 14px !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none !important;
+      transition: all 0.15s ease;
+    }
+    .ibk-btn-back:hover {
+      background: var(--ibk-surface-hover) !important;
+      color: var(--ibk-text) !important;
+      border-color: var(--ibk-brand-border) !important;
+    }
+    .ibk-btn-cancel {
+      background: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      color: var(--ibk-text-muted) !important;
+      border-radius: 8px !important;
+      font-size: 13.5px !important;
+      font-weight: 500;
+      padding: 9px 20px !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none !important;
+      transition: all 0.15s ease;
+    }
+    .ibk-btn-cancel:hover {
+      background: var(--ibk-surface-hover) !important;
+      color: var(--ibk-text) !important;
+      border-color: var(--ibk-brand-border) !important;
+    }
+    .ibk-btn-danger-outline {
+      background: var(--ibk-danger-soft) !important;
+      border: 1px solid var(--ibk-danger-border) !important;
+      color: var(--ibk-danger) !important;
+      border-radius: 8px !important;
+      font-size: 13.5px !important;
+      font-weight: 600;
+      padding: 9px 18px !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .ibk-btn-danger-outline:hover {
+      background: var(--ibk-danger) !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    }
+
+    /* Theme Toggle Button */
+    .ref-theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 8px;
+      background: var(--ibk-input-bg);
+      border: 1px solid var(--ibk-input-border);
+      color: var(--ibk-text-muted);
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .ref-theme-toggle:hover {
+      background: var(--ibk-surface-hover);
+      color: var(--ibk-text);
+      border-color: var(--ibk-brand-border);
+    }
+
+    /* Cards */
+    .ibk-form-card {
+      background: var(--ibk-card-bg);
+      border: 1px solid var(--ibk-border);
+      border-radius: 12px;
+      box-shadow: var(--ibk-card-shadow);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .ibk-form-header {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--ibk-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ibk-form-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ibk-text);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .ibk-form-title i {
+      font-size: 18px;
+      color: var(--ibk-brand);
+    }
+
+    /* Form Labels & Controls */
+    .form-label-custom {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ibk-text);
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+    }
+    .form-label-custom .required-star {
+      color: var(--ibk-danger) !important;
+      font-weight: bold;
+      margin-left: 4px;
+    }
+    .tokabe-input,
+    .tokabe-select {
+      background-color: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      color: var(--ibk-input-text) !important;
+      border-radius: 8px !important;
+      height: 40px !important;
+      font-size: 13.5px !important;
+      padding: 8px 14px !important;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .tokabe-input::placeholder {
+      color: var(--ibk-input-placeholder) !important;
+    }
+    .tokabe-input:focus,
+    .tokabe-select:focus {
+      border-color: #EA580C !important;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2) !important;
+      outline: none !important;
+    }
+    .tokabe-input:disabled,
+    .tokabe-input[readonly] {
+      background-color: var(--ibk-surface-hover) !important;
+      color: var(--ibk-text-muted) !important;
+      border-color: var(--ibk-border) !important;
+      cursor: default;
+    }
+
+    /* Items Table */
+    .tokabe-items-table {
+      width: 100% !important;
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+    }
+    .tokabe-items-table thead th {
+      background: var(--ibk-th-bg) !important;
+      color: var(--ibk-th-text) !important;
+      font-size: 11.5px !important;
+      font-weight: 600 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.04em !important;
+      border-top: none !important;
+      border-bottom: 1px solid var(--ibk-td-border) !important;
+      padding: 12px 14px !important;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .tokabe-items-table tbody td {
+      border-bottom: 1px solid var(--ibk-td-border) !important;
+      padding: 10px 14px !important;
+      vertical-align: middle;
+      color: var(--ibk-text) !important;
+      background-color: transparent !important;
+    }
+    .tokabe-items-table tbody tr:hover td {
+      background-color: var(--ibk-surface-hover) !important;
+    }
+
+    /* Delete Row Button */
+    .btn-row-delete {
+      background: transparent !important;
+      border: 1px solid var(--ibk-border) !important;
+      color: var(--ibk-danger) !important;
+      border-radius: 6px !important;
+      width: 34px !important;
+      height: 34px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-row-delete:hover:not(:disabled) {
+      background: var(--ibk-danger-soft) !important;
+      border-color: var(--ibk-danger-border) !important;
+      color: var(--ibk-danger) !important;
+    }
+    .btn-row-delete:disabled {
+      opacity: 0.35 !important;
+      cursor: not-allowed !important;
+    }
+
+    /* Summary Card (Dashboard Aligned) */
+    .summary-card {
+      background: var(--ibk-surface-hover);
+      border: 1px solid var(--ibk-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--ibk-border);
+    }
+    .summary-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .summary-row:first-child {
+      padding-top: 0;
+    }
+    .input-group-addon-custom {
+      background: var(--ibk-surface) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      border-right: none !important;
+      color: var(--ibk-text-muted) !important;
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      padding: 0 12px !important;
+      border-radius: 8px 0 0 8px !important;
+      display: flex;
+      align-items: center;
+    }
+    .input-addon-right {
+      border-radius: 0 8px 8px 0 !important;
+      border-left: none !important;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+      background-color: var(--ibk-modal-bg) !important;
+      border: 1px solid var(--ibk-modal-border) !important;
+      color: var(--ibk-text) !important;
+      border-radius: 12px !important;
+    }
+    .modal-header, .modal-footer {
+      border-color: var(--ibk-border) !important;
+    }
+
+    /* Flatpickr Custom Styling */
+    .flatpickr-calendar {
+      background: var(--ibk-popover-bg) !important;
+      border: 1px solid var(--ibk-border) !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+      border-radius: 10px !important;
+      font-family: inherit !important;
+    }
+    .flatpickr-months {
+      background: var(--ibk-surface-hover) !important;
+      border-bottom: 1px solid var(--ibk-border) !important;
+      border-radius: 10px 10px 0 0 !important;
+    }
+    .flatpickr-current-month,
+    .flatpickr-current-month .cur-month,
+    .flatpickr-current-month input.cur-year {
+      color: var(--ibk-text) !important;
+      font-weight: 700 !important;
+    }
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month {
+      color: var(--ibk-text-muted) !important;
+      fill: var(--ibk-text-muted) !important;
+    }
+    .flatpickr-months .flatpickr-prev-month:hover,
+    .flatpickr-months .flatpickr-next-month:hover {
+      color: var(--ibk-brand) !important;
+      fill: var(--ibk-brand) !important;
+    }
+    span.flatpickr-weekday {
+      color: var(--ibk-text-muted) !important;
+      font-weight: 600 !important;
+    }
+    .flatpickr-day {
+      color: var(--ibk-text) !important;
+      border-radius: 6px !important;
+    }
+    .flatpickr-day:hover {
+      background: var(--ibk-surface-hover) !important;
+    }
+    .flatpickr-day.selected {
+      background: #EA580C !important;
+      border-color: #EA580C !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+    }
+    .flatpickr-day.today {
+      border-color: var(--ibk-brand) !important;
+      color: var(--ibk-brand-text) !important;
+    }
+  </style>
 @endsection
 
 @section('content')
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+{{-- Modal Konfirmasi Hapus Pembelian --}}
+<div class="modal fade" id="modalHapusPembelian" tabindex="-1" aria-labelledby="modalHapusPembelianLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content tokabe-modal-content p-3">
-      <div class="modal-body text-center p-4">
-        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; border-radius: 50%; background: rgba(239, 68, 68, 0.2); border: 1.5px solid rgba(239, 68, 68, 0.45);">
-          <i class="las la-trash-alt fs-32 text-danger"></i>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title d-flex align-items-center gap-2" id="modalHapusPembelianLabel">
+          <i class="ri-error-warning-fill text-danger fs-20"></i>
+          <span>Konfirmasi Hapus Pembelian</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body py-4">
+        <p class="mb-2" style="color: var(--ibk-text);">Apakah Anda yakin ingin menghapus data pembelian <strong>#{{ $pembelian->nomor_inv }}</strong>?</p>
+        <div class="p-3 rounded-2" style="background: var(--ibk-danger-soft); border: 1px solid var(--ibk-danger-border);">
+          <small class="text-danger fw-semibold d-block">Peringatan: Seluruh rincian barang dalam nota pembelian ini akan dihapus secara permanen dan memengaruhi saldo kas.</small>
         </div>
-        <h5 class="text-white fw-bold mb-2">Hapus Pembelian?</h5>
-        <p class="fs-13 mb-4" style="color: #CBD5E1;">
-          Apakah Anda yakin ingin menghapus data pembelian <strong>{{ $pembelian->nomor_inv }}</strong> dari vendor <strong>{{ $vendor->nama_vendor }}</strong>? Tindakan ini tidak dapat dibatalkan.
-        </p>
-        <div class="d-flex justify-content-center gap-2">
-          <button type="button" class="btn btn-form-cancel" data-bs-dismiss="modal">
-            <i class="las la-times"></i>
-            <span>Batal</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="ibk-btn-cancel" data-bs-dismiss="modal">
+          <i class="ri-close-line fs-16" aria-hidden="true"></i>
+          <span>Batal</span>
+        </button>
+        <form action="{{ route('pembelian.delete', ['uid' => $pembelian->id]) }}" method="POST">
+          @csrf
+          @method('delete')
+          <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold" style="border-radius: 8px;">
+            <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+            <span>Ya, Hapus</span>
           </button>
-          <form action="{{ route('pembelian.delete', ['uid' => $pembelian->id]) }}" method="POST">
-            @csrf
-            @method('delete')
-            <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold" style="border-radius: 8px;">
-              <i class="las la-trash-alt fs-16"></i>
-              <span>Ya, Hapus</span>
-            </button>
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -466,277 +523,304 @@
 
 <div class="page-content">
   <div class="container-fluid">
+    <div class="form-page-wrapper">
 
-    <!-- Page Header & Title (§16.2) -->
-    <div class="row mb-3">
-      <div class="col-12">
-        <div class="page-title-box d-sm-flex align-items-center justify-content-between py-2">
-          <div>
-            <h4 class="mb-sm-0 text-white fw-bold">Edit Pembelian &mdash; {{ $vendor->nama_vendor }}</h4>
-          </div>
-          <div class="page-title-right">
-            <ol class="breadcrumb m-0">
-              <li class="breadcrumb-item"><a href="{{ route('vendor.list') }}">Vendor</a></li>
-              <li class="breadcrumb-item"><a href="{{ route('pembelian.list', ['uid' => $pembelian->id_vendor]) }}">{{ $vendor->nama_vendor }}</a></li>
-              <li class="breadcrumb-item active">Edit Pembelian</li>
-            </ol>
-          </div>
+      <!-- 1. Header & Actions -->
+      <div class="ibk-page-header">
+        <div class="ibk-page-title">
+          <h1>
+            <span>Edit Pembelian &mdash; {{ $vendor->nama_vendor }}</span>
+          </h1>
+          <div class="ibk-page-subtitle">Form pembaruan nota transaksi, status pembayaran, dan rincian item barang</div>
         </div>
-      </div>
-    </div>
-
-    @if (isset($errors) && $errors->any())
-      <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert" style="background: rgba(239, 68, 68, 0.2); border: 1.5px solid rgba(239, 68, 68, 0.45); color: #FCA5A5; border-radius: 8px;">
-        <i class="ri-error-warning-fill fs-20 me-2 text-danger"></i>
-        <div class="flex-grow-1">
-          <strong>Perhatian:</strong>
-          <ul class="mb-0 mt-1 ps-3">
-            @foreach ($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Tutup"></button>
-      </div>
-    @endif
-
-    <form action="{{ route('pembelian.update', ['uid' => $pembelian->id]) }}" method="POST" id="form-edit-pembelian">
-      @csrf
-      @method('put')
-
-      {{-- Card 1: Informasi Pembelian (§12.1) --}}
-      <div class="tokabe-form-card">
-        <div class="tokabe-form-header">
-          <h5 class="tokabe-form-title">
-            <i class="ri-file-text-line fs-20 text-info" aria-hidden="true"></i>
-            <span>Informasi Pembelian</span>
-          </h5>
-          <a href="{{ route('pembelian.list', ['uid' => $pembelian->id_vendor]) }}" class="btn-form-cancel" aria-label="Kembali ke Daftar Pembelian">
-            <i class="las la-arrow-left fs-16"></i>
-            <span>Kembali</span>
+        <div class="d-flex align-items-center gap-2">
+          <a href="{{ route('pembelian.list', ['uid' => $pembelian->id_vendor]) }}" class="ibk-btn-back" title="Kembali ke Daftar Transaksi">
+            <i class="ri-arrow-left-line"></i>
+            <span>Daftar Transaksi</span>
           </a>
-        </div>
-        <div class="p-4">
-          <div class="row g-4">
-            {{-- Kolom Kiri --}}
-            <div class="col-lg-6">
-              <div class="mb-3 row align-items-center">
-                <label for="anggaran_select" class="col-lg-4 form-label-modern">Pakai Anggaran <span class="required-star">*</span></label>
-                <div class="col-lg-8">
-                  <select name="anggaran" id="anggaran_select" class="form-select form-select-modern" required aria-required="true">
-                    <option value="{{ $anggaranNow->id ?? '' }}" selected>
-                      {{ $anggaranNow->nama_budget ?? 'Budget' }} &mdash; Rp {{ number_format($anggaranNow->anggaran ?? 0, 0, ',', '.') }}
-                    </option>
-                    @foreach ($anggaran as $data)
-                      @if (!$anggaranNow || $data->id != $anggaranNow->id)
-                        <option value="{{ $data->id }}">
-                          {{ $data->nama_budget }} &mdash; Rp {{ number_format($data->anggaran, 0, ',', '.') }}
-                        </option>
-                      @endif
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-
-              <div class="mb-3 row align-items-center">
-                <label for="nama_vendor_input" class="col-lg-4 form-label-modern">Nama Vendor</label>
-                <div class="col-lg-8">
-                  <input type="text" id="nama_vendor_input" class="form-control form-control-modern" value="{{ $vendor->nama_vendor }}" readonly>
-                </div>
-              </div>
-
-              <div class="mb-3 row align-items-center">
-                <label for="nomor_inv_input" class="col-lg-4 form-label-modern">Nomor Invoice <span class="required-star">*</span></label>
-                <div class="col-lg-8">
-                  <input type="text" name="no_inv" id="nomor_inv_input" class="form-control form-control-modern" value="{{ old('no_inv', $pembelian->nomor_inv) }}" placeholder="Nomor Invoice" required aria-required="true">
-                </div>
-              </div>
-            </div>
-
-            {{-- Kolom Kanan --}}
-            <div class="col-lg-6">
-              <div class="mb-3 row align-items-center">
-                <label for="tanggal_input" class="col-lg-4 form-label-modern">Tanggal Pembelian <span class="required-star">*</span></label>
-                <div class="col-lg-8">
-                  <div class="position-relative">
-                    <input type="text" name="tgl" id="tanggal_input" class="form-control form-control-modern" value="{{ old('tgl', $pembelian->tanggal) }}" placeholder="Pilih Tanggal Pembelian" required aria-required="true" style="cursor: pointer; padding-right: 38px;">
-                    <i class="ri-calendar-2-line position-absolute text-muted" style="right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px;"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-3 row align-items-center">
-                <label for="tanggal_jto_input" class="col-lg-4 form-label-modern">Tanggal Jatuh Tempo</label>
-                <div class="col-lg-8">
-                  <div class="position-relative">
-                    <input type="text" name="tgl_jto" id="tanggal_jto_input" class="form-control form-control-modern" value="{{ old('tgl_jto', $pembelian->tgl_jto) }}" placeholder="Pilih Tanggal Jatuh Tempo" style="cursor: pointer; padding-right: 38px;">
-                    <i class="ri-calendar-2-line position-absolute text-muted" style="right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px;"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-3 row align-items-center">
-                <label for="status_pembelian" class="col-lg-4 form-label-modern">Status Pembelian <span class="required-star">*</span></label>
-                <div class="col-lg-8">
-                  <select name="status" id="status_pembelian" class="form-select form-select-modern" required onchange="handleStatusChange()" aria-required="true">
-                    <option value="Belum Lunas" {{ old('status', $pembelian->status) === 'Belum Lunas' ? 'selected' : '' }}>Belum Lunas</option>
-                    <option value="Lunas" {{ old('status', $pembelian->status) === 'Lunas' ? 'selected' : '' }}>Lunas</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {{-- Card 2: Rincian Barang / Jasa (§12.1 & §13) --}}
-      <div class="tokabe-form-card">
-        <div class="tokabe-form-header">
-          <h5 class="tokabe-form-title">
-            <i class="ri-shopping-cart-2-line fs-20 text-warning" aria-hidden="true"></i>
-            <span>Rincian Barang / Jasa</span>
-          </h5>
-          <button type="button" class="btn-add-item" onclick="tambahItem()" aria-label="Tambah Baris Barang">
-            <i class="las la-plus fs-16" aria-hidden="true"></i>
-            <span>Tambah Barang</span>
+          <button type="button" class="ref-theme-toggle" id="btn-theme-toggle" onclick="toggleDashboardTheme(event)" title="Beralih Mode Tampilan" aria-label="Ganti Tema Tampilan">
+            <i class="ri-sun-line fs-14" id="theme-toggle-icon"></i>
+            <span id="theme-toggle-text">Mode Terang</span>
           </button>
         </div>
-        <div class="p-4">
-          <div class="table-responsive">
-            <table class="table tokabe-items-table" id="item-table" aria-label="Tabel Rincian Item Barang">
-              <thead>
-                <tr>
-                  <th scope="col" style="min-width: 250px;">Keterangan / Deskripsi Barang <span class="required-star">*</span></th>
-                  <th scope="col" style="width: 180px;" class="text-end">Harga Satuan (Rp) <span class="required-star">*</span></th>
-                  <th scope="col" style="width: 110px;" class="text-center">Qty <span class="required-star">*</span></th>
-                  <th scope="col" style="width: 125px;">Satuan</th>
-                  <th scope="col" style="width: 180px;" class="text-end">Jumlah Harga (Rp)</th>
-                  <th scope="col" style="width: 70px;" class="text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="item-body">
-                @forelse ($pembelianBrg as $index => $beli)
-                  <tr class="item-row">
-                    <td>
-                      <input type="text" name="deskripsi[]" class="form-control form-control-modern" value="{{ $beli->deskripsi }}" placeholder="Deskripsi item barang" required aria-label="Deskripsi item barang">
-                    </td>
-                    <td>
-                      <input type="text" inputmode="numeric" name="harga[]" class="form-control form-control-modern harga text-end num" placeholder="0" value="{{ number_format($beli->harga_barang, 0, ',', '.') }}" oninput="formatInputRibuan(this); hitungBaris(this)" required aria-label="Harga satuan barang">
-                    </td>
-                    <td>
-                      <input type="number" name="qty[]" class="form-control form-control-modern qty text-center num" placeholder="1" min="1" step="1" value="{{ $beli->qty }}" oninput="hitungBaris(this)" required aria-label="Kuantitas barang">
-                    </td>
-                    <td>
-                      <select name="satuan[]" class="form-select form-select-modern" aria-label="Pilih satuan">
-                        @foreach(['Pcs', 'Set', 'Und', 'Blok', 'Rim', 'Lbr', 'Ktk', 'Unit', 'Kg', 'Lainnya', 'Pax'] as $opt)
-                          <option value="{{ $opt }}" {{ $beli->satuan === $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                        @endforeach
-                      </select>
-                    </td>
-                    <td>
-                      <input type="text" name="jumlah[]" class="form-control form-control-modern jumlah-harga text-end num" placeholder="0" readonly value="{{ number_format($beli->total, 0, ',', '.') }}" aria-label="Jumlah harga subtotal">
-                    </td>
-                    <td class="text-center">
-                      <button type="button" class="btn-row-delete btn-hapus-item" onclick="hapusItem(this)" {{ count($pembelianBrg) <= 1 ? 'disabled' : '' }} aria-label="Hapus baris barang" title="Hapus baris">
-                        <i class="las la-trash fs-18" aria-hidden="true"></i>
-                      </button>
-                    </td>
-                  </tr>
-                @empty
-                  <tr class="item-row">
-                    <td>
-                      <input type="text" name="deskripsi[]" class="form-control form-control-modern" placeholder="Deskripsi item barang" required aria-label="Deskripsi item barang">
-                    </td>
-                    <td>
-                      <input type="text" inputmode="numeric" name="harga[]" class="form-control form-control-modern harga text-end num" placeholder="0" value="0" oninput="formatInputRibuan(this); hitungBaris(this)" required aria-label="Harga satuan barang">
-                    </td>
-                    <td>
-                      <input type="number" name="qty[]" class="form-control form-control-modern qty text-center num" placeholder="1" min="1" step="1" value="1" oninput="hitungBaris(this)" required aria-label="Kuantitas barang">
-                    </td>
-                    <td>
-                      <select name="satuan[]" class="form-select form-select-modern" aria-label="Pilih satuan">
-                        @foreach(['Pcs', 'Set', 'Und', 'Blok', 'Rim', 'Lbr', 'Ktk', 'Unit', 'Kg', 'Lainnya', 'Pax'] as $opt)
-                          <option value="{{ $opt }}">{{ $opt }}</option>
-                        @endforeach
-                      </select>
-                    </td>
-                    <td>
-                      <input type="text" name="jumlah[]" class="form-control form-control-modern jumlah-harga text-end num" placeholder="0" readonly value="0" aria-label="Jumlah harga subtotal">
-                    </td>
-                    <td class="text-center">
-                      <button type="button" class="btn-row-delete btn-hapus-item" onclick="hapusItem(this)" disabled aria-label="Hapus baris barang" title="Hapus baris">
-                        <i class="las la-trash fs-18" aria-hidden="true"></i>
-                      </button>
-                    </td>
-                  </tr>
-                @endforelse
-              </tbody>
-            </table>
-          </div>
+      </div>
 
-          {{-- Ringkasan Pembayaran di Bawah Kanan --}}
-          <div class="row justify-content-end mt-4">
-            <div class="col-lg-5 col-md-7">
-              <div class="summary-card">
-                <div class="summary-row">
-                  <span class="fw-medium" style="color: #CBD5E1;">Subtotal</span>
-                  <span class="fw-bold text-white num fs-14" id="summary-subtotal">Rp {{ number_format($pembelian->jumlah_harga, 0, ',', '.') }}</span>
-                </div>
-                <div class="summary-row">
-                  <span class="fw-bold" style="color: #E2E8F0;">Jumlah Total</span>
-                  <span class="fw-bold fs-16 num" style="color: #38BDF8;" id="summary-total">Rp {{ number_format($pembelian->jumlah_harga, 0, ',', '.') }}</span>
-                  <input type="hidden" name="jumlahTotal" id="jumlahTotal" value="{{ $pembelian->jumlah_harga }}">
-                </div>
-                <div class="summary-row">
-                  <span class="fw-medium" style="color: #CBD5E1;">Terbayar</span>
-                  <div class="input-group input-group-sm" style="max-width: 210px;">
-                    <span class="input-group-addon-modern">Rp</span>
-                    <input type="text" inputmode="numeric" name="terbayar" id="terbayar"
-                           class="form-control form-control-modern text-end fw-bold num fs-14"
-                           style="color: #34D399;"
-                           value="{{ number_format(old('terbayar', $pembelian->terbayar), 0, ',', '.') }}"
-                           placeholder="0"
-                           aria-label="Jumlah nominal terbayar"
-                           oninput="formatInputRibuan(this); handleTerbayarChange()">
+      {{-- Error Alerts --}}
+      @if (isset($errors) && $errors->any())
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert" style="background: var(--ibk-danger-soft); border: 1px solid var(--ibk-danger-border); color: var(--ibk-danger); border-radius: 8px;">
+          <i class="ri-error-warning-fill fs-20 me-2"></i>
+          <div class="flex-grow-1">
+            <strong class="fs-13">Perhatian:</strong>
+            <ul class="mb-0 mt-1 ps-3 fs-13">
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+        </div>
+      @endif
+
+      <form action="{{ route('pembelian.update', ['uid' => $pembelian->id]) }}" method="POST" id="form-edit-pembelian">
+        @csrf
+        @method('put')
+
+        {{-- Card 1: Informasi Pembelian --}}
+        <div class="ibk-form-card">
+          <div class="ibk-form-header">
+            <h5 class="ibk-form-title">
+              <i class="ri-file-text-line"></i>
+              <span>Informasi Pembelian</span>
+            </h5>
+          </div>
+          <div class="p-4">
+            <div class="row g-4">
+              {{-- Kolom Kiri --}}
+              <div class="col-lg-6">
+                <div class="mb-3 row align-items-center">
+                  <label for="anggaran_select" class="col-lg-4 form-label-custom">Pakai Anggaran <span class="required-star">*</span></label>
+                  <div class="col-lg-8">
+                    <select name="anggaran" id="anggaran_select" class="form-select tokabe-select @error('anggaran') is-invalid @enderror" required aria-required="true">
+                      <option value="">-- Pilih Anggaran --</option>
+                      @foreach ($anggaran as $b)
+                        <option value="{{ $b->id }}" {{ (old('anggaran', $anggaranNow->id ?? '') == $b->id) ? 'selected' : '' }}>
+                          {{ $b->nama_budget }} &mdash; Rp {{ number_format($b->anggaran, 0, ',', '.') }}
+                        </option>
+                      @endforeach
+                    </select>
+                    @error('anggaran')<span class="text-danger fs-12 mt-1 d-block">{{ $message }}</span>@enderror
                   </div>
                 </div>
-                <div class="summary-row" id="summary-sisa-row">
-                  <span class="fw-bold" style="color: #FCA5A5;">Sisa Pembayaran</span>
-                  <span class="fw-bold fs-16 num" style="color: #FB7185;" id="summary-sisa">Rp {{ number_format($pembelian->sisa, 0, ',', '.') }}</span>
-                  <input type="hidden" name="sisa" id="sisa_bayar" value="{{ $pembelian->sisa }}">
+
+                <div class="mb-3 row align-items-center">
+                  <label for="nama_vendor_input" class="col-lg-4 form-label-custom">Nama Vendor</label>
+                  <div class="col-lg-8">
+                    <input type="text" id="nama_vendor_input" class="form-control tokabe-input" value="{{ $vendor->nama_vendor }}" readonly>
+                  </div>
+                </div>
+
+                <div class="mb-3 row align-items-center">
+                  <label for="nomor_inv_input" class="col-lg-4 form-label-custom">Nomor Invoice <span class="required-star">*</span></label>
+                  <div class="col-lg-8">
+                    <input type="text" name="nomor_inv" id="nomor_inv_input"
+                           class="form-control tokabe-input @error('nomor_inv') is-invalid @enderror"
+                           placeholder="Contoh: INV-2026-001" value="{{ old('nomor_inv', $pembelian->nomor_inv) }}" required aria-required="true">
+                    @error('nomor_inv')<span class="text-danger fs-12 mt-1 d-block">{{ $message }}</span>@enderror
+                  </div>
+                </div>
+              </div>
+
+              {{-- Kolom Kanan --}}
+              <div class="col-lg-6">
+                <div class="mb-3 row align-items-center">
+                  <label for="tanggal_input" class="col-lg-4 form-label-custom">Tanggal Pembelian <span class="required-star">*</span></label>
+                  <div class="col-lg-8">
+                    <div class="position-relative">
+                      <input type="text" name="tanggal" id="tanggal_input"
+                             class="form-control tokabe-input @error('tanggal') is-invalid @enderror"
+                             value="{{ old('tanggal', optional($pembelian->tanggal)->format('Y-m-d') ?: '') }}"
+                             placeholder="Pilih Tanggal Pembelian" required aria-required="true" style="cursor: pointer; padding-right: 38px;">
+                      <i class="ri-calendar-2-line position-absolute text-muted" style="right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px;"></i>
+                    </div>
+                    @error('tanggal')<span class="text-danger fs-12 mt-1 d-block">{{ $message }}</span>@enderror
+                  </div>
+                </div>
+
+                <div class="mb-3 row align-items-center">
+                  <label for="tanggal_jto_input" class="col-lg-4 form-label-custom">Tanggal Jatuh Tempo</label>
+                  <div class="col-lg-8">
+                    <div class="position-relative">
+                      <input type="text" name="tanggal_jto" id="tanggal_jto_input"
+                             class="form-control tokabe-input @error('tanggal_jto') is-invalid @enderror"
+                             value="{{ old('tanggal_jto', optional($pembelian->tanggal_jto)->format('Y-m-d') ?: '') }}"
+                             placeholder="Pilih Tanggal Jatuh Tempo" style="cursor: pointer; padding-right: 38px;">
+                      <i class="ri-calendar-2-line position-absolute text-muted" style="right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 16px;"></i>
+                    </div>
+                    @error('tanggal_jto')<span class="text-danger fs-12 mt-1 d-block">{{ $message }}</span>@enderror
+                  </div>
+                </div>
+
+                <div class="mb-3 row align-items-center">
+                  <label for="status_pembelian" class="col-lg-4 form-label-custom">Status Pembelian <span class="required-star">*</span></label>
+                  <div class="col-lg-8">
+                    <select name="status" id="status_pembelian" class="form-select tokabe-select @error('status') is-invalid @enderror" required onchange="handleStatusChange()" aria-required="true">
+                      <option value="Belum Lunas" {{ old('status', $pembelian->status) === 'Belum Lunas' ? 'selected' : '' }}>Belum Lunas</option>
+                      <option value="Lunas" {{ old('status', $pembelian->status) === 'Lunas' ? 'selected' : '' }}>Lunas</option>
+                    </select>
+                    @error('status')<span class="text-danger fs-12 mt-1 d-block">{{ $message }}</span>@enderror
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-4 pt-3" style="border-top: 1.5px solid #28354A !important;">
-            <div class="d-flex align-items-center gap-3">
-              <button type="submit" class="btn btn-form-submit">
-                <i class="las la-save fs-18" aria-hidden="true"></i>
-                <span>Simpan Perubahan</span>
-              </button>
-              <a href="{{ route('pembelian.list', ['uid' => $pembelian->id_vendor]) }}" class="btn-form-cancel">
-                <i class="las la-times fs-16" aria-hidden="true"></i>
-                <span>Batal</span>
-              </a>
-            </div>
-            <button type="button" class="btn btn-form-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" aria-label="Hapus data pembelian ini">
-              <i class="las la-trash-alt fs-16" aria-hidden="true"></i>
-              <span>Hapus Pembelian</span>
+        {{-- Card 2: Rincian Barang / Jasa --}}
+        <div class="ibk-form-card">
+          <div class="ibk-form-header">
+            <h5 class="ibk-form-title">
+              <i class="ri-shopping-cart-2-line"></i>
+              <span>Rincian Barang / Jasa</span>
+            </h5>
+            <button type="button" class="ibk-btn-primary" onclick="tambahItem()" aria-label="Tambah Baris Barang">
+              <i class="ri-add-line fs-16" aria-hidden="true"></i>
+              <span>Tambah Barang</span>
             </button>
           </div>
-        </div>
-      </div>
-    </form>
+          <div class="p-4">
+            <div class="table-responsive">
+              <table class="table tokabe-items-table" id="item-table" aria-label="Tabel Rincian Item Barang">
+                <thead>
+                  <tr>
+                    <th scope="col" style="min-width: 260px;">KETERANGAN / DESKRIPSI BARANG <span class="text-danger">*</span></th>
+                    <th scope="col" style="width: 180px;" class="text-end">HARGA SATUAN (RP) <span class="text-danger">*</span></th>
+                    <th scope="col" style="width: 100px;" class="text-center">QTY <span class="text-danger">*</span></th>
+                    <th scope="col" style="width: 130px;">SATUAN</th>
+                    <th scope="col" style="width: 180px;" class="text-end">JUMLAH HARGA (RP)</th>
+                    <th scope="col" style="width: 70px;" class="text-center">AKSI</th>
+                  </tr>
+                </thead>
+                <tbody id="item-body">
+                  @forelse ($pembelianBrg as $key => $pb)
+                    <tr class="item-row">
+                      <td>
+                        <input type="text" name="items[{{ $key }}][deskripsi]" class="form-control tokabe-input" value="{{ $pb->deskripsi }}" placeholder="Deskripsi item barang" required aria-label="Deskripsi item barang">
+                      </td>
+                      <td>
+                        <input type="text" inputmode="numeric" name="items[{{ $key }}][harga_barang]" class="form-control tokabe-input harga text-end num" placeholder="0" value="{{ number_format($pb->harga_barang, 0, ',', '.') }}" oninput="formatInputRibuan(this); hitungBaris(this)" required aria-label="Harga satuan barang">
+                      </td>
+                      <td>
+                        <input type="number" name="items[{{ $key }}][qty]" class="form-control tokabe-input qty text-center num" placeholder="1" min="1" step="1" value="{{ $pb->qty }}" oninput="hitungBaris(this)" required aria-label="Kuantitas barang">
+                      </td>
+                      <td>
+                        <select name="items[{{ $key }}][satuan]" class="form-select tokabe-select" aria-label="Pilih satuan">
+                          @foreach (['Pcs', 'Set', 'Und', 'Blok', 'Rim', 'Lbr', 'Ktk', 'Unit', 'Kg', 'Lainnya'] as $stn)
+                            <option value="{{ $stn }}" {{ $pb->satuan === $stn ? 'selected' : '' }}>{{ $stn }}</option>
+                          @endforeach
+                        </select>
+                      </td>
+                      <td>
+                        <input type="text" class="form-control tokabe-input jumlah-harga text-end num" placeholder="0" readonly value="{{ number_format($pb->harga_barang * $pb->qty, 0, ',', '.') }}" aria-label="Jumlah harga subtotal">
+                      </td>
+                      <td class="text-center">
+                        <button type="button" class="btn-row-delete btn-hapus-item" onclick="hapusItem(this)" {{ count($pembelianBrg) <= 1 ? 'disabled' : '' }} aria-label="Hapus baris barang" title="Hapus baris">
+                          <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  @empty
+                    <tr class="item-row">
+                      <td>
+                        <input type="text" name="items[0][deskripsi]" class="form-control tokabe-input" placeholder="Deskripsi item barang" required aria-label="Deskripsi item barang">
+                      </td>
+                      <td>
+                        <input type="text" inputmode="numeric" name="items[0][harga_barang]" class="form-control tokabe-input harga text-end num" placeholder="0" value="0" oninput="formatInputRibuan(this); hitungBaris(this)" required aria-label="Harga satuan barang">
+                      </td>
+                      <td>
+                        <input type="number" name="items[0][qty]" class="form-control tokabe-input qty text-center num" placeholder="1" min="1" step="1" value="1" oninput="hitungBaris(this)" required aria-label="Kuantitas barang">
+                      </td>
+                      <td>
+                        <select name="items[0][satuan]" class="form-select tokabe-select" aria-label="Pilih satuan">
+                          @foreach (['Pcs', 'Set', 'Und', 'Blok', 'Rim', 'Lbr', 'Ktk', 'Unit', 'Kg', 'Lainnya'] as $stn)
+                            <option value="{{ $stn }}">{{ $stn }}</option>
+                          @endforeach
+                        </select>
+                      </td>
+                      <td>
+                        <input type="text" class="form-control tokabe-input jumlah-harga text-end num" placeholder="0" readonly value="0" aria-label="Jumlah harga subtotal">
+                      </td>
+                      <td class="text-center">
+                        <button type="button" class="btn-row-delete btn-hapus-item" onclick="hapusItem(this)" disabled aria-label="Hapus baris barang" title="Hapus baris">
+                          <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
 
+            {{-- Ringkasan Pembayaran di Bawah Kanan --}}
+            <div class="row justify-content-end mt-4">
+              <div class="col-lg-5 col-md-7">
+                <div class="summary-card">
+                  <div class="summary-row">
+                    <span class="fw-medium text-muted">Subtotal</span>
+                    <span class="fw-bold num fs-14" id="summary-subtotal" style="color: var(--ibk-text);">Rp {{ number_format($pembelian->jumlah_harga, 0, ',', '.') }}</span>
+                  </div>
+                  <div class="summary-row">
+                    <span class="fw-bold" style="color: var(--ibk-text);">Jumlah Total</span>
+                    <span class="fw-bold fs-16 num" style="color: var(--ibk-brand-text);" id="summary-total">Rp {{ number_format($pembelian->jumlah_harga, 0, ',', '.') }}</span>
+                  </div>
+                  <div class="summary-row">
+                    <span class="fw-medium text-muted">Terbayar</span>
+                    <div class="input-group input-group-sm" style="max-width: 220px;">
+                      <span class="input-group-addon-custom">Rp</span>
+                      <input type="text" inputmode="numeric" name="terbayar" id="terbayar"
+                             class="form-control tokabe-input input-addon-right text-end fw-bold num fs-14"
+                             style="color: var(--ibk-success) !important;"
+                             value="{{ number_format(old('terbayar', $pembelian->terbayar), 0, ',', '.') }}"
+                             placeholder="0"
+                             aria-label="Jumlah nominal terbayar"
+                             oninput="formatInputRibuan(this); handleTerbayarChange()">
+                    </div>
+                  </div>
+                  <div class="summary-row" id="summary-sisa-row">
+                    <span class="fw-bold" style="color: var(--ibk-danger);">Sisa Pembayaran</span>
+                    <span class="fw-bold fs-16 num" style="color: var(--ibk-danger);" id="summary-sisa">Rp {{ number_format($pembelian->sisa, 0, ',', '.') }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {{-- Hidden Inputs for Calculations --}}
+            <input type="hidden" name="jumlah_harga" id="jumlahTotal" value="{{ $pembelian->jumlah_harga }}">
+            <input type="hidden" name="sisa" id="sisa_bayar" value="{{ $pembelian->sisa }}">
+
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-4 pt-3" style="border-top: 1px solid var(--ibk-border) !important;">
+              <div class="d-flex align-items-center gap-2">
+                <button type="submit" class="ibk-btn-primary">
+                  <i class="ri-save-line fs-16" aria-hidden="true"></i>
+                  <span>Perbarui Pembelian</span>
+                </button>
+                <a href="{{ route('pembelian.list', ['uid' => $pembelian->id_vendor]) }}" class="ibk-btn-cancel">
+                  <i class="ri-close-line fs-16" aria-hidden="true"></i>
+                  <span>Batal</span>
+                </a>
+              </div>
+              <div>
+                <button type="button" class="ibk-btn-danger-outline" data-bs-toggle="modal" data-bs-target="#modalHapusPembelian">
+                  <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                  <span>Hapus Pembelian</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+    </div>
   </div>
 </div>
 @endsection
 
 @section('plugins')
 <script>
-  let itemIndex = {{ count($pembelianBrg) > 0 ? count($pembelianBrg) + 1 : 2 }};
-  const satuanOptions = ["Pcs", "Set", "Und", "Blok", "Rim", "Lbr", "Ktk", "Unit", "Kg", "Lainnya", "Pax"];
+  // Inisialisasi Tema (Dark / Light Mode)
+  function initPageTheme() {
+    var isLight = document.body.classList.contains('theme-light') || document.documentElement.classList.contains('theme-light');
+    var icon = document.getElementById('theme-toggle-icon');
+    var text = document.getElementById('theme-toggle-text');
+    if (icon) {
+      icon.className = isLight ? 'ri-moon-line fs-14' : 'ri-sun-line fs-14';
+    }
+    if (text) {
+      text.textContent = isLight ? 'Mode Gelap' : 'Mode Terang';
+    }
+  }
+
+  let itemIndex = {{ count($pembelianBrg) > 0 ? count($pembelianBrg) : 1 }};
+  const satuanOptions = ["Pcs", "Set", "Und", "Blok", "Rim", "Lbr", "Ktk", "Unit", "Kg", "Lainnya"];
 
   function parseRibuan(val) {
     if (typeof val === 'number') return val;
@@ -755,22 +839,23 @@
     input.value = raw > 0 ? formatRp(raw) : '0';
   }
 
-  function satuanSelect() {
+  function satuanSelect(name) {
     let opts = satuanOptions.map(s => `<option value="${s}">${s}</option>`).join('');
-    return `<select name="satuan[]" class="form-select form-select-modern" aria-label="Pilih satuan">${opts}</select>`;
+    return `<select name="${name}" class="form-select tokabe-select" aria-label="Pilih satuan">${opts}</select>`;
   }
 
   function tambahItem() {
     const tbody = document.getElementById('item-body');
+    const i = itemIndex++;
     const tr = document.createElement('tr');
     tr.className = 'item-row';
     tr.innerHTML = [
-      '<td><input type="text" name="deskripsi[]" class="form-control form-control-modern" placeholder="Deskripsi item barang" required aria-label="Deskripsi item barang"></td>',
-      '<td><input type="text" inputmode="numeric" name="harga[]" class="form-control form-control-modern harga text-end num" placeholder="0" value="0" oninput="formatInputRibuan(this); hitungBaris(this)" required aria-label="Harga satuan barang"></td>',
-      '<td><input type="number" name="qty[]" class="form-control form-control-modern qty text-center num" placeholder="1" min="1" step="1" value="1" oninput="hitungBaris(this)" required aria-label="Kuantitas barang"></td>',
-      '<td>' + satuanSelect() + '</td>',
-      '<td><input type="text" name="jumlah[]" class="form-control form-control-modern jumlah-harga text-end num" placeholder="0" readonly value="0" aria-label="Jumlah harga subtotal"></td>',
-      '<td class="text-center"><button type="button" class="btn-row-delete btn-hapus-item" onclick="hapusItem(this)" aria-label="Hapus baris barang" title="Hapus baris"><i class="las la-trash fs-18" aria-hidden="true"></i></button></td>'
+      '<td><input type="text" name="items[' + i + '][deskripsi]" class="form-control tokabe-input" placeholder="Deskripsi item barang" required aria-label="Deskripsi item barang"></td>',
+      '<td><input type="text" inputmode="numeric" name="items[' + i + '][harga_barang]" class="form-control tokabe-input harga text-end num" placeholder="0" value="0" oninput="formatInputRibuan(this); hitungBaris(this)" required aria-label="Harga satuan barang"></td>',
+      '<td><input type="number" name="items[' + i + '][qty]" class="form-control tokabe-input qty text-center num" placeholder="1" min="1" step="1" value="1" oninput="hitungBaris(this)" required aria-label="Kuantitas barang"></td>',
+      '<td>' + satuanSelect('items[' + i + '][satuan]') + '</td>',
+      '<td><input type="text" class="form-control tokabe-input jumlah-harga text-end num" placeholder="0" readonly value="0" aria-label="Jumlah harga subtotal"></td>',
+      '<td class="text-center"><button type="button" class="btn-row-delete btn-hapus-item" onclick="hapusItem(this)" aria-label="Hapus baris barang" title="Hapus baris"><i class="ri-delete-bin-line fs-16" aria-hidden="true"></i></button></td>'
     ].join('');
 
     tbody.appendChild(tr);
@@ -888,7 +973,7 @@
 
     const sisa = Math.max(0, total - terbayar);
     document.getElementById('summary-sisa').textContent = 'Rp ' + formatRp(sisa);
-    
+
     const hiddenSisa = document.getElementById('sisa_bayar');
     if (hiddenSisa) hiddenSisa.value = sisa;
 
@@ -903,6 +988,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
+    initPageTheme();
     updateHapusBtn();
     document.querySelectorAll('.harga').forEach(function(input) {
       formatInputRibuan(input);
@@ -933,6 +1019,7 @@
         }
       });
     });
+
     // Inisialisasi Flatpickr Kalender Interaktif
     if (typeof flatpickr !== 'undefined') {
       flatpickr("#tanggal_input", {

@@ -14,6 +14,17 @@ document.addEventListener("DOMContentLoaded", function () {
     new DataTable("#alternative-pagination", {
       pagingType: "full_numbers",
       pageLength: 50,
+      dom: "<'row'<'col-sm-12 col-md-6'f><'col-sm-12 col-md-6'l>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+      language: {
+        search: "",
+        searchPlaceholder: "Cari...",
+        paginate: {
+          first: '<i class="las la-angle-double-left fs-15"></i>',
+          previous: '<i class="las la-angle-left fs-15"></i>',
+          next: '<i class="las la-angle-right fs-15"></i>',
+          last: '<i class="las la-angle-double-right fs-15"></i>'
+        }
+      }
     });
   }),
   $(document).ready(function () {

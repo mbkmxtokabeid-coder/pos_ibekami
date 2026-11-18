@@ -40,11 +40,11 @@ function new_link() {
       t +=
         '</select></div><textarea class="form-control form-control-modern" id="productDetails-' +
         count +
-        '" name="deskripsi_item[]" rows="2" placeholder="Deskripsi Item"></textarea></td><td><select class="form-select form-select-modern" id="satuan-' + count + '" name="satuan[]" required><option value="">Pilih</option><option value="Set">Set</option><option value="Pcs">Pcs</option><option value="Kotak">Kotak</option><option value="Blok">Blok</option><option value="Lbr">Lbr</option></select></td><td><div class="input-step"><input type="number" class="form-control form-control-modern text-center num" id="product-qty-' +
+        '" name="deskripsi_item[]" rows="2" placeholder="Deskripsi Item"></textarea></td><td><select class="form-select form-select-modern" id="satuan-' + count + '" name="satuan[]" required><option value="">Pilih</option><option value="Set">Set</option><option value="Pcs">Pcs</option><option value="Kotak">Kotak</option><option value="Blok">Blok</option><option value="Lbr">Lbr</option></select></td><td><input type="number" class="form-control form-control-modern text-center num" id="product-qty-' +
         count +
-        '" name="qty[]" value="1" min="1"></div></td><td><div><textarea id="productKeterangan-'
+        '" name="qty[]" value="1" min="1" style="max-width: 80px; margin: 0 auto;"></td><td><div><textarea id="productKeterangan-'
         + count +
-        '" class="form-control form-control-modern" name="keterangan[]" rows="2" placeholder="Keterangan"></textarea></div></td><td class="product-removal text-center"><button type="button" class="btn-row-delete" aria-label="Hapus baris item"><i class="las la-trash fs-18"></i></button></td>';
+        '" class="form-control form-control-modern" name="keterangan[]" rows="2" placeholder="Keterangan"></textarea></div></td><td class="product-removal text-center"><button type="button" class="btn-row-delete" aria-label="Hapus baris item"><i class="ri-delete-bin-line fs-16"></i></button></td>';
 
       e.innerHTML = t;
       document.getElementById("newlink").appendChild(e);

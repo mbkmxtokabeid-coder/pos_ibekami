@@ -1,387 +1,604 @@
 @section('head')
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-  <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 
   <style>
     /* ==========================================================================
-       DESIGN SYSTEM & UI/UX PRO MAX (ACCESSIBILITY & VISIBILITY REFINED)
-       Module: Daftar Kategori Invoice
-       Theme: Dark Slate Pro (WCAG 2.2 AA Compliant)
+       TOKABE KATEGORI INVOICE — WARM STONE DUAL-THEME SYSTEM
        ========================================================================== */
 
-    .page-title-box h4 {
+    :root {
+      --ibk-bg: #0C0A09;
+      --ibk-surface: #14110F;
+      --ibk-surface-hover: #1C1917;
+      --ibk-card-bg: #14110F;
+      --ibk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+      --ibk-border: rgba(255, 255, 255, 0.08);
+      --ibk-border-subtle: rgba(255, 255, 255, 0.05);
+      --ibk-text: #F5F5F4;
+      --ibk-text-muted: #A8A29E;
+      --ibk-text-dim: #78716C;
+
+      --ibk-brand: #EA580C;
+      --ibk-brand-hover: #C2410C;
+      --ibk-brand-soft: rgba(234, 88, 12, 0.12);
+      --ibk-brand-border: rgba(234, 88, 12, 0.28);
+      --ibk-brand-text: #FDBA74;
+      --ibk-brand-btn-bg: #EA580C;
+      --ibk-brand-btn-text: #FFFFFF;
+
+      --ibk-success: #10B981;
+      --ibk-success-soft: rgba(16, 185, 129, 0.14);
+      --ibk-success-border: rgba(16, 185, 129, 0.28);
+
+      --ibk-warning: #F59E0B;
+      --ibk-warning-soft: rgba(245, 158, 11, 0.14);
+      --ibk-warning-border: rgba(245, 158, 11, 0.3);
+      --ibk-warning-text: #FCD34D;
+
+      --ibk-danger: #EF4444;
+      --ibk-danger-soft: rgba(239, 68, 68, 0.14);
+      --ibk-danger-border: rgba(239, 68, 68, 0.3);
+      --ibk-danger-text: #FCA5A5;
+
+      --ibk-input-bg: #1C1917;
+      --ibk-input-border: rgba(255, 255, 255, 0.12);
+      --ibk-input-text: #F5F5F4;
+      --ibk-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23A8A29E' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+
+      --ibk-th-bg: #181412;
+      --ibk-th-text: #A8A29E;
+      --ibk-td-border: rgba(255, 255, 255, 0.06);
+
+      --ibk-modal-bg: #181412;
+      --ibk-modal-header-bg: #14110F;
+      --ibk-modal-border: rgba(255, 255, 255, 0.08);
+    }
+
+    body.theme-light,
+    html.theme-light,
+    html[data-layout-mode="light"] {
+      --ibk-bg: #F7F6F2;
+      --ibk-surface: #FFFFFF;
+      --ibk-surface-hover: #FAF8F5;
+      --ibk-card-bg: #FFFFFF;
+      --ibk-card-shadow: 0 1px 3px rgba(28, 25, 23, 0.05);
+      --ibk-border: #E6E1D8;
+      --ibk-border-subtle: #F0ECE3;
+      --ibk-text: #1C1917;
+      --ibk-text-muted: #57534E;
+      --ibk-text-dim: #78716C;
+
+      --ibk-brand: #EA580C;
+      --ibk-brand-hover: #C2410C;
+      --ibk-brand-soft: #FFF7ED;
+      --ibk-brand-border: #FED7AA;
+      --ibk-brand-text: #C2410C;
+      --ibk-brand-btn-bg: #EA580C;
+      --ibk-brand-btn-text: #FFFFFF;
+
+      --ibk-success: #059669;
+      --ibk-success-soft: #ECFDF5;
+      --ibk-success-border: #A7F3D0;
+
+      --ibk-warning: #D97706;
+      --ibk-warning-soft: #FFFBEB;
+      --ibk-warning-border: #FDE68A;
+      --ibk-warning-text: #B45309;
+
+      --ibk-danger: #DC2626;
+      --ibk-danger-soft: #FEF2F2;
+      --ibk-danger-border: #FECACA;
+      --ibk-danger-text: #B91C1C;
+
+      --ibk-input-bg: #FFFFFF;
+      --ibk-input-border: #D6D0C4;
+      --ibk-input-text: #1C1917;
+      --ibk-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2357534E' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+
+      --ibk-th-bg: #F3EFE6;
+      --ibk-th-text: #57534E;
+      --ibk-td-border: #EAE4DC;
+
+      --ibk-modal-bg: #FFFFFF;
+      --ibk-modal-header-bg: #FAF8F5;
+      --ibk-modal-border: #E6E1D8;
+    }
+
+    .kategori-page-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 48px;
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      color: var(--ibk-text);
+    }
+
+    /* Header Section */
+    .ibk-page-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .ibk-page-title h1 {
       font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.01em;
-      color: #F8FAFC !important;
+      color: var(--ibk-text);
+      margin: 0;
+      letter-spacing: -0.015em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .breadcrumb .breadcrumb-item a {
-      color: #94A3B8 !important;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.15s ease;
+    .ibk-page-title h1 i {
+      color: var(--ibk-brand);
+      font-size: 22px;
     }
-    .breadcrumb .breadcrumb-item a:hover {
-      color: #60A5FA !important;
+    .ibk-page-subtitle {
+      font-size: 13px;
+      color: var(--ibk-text-muted);
+      margin-top: 4px;
     }
-    .breadcrumb .breadcrumb-item.active {
-      color: #E2E8F0 !important;
-      font-weight: 600;
+    .ibk-header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
     }
 
-    /* Section Card Container (§12.1) */
-    .tokabe-section-card {
-      background: #151D2A !important;
-      border: 1.5px solid #28354A !important;
-      border-radius: 12px !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
-      margin-bottom: 24px;
+    .ibk-btn-primary {
+      background: var(--ibk-brand-btn-bg) !important;
+      border: 1px solid var(--ibk-brand-btn-bg) !important;
+      color: var(--ibk-brand-btn-text) !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      padding: 0 16px !important;
+      height: 38px !important;
+      border-radius: 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      cursor: pointer !important;
+      transition: background-color 150ms ease, box-shadow 150ms ease !important;
+      box-shadow: 0 1px 3px rgba(234, 88, 12, 0.25) !important;
+      text-decoration: none !important;
+      white-space: nowrap;
+    }
+    .ibk-btn-primary:hover {
+      background: var(--ibk-brand-hover) !important;
+      border-color: var(--ibk-brand-hover) !important;
+      color: #FFFFFF !important;
+    }
+    .ibk-btn-primary:focus-visible,
+    .ref-theme-toggle:focus-visible,
+    .btn-action-edit:focus-visible,
+    .btn-action-delete:focus-visible,
+    .btn-tokabe-modal-cancel:focus-visible {
+      outline: 2px solid var(--ibk-brand) !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Main Card */
+    .ibk-card {
+      background: var(--ibk-card-bg);
+      border: 1px solid var(--ibk-border);
+      border-radius: 12px;
+      box-shadow: var(--ibk-card-shadow);
       overflow: hidden;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .tokabe-section-card:hover {
-      border-color: #3B4B66 !important;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
-    }
-
-    .tokabe-card-header {
-      background: #1A2436 !important;
-      border-bottom: 1.5px solid #28354A !important;
-      padding: 16px 20px !important;
+    .ibk-card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--ibk-border);
+      background: var(--ibk-surface);
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 12px;
     }
-    .tokabe-card-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #F8FAFC !important;
-      margin: 0;
+    .ibk-card-heading {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
-    .tokabe-card-subtitle {
-      font-size: 12.5px;
-      color: #94A3B8;
-      margin-top: 2px;
-      display: block;
+    .ibk-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ibk-text);
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ibk-card-title i {
+      color: var(--ibk-brand);
+      font-size: 18px;
+    }
+    .badge-count-pill {
+      background: var(--ibk-brand-soft);
+      color: var(--ibk-brand-text);
+      border: 1px solid var(--ibk-brand-border);
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
 
-    /* Icon Accent Badge */
-    .tokabe-header-icon {
+    /* Table Styling */
+    .table-responsive {
+      width: 100% !important;
+      display: block !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      border-top: 1px solid var(--ibk-border) !important;
+      border-bottom: 1px solid var(--ibk-border) !important;
+      scrollbar-width: thin;
+      scrollbar-color: var(--ibk-text-dim) transparent;
+    }
+    .table-responsive::-webkit-scrollbar {
+      height: 8px;
+    }
+    .table-responsive::-webkit-scrollbar-track {
+      background: var(--ibk-surface);
+    }
+    .table-responsive::-webkit-scrollbar-thumb {
+      background: rgba(120, 113, 108, 0.45);
+      border-radius: 9999px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+      background: var(--ibk-brand);
+    }
+
+    #table-kategori {
+      min-width: 720px !important;
+      width: 100% !important;
+      margin: 0 !important;
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      background: transparent !important;
+    }
+    .tokabe-table thead th {
+      background: var(--ibk-th-bg) !important;
+      color: var(--ibk-th-text) !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.04em !important;
+      border-top: none !important;
+      border-bottom: 1px solid var(--ibk-td-border) !important;
+      padding: 11px 16px !important;
+      vertical-align: middle !important;
+      white-space: nowrap;
+      height: 44px !important;
+    }
+    .tokabe-table tbody tr {
+      height: 58px !important;
+    }
+    .tokabe-table tbody td {
+      border-bottom: 1px solid var(--ibk-td-border) !important;
+      padding: 10px 16px !important;
+      font-size: 13px !important;
+      vertical-align: middle !important;
+      color: var(--ibk-text) !important;
+      background-color: transparent !important;
+    }
+    .tokabe-table tbody tr:hover td {
+      background-color: var(--ibk-surface-hover) !important;
+    }
+
+    /* Kode Invoice Pill */
+    .badge-kode-inv {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--ibk-brand-soft);
+      border: 1px solid var(--ibk-brand-border);
+      color: var(--ibk-brand-text);
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* Action Buttons */
+    .btn-action-edit {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--ibk-warning-soft) !important;
+      border: 1px solid var(--ibk-warning-border) !important;
+      color: var(--ibk-warning-text) !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+      cursor: pointer;
+    }
+    .btn-action-edit:hover {
+      background: #D97706 !important;
+      color: #FFFFFF !important;
+      border-color: #D97706 !important;
+    }
+
+    .btn-action-delete {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--ibk-danger-soft) !important;
+      border: 1px solid var(--ibk-danger-border) !important;
+      color: var(--ibk-danger-text) !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+      cursor: pointer;
+    }
+    .btn-action-delete:hover {
+      background: #DC2626 !important;
+      color: #FFFFFF !important;
+      border-color: #DC2626 !important;
+    }
+
+    /* DataTables Controls & Invoice-Standard Footer Pagination */
+    .dataTables_wrapper {
+      color: var(--ibk-text-muted) !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+    .dataTables_wrapper > .row {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    .dataTables_wrapper .dataTables_length label,
+    .dataTables_wrapper .dataTables_filter label {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      margin: 0 !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      color: var(--ibk-text-muted) !important;
+    }
+    .dataTables_wrapper .dataTables_length select {
+      background-color: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      color: var(--ibk-input-text) !important;
+      border-radius: 8px !important;
+      padding: 4px 28px 4px 10px !important;
+      font-size: 13px !important;
+      height: 36px !important;
+      cursor: pointer;
+      background-image: var(--ibk-select-arrow) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 8px center !important;
+      background-size: 12px 9px !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+    }
+    .dataTables_wrapper .dataTables_filter input {
+      background: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      color: var(--ibk-input-text) !important;
+      border-radius: 8px !important;
+      padding: 6px 14px !important;
+      margin-left: 0 !important;
+      font-size: 13px !important;
+      height: 36px !important;
+      width: 240px !important;
+      max-width: 100% !important;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .dataTables_wrapper .dataTables_filter input:focus,
+    .dataTables_wrapper .dataTables_length select:focus {
+      border-color: var(--ibk-brand) !important;
+      box-shadow: 0 0 0 3px var(--ibk-brand-soft) !important;
+      outline: none !important;
+    }
+
+    .ibk-table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 16px 24px;
+      background: var(--ibk-surface);
+    }
+    #tokabeCustomInfo,
+    #tokabeCustomInfo .dataTables_info {
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      color: var(--ibk-text-muted) !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    #tokabeCustomPaginate,
+    #tokabeCustomPaginate .dataTables_paginate {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    #tokabeCustomPaginate ul.pagination,
+    .dataTables_paginate ul.pagination {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      margin: 0 !important;
+      padding: 4px !important;
+      background: var(--ibk-surface) !important;
+      border: 1px solid var(--ibk-border) !important;
+      border-radius: 12px !important;
+      box-shadow: var(--ibk-card-shadow) !important;
+    }
+    .dataTables_paginate ul.pagination li.page-item .page-link {
+      min-width: 34px !important;
+      height: 34px !important;
+      padding: 0 10px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 8px !important;
+      border: 1px solid transparent !important;
+      background: transparent !important;
+      color: var(--ibk-text-muted) !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      font-variant-numeric: tabular-nums;
+      box-shadow: none !important;
+      transition: all 0.15s ease !important;
+    }
+    .dataTables_paginate ul.pagination li.page-item:not(.active):not(.disabled) .page-link:hover {
+      background: var(--ibk-surface-hover) !important;
+      color: var(--ibk-text) !important;
+      border-color: var(--ibk-border) !important;
+    }
+    .dataTables_paginate ul.pagination li.page-item.active .page-link {
+      background: var(--ibk-brand-btn-bg, #EA580C) !important;
+      border-color: var(--ibk-brand-btn-bg, #EA580C) !important;
+      color: var(--ibk-brand-btn-text, #FFFFFF) !important;
+      font-weight: 600 !important;
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.28) !important;
+    }
+    .dataTables_paginate ul.pagination li.page-item.disabled .page-link {
+      opacity: 0.4 !important;
+      background: transparent !important;
+      border-color: transparent !important;
+      color: var(--ibk-text-dim) !important;
+      cursor: not-allowed !important;
+    }
+
+    /* Dual-Theme Modal Styles */
+    .modal-content.tokabe-modal {
+      background-color: var(--ibk-modal-bg) !important;
+      border: 1px solid var(--ibk-modal-border) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45) !important;
+      overflow: hidden;
+      color: var(--ibk-text);
+    }
+    .tokabe-modal-header {
+      border-bottom: 1px solid var(--ibk-modal-border) !important;
+      padding: 16px 22px !important;
+      background-color: var(--ibk-modal-header-bg) !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tokabe-modal-icon {
       width: 36px;
       height: 36px;
       border-radius: 8px;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      color: #818CF8;
+      background: var(--ibk-brand-soft);
+      border: 1px solid var(--ibk-brand-border);
+      color: var(--ibk-brand);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 18px;
       flex-shrink: 0;
     }
-
-    /* Primary Action Button (§9) */
-    .btn-tokabe-primary {
-      background-color: #4F46E5 !important;
-      border-color: #4338CA !important;
-      color: #FFFFFF !important;
+    .tokabe-modal-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--ibk-text);
+      margin: 0;
+    }
+    .tokabe-modal-subtitle {
+      font-size: 12px;
+      color: var(--ibk-text-muted);
+    }
+    html:not(.theme-light) .tokabe-modal .btn-close {
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+    .tokabe-modal-body {
+      padding: 20px 22px !important;
+      background-color: var(--ibk-modal-bg) !important;
+    }
+    .tokabe-modal-footer {
+      border-top: 1px solid var(--ibk-modal-border) !important;
+      padding: 14px 22px !important;
+      background-color: var(--ibk-modal-header-bg) !important;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .tokabe-label {
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      color: var(--ibk-text) !important;
+      margin-bottom: 6px !important;
+      display: block;
+    }
+    .tokabe-label .required-star {
+      color: var(--ibk-danger);
+    }
+    .form-control-tokabe,
+    .form-select-tokabe {
+      background-color: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      color: var(--ibk-input-text) !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+      font-size: 13.5px !important;
+      height: 40px !important;
+      width: 100%;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .form-select-tokabe {
+      padding-right: 32px !important;
+      background-image: var(--ibk-select-arrow) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 10px center !important;
+      background-size: 14px 10px !important;
+    }
+    .form-control-tokabe:focus,
+    .form-select-tokabe:focus {
+      border-color: var(--ibk-brand) !important;
+      box-shadow: 0 0 0 3px var(--ibk-brand-soft) !important;
+      color: var(--ibk-text) !important;
+      outline: none !important;
+    }
+    .form-control-tokabe::placeholder {
+      color: var(--ibk-text-dim) !important;
+    }
+    .tokabe-helper-text {
+      font-size: 12px;
+      color: var(--ibk-text-muted);
+      margin-top: 4px;
+      display: block;
+    }
+    .btn-tokabe-modal-cancel {
+      background-color: var(--ibk-surface) !important;
+      border: 1px solid var(--ibk-border) !important;
+      color: var(--ibk-text-muted) !important;
       font-weight: 600 !important;
       font-size: 13px !important;
       border-radius: 8px !important;
-      height: 40px !important;
+      height: 38px !important;
       padding: 0 16px !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
       gap: 6px !important;
-      text-decoration: none !important;
-      transition: all 0.15s ease !important;
-      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25) !important;
-    }
-    .btn-tokabe-primary:hover {
-      background-color: #4338CA !important;
-      border-color: #3730A3 !important;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4) !important;
-      transform: translateY(-1px);
-    }
-
-    /* Table Design Tokens (§13.1) */
-    .tokabe-table {
-      margin-bottom: 0 !important;
-      border-color: #28354A !important;
-      width: 100% !important;
-    }
-    .tokabe-table thead th {
-      background-color: #101726 !important;
-      color: #94A3B8 !important;
-      font-size: 11.5px !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.05em !important;
-      padding: 12px 16px !important;
-      border-bottom: 2px solid #28354A !important;
-      border-top: none !important;
-      white-space: nowrap;
-    }
-    .tokabe-table tbody tr {
-      background-color: #151D2A !important;
-      transition: background-color 0.15s ease;
-    }
-    .tokabe-table tbody tr:hover {
-      background-color: #1E293B !important;
-    }
-    .tokabe-table tbody td {
-      padding: 12px 16px !important;
-      border-bottom: 1px solid #243044 !important;
-      color: #E2E8F0 !important;
-      font-size: 13.5px !important;
-      vertical-align: middle !important;
-    }
-
-    /* High Contrast Status Badges (§14.1) */
-    .badge-dengan-harga {
-      background: rgba(16, 185, 129, 0.16) !important;
-      color: #6EE7B7 !important;
-      border: 1px solid rgba(52, 211, 153, 0.45) !important;
-      font-weight: 600 !important;
-      font-size: 12px !important;
-      padding: 5px 12px !important;
-      border-radius: 9999px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 5px !important;
-    }
-    .badge-tanpa-harga {
-      background: rgba(245, 158, 11, 0.16) !important;
-      color: #FCD34D !important;
-      border: 1px solid rgba(245, 158, 11, 0.45) !important;
-      font-weight: 600 !important;
-      font-size: 12px !important;
-      padding: 5px 12px !important;
-      border-radius: 9999px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 5px !important;
-    }
-
-    /* Action Buttons (§9.3) */
-    .btn-action-edit {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      background: rgba(245, 158, 11, 0.16) !important;
-      border: 1.5px solid rgba(245, 158, 11, 0.4) !important;
-      color: #FCD34D !important;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      transition: all 0.15s ease;
       cursor: pointer;
-      text-decoration: none;
-    }
-    .btn-action-edit:hover {
-      background: #F59E0B !important;
-      color: #111827 !important;
-      border-color: #D97706 !important;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
-    }
-
-    .btn-action-delete {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      background: rgba(239, 68, 68, 0.16) !important;
-      border: 1.5px solid rgba(239, 68, 68, 0.4) !important;
-      color: #FCA5A5 !important;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      transition: all 0.15s ease;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .btn-action-delete:hover {
-      background: #EF4444 !important;
-      color: #FFFFFF !important;
-      border-color: #DC2626 !important;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
-    }
-
-    /* DataTables Dark Theme Overrides */
-    .dataTables_wrapper .dataTables_length,
-    .dataTables_wrapper .dataTables_filter,
-    .dataTables_wrapper .dataTables_info,
-    .dataTables_wrapper .dataTables_paginate {
-      color: #94A3B8 !important;
-      font-size: 13px !important;
-      padding: 12px 16px !important;
-    }
-    .dataTables_wrapper .dataTables_length select {
-      background-color: #0F172A !important;
-      border: 1.5px solid #334155 !important;
-      color: #F8FAFC !important;
-      border-radius: 6px !important;
-      padding: 4px 10px !important;
-      margin: 0 6px !important;
-    }
-    .dataTables_wrapper .dataTables_filter input {
-      background-color: #0F172A !important;
-      border: 1.5px solid #334155 !important;
-      color: #F8FAFC !important;
-      border-radius: 6px !important;
-      padding: 6px 12px !important;
-      margin-left: 8px !important;
-      outline: none;
-    }
-    .dataTables_wrapper .dataTables_filter input:focus {
-      border-color: #6366F1 !important;
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
-    }
-    .dataTables_wrapper .dt-buttons .dt-button {
-      background: #1A2436 !important;
-      border: 1px solid #334155 !important;
-      color: #CBD5E1 !important;
-      border-radius: 6px !important;
-      padding: 6px 14px !important;
-      font-size: 12.5px !important;
-      font-weight: 500 !important;
-      margin-right: 6px !important;
-      transition: all 0.15s ease;
-    }
-    .dataTables_wrapper .dt-buttons .dt-button:hover {
-      background: #334155 !important;
-      color: #FFFFFF !important;
-      border-color: #475569 !important;
-    }
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-      background: #1A2436 !important;
-      border: 1px solid #28354A !important;
-      color: #CBD5E1 !important;
-      border-radius: 6px !important;
-      margin: 0 3px !important;
-      padding: 5px 11px !important;
-      font-size: 12.5px !important;
-      transition: all 0.15s ease;
-    }
-    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-      background: #334155 !important;
-      border-color: #475569 !important;
-      color: #FFFFFF !important;
-    }
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-      background: #4F46E5 !important;
-      border-color: #4338CA !important;
-      color: #FFFFFF !important;
-      font-weight: 600 !important;
-    }
-
-    /* Dark Scrollbar */
-    .table-responsive::-webkit-scrollbar {
-      height: 8px;
-    }
-    .table-responsive::-webkit-scrollbar-track {
-      background: #0F172A;
-    }
-    .table-responsive::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
-    }
-    .table-responsive::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
-
-    /* Modal Dark Theme Styles */
-    .modal-content.tokabe-modal-dark {
-      background-color: #161B22 !important;
-      border: 1.5px solid #28354A !important;
-      border-radius: 14px !important;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
-      overflow: hidden;
-    }
-    .tokabe-modal-header {
-      border-bottom: 1px solid #28354A !important;
-      padding: 18px 24px !important;
-      background-color: #1A2436 !important;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .tokabe-modal-body {
-      padding: 22px 24px !important;
-      background-color: #151D2A !important;
-    }
-    .tokabe-modal-footer {
-      border-top: 1px solid #28354A !important;
-      padding: 16px 24px !important;
-      background-color: #1A2436 !important;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-    .tokabe-label {
-      font-size: 13.5px !important;
-      font-weight: 600 !important;
-      color: #CBD5E1 !important;
-      margin-bottom: 8px !important;
-      display: block;
-    }
-    .tokabe-label .required-star {
-      color: #F87171;
-    }
-    .form-control-tokabe, .form-select-tokabe {
-      background-color: #0F172A !important;
-      border: 1.5px solid #334155 !important;
-      color: #F8FAFC !important;
-      border-radius: 8px !important;
-      padding: 9px 14px !important;
-      font-size: 13.5px !important;
-      height: 42px !important;
-      width: 100%;
-      transition: all 0.15s ease;
-    }
-    .form-control-tokabe:focus, .form-select-tokabe:focus {
-      border-color: #6366F1 !important;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
-      color: #FFFFFF !important;
-      background-color: #0B1120 !important;
-      outline: none;
-    }
-    .form-control-tokabe::placeholder {
-      color: #64748B !important;
-    }
-    .btn-tokabe-modal-cancel {
-      background-color: #1E293B !important;
-      border: 1.5px solid #334155 !important;
-      color: #94A3B8 !important;
-      font-weight: 500 !important;
-      font-size: 13.5px !important;
-      border-radius: 8px !important;
-      height: 40px !important;
-      padding: 0 18px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 6px !important;
-      cursor: pointer;
-      transition: all 0.15s ease !important;
+      transition: background-color 150ms ease, color 150ms ease !important;
     }
     .btn-tokabe-modal-cancel:hover {
-      background-color: #334155 !important;
-      color: #F8FAFC !important;
+      background-color: var(--ibk-surface-hover) !important;
+      color: var(--ibk-text) !important;
     }
   </style>
 @endsection
@@ -391,317 +608,357 @@
 @section('content')
 <div class="page-content">
   <div class="container-fluid">
+    <div class="kategori-page-wrapper">
 
-    <!-- Page Header & Title (§16.2) -->
-    <div class="row mb-3">
-      <div class="col-12">
-        <div class="page-title-box d-sm-flex align-items-center justify-content-between py-2">
-          <div>
-            <h4 class="mb-sm-0 text-white fw-bold">Kategori Invoice</h4>
-            <span class="text-muted fs-13 d-none d-sm-inline">Kelola daftar klasifikasi template invoice dan aturan penetapan harga</span>
+      <!-- 1. Header & Actions -->
+      <div class="ibk-page-header">
+        <div class="ibk-page-title">
+          <h1>
+            <i class="ri-grid-line" aria-hidden="true"></i>
+            <span>Kategori Invoice</span>
+          </h1>
+          <div class="ibk-page-subtitle">Kelola daftar klasifikasi template invoice dan aturan prefix penomoran</div>
+        </div>
+        <div class="ibk-header-actions">
+          <button type="button" class="ref-theme-toggle" id="btn-theme-toggle" onclick="toggleDashboardTheme(event)" title="Beralih Mode Tampilan" aria-label="Ganti Tema Tampilan">
+            <i class="ri-sun-line fs-14" id="theme-toggle-icon" aria-hidden="true"></i>
+            <span id="theme-toggle-text">Mode Terang</span>
+          </button>
+          <button type="button" class="ibk-btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahKategori">
+            <i class="ri-add-line fs-16" aria-hidden="true"></i>
+            <span>Tambah Kategori</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Alerts -->
+      @foreach (['success', 'update', 'delete'] as $flashKey)
+        @if(session()->has($flashKey))
+          <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-3" role="alert" style="background: var(--ibk-success-soft); border: 1px solid var(--ibk-success-border); color: var(--ibk-success); border-radius: 10px;">
+            <i class="ri-checkbox-circle-fill fs-18" aria-hidden="true"></i>
+            <div class="flex-grow-1 fs-13 fw-medium">{{ session($flashKey) }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
           </div>
+        @endif
+      @endforeach
 
-          <div class="page-title-right">
-            <ol class="breadcrumb m-0">
-              <li class="breadcrumb-item"><a href="javascript:void(0);">Kategori</a></li>
-              <li class="breadcrumb-item active">Daftar Kategori</li>
-            </ol>
+      <!-- 2. Main Section Card -->
+      <div class="ibk-card">
+        <div class="ibk-card-header">
+          <div class="ibk-card-heading">
+            <h2 class="ibk-card-title">
+              <i class="ri-price-tag-3-line" aria-hidden="true"></i>
+              <span>Daftar Kategori</span>
+            </h2>
+            <span class="badge-count-pill">{{ count($invoices) }} Kategori</span>
+          </div>
+        </div>
+
+        <div class="card-body p-0">
+          <table id="table-kategori" class="table align-middle tokabe-table w-100">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 60px;">No.</th>
+                <th>Nama Invoice</th>
+                <th>Kode Invoice</th>
+                <th>Perusahaan</th>
+                <th class="text-center" style="width: 110px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($invoices as $invoice)
+                <tr>
+                  <td class="text-center" style="color: var(--ibk-text-muted); font-variant-numeric: tabular-nums; font-weight: 500;">{{ $loop->iteration }}</td>
+                  <td>
+                    <span class="fw-semibold" style="color: var(--ibk-text);">{{ $invoice->nama_invoice }}</span>
+                  </td>
+                  <td>
+                    <span class="badge-kode-inv">{{ $invoice->kode_invoice }}</span>
+                  </td>
+                  <td>
+                    <span class="fw-medium" style="color: var(--ibk-text-muted);">{{ $invoice->nama_perusahaan }}</span>
+                  </td>
+                  <td class="text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center gap-2">
+                      <button type="button" onclick="openEditKategoriModal({{ $invoice->id }}, '{{ addslashes($invoice->nama_invoice) }}', '{{ addslashes($invoice->kode_invoice) }}', {{ $invoice->perusahaan_id }}, '{{ $invoice->tipe_harga ?? 'dengan_harga' }}')" class="btn-action-edit" title="Edit Kategori {{ $invoice->nama_invoice }}" aria-label="Edit Kategori {{ $invoice->nama_invoice }}">
+                        <i class="ri-pencil-line" aria-hidden="true"></i>
+                      </button>
+
+                      <form action="{{ route('destroy.kategori', ['id' => $invoice->id]) }}" method="POST" id="deleteForm{{ $invoice->id }}" class="m-0 p-0 d-inline">
+                        @csrf
+                        @method('delete')
+                        <button type="button" onclick="showConfirmation('{{ addslashes($invoice->nama_invoice) }}', {{ $invoice->id }})" class="btn-action-delete" title="Hapus Kategori {{ $invoice->nama_invoice }}" aria-label="Hapus Kategori {{ $invoice->nama_invoice }}">
+                          <i class="ri-delete-bin-6-line" aria-hidden="true"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+
+          <!-- Table Footer matching Invoice standard -->
+          <div class="ibk-table-footer">
+            <div id="tokabeCustomInfo"></div>
+            <div id="tokabeCustomPaginate"></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Feedback Alerts -->
-    @if(session()->has('success'))
-      <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-3" role="alert" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #6EE7B7;">
-        <i class="fas fa-check-circle fs-18"></i>
-        <div class="flex-grow-1">{{ session('success') }}</div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    @endif
-    @if(session()->has('update'))
-      <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-3" role="alert" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #6EE7B7;">
-        <i class="fas fa-check-circle fs-18"></i>
-        <div class="flex-grow-1">{{ session('update') }}</div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    @endif
-    @if(session()->has('delete'))
-      <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-3" role="alert" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #6EE7B7;">
-        <i class="fas fa-check-circle fs-18"></i>
-        <div class="flex-grow-1">{{ session('delete') }}</div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    @endif
-
-    <!-- Main Section Card (§12.1) -->
-    <div class="row">
-      <div class="col-12">
-        <div class="tokabe-section-card">
-
-          <!-- Card Header with Title and Add Button -->
-          <div class="tokabe-card-header">
-            <div class="tokabe-card-title">
-              <div class="tokabe-header-icon">
-                <i class="las la-tags"></i>
+      <!-- MODAL POPUP: TAMBAH KATEGORI INVOICE -->
+      <div class="modal fade" id="modalTambahKategori" tabindex="-1" aria-labelledby="modalTambahKategoriLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content tokabe-modal">
+            <div class="tokabe-modal-header">
+              <div class="d-flex align-items-center gap-3">
+                <div class="tokabe-modal-icon" aria-hidden="true">
+                  <i class="ri-add-circle-line"></i>
+                </div>
+                <div>
+                  <h5 class="tokabe-modal-title" id="modalTambahKategoriLabel">Tambah Kategori Invoice</h5>
+                  <span class="tokabe-modal-subtitle">Lengkapi form kategori baru untuk format penomoran</span>
+                </div>
               </div>
-              <div>
-                <span>Daftar Kategori</span>
-                <span class="tokabe-card-subtitle">Total {{ count($invoices) }} kategori invoice terdaftar</span>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+
+            <form action="{{ route('store.kategori') }}" method="POST">
+              @csrf
+              <div class="tokabe-modal-body">
+                <div class="mb-3">
+                  <label class="tokabe-label" for="tambah_nama_invoice">
+                    Nama Invoice <span class="required-star">*</span>
+                  </label>
+                  <input type="text" name="nama_invoice" id="tambah_nama_invoice" class="form-control form-control-tokabe" placeholder="Contoh: Ibekami Plakat, Tokabe Merchandise" value="{{ old('nama_invoice') }}" required>
+                  @error('nama_invoice')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                <div class="mb-3">
+                  <label class="tokabe-label" for="tambah_kode_invoice">
+                    Kode Invoice (Prefix) <span class="required-star">*</span>
+                  </label>
+                  <input type="text" name="kode_invoice" id="tambah_kode_invoice" class="form-control form-control-tokabe" placeholder="Contoh: IBPL, TKB, IB" value="{{ old('kode_invoice') }}" required>
+                  @error('kode_invoice')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                  <span class="tokabe-helper-text">Kode ini digunakan sebagai format penomoran invoice (contoh: INV/IBPL/2026/001).</span>
+                </div>
+
+                <div class="mb-1">
+                  <label class="tokabe-label" for="tambah_perusahaan_id">
+                    Perusahaan <span class="required-star">*</span>
+                  </label>
+                  <select name="perusahaan_id" id="tambah_perusahaan_id" class="form-select form-select-tokabe" required>
+                    @foreach ($perusahaans as $perusahaan)
+                      <option value="{{ $perusahaan->id }}" {{ (old('perusahaan_id', $perusahaan->id) == $perusahaan->id) ? 'selected' : '' }}>
+                        {{ $perusahaan->nama_perusahaan }}
+                      </option>
+                    @endforeach
+                  </select>
+                  @error('perusahaan_id')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
               </div>
-            </div>
 
-            <div class="d-flex align-items-center gap-2">
-              <button type="button" class="btn-tokabe-primary" data-bs-toggle="modal" data-bs-target="#modalTambahKategori">
-                <i class="las la-plus fs-16"></i>
-                <span>Tambah Kategori</span>
-              </button>
-            </div>
+              <div class="tokabe-modal-footer">
+                <button type="button" class="btn-tokabe-modal-cancel" data-bs-dismiss="modal">
+                  <i class="ri-close-line fs-16" aria-hidden="true"></i>
+                  <span>Batal</span>
+                </button>
+                <button type="submit" class="ibk-btn-primary">
+                  <i class="ri-save-3-line fs-16" aria-hidden="true"></i>
+                  <span>Simpan Kategori</span>
+                </button>
+              </div>
+            </form>
           </div>
-
-          <!-- Table Container -->
-          <div class="card-body p-0">
-            <div class="table-responsive p-3">
-              <table id="scroll-horizontal" class="table nowrap align-middle tokabe-table" style="width:100%">
-                <thead>
-                  <tr>
-                    <th style="width: 50px; text-align: center;">No.</th>
-                    <th>Nama Invoice</th>
-                    <th>Kode Invoice</th>
-                    <th>Perusahaan</th>
-                    <th style="width: 100px; text-align: center;">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($invoices as $invoice)
-                    <tr>
-                      <td class="text-center fw-medium" style="color: #94A3B8;">{{ $loop->iteration }}</td>
-                      <td>
-                        <span class="fw-semibold text-white">{{ $invoice->nama_invoice }}</span>
-                      </td>
-                      <td>
-                        <code class="px-2 py-1 rounded" style="background: #0F172A; color: #93C5FD; border: 1px solid #28354A; font-size: 12px;">{{ $invoice->kode_invoice }}</code>
-                      </td>
-                      <td>
-                        <span class="fw-medium" style="color: #CBD5E1;">{{ $invoice->nama_perusahaan }}</span>
-                      </td>
-                      <td class="text-center">
-                        <div class="d-inline-flex align-items-center justify-content-center gap-2">
-                          <button type="button" onclick="openEditKategoriModal({{ $invoice->id }}, '{{ addslashes($invoice->nama_invoice) }}', '{{ addslashes($invoice->kode_invoice) }}', {{ $invoice->perusahaan_id }}, '{{ $invoice->tipe_harga ?? 'dengan_harga' }}')" class="btn-action-edit" title="Edit Kategori {{ $invoice->nama_invoice }}">
-                            <i class="ri-pencil-line"></i>
-                          </button>
-
-                          <form action="{{ route('destroy.kategori',['id'=>$invoice->id]) }}" method="POST" id="deleteForm{{ $invoice->id }}" class="m-0 p-0 d-inline">
-                            @csrf
-                            @method('delete')
-                            <button type="button" onclick="showConfirmation('{{ $invoice->nama_invoice }}', {{ $invoice->id }})" class="btn-action-delete" title="Hapus Kategori {{ $invoice->nama_invoice }}">
-                              <i class="ri-delete-bin-6-line"></i>
-                            </button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-          </div>
-
         </div>
       </div>
-    </div>
 
-    <!-- MODAL POPUP: TAMBAH KATEGORI INVOICE -->
-    <div class="modal fade" id="modalTambahKategori" tabindex="-1" aria-labelledby="modalTambahKategoriLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content tokabe-modal-dark">
-          <div class="tokabe-modal-header">
-            <div class="d-flex align-items-center gap-3">
-              <div class="tokabe-header-icon">
-                <i class="las la-plus-circle"></i>
+      <!-- MODAL POPUP: EDIT KATEGORI INVOICE -->
+      <div class="modal fade" id="modalEditKategori" tabindex="-1" aria-labelledby="modalEditKategoriLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content tokabe-modal">
+            <div class="tokabe-modal-header">
+              <div class="d-flex align-items-center gap-3">
+                <div class="tokabe-modal-icon" aria-hidden="true">
+                  <i class="ri-pencil-line"></i>
+                </div>
+                <div>
+                  <h5 class="tokabe-modal-title" id="modalEditKategoriLabel">Edit Kategori Invoice</h5>
+                  <span class="tokabe-modal-subtitle" id="editKategoriSubtitle">Perbarui informasi nama invoice dan kode prefix</span>
+                </div>
               </div>
-              <div>
-                <h5 class="modal-title text-white fw-bold mb-0" id="modalTambahKategoriLabel">Tambah Kategori Invoice</h5>
-                <span class="text-muted fs-12">Lengkapi form kategori baru untuk format penomoran </span>
-              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
             </div>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+
+            <form id="formEditKategori" action="" method="POST">
+              @csrf
+              @method('put')
+              <div class="tokabe-modal-body">
+                <div class="mb-3">
+                  <label class="tokabe-label" for="edit_nama_invoice">
+                    Nama Invoice <span class="required-star">*</span>
+                  </label>
+                  <input type="text" name="nama_invoice" id="edit_nama_invoice" class="form-control form-control-tokabe" placeholder="Nama Invoice" required>
+                </div>
+
+                <div class="mb-3">
+                  <label class="tokabe-label" for="edit_kode_invoice">
+                    Kode Invoice (Prefix) <span class="required-star">*</span>
+                  </label>
+                  <input type="text" name="kode_invoice" id="edit_kode_invoice" class="form-control form-control-tokabe" placeholder="Kode Invoice" required>
+                </div>
+
+                <div class="mb-1">
+                  <label class="tokabe-label" for="edit_perusahaan_id">
+                    Perusahaan <span class="required-star">*</span>
+                  </label>
+                  <select name="perusahaan_id" id="edit_perusahaan_id" class="form-select form-select-tokabe" required>
+                    @foreach ($perusahaans as $perusahaan)
+                      <option value="{{ $perusahaan->id }}">
+                        {{ $perusahaan->nama_perusahaan }}
+                      </option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+
+              <div class="tokabe-modal-footer">
+                <button type="button" class="btn-tokabe-modal-cancel" data-bs-dismiss="modal">
+                  <i class="ri-close-line fs-16" aria-hidden="true"></i>
+                  <span>Batal</span>
+                </button>
+                <button type="submit" class="ibk-btn-primary">
+                  <i class="ri-save-3-line fs-16" aria-hidden="true"></i>
+                  <span>Simpan Perubahan</span>
+                </button>
+              </div>
+            </form>
           </div>
-
-          <form action="{{ route('store.kategori') }}" method="POST">
-            @csrf
-            <div class="tokabe-modal-body">
-              <!-- Input Nama Invoice -->
-              <div class="mb-3">
-                <label class="tokabe-label" for="tambah_nama_invoice">
-                  Nama Invoice <span class="required-star">*</span>
-                </label>
-                <input type="text" name="nama_invoice" id="tambah_nama_invoice" class="form-control form-control-tokabe" placeholder="Contoh: Ibekami Plakat, Tokabe Merchandise" value="{{ old('nama_invoice') }}" required>
-                @error('nama_invoice')
-                  <div class="text-danger fs-12 mt-1">{{ $message }}</div>
-                @enderror
-              </div>
-
-              <!-- Input Kode Invoice -->
-              <div class="mb-3">
-                <label class="tokabe-label" for="tambah_kode_invoice">
-                  Kode Invoice (Prefix) <span class="required-star">*</span>
-                </label>
-                <input type="text" name="kode_invoice" id="tambah_kode_invoice" class="form-control form-control-tokabe" placeholder="Contoh: IBPL, TKB, IB" value="{{ old('kode_invoice') }}" required>
-                @error('kode_invoice')
-                  <div class="text-danger fs-12 mt-1">{{ $message }}</div>
-                @enderror
-                <span class="text-muted fs-12 mt-1 d-block">Kode ini digunakan sebagai format penomoran invoice (contoh: INV/IBPL/2026/001).</span>
-              </div>
-
-              <!-- Input Perusahaan -->
-              <div class="mb-3">
-                <label class="tokabe-label" for="tambah_perusahaan_id">
-                  Perusahaan <span class="required-star">*</span>
-                </label>
-                <select name="perusahaan_id" id="tambah_perusahaan_id" class="form-select form-select-tokabe" required>
-                  @foreach ($perusahaans as $perusahaan)
-                    <option value="{{ $perusahaan->id }}" {{ (old('perusahaan_id', $perusahaan->id) == $perusahaan->id) ? 'selected' : '' }}>
-                      {{ $perusahaan->nama_perusahaan }}
-                    </option>
-                  @endforeach
-                </select>
-                @error('perusahaan_id')
-                  <div class="text-danger fs-12 mt-1">{{ $message }}</div>
-                @enderror
-              </div>
-
-
-            </div>
-
-            <div class="tokabe-modal-footer">
-              <button type="button" class="btn-tokabe-modal-cancel" data-bs-dismiss="modal">
-                <i class="las la-times fs-16"></i>
-                <span>Batal</span>
-              </button>
-              <button type="submit" class="btn-tokabe-primary">
-                <i class="ri-save-3-line fs-16"></i>
-                <span>Simpan Kategori</span>
-              </button>
-            </div>
-          </form>
         </div>
       </div>
+
     </div>
-
-    <!-- MODAL POPUP: EDIT KATEGORI INVOICE -->
-    <div class="modal fade" id="modalEditKategori" tabindex="-1" aria-labelledby="modalEditKategoriLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content tokabe-modal-dark">
-          <div class="tokabe-modal-header">
-            <div class="d-flex align-items-center gap-3">
-              <div class="tokabe-header-icon" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #FCD34D;">
-                <i class="las la-pen"></i>
-              </div>
-              <div>
-                <h5 class="modal-title text-white fw-bold mb-0" id="modalEditKategoriLabel">Edit Kategori Invoice</h5>
-                <span class="text-muted fs-12" id="editKategoriSubtitle">Perbarui informasi nama invoice dan kode prefix</span>
-              </div>
-            </div>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
-          </div>
-
-          <form id="formEditKategori" action="" method="POST">
-            @csrf
-            @method('put')
-            <div class="tokabe-modal-body">
-              <!-- Input Nama Invoice -->
-              <div class="mb-3">
-                <label class="tokabe-label" for="edit_nama_invoice">
-                  Nama Invoice <span class="required-star">*</span>
-                </label>
-                <input type="text" name="nama_invoice" id="edit_nama_invoice" class="form-control form-control-tokabe" placeholder="Nama Invoice" required>
-              </div>
-
-              <!-- Input Kode Invoice -->
-              <div class="mb-3">
-                <label class="tokabe-label" for="edit_kode_invoice">
-                  Kode Invoice (Prefix) <span class="required-star">*</span>
-                </label>
-                <input type="text" name="kode_invoice" id="edit_kode_invoice" class="form-control form-control-tokabe" placeholder="Kode Invoice" required>
-              </div>
-
-              <!-- Input Perusahaan -->
-              <div class="mb-3">
-                <label class="tokabe-label" for="edit_perusahaan_id">
-                  Perusahaan <span class="required-star">*</span>
-                </label>
-                <select name="perusahaan_id" id="edit_perusahaan_id" class="form-select form-select-tokabe" required>
-                  @foreach ($perusahaans as $perusahaan)
-                    <option value="{{ $perusahaan->id }}">
-                      {{ $perusahaan->nama_perusahaan }}
-                    </option>
-                  @endforeach
-                </select>
-              </div>
-
-
-            </div>
-
-            <div class="tokabe-modal-footer">
-              <button type="button" class="btn-tokabe-modal-cancel" data-bs-dismiss="modal">
-                <i class="las la-times fs-16"></i>
-                <span>Batal</span>
-              </button>
-              <button type="submit" class="btn-tokabe-primary">
-                <i class="ri-save-3-line fs-16"></i>
-                <span>Simpan Perubahan</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 @endsection
 
 @section('plugins')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-
-<script src="{{ asset('js/pages/datatables.init.js') }}"></script>
-<script src="{{ asset('libs/cleave.js/cleave.min.js') }}"></script>
-<script src="{{ asset('js/halaman/form-masks.js') }}"></script>
-<script src="{{ asset('js/halaman/barang.js') }}"></script>
 
 <script>
-function openEditKategoriModal(id, nama, kode, perusahaanId, tipeHarga) {
-  $('#formEditKategori').attr('action', '/invoice/edit-kategori/' + id);
-  $('#edit_nama_invoice').val(nama);
-  $('#edit_kode_invoice').val(kode);
-  $('#edit_perusahaan_id').val(perusahaanId);
-  $('#editKategoriSubtitle').text('ID Kategori #' + id + ' — ' + nama);
-  $('#modalEditKategori').modal('show');
-}
+  function initPageTheme() {
+    var isLight = document.body.classList.contains('theme-light') || document.documentElement.classList.contains('theme-light');
+    var icon = document.getElementById('theme-toggle-icon');
+    var text = document.getElementById('theme-toggle-text');
+    if (icon) {
+      icon.className = isLight ? 'ri-moon-line fs-14' : 'ri-sun-line fs-14';
+    }
+    if (text) {
+      text.textContent = isLight ? 'Mode Gelap' : 'Mode Terang';
+    }
+  }
 
-function showConfirmation(NamaInvoice, InvoiceID) {
-  Swal.fire({
+  function openEditKategoriModal(id, nama, kode, perusahaanId, tipeHarga) {
+    $('#formEditKategori').attr('action', '/invoice/edit-kategori/' + id);
+    $('#edit_nama_invoice').val(nama);
+    $('#edit_kode_invoice').val(kode);
+    $('#edit_perusahaan_id').val(perusahaanId);
+    $('#editKategoriSubtitle').text('ID Kategori #' + id + ' - ' + nama);
+    $('#modalEditKategori').modal('show');
+  }
+
+  function showConfirmation(NamaInvoice, InvoiceID) {
+    var isLight = document.body.classList.contains('theme-light') || document.documentElement.classList.contains('theme-light');
+    Swal.fire({
       title: 'Hapus Kategori?',
       text: 'Kategori "' + NamaInvoice + '" akan dihapus permanen.',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#EF4444',
-      cancelButtonColor: '#334155',
+      confirmButtonColor: '#DC2626',
+      cancelButtonColor: isLight ? '#64748B' : '#334155',
       confirmButtonText: 'Ya, Hapus',
       cancelButtonText: 'Batal',
-      background: '#151D2A',
-      color: '#F8FAFC'
-  }).then((result) => {
+      background: isLight ? '#FFFFFF' : '#181412',
+      color: isLight ? '#1C1917' : '#F5F5F4'
+    }).then((result) => {
       if (result.isConfirmed) {
-          document.getElementById('deleteForm' + InvoiceID).submit();
+        document.getElementById('deleteForm' + InvoiceID).submit();
       }
+    });
+  }
+
+  $(document).ready(function () {
+    initPageTheme();
+
+    function syncCustomFooter(tableId) {
+      var wrapper = $(tableId + '_wrapper');
+      if (!wrapper.length) return;
+      var infoEl = wrapper.find('.dataTables_info');
+      var paginateEl = wrapper.find('.dataTables_paginate');
+
+      if (infoEl.length && $('#tokabeCustomInfo').length) {
+        if ($('#tokabeCustomInfo').children().first()[0] !== infoEl[0]) {
+          $('#tokabeCustomInfo').empty().append(infoEl);
+        }
+      }
+      if (paginateEl.length && $('#tokabeCustomPaginate').length) {
+        if ($('#tokabeCustomPaginate').children().first()[0] !== paginateEl[0]) {
+          $('#tokabeCustomPaginate').empty().append(paginateEl);
+        }
+      }
+      wrapper.children('.row:last-child').each(function () {
+        if ($(this).find('.dataTables_info, .dataTables_paginate').length === 0) {
+          $(this).hide();
+        }
+      });
+    }
+
+    if ($.fn.DataTable.isDataTable('#table-kategori')) {
+      $('#table-kategori').DataTable().destroy();
+    }
+    $('#table-kategori').DataTable({
+      paging: true,
+      pageLength: 10,
+      lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+      ordering: true,
+      order: [],
+      autoWidth: false,
+      scrollX: false,
+      deferRender: true,
+      orderClasses: false,
+      dom: "<'row p-3 pb-2 align-items-center'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 d-flex justify-content-md-end'f>>" +
+           "<'table-responsive'tr>" +
+           "<'row d-none'<'col-sm-6'i><'col-sm-6'p>>",
+      drawCallback: function () {
+        syncCustomFooter('#table-kategori');
+      },
+      language: {
+        search: "",
+        searchPlaceholder: "Cari nama / kode kategori...",
+        lengthMenu: "Tampilkan _MENU_ entri",
+        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ kategori",
+        infoEmpty: "Tidak ada data kategori",
+        infoFiltered: "(disaring dari _MAX_ total kategori)",
+        emptyTable: "Belum ada kategori invoice terdaftar.",
+        zeroRecords: "Tidak ada kategori yang cocok dengan pencarian.",
+        paginate: {
+          first: '<i class="ri-skip-back-line"></i>',
+          previous: '<i class="ri-arrow-left-s-line"></i>',
+          next: '<i class="ri-arrow-right-s-line"></i>',
+          last: '<i class="ri-skip-forward-line"></i>'
+        }
+      }
+    });
+
+    setTimeout(function () { syncCustomFooter('#table-kategori'); }, 50);
+    setTimeout(function () { syncCustomFooter('#table-kategori'); }, 200);
   });
-}
 </script>
 @endsection

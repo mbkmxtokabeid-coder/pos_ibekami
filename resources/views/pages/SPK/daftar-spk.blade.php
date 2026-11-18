@@ -2,8 +2,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.43.0/apexcharts.min.js" integrity="sha512-vv0F8Er+ByFK3l86WDjP5Zc0h8uxNWPzF+l4wGK0/BlHWxDiFHbYr/91dn8G0OO8tTnN40L4s2Whom+X2NxPog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.43.0/apexcharts.min.css" integrity="sha512-nnNXPeQKvNOEUd+TrFbofWwHT0ezcZiFU5E/Lv2+JlZCQwQ/ACM33FxPoQ6ZEFNnERrTho8lF0MCEH9DBZ/wWw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{{ asset('libs/apexcharts/apexcharts.css') }}" />
+<script src="{{ asset('libs/apexcharts/apexcharts.min.js') }}"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 
@@ -55,615 +58,877 @@
 
 <style>
   /* ==========================================================================
-     DESIGN SYSTEM & UI/UX PRO MAX (ACCESSIBILITY & VISIBILITY REFINED)
-     Theme: Dark Slate Pro (WCAG 2.2 AA Compliant)
+     TOKABE SPK (SURAT PERINTAH KERJA) — DUAL THEME WARM STONE SYSTEM
      ========================================================================== */
+
+  :root {
+    --ibk-bg: #0C0A09;
+    --ibk-surface: #14110F;
+    --ibk-surface-hover: #1A1613;
+    --ibk-card-bg: #14110F;
+    --ibk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    --ibk-border: rgba(255, 255, 255, 0.08);
+    --ibk-border-subtle: rgba(255, 255, 255, 0.04);
+    --ibk-text: #FAFAFA;
+    --ibk-text-muted: #A1A1AA;
+    --ibk-text-dim: #71717A;
+
+    --ibk-brand: #F59E0B;
+    --ibk-brand-deep: #EA580C;
+    --ibk-brand-soft: rgba(245, 158, 11, 0.12);
+    --ibk-brand-border: rgba(245, 158, 11, 0.24);
+    --ibk-brand-text: #FBBF24;
+    --ibk-brand-btn-bg: #EA580C;
+    --ibk-brand-btn-text: #FFFFFF;
+
+    --ibk-success: #10B981;
+    --ibk-success-soft: rgba(16, 185, 129, 0.14);
+    --ibk-success-border: rgba(16, 185, 129, 0.28);
+    --ibk-danger: #EF4444;
+    --ibk-danger-soft: rgba(239, 68, 68, 0.14);
+    --ibk-danger-border: rgba(239, 68, 68, 0.28);
+
+    --ibk-input-bg: rgba(255, 255, 255, 0.04);
+    --ibk-input-border: rgba(255, 255, 255, 0.12);
+    --ibk-input-text: #FAFAFA;
+    --ibk-input-placeholder: #71717A;
+    --ibk-popover-bg: #181412;
+
+    --ibk-th-bg: #14110F;
+    --ibk-th-text: #A1A1AA;
+    --ibk-td-border: rgba(255, 255, 255, 0.06);
+
+    --ibk-modal-bg: #181412;
+    --ibk-modal-border: rgba(255, 255, 255, 0.08);
+  }
+
+  body.theme-light,
+  html.theme-light,
+  html[data-layout-mode="light"] {
+    --ibk-bg: #F7F6F2;
+    --ibk-surface: #FFFFFF;
+    --ibk-surface-hover: #FAF7F2;
+    --ibk-card-bg: #FFFFFF;
+    --ibk-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    --ibk-border: #EAE4DC;
+    --ibk-border-subtle: #F5EFEB;
+    --ibk-text: #0F172A;
+    --ibk-text-muted: #64748B;
+    --ibk-text-dim: #94A3B8;
+
+    --ibk-brand: #EA580C;
+    --ibk-brand-deep: #C2410C;
+    --ibk-brand-soft: #FFF7ED;
+    --ibk-brand-border: #FED7AA;
+    --ibk-brand-text: #EA580C;
+    --ibk-brand-btn-bg: #EA580C;
+    --ibk-brand-btn-text: #FFFFFF;
+
+    --ibk-success: #059669;
+    --ibk-success-soft: #ECFDF5;
+    --ibk-success-border: #A7F3D0;
+    --ibk-danger: #DC2626;
+    --ibk-danger-soft: #FEF2F2;
+    --ibk-danger-border: #FECACA;
+
+    --ibk-input-bg: #FFFFFF;
+    --ibk-input-border: #DDD6CE;
+    --ibk-input-text: #0F172A;
+    --ibk-input-placeholder: #94A3B8;
+    --ibk-popover-bg: #FFFFFF;
+
+    --ibk-th-bg: #F3EFE6;
+    --ibk-th-text: #64748B;
+    --ibk-td-border: #EAE4DC;
+
+    --ibk-modal-bg: #FFFFFF;
+    --ibk-modal-border: #E2E8F0;
+  }
 
   .num, .price, .numeric, input.numeric {
     font-variant-numeric: tabular-nums !important;
     font-feature-settings: "tnum" 1, "cv11" 1 !important;
   }
 
-  /* Page Header Title & Breadcrumb (§16.2) */
-  .page-title-box h4 {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: #F8FAFC !important;
-  }
-  .breadcrumb .breadcrumb-item a {
-    color: #94A3B8 !important;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.15s ease;
-  }
-  .breadcrumb .breadcrumb-item a:hover {
-    color: #60A5FA !important;
-  }
-  .breadcrumb .breadcrumb-item.active {
-    color: #E2E8F0 !important;
-    font-weight: 600;
+  .surat-page-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 120px);
+    padding-bottom: 85px !important;
+    margin-bottom: 24px !important;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    color: var(--ibk-text);
   }
 
-  /* KPI Summary Cards (§12.4) */
-  .tokabe-kpi-card {
-    background: #151D2A !important;
-    border: 1.5px solid #28354A !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
-    padding: 18px 20px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  /* Header Section */
+  .ibk-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .ibk-page-title h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ibk-text);
+    margin: 0;
+    letter-spacing: -0.015em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ibk-page-title h1 i {
+    color: var(--ibk-brand);
+    font-size: 22px;
+  }
+  .ibk-page-subtitle {
+    font-size: 13px;
+    color: var(--ibk-text-muted);
+    margin-top: 4px;
+  }
+
+  /* Action Buttons */
+  .ibk-btn-primary {
+    background: #EA580C !important;
+    border: 1px solid #EA580C !important;
+    color: #FFFFFF !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    padding: 0 16px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+    transition: background-color 150ms ease, transform 100ms ease, box-shadow 150ms ease !important;
+    box-shadow: 0 1px 3px rgba(234, 88, 12, 0.25) !important;
+    text-decoration: none !important;
+  }
+  .ibk-btn-primary:hover {
+    background: #C2410C !important;
+    border-color: #C2410C !important;
+    color: #FFFFFF !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.35) !important;
+  }
+
+  .ref-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    height: 38px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--ibk-input-bg);
+    border: 1px solid var(--ibk-border);
+    color: var(--ibk-text);
+    transition: all 180ms ease;
+    white-space: nowrap;
+  }
+  .ref-theme-toggle:hover {
+    background: var(--ibk-surface-hover);
+    border-color: var(--ibk-brand-border);
+    transform: translateY(-1px);
+    color: var(--ibk-brand);
+  }
+
+  /* KPI Summary Cards */
+  .ibk-kpi-card {
+    background: var(--ibk-card-bg);
+    border: 1px solid var(--ibk-border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: var(--ibk-card-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 150ms ease, border-color 150ms ease;
     height: 100%;
   }
-  .tokabe-kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45) !important;
-    border-color: #3B4B66 !important;
+  .ibk-kpi-card:hover {
+    transform: translateY(-1px);
+    border-color: var(--ibk-brand-border);
   }
   .kpi-title {
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 500;
+    color: var(--ibk-text-muted);
+    margin-bottom: 4px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #CBD5E1 !important;
-    margin-bottom: 6px;
+    letter-spacing: 0.04em;
   }
   .kpi-amount {
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
     line-height: 1.2;
     margin-bottom: 0;
+    color: var(--ibk-text);
   }
   .kpi-icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 20px;
     flex-shrink: 0;
   }
   .icon-box-amber {
-    background-color: rgba(245, 158, 11, 0.16);
-    color: #FBBF24;
-    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    background-color: var(--ibk-brand-soft);
+    color: var(--ibk-brand);
+    border: 1px solid var(--ibk-brand-border);
   }
   .icon-box-rose {
-    background-color: rgba(244, 63, 94, 0.16);
-    color: #FB7185;
-    border: 1.5px solid rgba(244, 63, 94, 0.4);
+    background-color: var(--ibk-danger-soft);
+    color: var(--ibk-danger);
+    border: 1px solid var(--ibk-danger-border);
   }
-  .icon-box-sky {
-    background-color: rgba(56, 189, 248, 0.16);
-    color: #38BDF8;
-    border: 1.5px solid rgba(56, 189, 248, 0.4);
+  .icon-box-emerald {
+    background-color: var(--ibk-success-soft);
+    color: var(--ibk-success);
+    border: 1px solid var(--ibk-success-border);
   }
 
-  /* Section Card Container (§12.1) */
-  .tokabe-section-card {
-    background: #151D2A !important;
-    border: 1.5px solid #28354A !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
+  /* Section Card & Header */
+  .ibk-card {
+    background: var(--ibk-card-bg);
+    border: 1px solid var(--ibk-border);
+    border-radius: 12px;
+    box-shadow: var(--ibk-card-shadow);
     margin-bottom: 24px;
     overflow: hidden;
   }
-  .tokabe-card-header {
-    background: #1A2436 !important;
-    border-bottom: 1.5px solid #28354A !important;
-    padding: 16px 20px !important;
+  .ibk-card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--ibk-border);
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
   }
-  .tokabe-card-title {
-    font-size: 15.5px;
-    font-weight: 700;
-    color: #F8FAFC !important;
+  .ibk-card-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ibk-text);
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+  }
+  .ibk-card-title i {
+    font-size: 18px;
+    color: var(--ibk-brand);
+  }
+  .badge-count-pill {
+    background: var(--ibk-brand-soft);
+    color: var(--ibk-brand-text);
+    border: 1px solid var(--ibk-brand-border);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 11.5px;
+    font-weight: 600;
   }
 
   /* Timeframe Filter Buttons */
   .btn-time-filter {
-    background-color: #1E293B !important;
-    border: 1.5px solid #334155 !important;
-    color: #CBD5E1 !important;
+    background-color: var(--ibk-input-bg) !important;
+    border: 1px solid var(--ibk-border) !important;
+    color: var(--ibk-text-muted) !important;
     font-weight: 600;
-    font-size: 12.5px;
-    padding: 5px 14px;
+    font-size: 12px;
+    padding: 4px 12px;
     border-radius: 6px;
-    transition: all 0.15s ease;
+    transition: all 150ms ease;
   }
   .btn-time-filter:hover {
-    background-color: #334155 !important;
-    color: #FFFFFF !important;
+    background-color: var(--ibk-surface-hover) !important;
+    color: var(--ibk-text) !important;
   }
-  .btn-time-filter.btn-info,
   .btn-time-filter.active {
-    background-color: #4F46E5 !important;
-    border-color: #6366F1 !important;
+    background-color: #EA580C !important;
+    border-color: #EA580C !important;
     color: #FFFFFF !important;
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.4) !important;
   }
 
-  /* Table Styles (§13) */
+
+  #column_chart,
+  .apex-charts,
+  .apexcharts-canvas,
+  .apexcharts-canvas svg,
+  .apexcharts-svg {
+    background: transparent !important;
+  }
+
+  /* Table Styles */
   .tokabe-table {
-    background-color: #151D2A !important;
-    color: #F1F5F9 !important;
-    margin-bottom: 0 !important;
+    width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: 100% !important;
+    margin: 0 !important;
+    background: transparent !important;
   }
-  .tokabe-table thead th {
-    background-color: #101726 !important;
-    color: #E2E8F0 !important;
-    font-size: 12.5px !important;
+  body.theme-light .tokabe-table thead th,
+  html.theme-light .tokabe-table thead th,
+  html[data-layout-mode="light"] .tokabe-table thead th {
+    background: var(--ibk-th-bg) !important;
+    color: var(--ibk-th-text) !important;
+    font-size: 11px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    border-top: none !important;
-    border-bottom: 2px solid #28354A !important;
-    padding: 14px 16px !important;
-    vertical-align: middle;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--ibk-td-border) !important;
+    padding: 10px 14px !important;
+    vertical-align: middle !important;
     white-space: nowrap;
+    height: 44px !important;
+  }
+  .table-responsive {
+    width: 100% !important;
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-top: 1px solid var(--ibk-border) !important;
+    border-bottom: 1px solid var(--ibk-border) !important;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ibk-text-dim, #78716C) transparent;
+  }
+  .table-responsive::-webkit-scrollbar {
+    height: 8px;
+  }
+  .table-responsive::-webkit-scrollbar-track {
+    background: var(--ibk-surface);
+  }
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(120, 113, 108, 0.45);
+    border-radius: 9999px;
+  }
+  .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: var(--ibk-brand, #EA580C);
+  }
+  #table-spk {
+    min-width: 1420px !important;
+  }
+  .tokabe-table tbody tr {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 64px;
+    height: 64px !important;
+  }
+  .tokabe-table tbody tr,
+  .tokabe-table tbody td {
+    transition: none !important;
   }
   .tokabe-table tbody td {
-    border-bottom: 1px solid #222D3F !important;
-    padding: 13px 15px !important;
-    font-size: 13.5px !important;
-    vertical-align: middle;
+    border-bottom: 1px solid var(--ibk-td-border) !important;
+    padding: 8px 14px !important;
+    font-size: 12.5px !important;
+    vertical-align: middle !important;
+    color: var(--ibk-text) !important;
     background-color: transparent !important;
-    color: #F1F5F9 !important;
+    height: 64px !important;
   }
   .tokabe-table tbody tr:hover td {
-    background-color: #1E293B !important;
+    background-color: var(--ibk-surface-hover) !important;
   }
-  .tokabe-table tbody tr:last-child td {
-    border-bottom: none !important;
-  }
-
-  /* Overdue and Warning Row Styling with Non-Invasive Contrast */
-  .tokabe-table tbody tr.row-accent-danger > td {
-    background-color: rgba(239, 68, 68, 0.06) !important;
-  }
-  .tokabe-table tbody tr.row-accent-danger:hover > td {
-    background-color: rgba(239, 68, 68, 0.12) !important;
-  }
-  .tokabe-table tbody tr.row-accent-danger > td:first-child {
-    border-left: 4px solid #EF4444 !important;
-  }
-
-  .tokabe-table tbody tr.row-accent-warning > td {
-    background-color: rgba(245, 158, 11, 0.06) !important;
-  }
-  .tokabe-table tbody tr.row-accent-warning:hover > td {
-    background-color: rgba(245, 158, 11, 0.12) !important;
-  }
-  .tokabe-table tbody tr.row-accent-warning > td:first-child {
-    border-left: 4px solid #F59E0B !important;
-  }
-
-  /* Badges & Column Highlights */
-  .badge-invoice-no {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  .spk-pekerjaan-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.35;
+    max-height: 36px;
     font-size: 12.5px;
-    font-weight: 700;
-    color: #38BDF8 !important;
-    background: rgba(56, 189, 248, 0.12);
-    border: 1.5px solid rgba(56, 189, 248, 0.35);
-    padding: 4px 9px;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    font-weight: 500;
+    color: var(--ibk-text);
+    word-break: break-word;
+  }
+  .tokabe-table tbody tr {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 64px;
+  }
+  .tokabe-table tbody tr,
+  .tokabe-table tbody td {
+    transition: none !important;
+  }
+  .tokabe-table tbody tr:hover td {
+    background-color: var(--ibk-surface-hover) !important;
   }
 
+  /* Row Highlights */
+  .row-accent-danger td {
+    background-color: rgba(239, 68, 68, 0.04) !important;
+  }
+  .row-accent-warning td {
+    background-color: rgba(245, 158, 11, 0.04) !important;
+  }
+
+  /* Status Badges */
   .badge-status-selesai {
-    background: rgba(16, 185, 129, 0.2);
-    color: #6EE7B7 !important;
-    border: 1.5px solid rgba(52, 211, 153, 0.45);
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 9999px;
+    background: var(--ibk-success-soft) !important;
+    border: 1px solid var(--ibk-success-border) !important;
+    color: var(--ibk-success) !important;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
     font-size: 12px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
   }
   .badge-status-belum {
-    background: rgba(245, 158, 11, 0.2);
-    color: #FDE047 !important;
-    border: 1.5px solid rgba(251, 191, 36, 0.45);
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 9999px;
-    font-size: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .badge-stage-design {
-    background: rgba(56, 189, 248, 0.18);
-    color: #7DD3FC !important;
-    border: 1.5px solid rgba(56, 189, 248, 0.45);
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 9999px;
-    font-size: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .badge-stage-production {
-    background: rgba(245, 158, 11, 0.18);
-    color: #FDE047 !important;
-    border: 1.5px solid rgba(251, 191, 36, 0.45);
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 9999px;
-    font-size: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .badge-stage-pending {
-    background: rgba(244, 63, 94, 0.18);
-    color: #FDA4AF !important;
-    border: 1.5px solid rgba(244, 63, 94, 0.45);
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 9999px;
-    font-size: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .badge-timeline-overdue {
-    background: rgba(239, 68, 68, 0.2);
-    color: #FCA5A5 !important;
-    border: 1.5px solid rgba(239, 68, 68, 0.5);
+    background: var(--ibk-danger-soft) !important;
+    border: 1px solid var(--ibk-danger-border) !important;
+    color: var(--ibk-danger) !important;
     font-weight: 600;
-    padding: 4px 9px;
+    padding: 3px 10px;
     border-radius: 6px;
     font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-badge-action {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  .badge-invoice-no {
+    color: var(--ibk-text) !important;
+    font-weight: 700;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .badge-timeline-overdue {
+    background: var(--ibk-danger-soft);
+    border: 1px solid var(--ibk-danger-border);
+    color: var(--ibk-danger);
+    font-weight: 600;
+    font-size: 11.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
   }
   .badge-timeline-ontime {
-    background: rgba(16, 185, 129, 0.15);
-    color: #6EE7B7 !important;
-    border: 1.5px solid rgba(52, 211, 153, 0.4);
+    background: var(--ibk-success-soft);
+    border: 1px solid var(--ibk-success-border);
+    color: var(--ibk-success);
     font-weight: 600;
-    padding: 4px 9px;
+    font-size: 11.5px;
+    padding: 3px 8px;
     border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .badge-stage-design {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.24);
+    color: #FBBF24;
+    font-weight: 600;
     font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .badge-stage-production {
+    background: rgba(234, 88, 12, 0.14);
+    border: 1px solid rgba(234, 88, 12, 0.28);
+    color: #FB923C;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .badge-stage-pending {
+    background: var(--ibk-input-bg);
+    border: 1px solid var(--ibk-border);
+    color: var(--ibk-text-muted);
+    font-weight: 600;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
   }
 
-  /* Interactive Badge Button (Dropdown Trigger) */
-  .btn-badge-action {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.15s ease;
-  }
-  .btn-badge-action:hover {
-    transform: scale(1.03);
-    opacity: 0.95;
-  }
-  .btn-badge-action:focus-visible {
-    outline: 2px solid #818CF8 !important;
-    outline-offset: 3px;
-    border-radius: 9999px;
-  }
-  .btn-badge-action::after {
-    display: none !important;
-  }
-
-  /* Accessible Action Ghost Button */
+  /* Action Ghost & Dropdown */
   .btn-action-ghost {
-    background: #1E293B !important;
-    border: 1.5px solid #334155 !important;
-    color: #CBD5E1 !important;
-    border-radius: 8px !important;
-    width: 38px !important;
-    height: 38px !important;
+    background: transparent !important;
+    border: 1px solid var(--ibk-border) !important;
+    color: var(--ibk-text-muted) !important;
+    border-radius: 6px !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 0 !important;
-    transition: all 0.15s ease;
+    transition: all 150ms ease;
+    cursor: pointer;
   }
   .btn-action-ghost:hover {
-    background: #334155 !important;
-    color: #FFFFFF !important;
-    border-color: #6366F1 !important;
-  }
-  .btn-action-ghost:focus-visible {
-    outline: 2px solid #818CF8 !important;
-    outline-offset: 2px;
+    background: var(--ibk-surface-hover) !important;
+    color: var(--ibk-text) !important;
+    border-color: var(--ibk-brand-border) !important;
   }
   .dropdown-menu {
-    background: #1A2436 !important;
-    border: 1.5px solid #2D3B4F !important;
-    border-radius: 10px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+    background: var(--ibk-popover-bg) !important;
+    border: 1px solid var(--ibk-border) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25) !important;
     padding: 6px !important;
     z-index: 1050 !important;
   }
   .dropdown-item {
-    color: #F1F5F9 !important;
+    color: var(--ibk-text) !important;
     border-radius: 6px !important;
     padding: 8px 12px !important;
-    font-size: 13.5px !important;
-    font-weight: 500;
+    font-size: 13px !important;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: all 0.15s ease;
+    gap: 8px;
+    transition: all 150ms ease;
     background: transparent;
     border: none;
     width: 100%;
     text-align: left;
   }
-  .dropdown-item:hover, .dropdown-item:focus {
-    background: #28354A !important;
-    color: #FFFFFF !important;
+  .dropdown-item:hover {
+    background: var(--ibk-surface-hover) !important;
+    color: var(--ibk-text) !important;
   }
   .dropdown-item--danger {
-    color: #F87171 !important;
+    color: var(--ibk-danger) !important;
   }
-  .dropdown-item--danger:hover, .dropdown-item--danger:focus {
-    background: rgba(239, 68, 68, 0.2) !important;
-    color: #FCA5A5 !important;
+  .dropdown-item--danger:hover {
+    background: var(--ibk-danger-soft) !important;
+    color: var(--ibk-danger) !important;
   }
   .dropdown-divider {
-    border-color: #28354A !important;
-    margin: 6px 0 !important;
+    border-color: var(--ibk-border) !important;
+    margin: 4px 0 !important;
   }
 
-  /* ==========================================================================
-     DARK SLATE CUSTOM SCROLLBAR (ELIMINATES WHITE NATIVE SCROLLBAR)
-     ========================================================================== */
-  .table-responsive,
-  .dataTables_scroll,
-  .dataTables_scrollBody,
-  div.dataTables_scrollBody,
+  /* DataTables Styling */
   .dataTables_wrapper {
-    scrollbar-width: thin !important;
-    scrollbar-color: #2D3B52 #0F172A !important;
+    color: var(--ibk-text-muted) !important;
+    padding: 0 !important;
+    width: 100% !important;
   }
-  .table-responsive::-webkit-scrollbar,
-  .dataTables_scroll::-webkit-scrollbar,
-  .dataTables_scrollBody::-webkit-scrollbar,
-  div.dataTables_scrollBody::-webkit-scrollbar,
-  .dataTables_wrapper::-webkit-scrollbar {
-    height: 8px !important;
-    width: 8px !important;
+  .dataTables_wrapper > .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
-  .table-responsive::-webkit-scrollbar-track,
-  .dataTables_scroll::-webkit-scrollbar-track,
-  .dataTables_scrollBody::-webkit-scrollbar-track,
-  div.dataTables_scrollBody::-webkit-scrollbar-track,
-  .dataTables_wrapper::-webkit-scrollbar-track {
-    background: #0F172A !important;
-    border-radius: 4px !important;
-  }
-  .table-responsive::-webkit-scrollbar-thumb,
-  .dataTables_scroll::-webkit-scrollbar-thumb,
-  .dataTables_scrollBody::-webkit-scrollbar-thumb,
-  div.dataTables_scrollBody::-webkit-scrollbar-thumb,
-  .dataTables_wrapper::-webkit-scrollbar-thumb {
-    background: #2D3B52 !important;
-    border-radius: 4px !important;
-    border: 1px solid #0F172A !important;
-  }
-  .table-responsive::-webkit-scrollbar-thumb:hover,
-  .dataTables_scroll::-webkit-scrollbar-thumb:hover,
-  .dataTables_scrollBody::-webkit-scrollbar-thumb:hover,
-  div.dataTables_scrollBody::-webkit-scrollbar-thumb:hover,
-  .dataTables_wrapper::-webkit-scrollbar-thumb:hover {
-    background: #475569 !important;
-  }
-
-  /* ==========================================================================
-     DATATABLES CONTROLS & PAGINATION (§13.2)
-     Consistent with DESIGN.md & Tokabe Dark Slate System
-     ========================================================================== */
-  .dataTables_wrapper {
-    color: #CBD5E1 !important;
-    padding: 14px 16px;
-    position: relative;
-    clear: both;
+  .dataTables_wrapper .dataTables_length,
+  .dataTables_wrapper .dataTables_filter,
+  .dataTables_wrapper .dataTables_info,
+  .dataTables_wrapper .dataTables_paginate {
+    color: var(--ibk-text-muted) !important;
+    font-size: 13px !important;
   }
   .dataTables_wrapper::after {
     content: "";
     display: table;
     clear: both;
   }
-
-  /* Top Controls: Length & Search Filter */
   .dataTables_wrapper .dataTables_length {
-    float: left !important;
+    margin-bottom: 0 !important;
+  }
+  .dataTables_wrapper .dataTables_length label {
+    margin-bottom: 0 !important;
     display: inline-flex !important;
     align-items: center !important;
-    height: 52px !important;
-    padding: 8px 12px !important;
-    margin: 0 !important;
-    color: #94A3B8 !important;
-    font-size: 13px !important;
+    gap: 6px;
   }
   .dataTables_wrapper .dataTables_filter {
-    float: right !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    height: 52px !important;
-    padding: 8px 12px !important;
-    margin: 0 !important;
-    color: #94A3B8 !important;
-    font-size: 13px !important;
+    margin-bottom: 0 !important;
   }
-  .dataTables_wrapper .dataTables_length label,
   .dataTables_wrapper .dataTables_filter label {
+    margin-bottom: 0 !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 6px !important;
-    margin: 0 !important;
-    font-size: 13px !important;
-    color: #94A3B8 !important;
-    font-weight: 500 !important;
   }
   .dataTables_wrapper .dataTables_length select {
-    background-color: #0F172A !important;
-    border: 1.5px solid #334155 !important;
-    color: #F8FAFC !important;
-    border-radius: 8px !important;
-    padding: 5px 10px !important;
-    margin: 0 4px !important;
+    background-color: var(--ibk-input-bg) !important;
+    border: 1px solid var(--ibk-input-border) !important;
+    color: var(--ibk-input-text) !important;
+    border-radius: 6px !important;
     height: 34px !important;
+    padding: 3px 24px 3px 10px !important;
+    outline: none !important;
   }
   .dataTables_wrapper .dataTables_filter input {
-    background-color: #0F172A !important;
-    border: 1.5px solid #334155 !important;
-    color: #F8FAFC !important;
+    background-color: var(--ibk-input-bg) !important;
+    border: 1px solid var(--ibk-input-border) !important;
+    color: var(--ibk-input-text) !important;
     border-radius: 8px !important;
-    padding: 5px 12px !important;
-    margin: 0 0 0 6px !important;
-    height: 34px !important;
-    width: 220px !important;
+    padding: 6px 12px !important;
+    margin-left: 0 !important;
     outline: none !important;
+    height: 36px !important;
   }
   .dataTables_wrapper .dataTables_filter input:focus,
   .dataTables_wrapper .dataTables_length select:focus {
-    border-color: #6366F1 !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+    border-color: #EA580C !important;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2) !important;
   }
-
-  /* Bottom Controls: Info (Left) & Pagination (Right) */
-  .dataTables_wrapper .dataTables_info {
-    float: left !important;
-    display: inline-flex !important;
+  /* Table Footer & Pagination (Standard Invoice Layout) */
+  .ibk-table-footer {
+    padding: 16px 24px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
     align-items: center !important;
-    height: 52px !important;
-    padding: 8px 12px !important;
-    margin: 0 !important;
-    color: #94A3B8 !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    border-top: 1px solid var(--ibk-border) !important;
+    position: relative !important;
+    z-index: 5 !important;
+    min-height: 64px !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
   }
-  .dataTables_wrapper .dataTables_paginate {
-    float: right !important;
-    display: inline-flex !important;
+  body.theme-light .ibk-table-footer,
+  html.theme-light .ibk-table-footer,
+  html[data-layout-mode="light"] .ibk-table-footer {
+    border-top: 1px solid #EAE4DC !important;
+    background: transparent !important;
+  }
+  #tokabeCustomInfo {
+    display: flex !important;
+    align-items: center !important;
+    min-height: 38px !important;
+  }
+  #tokabeCustomPaginate {
+    display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
-    height: 52px !important;
-    padding: 8px 12px !important;
-    margin: 0 !important;
-    gap: 4px !important;
+    margin-left: auto !important;
   }
-  .dataTables_wrapper .pagination {
+  .dataTables_info {
+    color: var(--ibk-text-muted) !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    padding: 0 !important;
     margin: 0 !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 4px !important;
   }
-
-  /* High Specificity Pagination Buttons Override (Default & Bootstrap 5) */
-  .dataTables_wrapper .dataTables_paginate .paginate_button,
-  .dataTables_wrapper .dataTables_paginate .page-item .page-link,
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item .page-link {
-    background-color: #1E293B !important;
-    border: 1px solid #334155 !important;
-    color: #CBD5E1 !important;
-    border-radius: 8px !important;
-    padding: 6px 12px !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
+  .dataTables_paginate {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .dataTables_paginate ul.pagination {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 4px 6px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+  }
+  .dataTables_paginate li.page-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    display: inline-flex !important;
+  }
+  .dataTables_paginate .page-link,
+  .dataTables_paginate .paginate_button {
     min-width: 36px !important;
     height: 36px !important;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin: 0 2px !important;
+    text-align: center !important;
+    text-decoration: none !important;
     cursor: pointer !important;
-    transition: all 0.15s ease !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    padding: 4px 10px !important;
+    color: #B5AC9F !important;
     box-shadow: none !important;
-    line-height: 1 !important;
+    outline: none !important;
+    transition: all 0.2s cubic-bezier(.2,.8,.2,1) !important;
+    user-select: none !important;
   }
-
-  .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
-  .dataTables_wrapper .dataTables_paginate .page-item .page-link:hover,
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item .page-link:hover {
-    background-color: #334155 !important;
-    border-color: #475569 !important;
-    color: #FFFFFF !important;
+  .dataTables_paginate li.page-item:not(.active):not(.disabled) .page-link:hover,
+  .dataTables_paginate .paginate_button:not(.current):not(.disabled):hover {
+    background: rgba(249, 115, 22, 0.14) !important;
+    border-color: rgba(249, 115, 22, 0.35) !important;
+    color: #FB923C !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2) !important;
   }
-
-  /* Active Page: Brand Indigo (#4F46E5) with subtle glow */
-  .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-  .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
-  .dataTables_wrapper .dataTables_paginate .page-item.active .page-link,
-  .dataTables_wrapper .dataTables_paginate .page-item.active .page-link:hover,
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link,
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link:hover {
-    background: #4F46E5 !important;
-    background-color: #4F46E5 !important;
-    border-color: #6366F1 !important;
-    color: #FFFFFF !important;
+  .dataTables_paginate li.page-item:not(.active):not(.disabled) .page-link:active,
+  .dataTables_paginate .paginate_button:not(.current):not(.disabled):active {
+    transform: scale(0.94) !important;
+  }
+  .dataTables_paginate li.page-item.active .page-link,
+  .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, #F97316 0%, #F59E0B 100%) !important;
+    color: #1A0F05 !important;
     font-weight: 700 !important;
-    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    transform: translateY(-1px) scale(1.06) !important;
+    animation: ibkPageActivePop 260ms cubic-bezier(.2,.8,.2,1) !important;
+    z-index: 2 !important;
   }
-
-  /* Disabled Pagination State */
-  .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
-  .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover,
-  .dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link,
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.disabled .page-link {
-    background-color: rgba(30, 41, 59, 0.5) !important;
-    border-color: #28354A !important;
-    color: #64748B !important;
+  @keyframes ibkPageActivePop {
+    0% { transform: scale(0.88); opacity: 0.7; }
+    60% { transform: scale(1.1); }
+    100% { transform: translateY(-1px) scale(1.06); opacity: 1; }
+  }
+  .dataTables_paginate li.page-item.previous .page-link,
+  .dataTables_paginate li.page-item.next .page-link,
+  .dataTables_paginate .paginate_button.previous,
+  .dataTables_paginate .paginate_button.next {
+    font-size: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+  }
+  .dataTables_paginate li.page-item.disabled .page-link,
+  .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.3 !important;
     cursor: not-allowed !important;
-    opacity: 0.55 !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    color: #71717A !important;
     box-shadow: none !important;
+    transform: none !important;
   }
 
-  /* Modal Dark Theme */
-  .tokabe-modal-content {
-    background: #151D2A !important;
-    border: 1.5px solid #28354A !important;
+  /* Light Mode Overrides for Table Footer & Pagination */
+  body.theme-light .dataTables_info,
+  html.theme-light .dataTables_info,
+  html[data-layout-mode="light"] .dataTables_info {
+    color: #64748B !important;
+  }
+  body.theme-light .dataTables_paginate ul.pagination,
+  html.theme-light .dataTables_paginate ul.pagination,
+  html[data-layout-mode="light"] .dataTables_paginate ul.pagination {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  }
+  body.theme-light .dataTables_paginate .page-link,
+  body.theme-light .dataTables_paginate .paginate_button,
+  html.theme-light .dataTables_paginate .page-link,
+  html.theme-light .dataTables_paginate .paginate_button,
+  html[data-layout-mode="light"] .dataTables_paginate .page-link,
+  html[data-layout-mode="light"] .dataTables_paginate .paginate_button {
+    color: #475569 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+  }
+  body.theme-light .dataTables_paginate li.page-item:not(.active):not(.disabled) .page-link:hover,
+  body.theme-light .dataTables_paginate .paginate_button:not(.current):not(.disabled):hover,
+  html.theme-light .dataTables_paginate li.page-item:not(.active):not(.disabled) .page-link:hover,
+  html.theme-light .dataTables_paginate .paginate_button:not(.current):not(.disabled):hover,
+  html[data-layout-mode="light"] .dataTables_paginate li.page-item:not(.active):not(.disabled) .page-link:hover,
+  html[data-layout-mode="light"] .dataTables_paginate .paginate_button:not(.current):not(.disabled):hover {
+    background: #FFF7ED !important;
+    border-color: #FDBA74 !important;
+    color: #C2410C !important;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.12) !important;
+  }
+  body.theme-light .dataTables_paginate li.page-item.active .page-link,
+  body.theme-light .dataTables_paginate .paginate_button.current,
+  html.theme-light .dataTables_paginate li.page-item.active .page-link,
+  html.theme-light .dataTables_paginate .paginate_button.current,
+  html[data-layout-mode="light"] .dataTables_paginate li.page-item.active .page-link,
+  html[data-layout-mode="light"] .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35) !important;
+  }
+  body.theme-light .dataTables_paginate li.page-item.previous .page-link,
+  body.theme-light .dataTables_paginate li.page-item.next .page-link,
+  body.theme-light .dataTables_paginate .paginate_button.previous,
+  body.theme-light .dataTables_paginate .paginate_button.next,
+  html.theme-light .dataTables_paginate li.page-item.previous .page-link,
+  html.theme-light .dataTables_paginate li.page-item.next .page-link,
+  html.theme-light .dataTables_paginate .paginate_button.previous,
+  html.theme-light .dataTables_paginate .paginate_button.next,
+  html[data-layout-mode="light"] .dataTables_paginate li.page-item.previous .page-link,
+  html[data-layout-mode="light"] .dataTables_paginate li.page-item.next .page-link,
+  html[data-layout-mode="light"] .dataTables_paginate .paginate_button.previous,
+  html[data-layout-mode="light"] .dataTables_paginate .paginate_button.next {
+    border: 1px solid #E2E8F0 !important;
+    background: #FFFFFF !important;
+    color: #475569 !important;
+  }
+  body.theme-light .dataTables_paginate li.page-item.disabled .page-link,
+  body.theme-light .dataTables_paginate .paginate_button.disabled,
+  html.theme-light .dataTables_paginate li.page-item.disabled .page-link,
+  html.theme-light .dataTables_paginate .paginate_button.disabled,
+  html[data-layout-mode="light"] .dataTables_paginate li.page-item.disabled .page-link,
+  html[data-layout-mode="light"] .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.35 !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    color: #94A3B8 !important;
+  }
+
+  /* Modal */
+  .modal-content {
+    background-color: var(--ibk-modal-bg) !important;
+    border: 1px solid var(--ibk-modal-border) !important;
+    color: var(--ibk-text) !important;
     border-radius: 12px !important;
-    color: #F8FAFC !important;
   }
   .btn-form-cancel {
-    background-color: #1E293B !important;
-    border: 1.5px solid #334155 !important;
-    color: #E2E8F0 !important;
+    background: var(--ibk-input-bg) !important;
+    border: 1px solid var(--ibk-border) !important;
+    color: var(--ibk-text-muted) !important;
     border-radius: 8px !important;
     font-size: 13.5px !important;
-    font-weight: 600 !important;
+    font-weight: 500 !important;
     padding: 8px 18px !important;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    transition: all 150ms ease;
   }
   .btn-form-cancel:hover {
-    background-color: #334155 !important;
-    color: #FFFFFF !important;
+    background: var(--ibk-surface-hover) !important;
+    color: var(--ibk-text) !important;
   }
 </style>
 @endsection
@@ -674,26 +939,26 @@
 <!-- Delete Modal -->
 <div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" id="deleteModal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content tokabe-modal-content p-3">
+    <div class="modal-content p-3">
       <div class="modal-body text-center p-4">
         <input type="hidden" name="spk_delete_id" id="spk_id">
-        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; border-radius: 50%; background: rgba(239, 68, 68, 0.2); border: 1.5px solid rgba(239, 68, 68, 0.45);">
-          <i class="las la-trash-alt fs-32 text-danger"></i>
+        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; border-radius: 50%; background: var(--ibk-danger-soft); border: 1px solid var(--ibk-danger-border);">
+          <i class="ri-delete-bin-line fs-24 text-danger"></i>
         </div>
-        <h5 class="text-white fw-bold mb-2">Hapus Data SPK?</h5>
-        <p class="fs-13 mb-4" style="color: #CBD5E1;">
+        <h5 class="fw-bold mb-2" style="color: var(--ibk-text);">Hapus Data SPK?</h5>
+        <p class="fs-13 mb-4" style="color: var(--ibk-text-muted);">
           Apakah Anda yakin ingin menghapus data Surat Perintah Kerja ini? Tindakan ini tidak dapat dibatalkan.
         </p>
         <div class="d-flex justify-content-center gap-2">
-          <button type="button" class="btn btn-form-cancel" data-bs-dismiss="modal">
-            <i class="las la-times"></i>
+          <button type="button" class="btn-form-cancel" data-bs-dismiss="modal">
+            <i class="ri-close-line fs-16"></i>
             <span>Batal</span>
           </button>
           <form id="deleteForm" action="{{ url('/delete-spk') }}" method="POST">
             @csrf
             @method('delete')
             <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold" style="border-radius: 8px;">
-              <i class="las la-trash-alt fs-16"></i>
+              <i class="ri-delete-bin-line fs-16"></i>
               <span>Ya, Hapus</span>
             </button>
           </form>
@@ -705,436 +970,486 @@
 
 <div class="page-content">
   <div class="container-fluid">
+    <div class="surat-page-wrapper">
 
-    <!-- Page Header & Title (§16.2) -->
-    <div class="row mb-3">
-      <div class="col-12">
-        <div class="page-title-box d-sm-flex align-items-center justify-content-between py-2">
-          <div>
-            <h4 class="mb-sm-0 text-white fw-bold">SPK (Surat Perintah Kerja)</h4>
-          </div>
-          <div class="page-title-right">
-            <ol class="breadcrumb m-0">
-              <li class="breadcrumb-item"><a href="javascript:void(0);">SPK</a></li>
-              <li class="breadcrumb-item active">Daftar SPK</li>
-            </ol>
-          </div>
+      <!-- 1. Header & Actions -->
+      <div class="ibk-page-header">
+        <div class="ibk-page-title">
+          <h1>
+            <i class="ri-mail-settings-line"></i>
+            <span>Daftar SPK (Surat Perintah Kerja)</span>
+          </h1>
+          <div class="ibk-page-subtitle">Monitoring tahapan pengerjaan, respon desain & produksi, serta timeline target penyelesaian</div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="ref-theme-toggle" id="btn-theme-toggle" onclick="toggleDashboardTheme(event)" title="Beralih Mode Tampilan" aria-label="Ganti Tema Tampilan">
+            <i class="ri-sun-line fs-14" id="theme-toggle-icon"></i>
+            <span id="theme-toggle-text">Mode Terang</span>
+          </button>
+          @if (Auth::check() && (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik'))
+            <a href="{{ url('/tambah-spk') }}" class="ibk-btn-primary" aria-label="Tambah SPK Baru">
+              <i class="ri-add-line fs-16" aria-hidden="true"></i>
+              <span>Buat SPK Baru</span>
+            </a>
+          @endif
         </div>
       </div>
-    </div>
 
-    <!-- Summary KPI Cards (§12.4) -->
-    <div class="row g-3 mb-4">
-      <!-- KPI 1: Belum Selesai -->
-      <div class="col-md-4">
-        <div class="tokabe-kpi-card">
-          <div class="d-flex align-items-start justify-content-between">
+      <!-- 2. Summary KPI Cards -->
+      <div class="row g-3 mb-4">
+        <!-- KPI 1: SPK Belum Selesai -->
+        <div class="col-md-4">
+          <div class="ibk-kpi-card">
             <div>
-              <div class="kpi-title">SPK BELUM SELESAI</div>
-              <h4 class="kpi-amount num" style="color: #FBBF24;" aria-label="SPK Belum Selesai: {{ $belum_selesai }}">
+              <div class="kpi-title">SPK Belum Selesai</div>
+              <h4 class="kpi-amount num" style="color: var(--ibk-brand-text);" aria-label="SPK Belum Selesai: {{ $belum_selesai }}">
                 {{ $belum_selesai }}
               </h4>
-              <span class="fs-12 mt-1 d-block" style="color: #CBD5E1;">Pesanan dalam tahapan pengerjaan</span>
+              <span class="fs-12 mt-1 d-block text-muted">Pesanan dalam tahapan pengerjaan</span>
             </div>
             <div class="kpi-icon-box icon-box-amber" aria-hidden="true">
               <i class="ri-tools-line"></i>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- KPI 2: Belum Diproses -->
-      <div class="col-md-4">
-        <div class="tokabe-kpi-card">
-          <div class="d-flex align-items-start justify-content-between">
+        <!-- KPI 2: SPK Belum Diproses -->
+        <div class="col-md-4">
+          <div class="ibk-kpi-card">
             <div>
-              <div class="kpi-title">SPK BELUM DIPROSES</div>
-              <h4 class="kpi-amount num" style="color: #FB7185;" aria-label="SPK Belum Diproses: {{ $belum_proses }}">
+              <div class="kpi-title">SPK Belum Diproses</div>
+              <h4 class="kpi-amount num" style="color: var(--ibk-danger);" aria-label="SPK Belum Diproses: {{ $belum_proses }}">
                 {{ $belum_proses }}
               </h4>
-              <span class="fs-12 mt-1 d-block" style="color: #CBD5E1;">Menunggu respon desain & produksi</span>
+              <span class="fs-12 mt-1 d-block text-muted">Menunggu respon tim kerja</span>
             </div>
             <div class="kpi-icon-box icon-box-rose" aria-hidden="true">
-              <i class="las la-hourglass-half fs-24"></i>
+              <i class="ri-time-line"></i>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- KPI 3: Total Berkas SPK -->
-      <div class="col-md-4">
-        <div class="tokabe-kpi-card">
-          <div class="d-flex align-items-start justify-content-between">
+        <!-- KPI 3: Total Berkas SPK -->
+        <div class="col-md-4">
+          <div class="ibk-kpi-card">
             <div>
-              <div class="kpi-title">TOTAL BERKAS SPK</div>
-              <h4 class="kpi-amount num" style="color: #38BDF8;" aria-label="Total Berkas SPK: {{ count($spk) }}">
+              <div class="kpi-title">Total Berkas SPK</div>
+              <h4 class="kpi-amount num" aria-label="Total Berkas SPK: {{ count($spk) }}">
                 {{ count($spk) }}
               </h4>
-              <span class="fs-12 mt-1 d-block" style="color: #CBD5E1;">Seluruh data riwayat surat SPK</span>
+              <span class="fs-12 mt-1 d-block text-muted">Seluruh data riwayat berkas SPK</span>
             </div>
-            <div class="kpi-icon-box icon-box-sky" aria-hidden="true">
+            <div class="kpi-icon-box icon-box-emerald" aria-hidden="true">
               <i class="ri-file-list-3-line"></i>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- SPK Timeline Charts Card (§17) -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="tokabe-section-card">
-          <div class="tokabe-card-header">
-            <div>
-              <div class="tokabe-card-title">
-                <i class="ri-bar-chart-grouped-line fs-20 text-info" aria-hidden="true"></i>
-                <span>SPK Timeline Charts</span>
-              </div>
-              <small class="fs-12 d-block mt-1" style="color: #94A3B8;">Analisis durasi pengerjaan per invoice (Desain, Produksi, dan Total)</small>
+      <!-- 3. Timeline Chart Card -->
+      <div class="ibk-card mb-4">
+        <div class="ibk-card-header">
+          <div>
+            <div class="ibk-card-title">
+              <i class="ri-bar-chart-grouped-line"></i>
+              <span>Analisis Timeline Pengerjaan SPK</span>
             </div>
-            <div class="d-flex gap-2">
-              <button type="button" class="btn btn-time-filter tombol btn-sm active" onclick="timeFrame('week')" id="btn-week" aria-label="Tampilkan timeframe 1 minggu">
-                1W
-              </button>
-              <button type="button" class="btn btn-time-filter tombol btn-sm" onclick="timeFrame('month')" id="btn-month" aria-label="Tampilkan timeframe 1 bulan">
-                1M
-              </button>
-            </div>
+            <div class="fs-12 text-muted mt-1">Durasi pengerjaan per invoice (Waktu Desain, Waktu Produksi, dan Total)</div>
           </div>
-          <div class="card-body p-3">
-            <div id="column_chart" class="apex-charts" dir="ltr"></div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-time-filter tombol active" onclick="timeFrame('week')" id="btn-week" aria-label="Tampilkan timeframe 1 minggu">
+              1W
+            </button>
+            <button type="button" class="btn btn-time-filter tombol" onclick="timeFrame('month')" id="btn-month" aria-label="Tampilkan timeframe 1 bulan">
+              1M
+            </button>
           </div>
         </div>
+        <div class="p-3">
+          <div id="column_chart" class="apex-charts" dir="ltr"></div>
+        </div>
       </div>
-    </div>
 
-    <!-- Table Section (§13) -->
-    <div class="row">
-      <div class="col-12">
-        <div class="tokabe-section-card">
-          <div class="tokabe-card-header">
-            <div class="tokabe-card-title">
-              <i class="ri-file-list-3-line fs-20 text-warning" aria-hidden="true"></i>
-              <span>Daftar SPK</span>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-              <div class="fs-13 d-none d-sm-block" style="color: #CBD5E1;">
-                Total: <span class="fw-bold text-white num">{{ count($spk) }}</span> berkas
-              </div>
-              @if (Auth::check() && (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik'))
-                <a href="{{ url('/tambah-spk') }}" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2 fw-semibold px-3 py-2" style="background: #4F46E5; border-color: #6366F1; border-radius: 8px;">
-                  <i class="ri-add-line fs-16" aria-hidden="true"></i>
-                  <span>Buat SPK Baru</span>
-                </a>
-              @endif
-            </div>
+      <!-- Render SPK Chart IMMEDIATELY before browser parses the large table below -->
+      <script>
+        const nomorInvWeek = {!! json_encode($noInvWeek) !!};
+        const tlDesignsWeek = {!! json_encode($tlDesgnWeek) !!};
+        const tlProductionsWeek = {!! json_encode($tlProdWeek) !!};
+        const tlKeseluruhanWeek = {!! json_encode($tlWeek) !!};
+        const nomorInvMonth = {!! json_encode($noInvMonth) !!};
+        const tlDesignsMonth = {!! json_encode($tlDesgnMonth) !!};
+        const tlKeseluruhanMonth = {!! json_encode($tlMonth) !!};
+        const tlProductionsMonth = {!! json_encode($tlProdMonth) !!};
+      </script>
+      <script src="{{ asset('js/halaman/spk.js') }}?v={{ time() }}"></script>
+
+      <!-- 4. Table Section -->
+      <div class="ibk-card">
+        <div class="ibk-card-header">
+          <div class="ibk-card-title">
+            <i class="ri-history-line"></i>
+            <span>Daftar Riwayat SPK</span>
           </div>
+          <span class="badge-count-pill">{{ count($spk) }} Berkas</span>
+        </div>
 
-          <div class="card-body p-0">
-            <div class="table-responsive">
-              <table class="table align-middle mb-0 tokabe-table" id="scroll-horizontal" aria-label="Tabel Riwayat SPK">
-                <thead>
-                  <tr>
-                    <th scope="col" class="text-center text-nowrap" style="width: 50px;">No.</th>
-                    <th scope="col" class="text-center text-nowrap" style="width: 130px;">Status</th>
-                    @if (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik')
-                      <th scope="col" class="text-nowrap" style="min-width: 140px;">Nomor Invoice</th>
-                      <th scope="col" class="text-nowrap" style="min-width: 140px;">Tanggal SPK</th>
-                    @endif
-                    <th scope="col" style="min-width: 250px;">Pekerjaan</th>
-                    <th scope="col" class="text-center" style="min-width: 130px;">Pelanggan</th>
-                    <th scope="col" style="min-width: 130px;">Jenis</th>
-                    <th scope="col" class="text-center text-nowrap">Target Selesai</th>
-                    <th scope="col" class="text-center" style="min-width: 160px;">Timeline</th>
-                    <th scope="col" class="text-center text-nowrap" style="width: 130px;">Respon</th>
-                    <th scope="col" class="text-center text-nowrap" style="width: 70px;">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($spk as $surat)
-                    @php
-                      $isLate = ($surat->color == 'red');
-                      $isExpress = ($surat->express == 'Y' && $surat->status_kerja != 'Selesai');
-                    @endphp
-                    <tr class="{{ $isLate ? 'row-accent-danger' : ($isExpress ? 'row-accent-warning' : '') }}">
-                      <td class="text-center num fw-medium" style="color: #94A3B8;">{{ $loop->iteration }}</td>
+        <div class="card-body p-0">
+          <table class="table align-middle mb-0 tokabe-table" id="table-spk" aria-label="Tabel Riwayat SPK">
+            <thead>
+              <tr>
+                <th scope="col" class="text-center text-nowrap" style="width: 45px;">NO.</th>
+                <th scope="col" class="text-center text-nowrap" style="width: 125px;">STATUS</th>
+                @if (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik')
+                  <th scope="col" class="text-nowrap" style="width: 140px;">NOMOR INVOICE</th>
+                  <th scope="col" class="text-center text-nowrap" style="width: 125px;">TANGGAL SPK</th>
+                @endif
+                <th scope="col" style="min-width: 260px;">PEKERJAAN</th>
+                <th scope="col" class="text-center text-nowrap" style="width: 130px;">PELANGGAN</th>
+                <th scope="col" class="text-nowrap" style="width: 130px;">JENIS</th>
+                <th scope="col" class="text-center text-nowrap" style="width: 125px;">TARGET SELESAI</th>
+                <th scope="col" class="text-center" style="width: 180px;">TIMELINE</th>
+                <th scope="col" class="text-center text-nowrap" style="width: 130px;">RESPON</th>
+                <th scope="col" class="text-center text-nowrap" style="width: 50px;">AKSI</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($spk as $surat)
+                @php
+                  $isLate = ($surat->color == 'red');
+                  $isExpress = ($surat->express == 'Y' && $surat->status_kerja != 'Selesai');
+                  $tglMulai = $surat->tgl_mulai ? \Carbon\Carbon::parse($surat->tgl_mulai) : null;
+                  $tglTarget = $surat->target_selesai ? \Carbon\Carbon::parse($surat->target_selesai) : null;
+                @endphp
+                <tr class="{{ $isLate ? 'row-accent-danger' : ($isExpress ? 'row-accent-warning' : '') }}">
+                  {{-- No --}}
+                  <td class="text-center num text-muted fw-semibold" style="font-size: 12.5px;">{{ $loop->iteration }}</td>
 
-                      {{-- Status SPK --}}
-                      <td class="text-center text-nowrap">
-                        @if (Auth::check())
-                          @if (Auth::user()->role === 'Admin' && $surat->timeline_produksi)
-                            @if ($surat->status_spk === 'Selesai')
-                              <span class="badge-status-selesai">
-                                <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
-                                <span>Selesai</span>
-                              </span>
-                            @else
-                              <div class="dropdown d-inline-block">
-                                <button class="btn btn-badge-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Ubah Status SPK {{ $surat->nomor_invoice }}">
-                                  <span class="badge-status-belum">
-                                    <i class="ri-time-fill fs-13" aria-hidden="true"></i>
-                                    <span>{{ $surat->status_spk }}</span>
-                                    <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
-                                  </span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-lg">
-                                  <li>
-                                    <a class="dropdown-item text-success" href="{{ url('/ubah-status-spk/' . $surat->id) }}">
-                                      <i class="las la-clipboard-check fs-16 text-success" aria-hidden="true"></i>
-                                      <span>Tandai Selesai</span>
-                                    </a>
-                                  </li>
-                                </ul>
-                              </div>
-                            @endif
-                          @elseif (Auth::user()->role === 'Produksi' && $surat->status_spk === 'Belum Selesai' && $surat->status_kerja === 'Selesai')
-                            @php
-                              $adminWa = '628115239999';
-                              $linkApprove = url('/ubah-status-spk/' . $surat->id);
-                              $pesan = urlencode("Halo Admin, mohon approve status SPK untuk surat Nomor Invoice: {$surat->nomor_invoice}. Link approve: {$linkApprove}");
-                              $waUrl = "https://wa.me/{$adminWa}?text={$pesan}";
-                            @endphp
-                            <a href="{{ $waUrl }}" target="_blank" class="btn btn-sm text-white fw-semibold px-2 py-1" style="background: #059669; border-radius: 6px;" aria-label="Kirim Permohonan Approve via WhatsApp">
-                              <i class="lab la-whatsapp fs-16 align-middle me-1"></i> Approve
-                            </a>
-                          @else
-                            @if ($surat->status_spk === 'Selesai')
-                              <span class="badge-status-selesai">
-                                <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
-                                <span>Selesai</span>
-                              </span>
-                            @else
+                  {{-- Status SPK --}}
+                  <td class="text-center text-nowrap">
+                    @if (Auth::check())
+                      @if (Auth::user()->role === 'Admin' && $surat->timeline_produksi)
+                        @if ($surat->status_spk === 'Selesai')
+                          <span class="badge-status-selesai">
+                            <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
+                            <span>Selesai</span>
+                          </span>
+                        @else
+                          <div class="dropdown d-inline-block">
+                            <button class="btn btn-badge-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Ubah Status SPK {{ $surat->nomor_invoice }}">
                               <span class="badge-status-belum">
                                 <i class="ri-time-fill fs-13" aria-hidden="true"></i>
                                 <span>{{ $surat->status_spk }}</span>
+                                <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
                               </span>
-                            @endif
-                          @endif
-                        @endif
-                      </td>
-
-                      @if (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik')
-                        <td class="text-nowrap">
-                          <span class="badge-invoice-no">
-                            <i class="ri-file-text-line" aria-hidden="true"></i>
-                            {{ $surat->nomor_invoice }}
-                          </span>
-                          @if($surat->express == 'Y')
-                            <span class="badge bg-warning text-dark fw-bold ms-1" style="font-size: 10.5px; border-radius: 4px;">KILAT</span>
-                          @endif
-                        </td>
-                        <td class="text-nowrap num fw-medium" style="color: #CBD5E1;">
-                          {{ $surat->tgl_mulai }}
-                        </td>
-                      @endif
-
-                      {{-- Pekerjaan --}}
-                      <td>
-                        <div class="fw-semibold mb-0" style="color: #F8FAFC; line-height: 1.45;">
-                          @if(strpos($surat->pekerjaan, '), ') !== false)
-                            @php
-                              $items = explode('), ', $surat->pekerjaan);
-                            @endphp
-                            @foreach($items as $itemText)
-                              <div class="py-1" style="{{ !$loop->last ? 'border-bottom: 1px dashed rgba(255,255,255,0.12);' : '' }}">
-                                <i class="ri-checkbox-blank-circle-fill me-1" style="font-size: 6px; vertical-align: middle; color: #38BDF8;"></i>
-                                {{ $itemText }}{{ !$loop->last ? ')' : '' }}
-                              </div>
-                            @endforeach
-                          @else
-                            <p class="mb-0">{{ $surat->pekerjaan }}</p>
-                          @endif
-                        </div>
-                      </td>
-
-                      {{-- Pelanggan --}}
-                      <td class="text-center">
-                        <span class="fw-bold text-white d-inline-flex align-items-center gap-1">
-                          <i class="ri-user-3-line text-info fs-13" aria-hidden="true"></i>
-                          {{ $surat->customer }}
-                        </span>
-                      </td>
-
-                      {{-- Jenis Bahan --}}
-                      <td>
-                        <span class="fw-medium" style="color: #CBD5E1;">{{ $surat->jenis_bahan }}</span>
-                      </td>
-
-                      {{-- Target Penyelesaian --}}
-                      <td class="text-center text-nowrap num">
-                        @php
-                          $tglTarget = $surat->target_selesai ? \Carbon\Carbon::parse($surat->target_selesai) : null;
-                        @endphp
-                        @if($tglTarget)
-                          <div class="fw-bold text-white">{{ $tglTarget->format('d/m/Y') }}</div>
-                          <small style="color: #94A3B8; font-size: 12px;">{{ $tglTarget->format('H:i') }} WIB</small>
-                        @else
-                          <span style="color: #94A3B8;">-</span>
-                        @endif
-                      </td>
-
-                      {{-- Timeline --}}
-                      <td class="text-center">
-                        @if($isLate)
-                          <span class="badge-timeline-overdue" title="Melewati batas target penyelesaian">
-                            <i class="ri-alarm-warning-fill" aria-hidden="true"></i>{{ $surat->timeline }}
-                          </span>
-                        @else
-                          <span class="badge-timeline-ontime">
-                            <i class="ri-check-line" aria-hidden="true"></i>{{ $surat->timeline ?: 'Tepat waktu' }}
-                          </span>
-                        @endif
-
-                        @if($surat->timeline_design)
-                          <div class="mt-1" style="color: #CBD5E1; font-size: 12px;">
-                            <span class="badge bg-dark border border-secondary text-info px-1 py-0 me-1" style="font-size: 11px;">Design</span>{{ $surat->timeline_design }}
-                          </div>
-                        @endif
-                        @if($surat->timeline_produksi)
-                          <div class="mt-1" style="color: #CBD5E1; font-size: 12px;">
-                            <span class="badge bg-dark border border-secondary text-warning px-1 py-0 me-1" style="font-size: 11px;">Produksi</span>{{ $surat->timeline_produksi }}
-                          </div>
-                        @endif
-                      </td>
-
-                      {{-- Respon Status Kerja --}}
-                      <td class="text-center text-nowrap">
-                        @if (Auth::check() && Auth::user()->role == 'Produksi')
-                          @if ($surat->status_kerja === 'Selesai')
-                            <span class="badge-status-selesai">
-                              <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
-                              <span>Selesai</span>
-                            </span>
-                          @else
-                            <div class="dropdown d-inline-block">
-                              <button class="btn btn-badge-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Ubah Tahapan Kerja SPK {{ $surat->nomor_invoice }}">
-                                @if($surat->status_kerja === 'Proses Design')
-                                  <span class="badge-stage-design">
-                                    <i class="las la-pencil-ruler fs-14" aria-hidden="true"></i>
-                                    <span>Proses Design</span>
-                                    <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
-                                  </span>
-                                @elseif($surat->status_kerja === 'Proses Produksi')
-                                  <span class="badge-stage-production">
-                                    <i class="las la-tools fs-14" aria-hidden="true"></i>
-                                    <span>Proses Produksi</span>
-                                    <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
-                                  </span>
-                                @else
-                                  <span class="badge-stage-pending">
-                                    <i class="ri-hourglass-2-line fs-13" aria-hidden="true"></i>
-                                    <span>{{ $surat->status_kerja }}</span>
-                                    <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
-                                  </span>
-                                @endif
-                              </button>
-                              <ul class="dropdown-menu dropdown-menu-end shadow-lg">
-                                @if ($surat->status_kerja == 'Belum Diproses')
-                                  <li>
-                                    <a class="dropdown-item text-info" href="/ubah-proses-spk/{{ $surat->id }}">
-                                      <i class="las la-pencil-ruler fs-16 text-info me-2"></i> Lanjut: Proses Design
-                                    </a>
-                                  </li>
-                                @elseif ($surat->status_kerja == 'Proses Design')
-                                  <li>
-                                    <a class="dropdown-item text-warning" href="/ubah-proses-spk/{{ $surat->id }}">
-                                      <i class="las la-tools fs-16 text-warning me-2"></i> Lanjut: Proses Produksi
-                                    </a>
-                                  </li>
-                                @elseif ($surat->status_kerja == 'Proses Produksi')
-                                  <li>
-                                    <a class="dropdown-item text-success" href="/ubah-proses-spk/{{ $surat->id }}">
-                                      <i class="las la-check-circle fs-16 text-success me-2"></i> Selesaikan SPK
-                                    </a>
-                                  </li>
-                                @endif
-                              </ul>
-                            </div>
-                          @endif
-                        @elseif(Auth::check() && (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik'))
-                          @if ($surat->status_kerja === 'Selesai')
-                            <span class="badge-status-selesai">
-                              <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
-                              <span>Selesai</span>
-                            </span>
-                          @elseif($surat->status_kerja === 'Proses Design')
-                            <span class="badge-stage-design">
-                              <i class="las la-pencil-ruler fs-14" aria-hidden="true"></i>
-                              <span>Proses Design</span>
-                            </span>
-                          @elseif($surat->status_kerja === 'Proses Produksi')
-                            <span class="badge-stage-production">
-                              <i class="las la-tools fs-14" aria-hidden="true"></i>
-                              <span>Proses Produksi</span>
-                            </span>
-                          @else
-                            <span class="badge-stage-pending">
-                              <i class="ri-hourglass-2-line fs-13" aria-hidden="true"></i>
-                              <span>{{ $surat->status_kerja }}</span>
-                            </span>
-                          @endif
-                        @endif
-                      </td>
-
-                      {{-- Aksi --}}
-                      <td class="text-center text-nowrap">
-                        <div class="dropdown">
-                          <button class="btn btn-action-ghost" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu Aksi SPK {{ $surat->nomor_invoice }}">
-                            <i class="ri-more-fill fs-18" aria-hidden="true"></i>
-                          </button>
-                          <ul class="dropdown-menu dropdown-menu-end shadow-lg">
-                            <li>
-                              <a class="dropdown-item" href="{{ url('/lihat-spk/' . $surat->id) }}">
-                                <i class="las la-eye fs-16 text-info" aria-hidden="true"></i>
-                                <span>Lihat SPK</span>
-                              </a>
-                            </li>
-                            @if (Auth::check() && (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik'))
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
                               <li>
-                                <a class="dropdown-item" target="_blank" href="{{ url('/cetak-spk/' . $surat->id) }}">
-                                  <i class="las la-print fs-16 text-primary" aria-hidden="true"></i>
-                                  <span>Cetak SPK</span>
+                                <a class="dropdown-item text-success" href="{{ url('/ubah-status-spk/' . $surat->id) }}">
+                                  <i class="ri-checkbox-circle-line fs-15 text-success" aria-hidden="true"></i>
+                                  <span>Tandai Selesai</span>
                                 </a>
                               </li>
-                              <li class="dropdown-divider"></li>
-                              <li>
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" class="dropdown-item dropdown-item--danger hapus-btn" value="{{ $surat->id }}" data-url="{{ url('/delete-spk/' . $surat->id) }}">
-                                  <i class="las la-trash-alt fs-16 text-danger" aria-hidden="true"></i>
-                                  <span>Hapus SPK</span>
-                                </button>
-                              </li>
+                            </ul>
+                          </div>
+                        @endif
+                      @elseif (Auth::user()->role === 'Produksi' && $surat->status_spk === 'Belum Selesai' && $surat->status_kerja === 'Selesai')
+                        @php
+                          $adminWa = '628115239999';
+                          $linkApprove = url('/ubah-status-spk/' . $surat->id);
+                          $pesan = urlencode("Halo Admin, mohon approve status SPK untuk surat Nomor Invoice: {$surat->nomor_invoice}. Link approve: {$linkApprove}");
+                          $waUrl = "https://wa.me/{$adminWa}?text={$pesan}";
+                        @endphp
+                        <a href="{{ $waUrl }}" target="_blank" class="btn btn-sm text-white fw-semibold px-2 py-1" style="background: #059669; border-radius: 6px; font-size: 11.5px;" aria-label="Kirim Permohonan Approve via WhatsApp">
+                          <i class="ri-whatsapp-line fs-14 align-middle me-1"></i> Approve
+                        </a>
+                      @else
+                        @if ($surat->status_spk === 'Selesai')
+                          <span class="badge-status-selesai">
+                            <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
+                            <span>Selesai</span>
+                          </span>
+                        @else
+                          <span class="badge-status-belum">
+                            <i class="ri-time-fill fs-13" aria-hidden="true"></i>
+                            <span>{{ $surat->status_spk }}</span>
+                          </span>
+                        @endif
+                      @endif
+                    @endif
+                  </td>
+
+                  {{-- Nomor Invoice --}}
+                  @if (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik')
+                    <td class="text-nowrap">
+                      <div class="d-inline-flex align-items-center gap-1">
+                        <span class="badge-invoice-no">
+                          <i class="ri-file-text-line text-muted" aria-hidden="true"></i>
+                          <span>{{ $surat->nomor_invoice }}</span>
+                        </span>
+                        @if($surat->express == 'Y')
+                          <span class="badge py-0.5 px-1.5 fs-10 fw-bold" style="background: rgba(234, 88, 12, 0.16); color: #EA580C; border: 1px solid rgba(234, 88, 12, 0.3); border-radius: 4px;">KILAT</span>
+                        @endif
+                      </div>
+                    </td>
+                    {{-- Tanggal SPK --}}
+                    <td class="text-nowrap text-center num">
+                      @if($tglMulai)
+                        <div class="fw-semibold" style="font-size: 12px; color: var(--ibk-text); line-height: 1.2;">{{ $tglMulai->format('d/m/Y') }}</div>
+                        <small class="text-muted" style="font-size: 11px;">{{ $tglMulai->format('H:i') }} WIB</small>
+                      @else
+                        <span class="text-muted">-</span>
+                      @endif
+                    </td>
+                  @endif
+
+                  {{-- Pekerjaan --}}
+                  <td>
+                    <div class="spk-pekerjaan-clamp" title="{{ $surat->pekerjaan }}">
+                      {{ $surat->pekerjaan }}
+                    </div>
+                  </td>
+
+                  {{-- Pelanggan --}}
+                  <td class="text-center text-nowrap">
+                    <div class="fw-bold text-truncate" style="max-width: 125px; margin: 0 auto; color: var(--ibk-text); font-size: 12.5px;" title="{{ $surat->customer }}">
+                      <i class="ri-user-3-line text-muted fs-12 me-1" aria-hidden="true"></i>{{ $surat->customer }}
+                    </div>
+                  </td>
+
+                  {{-- Jenis Bahan --}}
+                  <td class="text-nowrap">
+                    <div class="text-muted text-truncate" style="max-width: 120px; font-size: 12.5px;" title="{{ $surat->jenis_bahan ?: '-' }}">
+                      {{ $surat->jenis_bahan ?: '-' }}
+                    </div>
+                  </td>
+
+                  {{-- Target Penyelesaian --}}
+                  <td class="text-center text-nowrap num">
+                    @if($tglTarget)
+                      <div class="fw-semibold" style="font-size: 12px; color: var(--ibk-text); line-height: 1.2;">{{ $tglTarget->format('d/m/Y') }}</div>
+                      <small class="text-muted" style="font-size: 11px;">{{ $tglTarget->format('H:i') }} WIB</small>
+                    @else
+                      <span class="text-muted">-</span>
+                    @endif
+                  </td>
+
+                  {{-- Timeline --}}
+                  <td class="text-center text-nowrap">
+                    @php
+                      $tooltipTimeline = ($surat->timeline_design ? 'Design: ' . $surat->timeline_design : '') . 
+                                         ($surat->timeline_produksi ? ($surat->timeline_design ? ' | ' : '') . 'Produksi: ' . $surat->timeline_produksi : '');
+                    @endphp
+                    <div class="d-flex align-items-center justify-content-center" style="height: 36px;" title="{{ $tooltipTimeline ?: ($isLate ? 'Melewati batas target penyelesaian' : 'Tepat waktu') }}">
+                      @if($isLate)
+                        <span class="badge-timeline-overdue">
+                          <i class="ri-alarm-warning-fill" aria-hidden="true"></i>{{ $surat->timeline }}
+                        </span>
+                      @else
+                        <span class="badge-timeline-ontime">
+                          <i class="ri-check-line" aria-hidden="true"></i>{{ $surat->timeline ?: 'Tepat waktu' }}
+                        </span>
+                      @endif
+                    </div>
+                  </td>
+
+                  {{-- Respon Status Kerja --}}
+                  <td class="text-center text-nowrap">
+                    @if (Auth::check() && Auth::user()->role == 'Produksi')
+                      @if ($surat->status_kerja === 'Selesai')
+                        <span class="badge-status-selesai">
+                          <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
+                          <span>Selesai</span>
+                        </span>
+                      @else
+                        <div class="dropdown d-inline-block">
+                          <button class="btn btn-badge-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Ubah Tahapan Kerja SPK {{ $surat->nomor_invoice }}">
+                            @if($surat->status_kerja === 'Proses Design')
+                              <span class="badge-stage-design">
+                                <i class="ri-pencil-ruler-line fs-13" aria-hidden="true"></i>
+                                <span>Proses Design</span>
+                                <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
+                              </span>
+                            @elseif($surat->status_kerja === 'Proses Produksi')
+                              <span class="badge-stage-production">
+                                <i class="ri-tools-line fs-13" aria-hidden="true"></i>
+                                <span>Proses Produksi</span>
+                                <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
+                              </span>
+                            @else
+                              <span class="badge-stage-pending">
+                                <i class="ri-time-line fs-13" aria-hidden="true"></i>
+                                <span>{{ $surat->status_kerja }}</span>
+                                <i class="ri-arrow-down-s-line fs-14 ms-1" aria-hidden="true"></i>
+                              </span>
                             @endif
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="{{ url('/ubah-proses-spk/' . $surat->id) }}">
+                                <i class="ri-arrow-right-circle-line fs-15 text-warning" aria-hidden="true"></i>
+                                <span>Lanjutkan Tahap Berikutnya</span>
+                              </a>
+                            </li>
                           </ul>
                         </div>
-                      </td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-          </div>
+                      @endif
+                    @elseif(Auth::check() && (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik'))
+                      @if ($surat->status_kerja === 'Selesai')
+                        <span class="badge-status-selesai">
+                          <i class="ri-checkbox-circle-fill fs-13" aria-hidden="true"></i>
+                          <span>Selesai</span>
+                        </span>
+                      @elseif($surat->status_kerja === 'Proses Design')
+                        <span class="badge-stage-design">
+                          <i class="ri-pencil-ruler-line fs-13" aria-hidden="true"></i>
+                          <span>Proses Design</span>
+                        </span>
+                      @elseif($surat->status_kerja === 'Proses Produksi')
+                        <span class="badge-stage-production">
+                          <i class="ri-tools-line fs-13" aria-hidden="true"></i>
+                          <span>Proses Produksi</span>
+                        </span>
+                      @else
+                        <span class="badge-stage-pending">
+                          <i class="ri-time-line fs-13" aria-hidden="true"></i>
+                          <span>{{ $surat->status_kerja }}</span>
+                        </span>
+                      @endif
+                    @endif
+                  </td>
+
+                  {{-- Aksi --}}
+                  <td class="text-center text-nowrap">
+                    <div class="dropdown">
+                      <button class="btn btn-action-ghost" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu Aksi SPK {{ $surat->nomor_invoice }}">
+                        <i class="ri-more-fill fs-16" aria-hidden="true"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                          <a class="dropdown-item" href="{{ url('/lihat-spk/' . $surat->id) }}">
+                            <i class="ri-eye-line fs-15 text-warning" aria-hidden="true"></i>
+                            <span>Lihat SPK</span>
+                          </a>
+                        </li>
+                        @if (Auth::check() && (Auth::user()->role == 'Admin' || Auth::user()->role == 'Pemilik'))
+                          <li>
+                            <a class="dropdown-item" target="_blank" href="{{ url('/cetak-spk/' . $surat->id) }}">
+                              <i class="ri-printer-line fs-15 text-warning" aria-hidden="true"></i>
+                              <span>Cetak SPK</span>
+                            </a>
+                          </li>
+                          <li class="dropdown-divider"></li>
+                          <li>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#deleteModal" class="dropdown-item dropdown-item--danger hapus-btn" value="{{ $surat->id }}" data-url="{{ url('/delete-spk/' . $surat->id) }}">
+                              <i class="ri-delete-bin-line fs-15 text-danger" aria-hidden="true"></i>
+                              <span>Hapus SPK</span>
+                            </button>
+                          </li>
+                        @endif
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer matching Invoice standard -->
+        <div class="ibk-table-footer">
+          <div id="tokabeCustomInfo"></div>
+          <div id="tokabeCustomPaginate"></div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </div>
 
 <script>
-  const nomorInvWeek = {!! json_encode($noInvWeek) !!};
-  const tlDesignsWeek = {!! json_encode($tlDesgnWeek) !!};
-  const tlProductionsWeek = {!! json_encode($tlProdWeek) !!};
-  const tlKeseluruhanWeek = {!! json_encode($tlWeek) !!};
-  const nomorInvMonth = {!! json_encode($noInvMonth) !!};
-  const tlDesignsMonth = {!! json_encode($tlDesgnMonth) !!};
-  const tlKeseluruhanMonth = {!! json_encode($tlMonth) !!};
-  const tlProductionsMonth = {!! json_encode($tlProdMonth) !!};
+  function initPageTheme() {
+    var isLight = document.body.classList.contains('theme-light') || document.documentElement.classList.contains('theme-light');
+    var icon = document.getElementById('theme-toggle-icon');
+    var text = document.getElementById('theme-toggle-text');
+    if (icon) {
+      icon.className = isLight ? 'ri-moon-line fs-14' : 'ri-sun-line fs-14';
+    }
+    if (text) {
+      text.textContent = isLight ? 'Mode Gelap' : 'Mode Terang';
+    }
+  }
+
+  $(document).ready(function() {
+    initPageTheme();
+  });
 </script>
 @endsection
 
 @section('plugins')
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-<script src="{{ asset('js/pages/datatables.init.js') }}"></script>
-<script src="{{ asset('js/halaman/spk.js') }}?v={{ time() }}"></script>
+<script>
+  $(document).ready(function() {
+    function syncCustomFooter(tableId) {
+      var wrapper = $(tableId + '_wrapper');
+      if (!wrapper.length) return;
+      var infoEl = wrapper.find('.dataTables_info');
+      var paginateEl = wrapper.find('.dataTables_paginate');
+
+      if (infoEl.length && $('#tokabeCustomInfo').length) {
+        if ($('#tokabeCustomInfo').children().first()[0] !== infoEl[0]) {
+          $('#tokabeCustomInfo').empty().append(infoEl);
+        }
+      }
+      if (paginateEl.length && $('#tokabeCustomPaginate').length) {
+        if ($('#tokabeCustomPaginate').children().first()[0] !== paginateEl[0]) {
+          $('#tokabeCustomPaginate').empty().append(paginateEl);
+        }
+      }
+      wrapper.children('.row:last-child').each(function() {
+        if ($(this).find('.dataTables_info, .dataTables_paginate').length === 0) {
+          $(this).hide();
+        }
+      });
+    }
+
+    if ($.fn.DataTable.isDataTable('#table-spk')) {
+      $('#table-spk').DataTable().destroy();
+    }
+    var spkTable = $('#table-spk').DataTable({
+      paging: true,
+      pageLength: 10,
+      lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+      ordering: false,
+      autoWidth: false,
+      scrollX: false,
+      deferRender: true,
+      orderClasses: false,
+      dom: "<'row p-3 pb-2 align-items-center'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 d-flex justify-content-md-end'f>>" +
+           "<'table-responsive'tr>" +
+           "<'row d-none'<'col-sm-6'i><'col-sm-6'p>>",
+      drawCallback: function() {
+        syncCustomFooter('#table-spk');
+      },
+      language: {
+        search: "",
+        searchPlaceholder: "Cari nomor invoice / pekerjaan...",
+        lengthMenu: "Tampilkan _MENU_ entri",
+        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ berkas",
+        infoEmpty: "Tidak ada data berkas",
+        infoFiltered: "(disaring dari _MAX_ total berkas)",
+        paginate: {
+          first: '<i class="ri-skip-back-line"></i>',
+          previous: '<i class="ri-arrow-left-s-line"></i>',
+          next: '<i class="ri-arrow-right-s-line"></i>',
+          last: '<i class="ri-skip-forward-line"></i>'
+        }
+      }
+    });
+
+    setTimeout(function() { syncCustomFooter('#table-spk'); }, 50);
+    setTimeout(function() { syncCustomFooter('#table-spk'); }, 200);
+    setTimeout(function() { syncCustomFooter('#table-spk'); }, 500);
+  });
+</script>
 @endsection

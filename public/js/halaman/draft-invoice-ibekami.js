@@ -92,6 +92,8 @@
         }
     }
 
+    // Expose Global Helper Functions
+    window.saveInvoiceDraft = saveDraft;
     window.clearInvoiceDraft = function () {
         var key = getStorageKey();
         if (key) {
@@ -116,6 +118,19 @@
         if (!data || !data.header) return;
 
         var header = data.header;
+
+        // Check if draft contains meaningful restored content
+        var hasRestoredContent = false;
+        if (header.pelanggan || header.perusahaan || header.tlp || header.order || header.sales || 
+            (data.items && data.items.length > 0 && data.items.some(function(item) { 
+                return (item.barang_id && item.barang_id !== '') || (item.deskripsi_item && item.deskripsi_item !== ''); 
+            }))) {
+            hasRestoredContent = true;
+        }
+
+        if (!hasRestoredContent) {
+            return;
+        }
 
         // Restore Header Inputs
         if (header.inv) $('[name="inv"]').val(header.inv).trigger('change');
@@ -240,6 +255,7 @@
 
         // Show Toast Notice
         if (typeof Swal !== 'undefined') {
+            var isLight = document.body.classList.contains('theme-light') || (localStorage.getItem('ibekami_dash_theme') === 'light');
             Swal.fire({
                 icon: 'info',
                 title: 'Draf Dimuat Kembali',
@@ -247,11 +263,11 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 5000,
+                timer: 4500,
                 timerProgressBar: true,
-                background: '#1e293b',
-                color: '#ffffff',
-                iconColor: '#38bdf8'
+                background: isLight ? '#FFFFFF' : '#161B22',
+                color: isLight ? '#0F172A' : '#F8FAFC',
+                iconColor: isLight ? '#EA580C' : '#F97316'
             });
         }
     }
@@ -272,52 +288,100 @@
             debouncedSave();
         });
 
-        // Add manual reset draft button next to save/update button if not exists
-        var $submitBtn = $form.find('button[type="submit"]');
-        if ($submitBtn.length && !$('#btn-reset-draft').length) {
-            var $resetBtn = $('<button type="button" id="btn-reset-draft" class="btn btn-outline-danger ms-2"><i class="ri-delete-bin-line align-bottom me-1"></i>Reset Draf</button>');
-            $submitBtn.after($resetBtn);
+        // Handle Explicit Save Draft Button Click
+        $(document).on('click', '#btn-save-draft', function (e) {
+            e.preventDefault();
+            saveDraft();
 
-            $resetBtn.on('click', function () {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        title: 'Hapus Draf?',
-                        text: 'Apakah Anda yakin ingin mengosongkan draf inputan ini?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, Hapus',
-                        cancelButtonText: 'Batal'
-                    }).then(function (result) {
-                        if (result.isConfirmed) {
-                            clearInvoiceDraft();
-                            window.location.reload();
-                        }
-                    });
-                } else {
-                    if (confirm('Apakah Anda yakin ingin mengosongkan draf inputan ini?')) {
+            var $btn = $(this);
+            var originalHtml = $btn.html();
+            $btn.html('<i class="ri-check-line align-bottom me-1"></i>Draf Tersimpan!').prop('disabled', true);
+            setTimeout(function () {
+                $btn.html(originalHtml).prop('disabled', false);
+            }, 1800);
+
+            if (typeof Swal !== 'undefined') {
+                var isLight = document.body.classList.contains('theme-light') || (localStorage.getItem('ibekami_dash_theme') === 'light');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Draf Berhasil Disimpan',
+                    text: 'Seluruh data formulir invoice berhasil disimpan.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: isLight ? '#FFFFFF' : '#161B22',
+                    color: isLight ? '#0F172A' : '#F8FAFC',
+                    iconColor: '#10B981'
+                });
+            }
+        });
+
+        // Add manual save & reset draft buttons next to submit button if not already in DOM
+        var $submitBtn = $form.find('button[type="submit"]');
+        if ($submitBtn.length && !$('#btn-save-draft').length) {
+            var $saveDraftBtn = $('<button type="button" id="btn-save-draft" class="btn btn-save-draft-custom ms-2"><i class="ri-draft-line align-bottom me-1"></i>Simpan Draf</button>');
+            $submitBtn.after($saveDraftBtn);
+        }
+        if ($submitBtn.length && !$('#btn-reset-draft').length) {
+            var $resetBtn = $('<button type="button" id="btn-reset-draft" class="btn btn-reset-draft-custom ms-2"><i class="ri-delete-bin-line align-bottom me-1"></i>Reset Draf</button>');
+            if ($('#btn-save-draft').length) {
+                $('#btn-save-draft').after($resetBtn);
+            } else {
+                $submitBtn.after($resetBtn);
+            }
+        }
+
+        // Handle Reset Draft Button Click
+        $(document).on('click', '#btn-reset-draft', function (e) {
+            e.preventDefault();
+            var isLight = document.body.classList.contains('theme-light') || (localStorage.getItem('ibekami_dash_theme') === 'light');
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Hapus Draf?',
+                    text: 'Apakah Anda yakin ingin mengosongkan draf inputan ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DC2626',
+                    cancelButtonColor: isLight ? '#64748B' : '#475569',
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal',
+                    background: isLight ? '#FFFFFF' : '#161B22',
+                    color: isLight ? '#0F172A' : '#F8FAFC',
+                    iconColor: isLight ? '#EA580C' : '#F59E0B'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
                         clearInvoiceDraft();
                         window.location.reload();
                     }
+                });
+            } else {
+                if (confirm('Apakah Anda yakin ingin mengosongkan draf inputan ini?')) {
+                    clearInvoiceDraft();
+                    window.location.reload();
                 }
-            });
-        }
+            }
+        });
 
         // Handle Batal / Cancel Button
         $(document).on('click', '.btn-cancel-ibekami', function (e) {
             e.preventDefault();
             var targetUrl = $(this).attr('href');
+            var isLight = document.body.classList.contains('theme-light') || (localStorage.getItem('ibekami_dash_theme') === 'light');
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     title: 'Batalkan Proses?',
                     text: 'Apakah Anda yakin ingin membatalkan? Draf inputan ini akan dibersihkan.',
                     icon: 'question',
                     showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
+                    confirmButtonColor: '#DC2626',
+                    cancelButtonColor: isLight ? '#64748B' : '#475569',
                     confirmButtonText: 'Ya, Batalkan',
-                    cancelButtonText: 'Kembali'
+                    cancelButtonText: 'Kembali',
+                    background: isLight ? '#FFFFFF' : '#161B22',
+                    color: isLight ? '#0F172A' : '#F8FAFC',
+                    iconColor: isLight ? '#EA580C' : '#F97316'
                 }).then(function (result) {
                     if (result.isConfirmed) {
                         clearInvoiceDraft();

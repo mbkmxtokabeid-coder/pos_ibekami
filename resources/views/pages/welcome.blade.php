@@ -12,15 +12,15 @@
    ========================================================================== */
 
 :root {
-    --bg-canvas: #090807;
-    --bg-card: rgba(24, 20, 17, 0.76);
-    --bg-card-hover: rgba(30, 25, 21, 0.82);
-    --bg-subbox: rgba(255, 255, 255, 0.035);
-    --bg-track: rgba(255, 255, 255, 0.06);
+    --bg-canvas: #0C0A09;
+    --bg-card: #14110F;
+    --bg-card-hover: #1A1613;
+    --bg-subbox: #181412;
+    --bg-track: #26201B;
 
-    --border-glass: rgba(255, 255, 255, 0.085);
-    --border-glass-strong: rgba(245, 158, 11, 0.28);
-    --border-subtle: rgba(255, 255, 255, 0.05);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --border-glass-strong: rgba(245, 158, 11, 0.36);
+    --border-subtle: rgba(255, 255, 255, 0.06);
 
     --text-white: #FFFFFF;
     --text-primary: #FAFAFA;
@@ -37,10 +37,10 @@
     --accent-danger: #EF4444;
     --accent-coral: #FCA5A5;
 
-    --radius-card: 20px;
-    --radius-kpi: 16px;
-    --radius-box: 12px;
-    --radius-pill: 10px;
+    --radius-card: 14px;
+    --radius-kpi: 12px;
+    --radius-box: 10px;
+    --radius-pill: 8px;
 }
 
 /* ==========================================================================
@@ -58,56 +58,66 @@ body.theme-light .ref-page-subtitle {
     color: #64748B !important;
 }
 
-body.theme-light .ref-live-pill {
-    background: rgba(16, 185, 129, 0.08) !important;
-    border: 1px solid rgba(16, 185, 129, 0.25) !important;
-    color: #059669 !important;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08) !important;
+body.theme-light .ref-meta-timestamp {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #64748B !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
 }
 
 /* Theme Toggle Button */
 .ref-theme-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 14px;
-    border-radius: 999px;
+    gap: 8px;
+    padding: 6px 16px;
+    height: 38px;
+    border-radius: 9999px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.12);
     color: #FBBF24;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 180ms ease;
+    transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
     outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 .ref-theme-toggle:hover {
     background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.22);
     transform: translateY(-1px);
+    color: #FDE047;
 }
 body.theme-light .ref-theme-toggle {
     background: #FFFFFF !important;
     border: 1px solid #E2E8F0 !important;
-    color: #475569 !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    color: #1E293B !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
 }
 body.theme-light .ref-theme-toggle:hover {
-    background: #F1F5F9 !important;
+    background: #F8FAFC !important;
     color: #0F172A !important;
+    border-color: #CBD5E1 !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08) !important;
+}
+body.theme-light .ref-theme-toggle #theme-toggle-icon {
+    color: #1E293B !important;
 }
 
 /* Top Exec Cards in Light Mode */
 body.theme-light .top-exec-card {
     background: #FFFFFF !important;
     border: 1px solid #E2E8F0 !important;
-    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.03) !important;
 }
 body.theme-light .top-exec-card:hover {
     border-color: #CBD5E1 !important;
-    box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.09) !important;
 }
 body.theme-light .top-exec-card--highlight {
-    background: linear-gradient(170deg, #FFFFFF 0%, #FFFBEB 100%) !important;
+    background: #FFFFFF !important;
+    border-color: #FCD34D !important;
+}
     border-color: #FDE68A !important;
 }
 body.theme-light .top-exec-label {
@@ -126,11 +136,11 @@ body.theme-light .top-exec-sub {
     color: #94A3B8 !important;
 }
 
-/* Glass Cards in Light Mode */
+/* Solid Structured Cards in Light Mode */
 body.theme-light .ref-glass-card {
     background: #FFFFFF !important;
     border: 1px solid #E2E8F0 !important;
-    box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.06), 0 2px 8px -2px rgba(15, 23, 42, 0.04) !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.03) !important;
 }
 body.theme-light .ref-glass-card:hover {
     border-color: #CBD5E1 !important;
@@ -155,20 +165,20 @@ body.theme-light .dash-btn-filter {
 body.theme-light .segmented-item:hover,
 body.theme-light .dash-btn-filter:hover {
     color: #0F172A !important;
-    background: rgba(255, 255, 255, 0.6) !important;
+    background: #E2E8F0 !important;
 }
 body.theme-light .segmented-item.active,
 body.theme-light .dash-btn-filter.active {
     background: #FFFFFF !important;
     color: #D97706 !important;
-    border: 1px solid #FCD34D !important;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.16) !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
 }
 body.theme-light #btn-filter-belum-lunas.active {
     background: #FEF2F2 !important;
     color: #DC2626 !important;
-    border: 1px solid #FCA5A5 !important;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15) !important;
+    border: 1px solid #FECACA !important;
+    box-shadow: 0 1px 2px rgba(239, 68, 68, 0.08) !important;
 }
 
 body.theme-light .btn-custom-filter {
@@ -238,7 +248,7 @@ body.theme-light .ref-status-amount {
 body.theme-light .ref-kpi-card {
     background: #FFFFFF !important;
     border: 1px solid #E2E8F0 !important;
-    box-shadow: 0 4px 18px -4px rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.03) !important;
 }
 body.theme-light .ref-kpi-card:hover {
     border-color: #CBD5E1 !important;
@@ -252,6 +262,26 @@ body.theme-light .ref-kpi-main-title {
 }
 body.theme-light .ref-kpi-sub-count {
     color: #64748B !important;
+}
+body.theme-light .ref-kpi-icon--stone {
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+}
+body.theme-light .ref-kpi-icon--emerald {
+    background: #ECFDF5 !important;
+    border: 1px solid #A7F3D0 !important;
+    color: #059669 !important;
+}
+body.theme-light .ref-kpi-icon--amber {
+    background: #FEF3C7 !important;
+    border: 1px solid #FCD34D !important;
+    color: #B45309 !important;
+}
+body.theme-light .ref-kpi-icon--brand {
+    background: #FFFBEB !important;
+    border: 1px solid #FDE68A !important;
+    color: #D97706 !important;
 }
 
 /* Jenis & Kategori in Light Mode */
@@ -300,6 +330,13 @@ body.theme-light .dash-select {
     color: #0F172A !important;
     border: 1px solid #CBD5E1 !important;
     color-scheme: light !important;
+    outline: none !important;
+}
+body.theme-light .dash-input:focus,
+body.theme-light .dash-select:focus {
+    outline: none !important;
+    border-color: #EA580C !important;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15) !important;
 }
 body.theme-light .btn-dash-primary {
     background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
@@ -395,6 +432,11 @@ body.theme-light .ref-pct-pill {
 }
 
 /* Top Exec Pills in Light Mode */
+body.theme-light .top-exec-pill--neutral {
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+}
 body.theme-light .top-exec-pill--amber {
     background: #FFFBEB !important;
     border: 1px solid #FDE68A !important;
@@ -433,190 +475,6 @@ body.theme-light .ref-debt-pill {
     background: #FEF2F2 !important;
     border: 1px solid #FECACA !important;
     color: #DC2626 !important;
-}
-
-/* ==========================================================================
-   SIDEBAR LIGHT MODE (Aktif Khusus Saat Halaman Dashboard Berada di Mode Light)
-   ========================================================================== */
-body.theme-light .app-menu.navbar-menu {
-    background: #FFFFFF !important;
-    border-right: 1px solid #E2E8F0 !important;
-    box-shadow: 2px 0 16px rgba(15, 23, 42, 0.04) !important;
-}
-
-body.theme-light .sidebar-org-box {
-    border-bottom: 1px solid #F1F5F9 !important;
-    background: #FFFFFF !important;
-}
-
-body.theme-light .org-trigger-btn {
-    color: #0F172A !important;
-}
-body.theme-light .org-trigger-btn:hover {
-    background: #F8FAFC !important;
-}
-body.theme-light .org-name {
-    color: #0F172A !important;
-}
-body.theme-light .org-badge-pro {
-    background: #FFFBEB !important;
-    color: #D97706 !important;
-    border: 1px solid #FDE68A !important;
-}
-body.theme-light .org-chevron,
-body.theme-light .user-chevron {
-    color: #94A3B8 !important;
-}
-
-body.theme-light .navbar-nav .menu-title {
-    color: #94A3B8 !important;
-}
-
-body.theme-light .navbar-nav .nav-link {
-    color: #475569 !important;
-    padding: 8px 12px !important;
-    margin: 4px 8px !important;
-    border-radius: 10px !important;
-    transition: all 180ms ease !important;
-}
-body.theme-light .navbar-nav .nav-link:hover {
-    color: #0F172A !important;
-    background: #F1F5F9 !important;
-}
-body.theme-light .navbar-nav .nav-link .icon-box {
-    background: transparent !important;
-    color: #64748B !important;
-    border: none !important;
-    box-shadow: none !important;
-    width: 28px !important;
-    height: 28px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-right: 12px !important;
-    font-size: 20px !important;
-}
-body.theme-light .navbar-nav .nav-link i.menu-icon {
-    color: #64748B !important;
-    transition: color 180ms ease, transform 180ms ease !important;
-}
-body.theme-light .navbar-nav .nav-link:hover i.menu-icon,
-body.theme-light .navbar-nav .nav-link:hover .icon-box {
-    background: transparent !important;
-    color: #D97706 !important;
-}
-body.theme-light .navbar-nav .nav-link:after {
-    color: #94A3B8 !important;
-}
-body.theme-light .navbar-nav .nav-link:hover:after {
-    color: #0F172A !important;
-}
-
-/* Collapsed rail mode centering */
-html[data-sidebar-size="sm-hover"] body.theme-light .navbar-menu:not(:hover) .navbar-nav .nav-link,
-html[data-sidebar-size="sm"] body.theme-light .navbar-menu .navbar-nav .nav-link {
-    justify-content: center !important;
-    padding: 0 !important;
-    margin: 4px auto !important;
-    width: 44px !important;
-    height: 44px !important;
-}
-html[data-sidebar-size="sm-hover"] body.theme-light .navbar-menu:not(:hover) .navbar-nav .nav-link .icon-box,
-html[data-sidebar-size="sm"] body.theme-light .navbar-menu .navbar-nav .nav-link .icon-box {
-    margin-right: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-}
-
-/* Active Menu Link in Light Mode */
-body.theme-light .navbar-nav .nav-link.active {
-    background: #FFFBEB !important;
-    color: #D97706 !important;
-    font-weight: 700 !important;
-    box-shadow: none !important;
-}
-body.theme-light .navbar-nav .nav-link.active .icon-box,
-body.theme-light .navbar-nav .nav-link.active i.menu-icon {
-    background: transparent !important;
-    color: #F59E0B !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Expanded & Submenu State in Light Mode */
-body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"] {
-    background: #FFFBEB !important;
-    color: #D97706 !important;
-    font-weight: 600 !important;
-}
-body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"] .icon-box,
-body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"] i.menu-icon {
-    color: #F59E0B !important;
-}
-body.theme-light .navbar-menu .navbar-nav .nav-link[aria-expanded="true"]:after {
-    color: #D97706 !important;
-}
-
-/* Submenu in Light Mode - High Specificity */
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list:before {
-    background: #E2E8F0 !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link {
-    color: #475569 !important;
-    background: transparent !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link .menu-text {
-    color: inherit !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link i.sub-menu-icon {
-    color: #64748B !important;
-    transition: color 0.16s ease, transform 0.16s ease !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link:hover {
-    color: #0F172A !important;
-    background: #F1F5F9 !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link:hover .menu-text {
-    color: #0F172A !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link:hover i.sub-menu-icon {
-    color: #D97706 !important;
-    transform: scale(1.08);
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link.active {
-    color: #D97706 !important;
-    background: #FFFBEB !important;
-    font-weight: 600 !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link.active .menu-text {
-    color: #D97706 !important;
-}
-body.theme-light .navbar-menu .navbar-nav .sub-menu-list .nav-link.active i.sub-menu-icon {
-    color: #F59E0B !important;
-}
-
-/* User Account Footer in Light Mode */
-body.theme-light .sidebar-user-footer {
-    border-top: 1px solid #F1F5F9 !important;
-    background: #FFFFFF !important;
-}
-body.theme-light .user-trigger-btn {
-    color: #0F172A !important;
-}
-body.theme-light .user-trigger-btn:hover {
-    background: #F8FAFC !important;
-}
-body.theme-light .user-avatar-badge {
-    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25) !important;
-}
-body.theme-light .user-name {
-    color: #0F172A !important;
-    font-weight: 600 !important;
-}
-body.theme-light .user-role-label {
-    color: #64748B !important;
 }
 
 /* Dropdown Menu & Popovers in Light Mode */
@@ -687,18 +545,17 @@ body.theme-light .footer {
 
 
 
-/* 1. Deep Warm Obsidian Canvas & Logo Golden-Orange Radial Glows */
+/* 1. Deep Warm Obsidian Canvas (Solid & Focused, No AI Radial Orbs) */
 body {
-    background-color: var(--bg-canvas) !important;
-    background-image:
-        radial-gradient(circle 580px at 18% 16%, rgba(245, 158, 11, 0.18), transparent 70%),
-        radial-gradient(circle 520px at 88% 36%, rgba(234, 88, 12, 0.13), transparent 70%),
-        radial-gradient(circle 620px at 32% 80%, rgba(251, 191, 36, 0.14), transparent 72%) !important;
-    background-attachment: fixed !important;
     font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    color: var(--text-primary) !important;
     position: relative;
     min-height: 100vh;
+}
+html:not(.theme-light) body,
+html.theme-dark body {
+    background-color: var(--bg-canvas) !important;
+    background-image: none !important;
+    color: var(--text-primary) !important;
 }
 
 /* ==========================================================================
@@ -726,7 +583,7 @@ body {
     }
 }
 
-/* Light Theme Canvas Overrides */
+/* Light Theme Canvas Overrides (Clean Slate Ground Plane) */
 body.theme-light,
 html[data-theme="light"] body,
 body.theme-light #layout-wrapper,
@@ -736,11 +593,7 @@ html[data-theme="light"] .main-content,
 body.theme-light .page-content,
 html[data-theme="light"] .page-content {
     background-color: #F8FAFC !important;
-    background-image: 
-        radial-gradient(circle 600px at 20% 12%, rgba(245, 158, 11, 0.06), transparent 70%),
-        radial-gradient(circle 550px at 85% 30%, rgba(16, 185, 129, 0.05), transparent 70%),
-        radial-gradient(circle 650px at 40% 85%, rgba(56, 189, 248, 0.05), transparent 72%) !important;
-    background-attachment: fixed !important;
+    background-image: none !important;
     color: #1E293B !important;
 }
 
@@ -785,12 +638,12 @@ html[data-theme="light"] .page-content {
     margin-bottom: 22px;
 }
 .ref-page-title {
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.025em;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--text-white);
     margin: 0 0 4px 0;
-    line-height: 1.2;
+    line-height: 1.25;
 }
 .ref-page-subtitle {
     font-size: 13px;
@@ -798,54 +651,38 @@ html[data-theme="light"] .page-content {
     color: var(--text-secondary);
     margin: 0;
 }
-.ref-live-pill {
+.ref-meta-timestamp {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     padding: 6px 14px;
-    border-radius: 999px;
-    background: rgba(16, 185, 129, 0.10);
-    border: 1px solid rgba(16, 185, 129, 0.28);
-    color: #6EE7B7;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: #CBD5E1;
     font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.12);
-}
-.ref-live-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #10B981;
-    box-shadow: 0 0 8px #10B981;
-    display: inline-block;
+    font-weight: 500;
 }
 
-/* 2b. Top 4 Executive Summary Cards (Matched to Reference Card Strip & Logo Palette) */
+/* 2b. Top 4 Executive Summary Cards (Clean Structural Solid Cards) */
 .top-exec-card {
-    background: linear-gradient(165deg, rgba(28, 24, 20, 0.78) 0%, rgba(14, 12, 10, 0.88) 100%);
-    backdrop-filter: blur(22px) saturate(150%);
-    -webkit-backdrop-filter: blur(22px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 16px;
-    padding: 20px 22px;
+    background: #14110F;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px 18px;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 14px 32px -12px rgba(0, 0, 0, 0.6);
-    transition: transform 160ms ease, border-color 160ms ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: border-color 160ms ease;
 }
 .top-exec-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(245, 158, 11, 0.28);
+    border-color: rgba(245, 158, 11, 0.35);
 }
 .top-exec-card--highlight {
-    background:
-        radial-gradient(ellipse 80% 70% at 15% 0%, rgba(245, 158, 11, 0.14), transparent 70%),
-        linear-gradient(165deg, rgba(32, 26, 18, 0.84) 0%, rgba(15, 13, 10, 0.92) 100%);
-    border-color: rgba(245, 158, 11, 0.38);
+    background: #191410;
+    border-color: rgba(245, 158, 11, 0.32);
 }
 .top-exec-card--highlight:hover {
     border-color: rgba(251, 191, 36, 0.50);
@@ -855,25 +692,30 @@ html[data-theme="light"] .page-content {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 .top-exec-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
     color: #94A3B8;
 }
 .top-exec-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 3px 9px;
+    padding: 2px 8px;
     border-radius: 6px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.25;
     white-space: nowrap;
+}
+.top-exec-pill--neutral {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #CBD5E1;
 }
 .top-exec-pill--amber {
     background: rgba(245, 158, 11, 0.14);
@@ -896,11 +738,11 @@ html[data-theme="light"] .page-content {
     color: #38BDF8;
 }
 .top-exec-val {
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0 0 8px 0;
     color: #FFFFFF;
 }
 .top-exec-val--emerald {
@@ -919,25 +761,21 @@ html[data-theme="light"] .page-content {
     margin: 0;
 }
 
-/* 3. Frosted Glass Card Surface (Warm Obsidian Glass) */
+/* 3. Solid Structured Card Surface (Matte Obsidian) */
 .ref-glass-card {
-    background: linear-gradient(165deg, rgba(28, 24, 20, 0.76) 0%, rgba(14, 12, 10, 0.84) 100%) !important;
-    backdrop-filter: blur(24px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    background: #14110F !important;
     border: 1px solid var(--border-glass) !important;
     border-radius: var(--radius-card) !important;
-    padding: 24px !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        0 20px 45px -15px rgba(0, 0, 0, 0.70) !important;
-    transition: border-color 180ms ease, box-shadow 180ms ease;
+    padding: 22px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+    transition: border-color 160ms ease;
 }
 .ref-glass-card:hover {
-    border-color: var(--border-glass-strong) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 .ref-card-title {
-    font-size: 16.5px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: -0.015em;
     color: var(--text-white) !important;
@@ -949,15 +787,15 @@ html[data-theme="light"] .page-content {
     margin: 3px 0 0 0;
 }
 
-/* 4. Segmented Control with Glowing Logo Golden-Orange Active Pill */
+/* 4. Segmented Control with Crisp Solid Active State (No Glowing Halos) */
 .segmented-control,
 .dash-segmented-group {
     display: inline-flex;
     align-items: center;
-    background: rgba(12, 10, 9, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 11px;
-    padding: 4px;
+    background: #100D0B;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 3px;
     gap: 3px;
     max-width: 100%;
     overflow-x: auto;
@@ -972,14 +810,14 @@ html[data-theme="light"] .page-content {
     background: transparent;
     border: 1px solid transparent;
     color: var(--text-secondary);
-    padding: 5px 13px;
-    border-radius: 8px;
+    padding: 5px 12px;
+    border-radius: 6px;
     font-size: 12px;
     font-weight: 600;
     line-height: 1.4;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 150ms ease;
+    transition: all 140ms ease;
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -987,20 +825,20 @@ html[data-theme="light"] .page-content {
 .segmented-item:hover,
 .dash-btn-filter:hover {
     color: var(--text-white);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
 }
 .segmented-item.active,
 .dash-btn-filter.active {
-    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    background: #EA580C !important;
     color: #FFFFFF !important;
-    border: 1px solid rgba(253, 186, 116, 0.45) !important;
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.42) !important;
+    border: 1px solid #EA580C !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 #btn-filter-belum-lunas.active {
-    background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%) !important;
+    background: #DC2626 !important;
     color: #FFFFFF !important;
-    border: 1px solid rgba(252, 165, 165, 0.45) !important;
-    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.45) !important;
+    border: 1px solid #DC2626 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Custom Filter Toggle Button */
@@ -1028,20 +866,20 @@ html[data-theme="light"] .page-content {
 
 /* 5. Row 1 Left: Hero Pendapatan Akumulasi & 3 Summary Sub-Boxes */
 .ref-hero-overline {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
     color: var(--text-secondary);
     margin-bottom: 4px;
 }
 .ref-hero-amount {
-    font-size: 38px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.12;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
     color: var(--text-white);
-    margin: 0 0 18px 0;
+    margin: 0 0 16px 0;
 }
 
 .ref-summary-grid {
@@ -1233,73 +1071,68 @@ html[data-theme="light"] .page-content {
     border: 1px solid rgba(148, 163, 184, 0.22);
 }
 
-/* 7. Row 2: 4 Standalone Glass KPI Cards */
+/* 7. Row 2: 4 Standalone Solid KPI Cards */
 .ref-kpi-card {
-    background: linear-gradient(165deg, rgba(28, 24, 20, 0.74) 0%, rgba(14, 12, 10, 0.84) 100%);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    background: #14110F;
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-kpi);
-    padding: 18px 20px;
+    padding: 16px 18px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 14px;
     height: 100%;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.09),
-        0 14px 32px -12px rgba(0, 0, 0, 0.55);
-    transition: transform 160ms ease, border-color 160ms ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: border-color 160ms ease;
 }
 .ref-kpi-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--border-glass-strong);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 .ref-kpi-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 19px;
     flex-shrink: 0;
 }
-.ref-kpi-icon--indigo {
-    background: rgba(245, 158, 11, 0.16);
-    border: 1px solid rgba(245, 158, 11, 0.34);
-    color: #F59E0B;
+.ref-kpi-icon--stone {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: #CBD5E1;
 }
 .ref-kpi-icon--emerald {
-    background: rgba(16, 185, 129, 0.16);
-    border: 1px solid rgba(52, 211, 153, 0.30);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
     color: #34D399;
 }
 .ref-kpi-icon--amber {
-    background: rgba(168, 85, 247, 0.16);
-    border: 1px solid rgba(192, 132, 252, 0.32);
-    color: #C084FC;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #FBBF24;
 }
-.ref-kpi-icon--cyan {
-    background: rgba(56, 189, 248, 0.16);
-    border: 1px solid rgba(56, 189, 248, 0.32);
-    color: #38BDF8;
+.ref-kpi-icon--brand {
+    background: rgba(234, 88, 12, 0.12);
+    border: 1px solid rgba(234, 88, 12, 0.25);
+    color: #FB923C;
 }
 .ref-kpi-overline {
-    font-size: 10.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
     color: var(--text-secondary);
     margin-bottom: 3px;
     display: block;
 }
 .ref-kpi-value {
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--text-white);
     margin: 0;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
 }
 .ref-kpi-main-title {
     font-size: 18px;
@@ -1398,14 +1231,14 @@ html[data-theme="light"] .page-content {
     position: sticky;
     top: 0;
     z-index: 10;
-    font-size: 10.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--text-muted-custom);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-secondary);
     padding: 10px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: #161310 !important;
+    background: #14110F !important;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
     white-space: nowrap;
 }
@@ -1413,13 +1246,13 @@ html[data-theme="light"] .page-content {
     transition: background-color 140ms ease;
 }
 .ref-clean-table tbody tr:hover {
-    background: rgba(245, 158, 11, 0.04);
+    background: rgba(255, 255, 255, 0.03);
 }
 .ref-clean-table tbody td {
-    padding: 11px 8px;
+    padding: 10px 8px;
     font-size: 12.5px;
     vertical-align: middle;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     white-space: nowrap;
 }
 .ref-clean-table tbody tr:last-child td {
@@ -1429,13 +1262,13 @@ html[data-theme="light"] .page-content {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: rgba(245, 158, 11, 0.16);
-    border: 1px solid rgba(245, 158, 11, 0.32);
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.28);
     color: #FBBF24;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 /* 10. Row 4: Pembelian Belum Dibayar per Vendor (Inline Progress Table) */
@@ -1443,49 +1276,49 @@ html[data-theme="light"] .page-content {
     width: 100%;
     height: 8px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.055);
+    background: rgba(255, 255, 255, 0.06);
     overflow: hidden;
 }
 .ref-vendor-fill {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #EA580C 0%, #F59E0B 55%, #FBBF24 100%);
-    box-shadow: 0 0 14px rgba(245, 158, 11, 0.42);
+    background: #EA580C;
+    box-shadow: none;
     transition: width 950ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .ref-debt-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 12px;
-    border-radius: 8px;
-    background: rgba(239, 68, 68, 0.16);
-    border: 1px solid rgba(248, 113, 113, 0.28);
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.14);
+    border: 1px solid rgba(239, 68, 68, 0.28);
     color: #FCA5A5;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }
 .ref-paid-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 12px;
-    border-radius: 8px;
-    background: rgba(16, 185, 129, 0.16);
-    border: 1px solid rgba(52, 211, 153, 0.28);
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.28);
     color: #6EE7B7;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 /* Custom Filter Panel Controls */
 .custom-filter-panel {
-    background: rgba(16, 13, 11, 0.90) !important;
+    background: #14110F !important;
     border: 1px solid var(--border-glass) !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
 }
 .dash-input, .dash-select {
-    background: rgba(22, 19, 16, 0.96) !important;
+    background: #181512 !important;
     color: var(--text-white) !important;
     border: 1px solid var(--border-glass) !important;
     border-radius: 8px !important;
@@ -1493,13 +1326,14 @@ html[data-theme="light"] .page-content {
     padding: 5px 10px !important;
 }
 .btn-dash-primary {
-    background: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%) !important;
+    background: #EA580C !important;
     color: #FFFFFF !important;
-    border: 1px solid rgba(253, 186, 116, 0.4) !important;
+    border: 1px solid #EA580C !important;
     border-radius: 8px !important;
     font-size: 12px !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     padding: 5px 14px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 .payment-ctrl, .barang-ctrl {
     display: none !important;
@@ -1514,45 +1348,28 @@ input.payment-ctrl.active, input.barang-ctrl.active {
 }
 
 /* ==========================================================================
-   11. PAGE ENTRANCE & FILTER CHANGE ANIMATIONS (Smooth, Graceful, Clearly Visible)
+   11. PURPOSEFUL UI MICRO-INTERACTIONS (Antislop: Restrained & Fast)
    ========================================================================== */
-@keyframes dashEntranceUp {
-    from {
-        opacity: 0;
-        transform: translateY(28px) scale(0.985);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.ref-header-bar,
+.top-exec-card,
+.ref-glass-card,
+.ref-kpi-card {
+    transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 @keyframes dashFilterSwap {
     0% {
-        opacity: 0;
-        transform: translateY(14px) scale(0.985);
+        opacity: 0.55;
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
     }
 }
 
 @keyframes dashRowSlide {
     from {
         opacity: 0;
-        transform: translateX(-12px) translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) translateY(0);
-    }
-}
-
-@keyframes dashPanelExpand {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(6px);
     }
     to {
         opacity: 1;
@@ -1560,48 +1377,15 @@ input.payment-ctrl.active, input.barang-ctrl.active {
     }
 }
 
-/* Staggered Entrance When Entering Dashboard */
-.ref-header-bar {
-    animation: dashEntranceUp 850ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 80ms;
-}
-.top-exec-card {
-    animation: dashEntranceUp 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.row > div:nth-child(1) > .top-exec-card { animation-delay: 180ms; }
-.row > div:nth-child(2) > .top-exec-card { animation-delay: 300ms; }
-.row > div:nth-child(3) > .top-exec-card { animation-delay: 420ms; }
-.row > div:nth-child(4) > .top-exec-card { animation-delay: 540ms; }
-
-#card-aktivitas-pembayaran {
-    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 640ms;
-}
-.col-xl-5 > .ref-glass-card {
-    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 780ms;
-}
-
-.ref-kpi-card {
-    animation: dashEntranceUp 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.row > div:nth-child(1) > .ref-kpi-card { animation-delay: 880ms; }
-.row > div:nth-child(2) > .ref-kpi-card { animation-delay: 990ms; }
-.row > div:nth-child(3) > .ref-kpi-card { animation-delay: 1100ms; }
-.row > div:nth-child(4) > .ref-kpi-card { animation-delay: 1210ms; }
-
-#card-statistik-barang > div:nth-child(1) > .ref-glass-card {
-    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 1280ms;
-}
-#card-statistik-barang > div:nth-child(2) > .ref-glass-card {
-    animation: dashEntranceUp 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 1410ms;
-}
-
-#card-hutang-vendor {
-    animation: dashEntranceUp 980ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 1520ms;
+@keyframes dashPanelExpand {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Filter Transition Utility Classes */
@@ -1659,29 +1443,40 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                     <i class="ri-sun-line fs-14" id="theme-toggle-icon"></i>
                     <span id="theme-toggle-text">Mode Terang</span>
                 </button>
-                <span class="ref-live-pill">
-                    <span class="ref-live-dot"></span>
-                    <span>Data terbaru · s/d {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d M Y') }}</span>
+                <span class="ref-meta-timestamp" title="Tanggal pembaruan data sistem">
+                    <i class="ri-calendar-line fs-14"></i>
+                    <span>Data per {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d M Y') }}</span>
                 </span>
             </div>
         </div>
 
         @php
             $totalAkumulasiTahunTop = ($datasInYear[0] ?? 0) + ($datasInYear[1] ?? 0) + ($datasInYear[2] ?? 0);
+            $totalAkumulasiLastYearTop = ($datasInLastYear[0] ?? 0) + ($datasInLastYear[1] ?? 0) + ($datasInLastYear[2] ?? 0);
             $pctTerbayarTop = $totalAkumulasiTahunTop > 0 ? number_format((($datasInYear[0] ?? 0) / $totalAkumulasiTahunTop) * 100, 1, ',', '.') : '0';
             $pctPiutangTop = $totalAkumulasiTahunTop > 0 ? number_format((($datasInYear[1] ?? 0) / $totalAkumulasiTahunTop) * 100, 1, ',', '.') : '0';
+
+            // Real YoY comparison if previous year exists, otherwise honest period badge
+            $hasLastYearData = $totalAkumulasiLastYearTop > 0;
+            $realYoY = $hasLastYearData ? round((($totalAkumulasiTahunTop - $totalAkumulasiLastYearTop) / $totalAkumulasiLastYearTop) * 100, 1) : null;
         @endphp
 
-        <!-- TOP 4 EXECUTIVE SUMMARY CARDS (Matched to Uploaded Reference Image) -->
+        <!-- TOP 4 EXECUTIVE SUMMARY CARDS -->
         <div class="row g-3 mb-4">
-            <!-- Card 1: PENDAPATAN AKUMULASI -->
+            <!-- Card 1: Pendapatan Akumulasi -->
             <div class="col-xl-3 col-sm-6">
                 <div class="top-exec-card top-exec-card--highlight">
                     <div class="top-exec-head">
-                        <span class="top-exec-label">PENDAPATAN AKUMULASI</span>
-                        <span class="top-exec-pill top-exec-pill--amber tabular-nums" id="top-kpi-yoy-badge">
-                            {{ ($percentageInYear >= 0 ? '+' : '') . $percentageInYear }}% YoY
-                        </span>
+                        <span class="top-exec-label">Pendapatan akumulasi</span>
+                        @if($hasLastYearData)
+                            <span class="top-exec-pill {{ $realYoY >= 0 ? 'top-exec-pill--emerald' : 'top-exec-pill--danger' }} tabular-nums" id="top-kpi-yoy-badge">
+                                {{ ($realYoY >= 0 ? '+' : '') . $realYoY }}% vs Thn Lalu
+                            </span>
+                        @else
+                            <span class="top-exec-pill top-exec-pill--neutral tabular-nums" id="top-kpi-yoy-badge">
+                                Tahun {{ date('Y') }}
+                            </span>
+                        @endif
                     </div>
                     <h3 class="top-exec-val tabular-nums" id="top-kpi-akumulasi">
                         Rp {{ number_format($totalAkumulasiTahunTop, 0, ',', '.') }}
@@ -1692,11 +1487,11 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                 </div>
             </div>
 
-            <!-- Card 2: INVOICE TERBAYAR (LUNAS) -->
+            <!-- Card 2: Invoice Terbayar (Lunas) -->
             <div class="col-xl-3 col-sm-6">
                 <div class="top-exec-card">
                     <div class="top-exec-head">
-                        <span class="top-exec-label">INVOICE TERBAYAR (LUNAS)</span>
+                        <span class="top-exec-label">Invoice terbayar (lunas)</span>
                         <span class="top-exec-pill top-exec-pill--emerald tabular-nums" id="top-kpi-terbayar-pct">
                             {{ $pctTerbayarTop }}%
                         </span>
@@ -1710,11 +1505,11 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                 </div>
             </div>
 
-            <!-- Card 3: PIUTANG BELUM LUNAS -->
+            <!-- Card 3: Piutang Belum Lunas -->
             <div class="col-xl-3 col-sm-6">
                 <div class="top-exec-card">
                     <div class="top-exec-head">
-                        <span class="top-exec-label">PIUTANG BELUM LUNAS</span>
+                        <span class="top-exec-label">Piutang belum lunas</span>
                         <span class="top-exec-pill top-exec-pill--danger tabular-nums" id="top-kpi-piutang-pct">
                             {{ $pctPiutangTop }}%
                         </span>
@@ -1728,20 +1523,20 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                 </div>
             </div>
 
-            <!-- Card 4: TOTAL PRODUK TERJUAL -->
+            <!-- Card 4: Total Produk Terjual -->
             <div class="col-xl-3 col-sm-6">
                 <div class="top-exec-card">
                     <div class="top-exec-head">
-                        <span class="top-exec-label">TOTAL PRODUK TERJUAL</span>
-                        <span class="top-exec-pill top-exec-pill--sky text-truncate" id="top-kpi-produk-badge" style="max-width: 135px;">
-                            Top: -
+                        <span class="top-exec-label">Total produk terjual</span>
+                        <span class="top-exec-pill top-exec-pill--neutral text-truncate" id="top-kpi-produk-badge" style="max-width: 140px;">
+                            Volume Penjualan
                         </span>
                     </div>
                     <h3 class="top-exec-val tabular-nums" id="top-kpi-produk-qty">
                         0 Pcs
                     </h3>
                     <p class="top-exec-sub" id="top-kpi-produk-sub">
-                        Dari 0 kategori barang aktif
+                        Memuat data...
                     </p>
                 </div>
             </div>
@@ -1755,8 +1550,8 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                     <div>
                         <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
                             <div>
-                                <h4 class="ref-card-title">Aktivitas Pembayaran</h4>
-                                <p class="ref-card-subtitle">Arus kas masuk dan status pelunasan invoice</p>
+                                <h4 class="ref-card-title">Arus Kas Masuk & Realisasi Pembayaran</h4>
+                                <p class="ref-card-subtitle">Bagaimana tren pendapatan bersih dibandingkan beban operasional pada periode ini?</p>
                             </div>
                         </div>
 
@@ -1783,7 +1578,7 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                                 <button type="button" class="segmented-item payment-submode" data-mode="range" onclick="setPaymentSubmode('range')">Rentang</button>
                             </div>
                             <div class="d-inline-flex align-items-center gap-2" id="payment-inputs-container">
-                                <input type="date" id="payment-input-date" class="form-control form-control-sm dash-input payment-ctrl active" style="width: 140px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                <input type="text" id="payment-input-date" class="form-control form-control-sm dash-input payment-ctrl active dash-flatpickr" style="width: 140px; height: 32px; text-align: center; font-weight: 600; cursor: pointer;" value="{{ date('Y-m-d') }}" readonly placeholder="Pilih Tanggal">
                                 <div id="payment-ctrl-month" class="payment-ctrl">
                                     <select id="payment-input-bulan" class="form-select form-select-sm dash-select" style="width: 120px; height: 32px;">
                                         @for ($m = 1; $m <= 12; $m++)
@@ -1806,19 +1601,19 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                                     </select>
                                 </div>
                                 <div id="payment-ctrl-range" class="payment-ctrl">
-                                    <input type="date" id="payment-range-start" class="form-control form-control-sm dash-input" style="width: 135px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-01') }}">
+                                    <input type="text" id="payment-range-start" class="form-control form-control-sm dash-input dash-flatpickr" style="width: 130px; height: 32px; text-align: center; font-weight: 600; cursor: pointer;" value="{{ date('Y-m-01') }}" readonly placeholder="Dari Tanggal">
                                     <span class="text-secondary fs-12">s/d</span>
-                                    <input type="date" id="payment-range-end" class="form-control form-control-sm dash-input" style="width: 135px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                    <input type="text" id="payment-range-end" class="form-control form-control-sm dash-input dash-flatpickr" style="width: 130px; height: 32px; text-align: center; font-weight: 600; cursor: pointer;" value="{{ date('Y-m-d') }}" readonly placeholder="Sampai Tanggal">
                                 </div>
                             </div>
                             <button type="button" class="btn btn-dash-primary" onclick="submitPaymentCustomFilter()">Tampilkan</button>
                         </div>
 
-                        <!-- Hero Metric: PENDAPATAN AKUMULASI -->
+                        <!-- Hero Metric: Pendapatan Akumulasi -->
                         @php
                             $totalAkumulasiTahun = ($datasInYear[0] ?? 0) + ($datasInYear[1] ?? 0) + ($datasInYear[2] ?? 0);
                         @endphp
-                        <div class="ref-hero-overline">PENDAPATAN AKUMULASI</div>
+                        <div class="ref-hero-overline">Pendapatan akumulasi</div>
                         <h2 class="ref-hero-amount tabular-nums" id="hero-pendapatan-akumulasi">Rp {{ number_format($totalAkumulasiTahun, 0, ',', '.') }}</h2>
 
                         <!-- 3 Horizontal Sub-Cards (#harga) -->
@@ -1850,11 +1645,11 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                             <span class="d-none" id="tag-periode-kas">Tahun Ini</span>
                             <div class="ref-legend-group" id="payment-chart-legend">
                                 <span class="ref-legend-item">
-                                    <span class="ref-legend-dot" style="background: #F59E0B; box-shadow: 0 0 8px rgba(245, 158, 11, 0.65);"></span>
+                                    <span class="ref-legend-dot" style="background: #F59E0B;"></span>
                                     Pendapatan Bersih
                                 </span>
                                 <span class="ref-legend-item">
-                                    <span class="ref-legend-dot" style="background: #34D399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.65);"></span>
+                                    <span class="ref-legend-dot" style="background: #34D399;"></span>
                                     Pendapatan Asli
                                 </span>
                             </div>
@@ -1869,16 +1664,20 @@ input.payment-ctrl.active, input.barang-ctrl.active {
             <!-- Right Card: Struktur Status Pembayaran -->
             <div class="col-xl-5">
                 <div class="ref-glass-card h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h4 class="ref-card-title">Struktur Status Pembayaran</h4>
-                        <span class="ref-period-pill" id="periode">Tahun Ini</span>
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <h4 class="ref-card-title">Proporsi Pelunasan Tagihan</h4>
+                            <span class="ref-period-pill" id="periode">Tahun Ini</span>
+                        </div>
+                        <p class="ref-card-subtitle mb-2">Berapa rasio invoice lunas dibandingkan piutang berjalan?</p>
                     </div>
 
                     <div class="my-auto py-2">
                         <div id="structure_widget" data-colors='["#34D399", "#EF4444", "#64748B"]' class="apex-charts" dir="ltr"></div>
                         <div id="structure_widget_empty" class="text-center py-5 text-secondary" style="display: none;">
-                            <i class="ri-pie-chart-line fs-36 d-block mb-2 opacity-50"></i>
-                            <span class="fs-12">Belum ada transaksi pembayaran pada periode ini.</span>
+                            <i class="ri-pie-chart-line fs-32 d-block mb-2 opacity-50"></i>
+                            <span class="fs-13 fw-medium">Belum ada data pembayaran pada periode ini.</span>
+                            <p class="fs-12 text-muted mb-0 mt-1">Ubah filter periode di atas untuk memuat catatan transaksi.</p>
                         </div>
                     </div>
 
@@ -1886,7 +1685,7 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                     <div class="ref-status-list">
                         <div class="ref-status-row">
                             <div class="ref-status-left">
-                                <span class="ref-status-dot" style="background: #34D399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);"></span>
+                                <span class="ref-status-dot" style="background: #34D399;"></span>
                                 <span>Terbayar</span>
                             </div>
                             <div class="ref-status-right">
@@ -1897,7 +1696,7 @@ input.payment-ctrl.active, input.barang-ctrl.active {
 
                         <div class="ref-status-row">
                             <div class="ref-status-left">
-                                <span class="ref-status-dot" style="background: #EF4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.65);"></span>
+                                <span class="ref-status-dot" style="background: #EF4444;"></span>
                                 <span>Belum Bayar</span>
                             </div>
                             <div class="ref-status-right">
@@ -1921,15 +1720,15 @@ input.payment-ctrl.active, input.barang-ctrl.active {
             </div>
         </div>
 
-        <!-- ROW 2: 4 STANDALONE KPI CARDS -->
+        <!-- ROW 2: 4 STANDALONE KPI CARDS (Brand Harmonious Palette) -->
         <div class="row g-3 mb-4">
             <div class="col-xl-3 col-sm-6">
                 <div class="ref-kpi-card">
-                    <div class="ref-kpi-icon ref-kpi-icon--indigo">
+                    <div class="ref-kpi-icon ref-kpi-icon--stone">
                         <i class="ri-shopping-bag-3-line"></i>
                     </div>
                     <div class="overflow-hidden">
-                        <span class="ref-kpi-overline">TOTAL QTY TERJUAL</span>
+                        <span class="ref-kpi-overline">Total kuantitas terjual</span>
                         <h3 class="ref-kpi-value tabular-nums text-truncate" id="summary-total-qty">0 Pcs</h3>
                     </div>
                 </div>
@@ -1940,29 +1739,29 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                         <i class="ri-money-dollar-circle-line"></i>
                     </div>
                     <div class="overflow-hidden">
-                        <span class="ref-kpi-overline">NILAI PENJUALAN</span>
+                        <span class="ref-kpi-overline">Nilai penjualan</span>
                         <h3 class="ref-kpi-value tabular-nums text-truncate" id="summary-total-nominal">Rp 0</h3>
                     </div>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6">
                 <div class="ref-kpi-card">
-                    <div class="ref-kpi-icon ref-kpi-icon--amber">
+                    <div class="ref-kpi-icon ref-kpi-icon--brand">
                         <i class="ri-trophy-line"></i>
                     </div>
                     <div class="overflow-hidden">
-                        <span class="ref-kpi-overline">JENIS TERPOPULER</span>
+                        <span class="ref-kpi-overline">Jenis terpopuler</span>
                         <div class="text-truncate" id="summary-top-jenis">-</div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6">
                 <div class="ref-kpi-card">
-                    <div class="ref-kpi-icon ref-kpi-icon--cyan">
+                    <div class="ref-kpi-icon ref-kpi-icon--amber">
                         <i class="ri-stack-line"></i>
                     </div>
                     <div class="overflow-hidden">
-                        <span class="ref-kpi-overline">KATEGORI TERLARIS</span>
+                        <span class="ref-kpi-overline">Kategori terlaris</span>
                         <div class="text-truncate" id="summary-top-kategori">-</div>
                     </div>
                 </div>
@@ -1977,9 +1776,9 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                     <div>
                         <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
                             <div>
-                                <h4 class="ref-card-title">Jenis Barang yang Dibeli</h4>
+                                <h4 class="ref-card-title">Volume & Nilai Penjualan per Jenis</h4>
                                 <p class="ref-card-subtitle" id="jenis-barang-subtitle">
-                                    Top 8 berdasarkan jumlah · {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('F Y') }}
+                                    Barang apa yang mendominasi penjualan? · {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('F Y') }}
                                 </p>
                             </div>
                             <div class="d-flex align-items-center gap-2">
@@ -1990,8 +1789,8 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                             </div>
                         </div>
 
-                        <!-- Optional Quick Period Filter Strip for Barang -->
-                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <!-- Quick Period Filter Strip for Barang -->
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
                             <div class="segmented-control" role="group">
                                 <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('today', this)" id="btn-barang-today">Hari Ini</button>
                                 <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('week', this)" id="btn-barang-week">Minggu Ini</button>
@@ -2000,7 +1799,7 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                                 <button type="button" class="segmented-item btn-filter-barang" onclick="filterBarang('last_year', this)" id="btn-barang-lastyear">Tahun Lalu</button>
                             </div>
                             <button type="button" class="btn-custom-filter" onclick="toggleCustomFilter()" id="btn-barang-custom">
-                                <i class="ri-equalizer-line"></i> Kustom
+                                <i class="ri-equalizer-line"></i> Filter Kustom
                             </button>
                         </div>
 
@@ -2013,7 +1812,7 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                                 <button type="button" class="segmented-item barang-submode" data-mode="range" onclick="setBarangSubmode('range')">Rentang</button>
                             </div>
                             <div class="d-inline-flex align-items-center gap-2" id="barang-inputs-container">
-                                <input type="date" id="barang-input-date" class="form-control form-control-sm dash-input barang-ctrl active" style="width: 135px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                <input type="text" id="barang-input-date" class="form-control form-control-sm dash-input barang-ctrl active dash-flatpickr" style="width: 140px; height: 32px; text-align: center; font-weight: 600; cursor: pointer;" value="{{ date('Y-m-d') }}" readonly placeholder="Pilih Tanggal">
                                 <div id="barang-ctrl-month" class="barang-ctrl">
                                     <select id="barang-input-bulan" class="form-select form-select-sm dash-select" style="width: 115px; height: 32px;">
                                         @for ($m = 1; $m <= 12; $m++)
@@ -2036,9 +1835,9 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                                     </select>
                                 </div>
                                 <div id="barang-ctrl-range" class="barang-ctrl">
-                                    <input type="date" id="barang-range-start" class="form-control form-control-sm dash-input" style="width: 130px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-01') }}">
+                                    <input type="text" id="barang-range-start" class="form-control form-control-sm dash-input dash-flatpickr" style="width: 130px; height: 32px; text-align: center; font-weight: 600; cursor: pointer;" value="{{ date('Y-m-01') }}" readonly placeholder="Dari Tanggal">
                                     <span class="text-secondary fs-12">s/d</span>
-                                    <input type="date" id="barang-range-end" class="form-control form-control-sm dash-input" style="width: 130px; height: 32px; color-scheme: dark;" value="{{ date('Y-m-d') }}">
+                                    <input type="text" id="barang-range-end" class="form-control form-control-sm dash-input dash-flatpickr" style="width: 130px; height: 32px; text-align: center; font-weight: 600; cursor: pointer;" value="{{ date('Y-m-d') }}" readonly placeholder="Sampai Tanggal">
                                 </div>
                             </div>
                             <button type="button" class="btn btn-dash-primary" onclick="applyCustomFilter()">Tampilkan</button>
@@ -2047,8 +1846,9 @@ input.payment-ctrl.active, input.barang-ctrl.active {
 
                         <!-- Custom Progress-Track Horizontal List -->
                         <div id="chart_jenis_empty" class="text-center py-5 text-secondary" style="display: none;">
-                            <i class="ri-inbox-line fs-36 d-block mb-2 opacity-50"></i>
-                            <span class="fs-13">Tidak ada data transaksi jenis barang pada periode ini.</span>
+                            <i class="ri-inbox-line fs-32 d-block mb-2 opacity-50"></i>
+                            <span class="fs-13 fw-medium">Tidak ada transaksi penjualan barang pada rentang tanggal ini.</span>
+                            <p class="fs-12 text-muted mb-0 mt-1">Ubah pilihan tanggal atau klik tombol filter periode untuk memuat data.</p>
                         </div>
                         <div id="chart_jenis_barang" class="pt-1"></div>
                     </div>
@@ -2058,14 +1858,18 @@ input.payment-ctrl.active, input.barang-ctrl.active {
             <!-- Right Card: Kategori Barang -->
             <div class="col-xl-6">
                 <div class="ref-glass-card h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h4 class="ref-card-title">Kategori Barang</h4>
-                        <span class="ref-teal-badge" id="badge-total-kategori">0 Kategori</span>
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <h4 class="ref-card-title">Kontribusi Kategori Barang</h4>
+                            <span class="ref-teal-badge" id="badge-total-kategori">0 Kategori</span>
+                        </div>
+                        <p class="ref-card-subtitle mb-2">Bagaimana distribusi penjualan antar kelompok kategori produk?</p>
                     </div>
 
                     <div id="chart_kategori_empty" class="text-center py-5 text-secondary" style="display: none;">
-                        <i class="ri-inbox-line fs-36 d-block mb-2 opacity-50"></i>
-                        <span class="fs-13">Tidak ada data transaksi kategori pada periode ini.</span>
+                        <i class="ri-pie-chart-line fs-32 d-block mb-2 opacity-50"></i>
+                        <span class="fs-13 fw-medium">Belum ada transaksi kategori pada periode terpilih.</span>
+                        <p class="fs-12 text-muted mb-0 mt-1">Pilih filter periode lain untuk melihat distribusi kategori.</p>
                     </div>
                     <div id="chart_kategori_barang" class="apex-charts my-1" style="min-height: 205px;"></div>
 
@@ -2074,10 +1878,10 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                         <table class="ref-clean-table align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>KATEGORI</th>
-                                    <th class="text-center">QTY</th>
-                                    <th class="text-end">NILAI</th>
-                                    <th class="text-end">%</th>
+                                    <th>Kategori</th>
+                                    <th class="text-center">Kuantitas</th>
+                                    <th class="text-end">Nilai (Rp)</th>
+                                    <th class="text-end">Pangsa</th>
                                 </tr>
                             </thead>
                             <tbody id="table-kategori-body">
@@ -2094,9 +1898,9 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                 <div class="ref-glass-card" id="card-hutang-vendor">
                     <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
                         <div>
-                            <h4 class="ref-card-title" id="pembelian-chart-title">Pembelian Belum Dibayar per Vendor</h4>
+                            <h4 class="ref-card-title" id="pembelian-chart-title">Kewajiban Tagihan per Vendor</h4>
                             <p class="ref-card-subtitle" id="pembelian-chart-subtitle">
-                                Sisa tagihan pembelian yang belum lunas, diurutkan dari yang terbesar
+                                Vendor mana yang memiliki sisa tagihan berjalan terbesar untuk segera dilunasi?
                             </p>
                         </div>
                         <div class="d-flex align-items-center gap-2">
@@ -2112,10 +1916,10 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                         <table class="ref-clean-table align-middle mb-0" id="tableDaftarVendor">
                             <thead>
                                 <tr>
-                                    <th style="width: 24%;">VENDOR</th>
-                                    <th style="width: 44%;">PROPORSI SISA HUTANG</th>
-                                    <th class="text-end" style="width: 16%;">TOTAL BELI</th>
-                                    <th class="text-end" style="width: 16%;">SISA HUTANG</th>
+                                    <th style="width: 24%;">Vendor</th>
+                                    <th style="width: 44%;">Proporsi sisa hutang</th>
+                                    <th class="text-end" style="width: 16%;">Total beli</th>
+                                    <th class="text-end" style="width: 16%;">Sisa tagihan</th>
                                 </tr>
                             </thead>
                             <tbody id="vendor-tagihan-tbody">
@@ -2323,25 +2127,31 @@ input.payment-ctrl.active, input.barang-ctrl.active {
             });
 
             if (sortedVendors.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-secondary">Tidak ada data tagihan vendor.</td></tr>';
+                var emptyMsg = vendorStatusFilter === 'belum_lunas'
+                    ? 'Semua tagihan vendor telah lunas atau tidak ada pembelian berjalan pada periode ini.'
+                    : 'Tidak ada data pembelian vendor yang sesuai dengan filter yang dipilih.';
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-secondary">' +
+                    '<i class="ri-file-list-3-line fs-24 d-block mb-1 opacity-50"></i>' +
+                    '<span class="fs-13 fw-medium">' + emptyMsg + '</span>' +
+                    '<p class="fs-12 text-muted mb-0 mt-1">Pilih filter status "Semua" di atas untuk melihat riwayat lengkap.</p>' +
+                    '</td></tr>';
                 return;
             }
 
             var maxSisa = Math.max.apply(Math, sortedVendors.map(function(r) { return Number(r.sisa_tagihan) || 0; })) || 1;
 
             var html = '';
-            sortedVendors.forEach(function(row, idx) {
+            sortedVendors.forEach(function(row) {
                 var sisaVal = Number(row.sisa_tagihan) || 0;
                 var totalVal = Number(row.total_pembelian) || 0;
                 var formattedTotal = totalVal.toLocaleString('id-ID');
                 var formattedSisa = sisaVal.toLocaleString('id-ID');
                 var isLunas = sisaVal <= 0;
                 var pct = isLunas ? 0 : Math.max(1.8, Math.min(100, (sisaVal / maxSisa) * 100));
-                var delayMs = Math.min(idx * 65, 520);
 
-                html += '<tr class="dash-row-anim" style="animation-delay: ' + delayMs + 'ms;">' +
+                html += '<tr class="dash-row-anim">' +
                     '<td><span class="fw-bold text-white">' + (row.nama_vendor || '-') + '</span></td>' +
-                    '<td><div class="ref-vendor-track"><div class="ref-vendor-fill" data-target-width="' + pct.toFixed(1) + '%" style="width: 0%;"></div></div></td>' +
+                    '<td><div class="ref-vendor-track"><div class="ref-vendor-fill" data-target-width="' + pct.toFixed(1) + '%" style="width: ' + pct.toFixed(1) + '%;"></div></div></td>' +
                     '<td class="text-end tabular-nums" style="color: #94A3B8;">Rp ' + formattedTotal + '</td>' +
                     '<td class="text-end">' +
                     (isLunas
@@ -2352,11 +2162,6 @@ input.payment-ctrl.active, input.barang-ctrl.active {
             });
 
             tbody.innerHTML = html;
-            tbody.querySelectorAll('.ref-vendor-fill').forEach(function(bar, idx) {
-                setTimeout(function() {
-                    bar.style.width = bar.getAttribute('data-target-width') || '0%';
-                }, 120 + Math.min(idx * 65, 520));
-            });
         }
 
         // ==========================================================================
@@ -2367,12 +2172,20 @@ input.payment-ctrl.active, input.barang-ctrl.active {
         function setThemeDOM(theme) {
             var isLight = theme === 'light';
             document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-layout-mode', theme);
+            document.documentElement.setAttribute('data-sidebar', isLight ? 'light' : 'dark');
             document.documentElement.classList.toggle('theme-light', isLight);
-            document.body.classList.toggle('theme-light', isLight);
+            document.documentElement.classList.toggle('theme-dark', !isLight);
+            if (document.body) {
+                document.body.classList.toggle('theme-light', isLight);
+                document.body.classList.toggle('theme-dark', !isLight);
+            }
             try {
                 localStorage.setItem('ibekami_dash_theme', theme);
+                sessionStorage.setItem('data-layout-mode', theme);
+                sessionStorage.setItem('data-sidebar', isLight ? 'light' : 'dark');
             } catch (e) {
-                console.warn('localStorage is not available:', e);
+                console.warn('Storage is not available:', e);
             }
         }
 
@@ -2506,8 +2319,8 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                                 ]
                             },
                             {
-                                duration: 650,
-                                easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                                duration: 850,
+                                easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
                                 pseudoElement: '::view-transition-new(root)'
                             }
                         );
@@ -2524,7 +2337,7 @@ input.payment-ctrl.active, input.barang-ctrl.active {
                             setTimeout(function() {
                                 if (btn) btn.classList.remove('theme-switching');
                                 isThemeTransitioning = false;
-                            }, 650);
+                            }, 850);
                         }
                     }).catch(function() {
                         if (btn) btn.classList.remove('theme-switching');
@@ -2556,6 +2369,15 @@ input.payment-ctrl.active, input.barang-ctrl.active {
             updateButtonUI(saved);
             updateAllChartsTheme(saved);
             renderVendorTable();
+
+            // Initialize Modern Flatpickr on Dashboard Date Inputs
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr('.dash-flatpickr', {
+                    dateFormat: "Y-m-d",
+                    disableMobile: true,
+                    animate: true
+                });
+            }
         });
     </script>
     <script src="{{asset('js/halaman/dashboard.js')}}"></script>

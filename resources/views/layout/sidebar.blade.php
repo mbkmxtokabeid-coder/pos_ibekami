@@ -95,7 +95,7 @@
 
                 <!-- Pembelian -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ (Request::is('*vendor*') || Request::is('*pembelian*') || Request::is('*Pembelian*') || Request::routeIs('vendor.*') || Request::routeIs('pembelian.*')) ? 'active' : '' }}" href="{{ route('vendor.list') }}">
+                    <a class="nav-link menu-link {{ ((Request::is('*vendor*') || Request::is('*pembelian*') || Request::is('*Pembelian*') || Request::routeIs('vendor.*') || Request::routeIs('pembelian.*')) && !Request::is('*laporan*') && !Request::is('*Laporan*')) ? 'active' : '' }}" href="{{ route('vendor.list') }}">
                         <span class="icon-box"><i class="mdi mdi-cash-minus menu-icon"></i></span>
                         <span class="menu-text" data-key="t-invoices">Pembelian</span>
                     </a>
@@ -217,7 +217,7 @@
 
                 <!-- Pembelian -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ (Request::is('*vendor*') || Request::is('*pembelian*') || Request::is('*Pembelian*') || Request::routeIs('vendor.*') || Request::routeIs('pembelian.*')) ? 'active' : '' }}" href="{{ route('vendor.list') }}">
+                    <a class="nav-link menu-link {{ ((Request::is('*vendor*') || Request::is('*pembelian*') || Request::is('*Pembelian*') || Request::routeIs('vendor.*') || Request::routeIs('pembelian.*')) && !Request::is('*laporan*') && !Request::is('*Laporan*')) ? 'active' : '' }}" href="{{ route('vendor.list') }}">
                         <span class="icon-box"><i class="mdi mdi-cash-minus menu-icon"></i></span>
                         <span class="menu-text" data-key="t-invoices">Pembelian</span>
                     </a>

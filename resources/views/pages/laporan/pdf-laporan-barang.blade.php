@@ -1,148 +1,306 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Laporan {{$namaInvoice}} {{ $periode }}</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" >
-  {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> --}}
-
-
+  <title>Laporan Barang {{ $namaInvoice }} {{ $periode }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    h5 {
-      /* gaya huruf dan ukuran yang sama dengan Bootstrap */
-      font-family: Arial, sans-serif;
-      font-size: 30px;
-      font-weight: 600;
-      color: #333;
-      margin: 20px 0;
-    }
-    .table {
+    @page { size: landscape; margin: 12mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px 34px;
+      background: #FFFFFF;
+      color: #0F172A;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 12px;
-      font-family: Arial, sans-serif;
+      line-height: 1.45;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
-    .table-striped tbody tr:nth-of-type(even) {
-      background-color: #4f6a9c;
+    .report-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
     }
-    /* Batas */
-    .signatures {
-            display: flex;
-            justify-content: space-evenly;
-            margin-top: 40px;
-
-        }
-        .signature div{
-          width: 100px;
-          height: 100px;
-        }
-        .signature {
-            text-align: center;
-        }
-        .signature-name {
-            margin-top: 20px;
-        }
-        .underline {
-            text-decoration: underline;
-        }
-
+    .no-print-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+    .btn-print {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid #CBD5E1;
+      background: #F8FAFC;
+      color: #1E293B;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-print:hover { background: #F1F5F9; }
+    .report-brand {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #64748B;
+      margin-bottom: 2px;
+    }
+    .report-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0F172A;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .report-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    .report-subtitle {
+      font-size: 12px;
+      color: #64748B;
+    }
+    .report-date {
+      font-size: 11.5px;
+      color: #64748B;
+      white-space: nowrap;
+    }
+    .report-divider {
+      border: none;
+      border-top: 2px solid #0F172A;
+      margin: 12px 0 18px 0;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: #F8FAFC;
+      border-left: 3px solid #1E293B;
+      padding: 12px 16px;
+    }
+    .kpi-card.is-warning { border-left-color: #D97706; }
+    .kpi-card.is-success { border-left-color: #16A34A; }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #64748B;
+      margin-bottom: 4px;
+    }
+    .kpi-value {
+      font-size: 19px;
+      font-weight: 700;
+      color: #0F172A;
+      letter-spacing: -0.01em;
+    }
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    .report-table thead th {
+      background: #1E293B;
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 11.5px;
+      text-align: left;
+      padding: 10px 12px;
+      white-space: nowrap;
+    }
+    .report-table thead th.text-right,
+    .report-table tbody td.text-right,
+    .report-table tfoot td.text-right {
+      text-align: right;
+    }
+    .report-table thead th.text-center,
+    .report-table tbody td.text-center {
+      text-align: center;
+    }
+    .report-table tbody td {
+      padding: 11px 12px;
+      border-bottom: 1px solid #E2E8F0;
+      vertical-align: top;
+      color: #1E293B;
+    }
+    .col-no {
+      width: 42px;
+      text-align: center;
+      color: #64748B !important;
+    }
+    .inv-no {
+      font-weight: 600;
+      color: #0F172A;
+      white-space: nowrap;
+    }
+    .cust-name {
+      font-weight: 600;
+      color: #0F172A;
+    }
+    .cust-sub {
+      font-size: 10.5px;
+      color: #64748B;
+      margin-top: 1px;
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .status-lunas { background: #DCFCE7; color: #15803D; }
+    .status-belum { background: #FEF3C7; color: #B45309; }
+    .status-batal { background: #FEE2E2; color: #B91C1C; }
+    .status-note {
+      display: block;
+      font-size: 10px;
+      color: #64748B;
+      margin-top: 2px;
+    }
+    .report-table tfoot td {
+      background: #F1F5F9;
+      padding: 11px 12px;
+      font-weight: 700;
+      color: #0F172A;
+      border-top: 1px solid #CBD5E1;
+      border-bottom: 1px solid #E2E8F0;
+    }
+    .report-footer-note {
+      margin-top: 14px;
+      text-align: right;
+      font-size: 10.5px;
+      color: #94A3B8;
+    }
+    @media print {
+      body { padding: 0; }
+      .no-print-bar { display: none !important; }
+      .report-table tr { page-break-inside: avoid; }
+    }
   </style>
-
 </head>
 <body>
+@php
+  $activeItems = $penjualans->filter(fn($p) => empty($p->deleted_at) && ($p->status ?? '') !== 'Batal');
+  $sumNilai = $activeItems->sum('jumlah_harga');
+  $sumLunas = $activeItems->filter(fn($p) => strtolower(trim($p->status ?? '')) === 'lunas')->sum('jumlah_harga');
+  $sumBelum = $activeItems->filter(fn($p) => strtolower(trim($p->status ?? '')) !== 'lunas')->sum('jumlah_harga');
+  $brandLabel = !empty($namaInvoice) ? $namaInvoice : 'Ibeka';
+  $printedDate = !empty($tanggal) ? $tanggal : \Carbon\Carbon::now()->translatedFormat('d F Y');
+@endphp
+<div class="report-wrap">
+  <div class="no-print-bar">
+    <button type="button" class="btn-print" onclick="window.print()">Cetak / Simpan PDF</button>
+  </div>
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <h5 class="col m-4 text-center">Laporan Invoice {{$namaInvoice}} {{$periode}}</h5>
+  <div class="report-brand">{{ $brandLabel }}</div>
+  <h1 class="report-title">Laporan barang invoice</h1>
+  <div class="report-meta">
+    <div class="report-subtitle">{{ $brandLabel }}, {{ $periode ?: 'seluruh periode' }}</div>
+    <div class="report-date">Dicetak {{ $printedDate }}</div>
+  </div>
+  <hr class="report-divider">
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Jumlah item</div>
+      <div class="kpi-value">{{ $penjualans->count() }}</div>
     </div>
-    <div class="row">
-        <table class="table">
-         <thead class="thead-dark">
-          <tr>
-           <th scope="col">NO</th>
-           <th scope="col">NO INVOICE</th>
-           <th scope="col">TANGGAL</th>
-           <th scope="col">CUSTOMER</th>
-           <th scope="col">PERUSAHAAN</th>
-           <th scope="col">NOMOR HP</th>
-           <th scope="col">DESKRIPSI</th>
-           <th scope="col">STATUS</th>
-           <th scope="col">QTY</th>
-           <th scope="col">HARGA</th>
-           <th scope="col">GRAND TOTAL</th>
-          </tr>
-         </thead>
-        <tbody>
-        @foreach ($penjualans as $jual)
-         <tr>
-          <td>{{$loop->iteration}}</td>
-          <td>{{$jual->nomor_invoice}}</td>
-          <td>{{$jual->formatted_tgl_penjualan}}</td>
-          <td>{{$jual->customer}}</td>
-          <td>{{$jual->perusahaan}}</td>
-          <td>{{$jual->no_telepon ?? '-'}}</td>
-          <td>{{ $jual->jenis_barang }} {{$jual->deskripsi_item}}</td>
-          <td>
-              @if(!empty($jual->deleted_at))
-                  <span style="color: #dc3545; font-weight: bold;">Dihapus</span>
-                  @if(!empty($jual->alasan_hapus))
-                      <br><small style="color: #c71f16;">({{$jual->alasan_hapus}})</small>
-                  @endif
-              @elseif($jual->status == 'Batal')
-                  <span style="color: #e0a800; font-weight: bold;">Batal</span>
-                  @if(!empty($jual->alasan_batal))
-                      <br><small style="color: #666;">({{$jual->alasan_batal}})</small>
-                  @endif
-              @else
-                  {{$jual->status}}
-              @endif
-          </td>
-          <td>{{$jual->qty}}</td>
-          <td>{{$jual->formatted_harga_barang}}</td>
-          <td>{{$jual->formatted_total_harga}}</td>
-         </tr>
-        @endforeach
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td class="text-bold ">Jumlah</td>
-          <td class="text-bold ">{{$formatGrandTotal}}</td>
-         </tr>
-        </tbody>
-       </table>
-      </div>
-     <div class="signatures">
-      {{-- <div class="col-2"></div> --}}
-      <div class="col-3">
-        <p class="text-center">Ikhtiar Berkah, {{$tanggal}}</p>
+    <div class="kpi-card">
+      <div class="kpi-label">Total nilai barang</div>
+      <div class="kpi-value">Rp {{ number_format($sumNilai, 0, ',', '.') }}</div>
+    </div>
+    <div class="kpi-card is-warning">
+      <div class="kpi-label">Belum lunas</div>
+      <div class="kpi-value">Rp {{ number_format($sumBelum, 0, ',', '.') }}</div>
+    </div>
+    <div class="kpi-card is-success">
+      <div class="kpi-label">Lunas</div>
+      <div class="kpi-value">Rp {{ number_format($sumLunas, 0, ',', '.') }}</div>
+    </div>
+  </div>
 
-        <p class="text-center">Disiapkan Oleh,</p>
-        <p class="text-center">&nbsp;</p> <!-- Gunakan paragraf kosong untuk membuat jarak -->
-        <p class="text-center">&nbsp;
-        <p class="text-center" style="text-decoration: underline;">{{auth()->user()->nama}}</p>
-        <p class="text-center">{{auth()->user()->role}}</p>
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th class="col-no">No</th>
+        <th>No invoice</th>
+        <th>Tanggal</th>
+        <th>Customer</th>
+        <th>Deskripsi</th>
+        <th class="text-center">Status</th>
+        <th class="text-right">Qty</th>
+        <th class="text-right">Harga</th>
+        <th class="text-right">Grand total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @forelse ($penjualans as $jual)
+      <tr>
+        <td class="col-no">{{ $loop->iteration }}</td>
+        <td class="inv-no">{{ $jual->nomor_invoice }}</td>
+        <td style="white-space: nowrap;">{{ $jual->formatted_tgl_penjualan }}</td>
+        <td>
+          <div class="cust-name">{{ $jual->customer ?: '-' }}</div>
+          @if(!empty($jual->perusahaan) && $jual->perusahaan !== '-')
+            <div class="cust-sub">{{ $jual->perusahaan }}</div>
+          @endif
+          <div class="cust-sub">{{ $jual->no_telepon ?? '-' }}</div>
+        </td>
+        <td>
+          <div class="cust-name">{{ $jual->jenis_barang ?? '-' }}</div>
+          @if(!empty($jual->deskripsi_item))
+            <div class="cust-sub">{{ $jual->deskripsi_item }}</div>
+          @endif
+        </td>
+        <td class="text-center">
+          @if(!empty($jual->deleted_at))
+            <span class="status-pill status-batal">Dihapus</span>
+            @if(!empty($jual->alasan_hapus))
+              <span class="status-note">({{ $jual->alasan_hapus }})</span>
+            @endif
+          @elseif(($jual->status ?? '') == 'Batal')
+            <span class="status-pill status-batal">Batal</span>
+            @if(!empty($jual->alasan_batal))
+              <span class="status-note">({{ $jual->alasan_batal }})</span>
+            @endif
+          @elseif(strtolower(trim($jual->status ?? '')) === 'lunas')
+            <span class="status-pill status-lunas">Lunas</span>
+          @else
+            <span class="status-pill status-belum">{{ ucfirst(strtolower($jual->status ?? 'Belum lunas')) }}</span>
+          @endif
+        </td>
+        <td class="text-right" style="white-space: nowrap;">{{ $jual->qty }} {{ $jual->satuan ?? '' }}</td>
+        <td class="text-right" style="white-space: nowrap;">Rp {{ number_format($jual->jumlah_harga ?? 0, 0, ',', '.') }}</td>
+        <td class="text-right" style="white-space: nowrap; font-weight: 600;">Rp {{ number_format($jual->total_pembayaran ?? $jual->jumlah_harga ?? 0, 0, ',', '.') }}</td>
+      </tr>
+      @empty
+      <tr>
+        <td colspan="9" class="text-center" style="padding: 28px; color: #64748B;">Tidak ada data barang invoice.</td>
+      </tr>
+      @endforelse
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="8" class="text-right">Total keseluruhan</td>
+        <td class="text-right" style="white-space: nowrap;">{{ $formatGrandTotal ?: 'Rp ' . number_format($sumNilai, 0, ',', '.') }}</td>
+      </tr>
+    </tfoot>
+  </table>
 
-      </div>
-      <div class="col-3">
-        <p class="text-center">&nbsp;</p>
-
-        <p class="text-center">Diketahui Oleh,</p>
-        <p class="text-center">&nbsp;</p> <!-- Gunakan paragraf kosong untuk membuat jarak -->
-        <p class="text-center">&nbsp;
-        <p class="text-center" style="text-decoration: underline;">. . . . . . . . . . . .</p>
-        <p class="text-center">Pimpinan</p>
-      </div>
-     </div>
-      </div>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <div class="report-footer-note">Laporan barang invoice &middot; {{ $brandLabel }}</div>
+</div>
 </body>
 </html>

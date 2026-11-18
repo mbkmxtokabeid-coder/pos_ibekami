@@ -221,7 +221,7 @@
                         <th>Prioritas Express</th>
                         <td>
                             @if($spk->express === 'Y')
-                                <span class="badge-express-yes">⚡ YA (Express)</span>
+                                <span class="badge-express-yes">YA (Express)</span>
                             @else
                                 <span class="badge-express-no">Tidak (Standar)</span>
                             @endif

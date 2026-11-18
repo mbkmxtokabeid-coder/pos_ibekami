@@ -2,194 +2,363 @@
 
 @section('head')
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     /* ==========================================================================
-       DESIGN SYSTEM & UI/UX PRO MAX (ACCESSIBILITY & VISIBILITY REFINED)
-       Theme: Dark Slate Pro (WCAG 2.2 AA Compliant)
+       TOKABE EDIT SPB — UNSLOPPED WARM STONE SYSTEM (DUAL THEME)
+       Consistent with Daftar Vendor, Invoice, and Dashboard standards
        ========================================================================== */
 
-    .num, .price, .numeric, input.numeric {
+    :root {
+      /* Mode Gelap (Default) — Warm Stone (#14110F / #0C0A09) */
+      --ibk-bg: #0C0A09;
+      --ibk-surface: #14110F;
+      --ibk-surface-hover: #1A1613;
+      --ibk-card-bg: #14110F;
+      --ibk-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      --ibk-border: rgba(255, 255, 255, 0.08);
+      --ibk-border-subtle: rgba(255, 255, 255, 0.04);
+      --ibk-text: #FAFAFA;
+      --ibk-text-muted: #A1A1AA;
+      --ibk-text-dim: #71717A;
+
+      /* Brand Accent — Golden Amber / Tokabe Orange */
+      --ibk-brand: #F59E0B;
+      --ibk-brand-deep: #EA580C;
+      --ibk-brand-soft: rgba(245, 158, 11, 0.12);
+      --ibk-brand-border: rgba(245, 158, 11, 0.24);
+      --ibk-brand-text: #FBBF24;
+      --ibk-brand-btn-bg: #EA580C;
+      --ibk-brand-btn-text: #FFFFFF;
+
+      --ibk-success: #10B981;
+      --ibk-success-soft: rgba(16, 185, 129, 0.14);
+      --ibk-success-border: rgba(16, 185, 129, 0.28);
+      --ibk-danger: #EF4444;
+      --ibk-danger-soft: rgba(239, 68, 68, 0.14);
+      --ibk-danger-border: rgba(239, 68, 68, 0.28);
+
+      --ibk-input-bg: rgba(255, 255, 255, 0.04);
+      --ibk-input-border: rgba(255, 255, 255, 0.12);
+      --ibk-input-text: #FAFAFA;
+      --ibk-input-placeholder: #71717A;
+      --ibk-popover-bg: #181412;
+
+      /* Table Variables */
+      --ibk-th-bg: #14110F;
+      --ibk-th-text: #A1A1AA;
+      --ibk-td-border: rgba(255, 255, 255, 0.08);
+    }
+
+    body.theme-light,
+    html.theme-light,
+    html[data-layout-mode="light"] {
+      /* Mode Terang — Neutral Warm Stone & Crisp Craft Surface */
+      --ibk-bg: #F7F6F2;
+      --ibk-surface: #FFFFFF;
+      --ibk-surface-hover: #FAF7F2;
+      --ibk-card-bg: #FFFFFF;
+      --ibk-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --ibk-border: #EAE4DC;
+      --ibk-border-subtle: #F5EFEB;
+      --ibk-text: #0F172A;
+      --ibk-text-muted: #64748B;
+      --ibk-text-dim: #94A3B8;
+
+      /* Brand Accent (Light) */
+      --ibk-brand: #EA580C;
+      --ibk-brand-deep: #C2410C;
+      --ibk-brand-soft: #FFF7ED;
+      --ibk-brand-border: #FED7AA;
+      --ibk-brand-text: #EA580C;
+      --ibk-brand-btn-bg: #EA580C;
+      --ibk-brand-btn-text: #FFFFFF;
+
+      --ibk-success: #059669;
+      --ibk-success-soft: #ECFDF5;
+      --ibk-success-border: #A7F3D0;
+      --ibk-danger: #DC2626;
+      --ibk-danger-soft: #FEF2F2;
+      --ibk-danger-border: #FECACA;
+
+      --ibk-input-bg: #FFFFFF;
+      --ibk-input-border: #DDD6CE;
+      --ibk-input-text: #0F172A;
+      --ibk-input-placeholder: #94A3B8;
+      --ibk-popover-bg: #FFFFFF;
+
+      /* Warm Stone Table Header (Identical to Daftar Vendor) */
+      --ibk-th-bg: #F3EFE6;
+      --ibk-th-text: #64748B;
+      --ibk-td-border: #EAE4DC;
+    }
+
+    .num, .numeric, input.numeric {
       font-variant-numeric: tabular-nums !important;
       font-feature-settings: "tnum" 1, "cv11" 1 !important;
     }
 
-    /* Page Header Title & Breadcrumb (§16.2) */
-    .page-title-box h4 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: #F8FAFC !important;
-    }
-    .breadcrumb .breadcrumb-item a {
-      color: #94A3B8 !important;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.15s ease;
-    }
-    .breadcrumb .breadcrumb-item a:hover {
-      color: #60A5FA !important;
-    }
-    .breadcrumb .breadcrumb-item.active {
-      color: #E2E8F0 !important;
-      font-weight: 600;
+    .page-content {
+      padding-top: 24px !important;
     }
 
-    /* Form Container Cards (§12.1) */
-    .tokabe-form-card {
-      background: #151D2A !important;
-      border: 1.5px solid #28354A !important;
-      border-radius: 12px !important;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
-      margin-bottom: 24px;
-      overflow: hidden;
+    .form-page-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 120px);
+      padding-bottom: 85px !important;
+      margin-bottom: 24px !important;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      color: var(--ibk-text);
     }
-    .tokabe-form-header {
-      background: #1A2436 !important;
-      border-bottom: 1.5px solid #28354A !important;
-      padding: 18px 24px !important;
+
+    /* Page Header */
+    .ibk-page-header {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
     }
-    .tokabe-form-title {
-      font-size: 15.5px;
-      font-weight: 700;
-      color: #F8FAFC !important;
+    .ibk-page-title h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ibk-text);
       margin: 0;
+      letter-spacing: -0.015em;
       display: flex;
       align-items: center;
       gap: 10px;
     }
+    .ibk-page-title h1 i {
+      color: var(--ibk-brand);
+      font-size: 22px;
+    }
+    .ibk-page-subtitle {
+      font-size: 13px;
+      color: var(--ibk-text-muted);
+      margin-top: 4px;
+    }
 
-    /* Form Labels & Controls (§10.1) - High Contrast & Visible Borders */
-    .form-label-modern {
-      font-size: 13.5px;
+    /* Primary Craft Action Button */
+    .ibk-btn-primary {
+      background: #EA580C !important;
+      border: 1px solid #EA580C !important;
+      color: #FFFFFF !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      padding: 0 18px !important;
+      height: 38px !important;
+      border-radius: 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      cursor: pointer !important;
+      transition: all 150ms ease !important;
+      box-shadow: 0 1px 3px rgba(234, 88, 12, 0.25) !important;
+      text-decoration: none !important;
+    }
+    .ibk-btn-primary:hover {
+      background: #C2410C !important;
+      border-color: #C2410C !important;
+      color: #FFFFFF !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35) !important;
+    }
+
+    .ibk-btn-back {
+      background: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-border) !important;
+      color: var(--ibk-text-muted) !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      padding: 0 14px !important;
+      height: 38px !important;
+      border-radius: 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      text-decoration: none !important;
+      transition: all 150ms ease !important;
+    }
+    .ibk-btn-back:hover {
+      background: var(--ibk-surface-hover) !important;
+      border-color: var(--ibk-brand-border) !important;
+      color: var(--ibk-text) !important;
+    }
+
+    .ibk-btn-cancel {
+      background: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-border) !important;
+      color: var(--ibk-text-muted) !important;
+      border-radius: 8px !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      padding: 8px 18px !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none !important;
+      transition: all 150ms ease;
+    }
+    .ibk-btn-cancel:hover {
+      background: var(--ibk-surface-hover) !important;
+      color: var(--ibk-text) !important;
+      border-color: var(--ibk-brand-border) !important;
+    }
+
+    .ref-theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      height: 38px;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: 600;
-      color: #F1F5F9 !important;
-      margin-bottom: 0;
+      cursor: pointer;
+      background: var(--ibk-input-bg);
+      border: 1px solid var(--ibk-border);
+      color: var(--ibk-text);
+      transition: all 180ms ease;
+      white-space: nowrap;
+    }
+    .ref-theme-toggle:hover {
+      background: var(--ibk-surface-hover);
+      border-color: var(--ibk-brand-border);
+      transform: translateY(-1px);
+      color: var(--ibk-brand);
+    }
+
+    /* Form Container Cards */
+    .ibk-form-card {
+      background: var(--ibk-card-bg);
+      border: 1px solid var(--ibk-border);
+      border-radius: 12px;
+      box-shadow: var(--ibk-card-shadow);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .ibk-form-header {
+      background: transparent;
+      border-bottom: 1px solid var(--ibk-border);
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ibk-form-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ibk-text);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .ibk-form-title i {
+      font-size: 18px;
+      color: var(--ibk-brand);
+    }
+
+    /* Form Controls */
+    .form-label-custom {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ibk-text-dim);
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
     }
-    .form-label-modern .required-star {
-      color: #EF4444 !important;
+    .required-star {
+      color: var(--ibk-danger) !important;
       font-weight: bold;
       margin-left: 4px;
     }
     .form-control-modern,
-    .form-select-modern,
-    .invoice-table .form-control,
-    .invoice-table .form-select {
-      background-color: #0B1120 !important;
-      border: 1.5px solid #3B4B66 !important;
-      color: #F8FAFC !important;
-      border-radius: 8px !important;
-      font-size: 14px !important;
-      padding: 8px 14px !important;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-    }
-    .form-control-modern,
     .form-select-modern {
-      height: 42px !important;
+      background-color: var(--ibk-input-bg) !important;
+      border: 1px solid var(--ibk-input-border) !important;
+      color: var(--ibk-input-text) !important;
+      border-radius: 8px !important;
+      font-size: 13.5px !important;
+      padding: 8px 14px !important;
+      height: 40px !important;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .form-control-modern::placeholder,
-    .invoice-table textarea::placeholder,
-    .invoice-table input::placeholder {
-      color: #94A3B8 !important;
-      opacity: 1;
-    }
-    .form-control-modern:hover:not(:disabled),
-    .form-select-modern:hover:not(:disabled),
-    .invoice-table .form-control:hover,
-    .invoice-table .form-select:hover {
-      border-color: #64748B !important;
+    textarea.form-control-modern {
+      height: auto !important;
+      min-height: 52px;
     }
     .form-control-modern:focus,
-    .form-select-modern:focus,
-    .invoice-table .form-control:focus,
-    .invoice-table .form-select:focus {
-      border-color: #6366F1 !important;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35) !important;
+    .form-select-modern:focus {
+      border-color: #EA580C !important;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15) !important;
       outline: none !important;
-      background-color: #0B1120 !important;
+    }
+    .form-control-modern::placeholder {
+      color: var(--ibk-input-placeholder) !important;
     }
 
-    /* Logo Preview Box */
-    .logo-preview-card {
-      background: #101726;
-      border: 1.5px dashed #3B4B66;
-      border-radius: 12px;
-      padding: 16px;
+    .preview-kop-card {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      height: 100%;
-      min-height: 140px;
+      gap: 14px;
+      background: var(--ibk-surface-hover);
+      border: 1px dashed var(--ibk-border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      height: 40px;
     }
 
-    /* Table Rincian Item SPB */
+    /* Table Styles */
     .invoice-table {
+      width: 100% !important;
       border-collapse: separate !important;
       border-spacing: 0 !important;
-      width: 100% !important;
-      margin-bottom: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
     }
     .invoice-table thead th {
-      background-color: #101726 !important;
-      color: #CBD5E1 !important;
-      font-size: 12px !important;
+      background: var(--ibk-th-bg) !important;
+      color: var(--ibk-th-text) !important;
+      font-size: 11.5px !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
       letter-spacing: 0.05em !important;
       border-top: none !important;
-      border-bottom: 2px solid #28354A !important;
-      padding: 13px 14px !important;
-      vertical-align: middle;
-    }
-    .invoice-table tbody td {
-      border-bottom: 1px solid #222D3F !important;
+      border-bottom: 1px solid var(--ibk-td-border) !important;
       padding: 12px 14px !important;
       vertical-align: middle;
-      background-color: #151D2A !important;
-      color: #E2E8F0 !important;
+      white-space: nowrap;
+    }
+    .invoice-table tbody td {
+      border-bottom: 1px solid var(--ibk-td-border) !important;
+      padding: 12px 14px !important;
+      vertical-align: top;
+      background-color: transparent !important;
+      color: var(--ibk-text) !important;
     }
     .invoice-table tbody tr:hover td {
-      background-color: #1A2436 !important;
+      background-color: var(--ibk-surface-hover) !important;
     }
 
-    /* Action Buttons */
-    .btn-add-item {
-      background: #059669 !important;
-      border: 1.5px solid #10B981 !important;
-      color: #FFFFFF !important;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 13.5px;
-      padding: 7px 18px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);
-      text-decoration: none;
-    }
-    .btn-add-item:hover {
-      background: #10B981 !important;
-      border-color: #34D399 !important;
-      color: #FFFFFF !important;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
-    }
     .btn-row-delete,
     .product-removal .btn {
-      width: 38px !important;
-      height: 38px !important;
-      background: rgba(239, 68, 68, 0.15) !important;
-      border: 1.5px solid rgba(239, 68, 68, 0.4) !important;
-      color: #FCA5A5 !important;
-      border-radius: 8px !important;
+      width: 34px !important;
+      height: 34px !important;
+      background: transparent !important;
+      border: 1px solid var(--ibk-border) !important;
+      color: var(--ibk-danger) !important;
+      border-radius: 6px !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -199,48 +368,18 @@
     }
     .btn-row-delete:hover,
     .product-removal .btn:hover {
-      background: #EF4444 !important;
-      border-color: #EF4444 !important;
-      color: #FFFFFF !important;
+      background: var(--ibk-danger-soft) !important;
+      border-color: var(--ibk-danger-border) !important;
+      color: var(--ibk-danger) !important;
     }
-    .btn-form-cancel {
-      background-color: #1E293B !important;
-      border: 1.5px solid #334155 !important;
-      color: #E2E8F0 !important;
-      border-radius: 8px !important;
-      font-size: 13.5px !important;
-      font-weight: 600 !important;
-      padding: 9px 22px !important;
-      text-decoration: none !important;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.15s ease;
+    .input-step { border: none !important; background: transparent !important; padding: 0 !important; box-shadow: none !important; }
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none !important;
+      margin: 0 !important;
     }
-    .btn-form-cancel:hover {
-      background-color: #334155 !important;
-      color: #FFFFFF !important;
-      border-color: #475569 !important;
-    }
-    .btn-form-submit {
-      background-color: #4F46E5 !important;
-      border: 1.5px solid #6366F1 !important;
-      color: #FFFFFF !important;
-      border-radius: 8px !important;
-      font-size: 14px !important;
-      font-weight: 600 !important;
-      padding: 9px 26px !important;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.15s ease;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
-    }
-    .btn-form-submit:hover {
-      background-color: #4338CA !important;
-      border-color: #818CF8 !important;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.45);
+    input[type=number] {
+      -moz-appearance: textfield !important;
     }
   </style>
 @endsection
@@ -248,244 +387,232 @@
 @section('content')
   <div class="page-content">
     <div class="container-fluid">
+      <div class="form-page-wrapper">
 
-      <!-- Page Header & Title (§16.2) -->
-      <div class="row mb-3">
-        <div class="col-12">
-          <div class="page-title-box d-sm-flex align-items-center justify-content-between py-2">
-            <div>
-              <h4 class="mb-sm-0 text-white fw-bold">Edit SPB (Surat Pengantar Barang)</h4>
-            </div>
-            <div class="page-title-right">
-              <ol class="breadcrumb m-0">
-                <li class="breadcrumb-item"><a href="{{ url('daftar-spb') }}">SPB</a></li>
-                <li class="breadcrumb-item active">Edit SPB</li>
-              </ol>
-            </div>
+        <!-- Header Section -->
+        <div class="ibk-page-header">
+          <div class="ibk-page-title">
+            <h1>
+              <i class="ri-edit-line"></i>
+              <span>Edit SPB #{{ $spb->id }}</span>
+            </h1>
+            <div class="ibk-page-subtitle">Perbarui data surat pengantar pengiriman barang dan rincian item barang</div>
           </div>
-        </div>
-      </div>
-
-      @if(Session::has('error'))
-        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert" style="background: rgba(239, 68, 68, 0.2); border: 1.5px solid rgba(239, 68, 68, 0.45); color: #FCA5A5; border-radius: 8px;">
-          <i class="ri-error-warning-fill fs-20 me-2 text-danger"></i>
-          <div class="flex-grow-1">SPB Gagal diperbarui. Silakan periksa kembali input Anda.</div>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Tutup"></button>
-        </div>
-      @endif
-
-      @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert" style="background: rgba(239, 68, 68, 0.2); border: 1.5px solid rgba(239, 68, 68, 0.45); color: #FCA5A5; border-radius: 8px;">
-          <i class="ri-error-warning-fill fs-20 me-2 text-danger"></i>
-          <div class="flex-grow-1">
-            <strong>Validasi Gagal:</strong>
-            <ul class="mb-0 mt-1 ps-3">
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Tutup"></button>
-        </div>
-      @endif
-
-      <form method="POST" action="{{ url('update-spb/' . $spb->id) }}" class="needs-validation" id="spb_form" enctype="multipart/form-data">
-        @csrf
-        @method('put')
-
-        {{-- Card 1: Informasi Pengantar & Customer (§12.1) --}}
-        <div class="tokabe-form-card">
-          <div class="tokabe-form-header">
-            <h5 class="tokabe-form-title">
-              <i class="ri-file-text-line fs-20 text-info" aria-hidden="true"></i>
-              <span>Informasi Surat Pengantar Barang</span>
-            </h5>
-            <a href="{{ url('daftar-spb') }}" class="btn-form-cancel" aria-label="Kembali ke Daftar SPB">
-              <i class="las la-arrow-left fs-16"></i>
-              <span>Kembali</span>
+          <div class="d-flex align-items-center gap-2">
+            <a href="{{ url('daftar-spb') }}" class="ibk-btn-back" title="Kembali ke Daftar SPB">
+              <i class="ri-arrow-left-line"></i>
+              <span>Daftar SPB</span>
             </a>
-          </div>
-          <div class="p-4">
-            <div class="row g-4 align-items-center">
-              <div class="col-lg-8">
-                <div class="row g-3">
-                  {{-- Input Perusahaan SPB --}}
-                  <div class="row col-12 align-items-center mb-2">
-                    <label for="namaSpb" class="col-lg-4 form-label-modern">Perusahaan SPB <span class="required-star">*</span></label>
-                    <div class="col-lg-8">
-                      <select class="form-select form-select-modern @error('namaSpb') is-invalid @enderror" name="namaSpb" id="namaSpb" required aria-required="true">
-                        @foreach($namaPerusahaan as $usaha)
-                          <option value="{{ $usaha->id }}" {{ (old('namaSpb') ?? $spb->nama_spb) == $usaha->id ? 'selected' : '' }}>
-                            {{ $usaha->nama_perusahaan }}
-                          </option>
-                        @endforeach
-                      </select>
-                      @error('namaSpb')
-                        <div class="text-danger fs-12 mt-1">{{ $message }}</div>
-                      @enderror
-                    </div>
-                  </div>
-
-                  {{-- Input Nama Customer --}}
-                  <div class="row col-12 align-items-center mb-2">
-                    <label for="customer" class="col-lg-4 form-label-modern">Nama Customer <span class="required-star">*</span></label>
-                    <div class="col-lg-8">
-                      <input class="form-control form-control-modern @error('customer') is-invalid @enderror" type="text" name="customer" id="customer" list="pelanggan"
-                        placeholder="Nama pelanggan / penerima" value="{{ old('customer', $spb->customer) }}" required aria-required="true">
-                      <datalist id="pelanggan">
-                        @foreach ($customer as $cust)
-                          <option value="{{ $cust }}">
-                        @endforeach
-                      </datalist>
-                      @error('customer')
-                        <div class="text-danger fs-12 mt-1">{{ $message }}</div>
-                      @enderror
-                    </div>
-                  </div>
-
-                  {{-- Input Nama Perusahaan --}}
-                  <div class="row col-12 align-items-center mb-2">
-                    <label for="usaha" class="col-lg-4 form-label-modern">Nama Perusahaan <span class="required-star">*</span></label>
-                    <div class="col-lg-8">
-                      <input class="form-control form-control-modern @error('perusahaan') is-invalid @enderror" type="text" name="perusahaan" id="usaha" list="usaha_list"
-                        placeholder="Nama instansi / perusahaan customer" value="{{ old('perusahaan', $spb->perusahaan) }}" required aria-required="true">
-                      <datalist id="usaha_list">
-                        @foreach ($perusahaan as $usaha_item)
-                          <option value="{{ $usaha_item }}">
-                        @endforeach
-                      </datalist>
-                      @error('perusahaan')
-                        <div class="text-danger fs-12 mt-1">{{ $message }}</div>
-                      @enderror
-                    </div>
-                  </div>
-
-                  {{-- Input Nomor Telepon --}}
-                  <div class="row col-12 align-items-center mb-2">
-                    <label for="phone-number" class="col-lg-4 form-label-modern">Nomor Telepon <span class="required-star">*</span></label>
-                    <div class="col-lg-8">
-                      <input type="text" value="{{ old('no_telp', $spb->nomor_telepon) }}" name="no_telp" class="form-control form-control-modern num @error('no_telp') is-invalid @enderror"
-                        placeholder="08xx xxxx xxxx" id="phone-number" required aria-required="true">
-                      @error('no_telp')
-                        <div class="text-danger fs-12 mt-1">{{ $message }}</div>
-                      @enderror
-                    </div>
-                  </div>
-
-                  {{-- Input Nama Penandatangan --}}
-                  <div class="row col-12 align-items-center mb-2">
-                    <label for="nama_penandatangan" class="col-lg-4 form-label-modern">Nama Penandatangan</label>
-                    <div class="col-lg-8">
-                      <input type="text" value="{{ old('nama_penandatangan', $spb->nama_penandatangan) }}" name="nama_penandatangan" id="nama_penandatangan" class="form-control form-control-modern"
-                        placeholder="Nama di bawah tanda tangan (Contoh: Oky Irawan)">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {{-- Kolom Kanan: Preview Logo Perusahaan --}}
-              <div class="col-lg-4">
-                <div class="logo-preview-card">
-                  <div class="mb-2" style="max-height: 80px; display: flex; align-items: center; justify-content: center;">
-                    <img src="{{ asset('storage/images/perusahaan/698c05828c9a6.png') }}" onerror="this.onerror=null;this.src='{{ asset('images/perusahaan/698c05828c9a6.png') }}';" class="img-fluid" alt="Logo Perusahaan SPB" style="max-height: 70px; object-fit: contain;">
-                  </div>
-                  <span class="fs-12 fw-medium" style="color: #94A3B8;">Preview Kop SPB Resmi</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {{-- Card 2: Rincian Barang yang Diantar (§12.1 & §13) --}}
-        <div class="tokabe-form-card">
-          <div class="tokabe-form-header">
-            <h5 class="tokabe-form-title">
-              <i class="ri-truck-line fs-20 text-warning" aria-hidden="true"></i>
-              <span>Rincian Barang yang Diantar</span>
-            </h5>
-            <button type="button" class="btn-add-item" onclick="new_link()" aria-label="Tambah Item Barang">
-              <i class="las la-plus fs-16" aria-hidden="true"></i>
-              <span>Tambah Item</span>
+            <button type="button" class="ref-theme-toggle" id="btn-theme-toggle" onclick="toggleDashboardTheme(event)" title="Beralih Mode Tampilan" aria-label="Ganti Tema Tampilan">
+              <i class="ri-sun-line fs-14" id="theme-toggle-icon"></i>
+              <span id="theme-toggle-text">Mode Terang</span>
             </button>
           </div>
-          <div class="p-4">
-            <div class="table-responsive">
-              <table class="table invoice-table" aria-label="Tabel Rincian Item SPB">
-                <thead>
-                  <tr>
-                    <th scope="col" style="width: 50px;" class="text-center">#</th>
-                    <th scope="col" style="min-width: 260px;">Item & Deskripsi <span class="required-star">*</span></th>
-                    <th scope="col" style="width: 140px;">Satuan <span class="required-star">*</span></th>
-                    <th scope="col" style="width: 110px;" class="text-center">Quantity <span class="required-star">*</span></th>
-                    <th scope="col" style="min-width: 200px;">Keterangan</th>
-                    <th scope="col" style="width: 70px;" class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="newlink">
-                  @foreach ($brg_spb as $index => $brg)
-                    @foreach ($barangs[$index] as $item)
-                      <tr id="{{ $index + 1 }}" class="product">
-                        <th scope="row" class="product-id text-center num fw-medium" style="color: #94A3B8;">{{ $index + 1 }}</th>
-                        <td class="text-start">
-                          <div class="mb-2">
-                            <select class="form-select form-select-modern @error('barang_id.' . $index) is-invalid @enderror" name="barang_id[]" required aria-label="Pilih Item Kategori">
-                              <option value="{{ $item->id }}" selected>{{ $item->nama_kategori }}</option>
-                              @foreach ($kategori_brg as $items)
-                                @if ($item->id != $items->id)
-                                  <option value="{{ $items->id }}">{{ $items->nama_kategori ?: $items->jenis_barang }}</option>
-                                @endif
-                              @endforeach
-                            </select>
-                          </div>
-                          <textarea class="form-control form-control-modern @error('deskripsi_item.' . $index) is-invalid @enderror"
-                            name="deskripsi_item[]" rows="2" placeholder="Tuliskan spesifikasi / deskripsi item..." required aria-label="Deskripsi item barang">{{ $brg->deskripsi }}</textarea>
-                        </td>
-                        <td>
-                          <select class="form-select form-select-modern @error('satuan.' . $index) is-invalid @enderror" name="satuan[]" required aria-label="Pilih Satuan">
-                            <option disabled value="">Pilih</option>
-                            <option value="Set" {{ $brg->satuan == 'Set' ? 'selected' : '' }}>Set</option>
-                            <option value="Pcs" {{ $brg->satuan == 'Pcs' ? 'selected' : '' }}>Pcs</option>
-                            <option value="Kotak" {{ $brg->satuan == 'Kotak' ? 'selected' : '' }}>Kotak</option>
-                            <option value="Blok" {{ $brg->satuan == 'Blok' ? 'selected' : '' }}>Blok</option>
-                            <option value="Lbr" {{ $brg->satuan == 'Lbr' ? 'selected' : '' }}>Lbr</option>
-                          </select>
-                        </td>
-                        <td>
-                          <div class="input-step">
-                            <input type="number" class="form-control form-control-modern text-center num @error('qty.' . $index) is-invalid @enderror"
-                              name="qty[]" value="{{ $brg->qty }}" min="1" step="1" required aria-label="Kuantitas barang">
-                          </div>
-                        </td>
-                        <td>
-                          <textarea class="form-control form-control-modern @error('keterangan.' . $index) is-invalid @enderror"
-                            name="keterangan[]" rows="2" placeholder="Catatan / keterangan tambahan...">{{ $brg->keterangan }}</textarea>
-                        </td>
-                        <td class="product-removal text-center">
-                          <button type="button" class="btn-row-delete" aria-label="Hapus baris item" title="Hapus baris">
-                            <i class="las la-trash fs-18" aria-hidden="true"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    @endforeach
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
+        </div>
 
-            <div class="d-flex align-items-center gap-3 mt-4 pt-3" style="border-top: 1.5px solid #28354A !important;">
-              <button type="submit" id="simpan" class="btn btn-form-submit">
-                <i class="las la-save fs-18" aria-hidden="true"></i>
-                <span>Simpan Perubahan</span>
-              </button>
-              <a href="{{ url('daftar-spb') }}" class="btn-form-cancel">
-                <i class="las la-times fs-16" aria-hidden="true"></i>
-                <span>Batal</span>
-              </a>
+        @if(Session::has('error'))
+          <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert" style="background: var(--ibk-danger-soft); border: 1px solid var(--ibk-danger-border); color: var(--ibk-danger); border-radius: 8px;">
+            <i class="ri-error-warning-fill fs-20 me-2 text-danger"></i>
+            <div class="flex-grow-1 fs-13">SPB Gagal diperbarui. Silakan periksa kembali input Anda.</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+          </div>
+        @endif
+
+        @if($errors->any())
+          <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert" style="background: var(--ibk-danger-soft); border: 1px solid var(--ibk-danger-border); color: var(--ibk-danger); border-radius: 8px;">
+            <i class="ri-error-warning-fill fs-20 me-2 text-danger"></i>
+            <div class="flex-grow-1 fs-13">
+              <strong>Validasi Gagal:</strong>
+              <ul class="mb-0 mt-1 ps-3">
+                @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+                @endforeach
+              </ul>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+          </div>
+        @endif
+
+        <form method="POST" action="{{ url('update-spb/'.$spb->id) }}" class="needs-validation" id="spb_form">
+          @csrf
+          @method('put')
+
+          {{-- Card 1: Informasi Pengantar & Customer --}}
+          <div class="ibk-form-card">
+            <div class="ibk-form-header">
+              <h5 class="ibk-form-title">
+                <i class="ri-file-text-line"></i>
+                <span>Informasi Surat Pengantar Barang</span>
+              </h5>
+            </div>
+            <div class="p-4">
+              <div class="row g-3">
+                {{-- Input Perusahaan SPB --}}
+                <div class="col-md-6">
+                  <label for="namaSpb" class="form-label-custom">Perusahaan SPB <span class="required-star">*</span></label>
+                  <select class="form-select form-select-modern @error('namaSpb') is-invalid @enderror" name="namaSpb" id="namaSpb" required aria-required="true">
+                    @foreach($namaPerusahaan as $usaha)
+                      <option value="{{ $usaha->id }}" {{ (old('namaSpb', $spb->nama_spb) == $usaha->id) ? 'selected' : '' }}>
+                        {{ $usaha->nama_perusahaan }}
+                      </option>
+                    @endforeach
+                  </select>
+                  @error('namaSpb')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                {{-- Input Nama Customer --}}
+                <div class="col-md-6">
+                  <label for="customer" class="form-label-custom">Nama Customer <span class="required-star">*</span></label>
+                  <input class="form-control form-control-modern @error('customer') is-invalid @enderror" type="text" name="customer" id="customer" list="pelanggan"
+                    placeholder="Nama pelanggan / penerima" value="{{ old('customer', $spb->nama_customer) }}" required aria-required="true">
+                  <datalist id="pelanggan">
+                    @foreach ($customer as $cust)
+                      <option value="{{ $cust }}">
+                    @endforeach
+                  </datalist>
+                  @error('customer')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                {{-- Input Nama Perusahaan --}}
+                <div class="col-md-6">
+                  <label for="usaha" class="form-label-custom">Nama Perusahaan <span class="required-star">*</span></label>
+                  <input class="form-control form-control-modern @error('perusahaan') is-invalid @enderror" type="text" name="perusahaan" id="usaha" list="usaha_list"
+                    placeholder="Nama instansi / perusahaan customer" value="{{ old('perusahaan', $spb->perusahaan) }}" required aria-required="true">
+                  <datalist id="usaha_list">
+                    @foreach ($perusahaan as $usaha_item)
+                      <option value="{{ $usaha_item }}">
+                    @endforeach
+                  </datalist>
+                  @error('perusahaan')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                {{-- Input Nomor Telepon --}}
+                <div class="col-md-6">
+                  <label for="phone-number" class="form-label-custom">Nomor Telepon <span class="required-star">*</span></label>
+                  <input type="text" value="{{ old('no_telp', $spb->nomor_telepon) }}" name="no_telp" class="form-control form-control-modern num @error('no_telp') is-invalid @enderror"
+                    placeholder="08xx xxxx xxxx" id="phone-number" required aria-required="true">
+                  @error('no_telp')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                {{-- Input Nama Penandatangan --}}
+                <div class="col-md-6">
+                  <label for="nama_penandatangan" class="form-label-custom">Nama Penandatangan</label>
+                  <input type="text" value="{{ old('nama_penandatangan', $spb->nama_penandatangan) }}" name="nama_penandatangan" id="nama_penandatangan" class="form-control form-control-modern"
+                    placeholder="Nama di bawah tanda tangan (Contoh: Oky Irawan)">
+                  @error('nama_penandatangan')
+                    <div class="text-danger fs-12 mt-1">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                {{-- Kop SPB Preview --}}
+                <div class="col-md-6">
+                  <label class="form-label-custom">Kop Dokumen Resmi</label>
+                  <div class="preview-kop-card">
+                    <img src="{{ asset('storage/images/perusahaan/698c05828c9a6.png') }}" onerror="this.onerror=null;this.src='{{ asset('images/perusahaan/698c05828c9a6.png') }}';" style="max-height: 28px; object-fit: contain;">
+                    <span class="fs-12 text-muted fw-semibold">Dokumen Resmi SPB Ibekami</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
 
+          {{-- Card 2: Rincian Barang yang Diantar --}}
+          <div class="ibk-form-card">
+            <div class="ibk-form-header">
+              <h5 class="ibk-form-title">
+                <i class="ri-truck-line"></i>
+                <span>Rincian Barang yang Diantar</span>
+              </h5>
+              <button type="button" class="ibk-btn-primary" onclick="new_link()" aria-label="Tambah Item Barang">
+                <i class="ri-add-line fs-16" aria-hidden="true"></i>
+                <span>Tambah Item</span>
+              </button>
+            </div>
+            <div class="p-4">
+              <div class="table-responsive">
+                <table class="table invoice-table" aria-label="Tabel Rincian Item SPB">
+                  <thead>
+                    <tr>
+                      <th scope="col" style="width: 50px;" class="text-center">#</th>
+                      <th scope="col" style="min-width: 260px;">Item & Deskripsi <span class="required-star">*</span></th>
+                      <th scope="col" style="width: 140px;">Satuan <span class="required-star">*</span></th>
+                      <th scope="col" style="width: 110px;" class="text-center">Quantity <span class="required-star">*</span></th>
+                      <th scope="col" style="min-width: 200px;">Keterangan</th>
+                      <th scope="col" style="width: 70px;" class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="newlink">
+                    @foreach ($brg_spb as $index => $brg)
+                      @foreach ($barangs[$index] as $item)
+                        <tr id="{{ $index + 1 }}" class="product">
+                          <th scope="row" class="product-id text-center num fw-medium" style="color: var(--ibk-text-muted);">{{ $index + 1 }}</th>
+                          <td class="text-start">
+                            <div class="mb-2">
+                              <select class="form-select form-select-modern @error('barang_id.' . $index) is-invalid @enderror" name="barang_id[]" required aria-label="Pilih Item Kategori">
+                                <option value="{{ $item->id }}" selected>{{ $item->nama_kategori }}</option>
+                                @foreach ($kategori_brg as $items)
+                                  @if ($item->id != $items->id)
+                                    <option value="{{ $items->id }}">{{ $items->nama_kategori ?: $items->jenis_barang }}</option>
+                                  @endif
+                                @endforeach
+                              </select>
+                            </div>
+                            <textarea class="form-control form-control-modern @error('deskripsi_item.' . $index) is-invalid @enderror"
+                              name="deskripsi_item[]" rows="2" placeholder="Tuliskan spesifikasi / deskripsi item..." required aria-label="Deskripsi item barang">{{ $brg->deskripsi }}</textarea>
+                          </td>
+                          <td>
+                            <select class="form-select form-select-modern @error('satuan.' . $index) is-invalid @enderror" name="satuan[]" required aria-label="Pilih Satuan">
+                              <option disabled value="">Pilih</option>
+                              <option value="Set" {{ $brg->satuan == 'Set' ? 'selected' : '' }}>Set</option>
+                              <option value="Pcs" {{ $brg->satuan == 'Pcs' ? 'selected' : '' }}>Pcs</option>
+                              <option value="Kotak" {{ $brg->satuan == 'Kotak' ? 'selected' : '' }}>Kotak</option>
+                              <option value="Blok" {{ $brg->satuan == 'Blok' ? 'selected' : '' }}>Blok</option>
+                              <option value="Lbr" {{ $brg->satuan == 'Lbr' ? 'selected' : '' }}>Lbr</option>
+                            </select>
+                          </td>
+                          <td class="text-center" style="width: 100px;">
+                            <input type="number" class="form-control form-control-modern text-center num @error('qty.' . $index) is-invalid @enderror"
+                              name="qty[]" value="{{ $brg->qty }}" min="1" step="1" required aria-label="Kuantitas barang" style="max-width: 80px; margin: 0 auto;">
+                          </td>
+                          <td>
+                            <textarea class="form-control form-control-modern @error('keterangan.' . $index) is-invalid @enderror"
+                              name="keterangan[]" rows="2" placeholder="Catatan / keterangan tambahan...">{{ $brg->keterangan }}</textarea>
+                          </td>
+                          <td class="product-removal text-center">
+                            <button type="button" class="btn-row-delete" aria-label="Hapus baris item" title="Hapus baris">
+                              <i class="ri-delete-bin-line fs-16" aria-hidden="true"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      @endforeach
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-end gap-3 mt-4 pt-3" style="border-top: 1px solid var(--ibk-border) !important;">
+                <a href="{{ url('daftar-spb') }}" class="ibk-btn-cancel">
+                  <i class="ri-close-line fs-16" aria-hidden="true"></i>
+                  <span>Batal</span>
+                </a>
+                <button type="submit" id="simpan" class="ibk-btn-primary">
+                  <i class="ri-save-line fs-16" aria-hidden="true"></i>
+                  <span>Simpan Perubahan</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
     </div>
   </div>
 @endsection
@@ -493,4 +620,21 @@
 @section('plugins')
   <script src="{{ asset('libs/cleave.js/cleave.min.js') }}"></script>
   <script src="{{ asset('js/halaman/spb.js') }}"></script>
+  <script>
+    function initPageTheme() {
+      var isLight = document.body.classList.contains('theme-light') || document.documentElement.classList.contains('theme-light');
+      var icon = document.getElementById('theme-toggle-icon');
+      var text = document.getElementById('theme-toggle-text');
+      if (icon) {
+        icon.className = isLight ? 'ri-moon-line fs-14' : 'ri-sun-line fs-14';
+      }
+      if (text) {
+        text.textContent = isLight ? 'Mode Gelap' : 'Mode Terang';
+      }
+    }
+
+    $(document).ready(function() {
+      initPageTheme();
+    });
+  </script>
 @endsection
