@@ -257,9 +257,12 @@ class PenjualanController extends Controller
                         // Jika sudah ada, perbarui data barang tersebut
                         $existingPenjualanBarang->deskripsi_item = $request->deskripsi_item[$key];
                         $existingPenjualanBarang->qty = $request->qty[$key];
+                        $hrg = $cleanNominal($request->hrg[$key] ?? 0);
+                        $submitedJumlah = $cleanNominal($request->jlh_hrg[$key] ?? 0);
+                        $calcJumlah = round($hrg * (float)($request->qty[$key] ?? 0));
                         $existingPenjualanBarang->satuan = $request->satuan[$key];
-                        $existingPenjualanBarang->hargaBarang = $cleanNominal($request->hrg[$key]);
-                        $existingPenjualanBarang->jumlah_harga = $cleanNominal($request->jlh_hrg[$key]);
+                        $existingPenjualanBarang->hargaBarang = $hrg;
+                        $existingPenjualanBarang->jumlah_harga = ($submitedJumlah <= 0 || ($calcJumlah > 0 && abs($submitedJumlah - $calcJumlah) > 10)) ? $calcJumlah : $submitedJumlah;
                         
                         // Update data material menggunakan JSON
                         $existingPenjualanBarang->material_id = !empty($matIds) ? json_encode(array_values($matIds)) : null;
@@ -270,14 +273,17 @@ class PenjualanController extends Controller
                         $existingPenjualanBarang->save();
                     } else {
                         // Jika belum ada, buat data baru untuk penjualan_barang
+                        $hrg = $cleanNominal($request->hrg[$key] ?? 0);
+                        $submitedJumlah = $cleanNominal($request->jlh_hrg[$key] ?? 0);
+                        $calcJumlah = round($hrg * (float)($request->qty[$key] ?? 0));
                         $penjualan_brg = [
                             'barang_id' => $barang->id,
                             'penjualan_id' => $existingPenjualan->id,
                             'deskripsi_item' => $request->deskripsi_item[$key],
                             'qty' => $request->qty[$key],
                             'satuan' => $request->satuan[$key],
-                            'hargaBarang' => $cleanNominal($request->hrg[$key] ?? 0),
-                            'jumlah_harga' => $cleanNominal($request->jlh_hrg[$key] ?? 0),
+                            'hargaBarang' => $hrg,
+                            'jumlah_harga' => ($submitedJumlah <= 0 || ($calcJumlah > 0 && abs($submitedJumlah - $calcJumlah) > 10)) ? $calcJumlah : $submitedJumlah,
                             
                             // Simpan sebagai JSON
                             'material_id' => !empty($matIds) ? json_encode(array_values($matIds)) : null,
@@ -358,14 +364,17 @@ class PenjualanController extends Controller
                         $matLebars = isset($request->material_lebar[$key]) && is_array($request->material_lebar[$key]) ? array_filter($request->material_lebar[$key], 'strlen') : [];
                     }
 
+                    $hrg = $cleanNominal($request->hrg[$key] ?? 0);
+                    $submitedJumlah = $cleanNominal($request->jlh_hrg[$key] ?? 0);
+                    $calcJumlah = round($hrg * (float)($request->qty[$key] ?? 0));
                     $penjualan_brg = [
                         'barang_id' => $barang->id,
                         'penjualan_id' => $penjualan->id,
                         'deskripsi_item' => $request->deskripsi_item[$key],
                         'qty' => $request->qty[$key],
                         'satuan' => $request->satuan[$key],
-                        'hargaBarang' => $cleanNominal($request->hrg[$key] ?? 0),
-                        'jumlah_harga' => $cleanNominal($request->jlh_hrg[$key] ?? 0),
+                        'hargaBarang' => $hrg,
+                        'jumlah_harga' => ($submitedJumlah <= 0 || ($calcJumlah > 0 && abs($submitedJumlah - $calcJumlah) > 10)) ? $calcJumlah : $submitedJumlah,
                         
                         // Simpan sebagai JSON
                         'material_id' => !empty($matIds) ? json_encode(array_values($matIds)) : null,

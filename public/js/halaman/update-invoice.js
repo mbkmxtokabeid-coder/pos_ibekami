@@ -10,17 +10,18 @@ function formatNominal(val) {
 }
 
 function autoCalc(v) {
+  if (!v) return;
   var row = v.closest('tr');
-  var index = Array.from(row.parentNode.children).indexOf(row) + 1;
+  if (!row) return;
 
-  var hargaElem = document.getElementById('productRate-' + index);
+  var hargaElem = row.querySelector('.product-price') || row.querySelector('[id^="productRate-"]');
   var unformattedHarga = hargaElem ? parseNominal(hargaElem.value) : 0;
-  var qtyElem = document.getElementById('product-qty-' + index);
+  var qtyElem = row.querySelector('input[name*="qty"]') || row.querySelector('[id^="product-qty-"]') || row.querySelector('input[type="number"]');
   var qty = qtyElem ? (parseFloat(qtyElem.value) || 0) : 0;
 
   if (!isNaN(unformattedHarga) && !isNaN(qty)) {
     var jumlah = Math.round(unformattedHarga * qty);
-    var productPriceElem = document.getElementById('productPrice-' + index);
+    var productPriceElem = row.querySelector('.product-line-price') || row.querySelector('[id^="productPrice-"]');
     if (productPriceElem) {
       productPriceElem.value = formatNominal(jumlah);
     }
@@ -30,9 +31,14 @@ function autoCalc(v) {
 
 function getTotal() {
   var sum = 0;
-  var semuaHarga = document.querySelectorAll('[id^="productPrice-"]');
-
+  var semuaHarga = document.querySelectorAll('#newlink tr.product .product-line-price, #newlink .product-line-price');
+  if (!semuaHarga.length) {
+    semuaHarga = document.querySelectorAll('[id^="productPrice-"]');
+  }
+  var seen = new Set();
   for (let i = 0; i < semuaHarga.length; i++) {
+    if (seen.has(semuaHarga[i])) continue;
+    seen.add(semuaHarga[i]);
     const harga = parseNominal(semuaHarga[i].value);
     if (!isNaN(harga)) {
       sum += harga;
@@ -265,6 +271,12 @@ function handleSelectChange() {
 }
 document.addEventListener("DOMContentLoaded", function () {
   handleSelectChange();
+  // Recalculate existing items to guarantee accurate display
+  document.querySelectorAll('#newlink tr.product').forEach(function(row) {
+    var rateEl = row.querySelector('.product-price') || row.querySelector('[id^="productRate-"]');
+    if (rateEl) autoCalc(rateEl);
+  });
+  getTotal();
   totalPembayaran();
   sisaPembayaran();
 
@@ -275,6 +287,11 @@ document.addEventListener("DOMContentLoaded", function () {
       totalPembayaran();
     });
   }
+});
+
+// Real-time calculation on input/change
+$(document).on('input change', '#newlink .product-price, #newlink input[name*="qty"], #newlink [id^="productRate-"], #newlink [id^="product-qty-"]', function () {
+  autoCalc(this);
 });
 
 // document.addEventListener("DOMContentLoaded", function () {
