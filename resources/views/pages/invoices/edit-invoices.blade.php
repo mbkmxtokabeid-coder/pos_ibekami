@@ -1024,7 +1024,7 @@
                                       </div>
                                       <div class="col-lg-6" id="dp" style="display: block;">
                                         @if (!empty($inv->dp))
-                                          <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }'  class="form-control bg-light border-0" rows="1" placeholder="0 (Boleh kosong)" value="{{ number_format($inv->dp, 0, ',', '.') }}">
+                                          <input id="input-dp" name="dp" type="text" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }'  class="form-control bg-light border-0" rows="1" placeholder="0 (Boleh kosong)" value="{{ (int)$inv->dp }}">
                                         @else
                                           <input id="input-dp" data-cleave='{ "numeral": true, "numeralThousandsGroupStyle": "thousand" }' name="dp" type="text" class="form-control bg-light border-0" rows="1" placeholder="0 (Boleh kosong)" value="0">
                                         @endif
@@ -1111,7 +1111,7 @@
 <script src="{{asset('libs/choices.js/public/assets/scripts/choices.min.js')}}"></script>
 <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
 <script src="{{asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
-<script src="{{asset('js/halaman/update-invoice.js')}}"></script>
+<script src="{{asset('js/halaman/update-invoice.js')}}?v={{ filemtime(public_path('js/halaman/update-invoice.js')) }}"></script>
 <script src="{{asset('js/halaman/invoice.js')}}"></script>
 <script src="{{asset('js/halaman/draft-invoice-ibekami.js')}}"></script>
 

@@ -1185,6 +1185,7 @@ class InvoiceController extends Controller
         PenjualanBarang::where('penjualan_id', $id)->delete();
 
         // 2. SIMPAN ITEM BARU DAN POTONG STOK (BARANG & MATERIAL)
+        $sumItemTotal = 0;
         foreach ($request->barang_id as $key => $value) {
             $barangObj = Barang::find($value);
             if ($barangObj && $barangObj->is_material_required == 1) {
@@ -1222,6 +1223,7 @@ class InvoiceController extends Controller
             $item->material_lebar = !empty($matLebars) ? json_encode(array_values($matLebars)) : null;
 
             $item->save();
+            $sumItemTotal += $item->jumlah_harga;
 
             // Kurangi Stok Barang
             if ($barangObj) {
@@ -1238,6 +1240,27 @@ class InvoiceController extends Controller
                     }
                 }
             }
+        }
+
+        // Pastikan total_harga, total_pembayaran, dan sisa_pembayaran selalu sinkron dengan jumlah item aktual
+        if ($sumItemTotal > 0 && abs($tot_harga - $sumItemTotal) > 10) {
+            $tot_harga = $sumItemTotal;
+            $penjualan->total_harga = $tot_harga;
+
+            if ($jenisPotongan == 'PPN' && $nilai_potongan > 0) {
+                $tot_pem = $tot_harga + round($tot_harga * ($nilai_potongan / 100));
+            } elseif ($jenisPotongan == 'Diskon' && $nilai_potongan > 0) {
+                $tot_pem = max(0, $tot_harga - round($tot_harga * ($nilai_potongan / 100)));
+            } elseif ($jenisPotongan == 'Potongan' && $nilai_potongan > 0) {
+                $tot_pem = max(0, $tot_harga - $nilai_potongan);
+            } else {
+                $tot_pem = $tot_harga;
+            }
+
+            $sisa_pemb = ($status == 'Lunas') ? 0 : max(0, $tot_pem - $dp);
+            $penjualan->total_pembayaran = $tot_pem;
+            $penjualan->sisa_pembayaran = $sisa_pemb;
+            $penjualan->save();
         }
         });
 

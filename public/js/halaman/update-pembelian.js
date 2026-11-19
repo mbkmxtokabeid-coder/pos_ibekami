@@ -78,17 +78,31 @@ function new_link() {
   resetRow();
 };
 
+function parseNominalPembelian(val) {
+  if (val === null || val === undefined) return 0;
+  var digits = String(val).replace(/[^0-9]/g, '');
+  return digits ? parseInt(digits, 10) : 0;
+}
+
+function formatNominalPembelian(val) {
+  var num = Math.round(Number(val) || 0);
+  return num.toLocaleString('id-ID');
+}
+
 function autoCalc(v) {
-  var row = v.closest('tr');
-  var index = Array.from(row.parentNode.children).indexOf(row) + 1;
-  var harga = document.getElementById('productRate-' + index).value;
-  var formattedHarga = parseFloat(harga.replace(/,/g, ''));
-  var qty = parseFloat(document.getElementById('product-qty-' + index).value);
+  if (!v) return;
+  var row = v.closest('tr.product') || v.closest('tr');
+  if (!row) return;
+  var hargaElem = row.querySelector('.product-price') || row.querySelector('[id^="productRate-"]');
+  var qtyElem = row.querySelector('[id^="product-qty-"]') || row.querySelector('input[name^="qty"]');
+  var priceElem = row.querySelector('.product-line-price') || row.querySelector('[id^="productPrice-"]');
+
+  var formattedHarga = hargaElem ? parseNominalPembelian(hargaElem.value) : 0;
+  var qty = qtyElem ? (parseFloat(qtyElem.value) || 0) : 0;
 
   if (!isNaN(formattedHarga) && !isNaN(qty)) {
-    var jumlah = formattedHarga * qty;
-
-    document.getElementById('productPrice-' + index).value = jumlah.toLocaleString();
+    var jumlah = Math.round(formattedHarga * qty);
+    if (priceElem) priceElem.value = formatNominalPembelian(jumlah);
     getTotal();
   }
 }
@@ -97,13 +111,13 @@ function getTotal() {
   var sum = 0;
   var semuaHarga = document.querySelectorAll('[id^="productPrice-"]');
   for (let i = 0; i < semuaHarga.length; i++) {
-    const hargaValue = semuaHarga[i].value || '0'; // Use '0' as the default value if value is undefined or null
-    const harga = parseFloat(hargaValue.replace(/,/g, ''));
+    const harga = parseNominalPembelian(semuaHarga[i].value);
     if (!isNaN(harga)) {
       sum += harga;
     }
   }
-  document.getElementById('total-harga').value = sum.toLocaleString();
+  var totalEl = document.getElementById('total-harga');
+  if (totalEl) totalEl.value = formatNominalPembelian(sum);
   totalPembayaran();
 }
 
@@ -114,21 +128,20 @@ semuaHargaElements.forEach(function (element) {
 
 
 function totalPembayaran() {
-  var total = 0
-  var inputTerbayar = document.getElementById('input_bayar')
-  var inputTotal = parseFloat(document.getElementById('total-harga').value.replace(/,/g, ''))
-  var inputTerbayarFormatted = parseFloat(inputTerbayar.value.replace(/,/g, ''))
-  var sisaPembayaran = document.getElementById('sisa_bayar')
-  if (!isNaN(inputTerbayarFormatted)) {
-    total = inputTotal - inputTerbayarFormatted
-    sisaPembayaran.value = total.toLocaleString()
-  }
-  else {
-    inputTerbayar.value = total.toLocaleString()
-    sisaPembayaran.value = total.toLocaleString()
-  }
+  var inputTerbayar = document.getElementById('input_bayar');
+  var totalHargaEl = document.getElementById('total-harga');
+  var sisaPembayaran = document.getElementById('sisa_bayar');
+  if (!totalHargaEl || !sisaPembayaran) return;
+
+  var inputTotal = parseNominalPembelian(totalHargaEl.value);
+  var inputTerbayarVal = inputTerbayar ? parseNominalPembelian(inputTerbayar.value) : 0;
+  var sisa = Math.max(0, inputTotal - inputTerbayarVal);
+  sisaPembayaran.value = formatNominalPembelian(sisa);
 }
-document.getElementById('input_bayar').addEventListener('change', totalPembayaran);
+if (document.getElementById('input_bayar')) {
+  document.getElementById('input_bayar').addEventListener('input', totalPembayaran);
+  document.getElementById('input_bayar').addEventListener('change', totalPembayaran);
+}
 remove();
 
 // Batas

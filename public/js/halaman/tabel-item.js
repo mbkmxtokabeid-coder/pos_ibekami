@@ -11,17 +11,18 @@ function formatNominal(val) {
 }
 
 function autoCalc(v) {
-  var row = v.closest('tr');
-  var index = Array.from(row.parentNode.children).indexOf(row) + 1;
+  if (!v) return;
+  var row = v.closest('tr.product') || v.closest('tr');
+  if (!row) return;
 
-  var hargaElem = document.getElementById('productRate-' + index);
+  var hargaElem = row.querySelector('.product-price') || row.querySelector('[id^="productRate-"]');
   var unformattedHarga = hargaElem ? parseNominal(hargaElem.value) : 0;
-  var qtyElem = document.getElementById('product-qty-' + index);
+  var qtyElem = row.querySelector('[id^="product-qty-"]') || row.querySelector('input[name^="qty"]');
   var qty = qtyElem ? (parseFloat(qtyElem.value) || 0) : 0;
 
   if (!isNaN(unformattedHarga) && !isNaN(qty)) {
     var jumlah = Math.round(unformattedHarga * qty);
-    var productPriceElem = document.getElementById('productPrice-' + index);
+    var productPriceElem = row.querySelector('.product-line-price') || row.querySelector('[id^="productPrice-"]');
     if (productPriceElem) {
       productPriceElem.value = formatNominal(jumlah);
     }
@@ -278,6 +279,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 totalPembayaran();
 remove();
+
+// Event delegation untuk kalkulasi real-time (kecualikan material_qty)
+$(document).on('input change', '#newlink .product-price, #newlink input[name^="qty"], #newlink [id^="productRate-"], #newlink [id^="product-qty-"]', function () {
+  autoCalc(this);
+});
 
 // Event delegation untuk tombol Delete item
 $(document).on('click', '.product-removal a, .product-removal button', function (e) {

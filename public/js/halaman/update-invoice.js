@@ -11,12 +11,12 @@ function formatNominal(val) {
 
 function autoCalc(v) {
   if (!v) return;
-  var row = v.closest('tr');
+  var row = v.closest('tr.product') || v.closest('tr');
   if (!row) return;
 
   var hargaElem = row.querySelector('.product-price') || row.querySelector('[id^="productRate-"]');
   var unformattedHarga = hargaElem ? parseNominal(hargaElem.value) : 0;
-  var qtyElem = row.querySelector('input[name*="qty"]') || row.querySelector('[id^="product-qty-"]') || row.querySelector('input[type="number"]');
+  var qtyElem = row.querySelector('[id^="product-qty-"]') || row.querySelector('input[name^="qty"]');
   var qty = qtyElem ? (parseFloat(qtyElem.value) || 0) : 0;
 
   if (!isNaN(unformattedHarga) && !isNaN(qty)) {
@@ -289,8 +289,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// Real-time calculation on input/change
-$(document).on('input change', '#newlink .product-price, #newlink input[name*="qty"], #newlink [id^="productRate-"], #newlink [id^="product-qty-"]', function () {
+// Real-time calculation on input/change (exclude material_qty inputs!)
+$(document).on('input change', '#newlink .product-price, #newlink input[name^="qty"], #newlink [id^="productRate-"], #newlink [id^="product-qty-"]', function () {
   autoCalc(this);
 });
 
