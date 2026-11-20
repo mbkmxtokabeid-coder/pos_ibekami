@@ -157,6 +157,28 @@ body::-webkit-scrollbar,
     padding: 6px !important;
     z-index: 99999 !important;
 }
+.choices.is-open {
+    position: relative !important;
+    z-index: 9999 !important;
+}
+.choices.is-flipped .choices__list--dropdown,
+.choices.is-flipped .choices__list[aria-expanded] {
+    top: 100% !important;
+    bottom: auto !important;
+    margin-top: 4px !important;
+    margin-bottom: 0 !important;
+}
+.choices__list--dropdown .choices__list,
+.choices__list[aria-expanded] .choices__list {
+    max-height: 260px !important;
+    overflow-y: auto !important;
+}
+.table-responsive:has(.choices.is-open),
+.inv-main-card:has(.choices.is-open),
+.card:has(.choices.is-open),
+.card-body:has(.choices.is-open) {
+    overflow: visible !important;
+}
 .choices__list--dropdown .choices__input {
     background: #14100D !important;
     border: 1px solid rgba(255, 255, 255, 0.14) !important;
@@ -1947,13 +1969,13 @@ body.theme-light .btn-batal-custom:hover {
                             <table class="table invoice-table align-middle inv-dark-table mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width: 45px;" class="text-center">#</th>
-                                        <th style="min-width: 420px;">ITEM <span class="inv-required-mark">*</span></th>
-                                        <th style="width: 120px;">SATUAN <span class="inv-required-mark">*</span></th>
-                                        <th style="width: 150px;" class="col-header-harga">HARGA (Rp) <span class="inv-required-mark">*</span></th>
-                                        <th style="width: 110px;" class="text-center">QUANTITY <span class="inv-required-mark">*</span></th>
-                                        <th style="width: 160px;" class="col-header-jumlah-harga text-end">JUMLAH HARGA</th>
-                                        <th style="width: 90px;" class="text-center"></th>
+                                        <th style="width: 40px;" class="text-center">#</th>
+                                        <th style="min-width: 280px;">ITEM <span class="inv-required-mark">*</span></th>
+                                        <th style="width: 100px;">SATUAN <span class="inv-required-mark">*</span></th>
+                                        <th style="width: 130px;" class="col-header-harga">HARGA (Rp) <span class="inv-required-mark">*</span></th>
+                                        <th style="width: 88px;" class="text-center">QUANTITY <span class="inv-required-mark">*</span></th>
+                                        <th style="width: 135px;" class="col-header-jumlah-harga text-end">JUMLAH HARGA</th>
+                                        <th style="width: 82px;" class="text-center"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="newlink">
@@ -2296,6 +2318,7 @@ body.theme-light .btn-batal-custom:hover {
 
 <script src="{{asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
 <script src="{{asset('js/halaman/tabel-item.js')}}?v={{ filemtime(public_path('js/halaman/tabel-item.js')) }}"></script>
+<script src="{{asset('js/halaman/tabel-item.js')}}?v={{ file_exists(public_path('js/halaman/tabel-item.js')) ? filemtime(public_path('js/halaman/tabel-item.js')) : '20261119' }}"></script>
 <script src="{{asset('js/halaman/invoice.js')}}"></script>
 <script src="{{asset('js/halaman/draft-invoice-ibekami.js')}}"></script>
 
@@ -2445,6 +2468,19 @@ body.theme-light .btn-batal-custom:hover {
             var jlhEl = tr.querySelector(`[name="jlh_hrg[${currentIdx}]"]`);
             if (jlhEl) {
                 jlhEl.value = '0';
+            }
+        }
+
+        if (typeof Choices !== 'undefined') {
+            var newProductSelect = document.getElementById(`productName-${nextNum}`);
+            if (newProductSelect) {
+                new Choices(newProductSelect, {
+                    searchEnabled: true,
+                    shouldSort: true,
+                    searchResultLimit: 50,
+                    position: 'bottom',
+                    fuseOptions: { threshold: 0.35, ignoreLocation: true }
+                });
             }
         }
 

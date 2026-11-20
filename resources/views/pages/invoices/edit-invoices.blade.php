@@ -184,6 +184,27 @@
       color: #78716C !important;
       opacity: 1 !important;
   }
+  .choices.is-open {
+      position: relative !important;
+      z-index: 9999 !important;
+  }
+  .choices.is-flipped .choices__list--dropdown,
+  .choices.is-flipped .choices__list[aria-expanded] {
+      top: 100% !important;
+      bottom: auto !important;
+      margin-top: 4px !important;
+      margin-bottom: 0 !important;
+  }
+  .choices__list--dropdown .choices__list,
+  .choices__list[aria-expanded] .choices__list {
+      max-height: 260px !important;
+      overflow-y: auto !important;
+  }
+  .table-responsive:has(.choices.is-open),
+  .card:has(.choices.is-open),
+  .card-body:has(.choices.is-open) {
+      overflow: visible !important;
+  }
 
   /* Choices.js Light Mode */
   body.theme-light .choices__inner {
@@ -1112,6 +1133,7 @@
 <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
 <script src="{{asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
 <script src="{{asset('js/halaman/update-invoice.js')}}?v={{ filemtime(public_path('js/halaman/update-invoice.js')) }}"></script>
+<script src="{{asset('js/halaman/update-invoice.js')}}?v={{ file_exists(public_path('js/halaman/update-invoice.js')) ? filemtime(public_path('js/halaman/update-invoice.js')) : '20261119' }}"></script>
 <script src="{{asset('js/halaman/invoice.js')}}"></script>
 <script src="{{asset('js/halaman/draft-invoice-ibekami.js')}}"></script>
 
@@ -1389,6 +1411,20 @@
 
         tr.innerHTML = template;
         document.getElementById("newlink").appendChild(tr);
+
+        // Init Choices.js untuk dropdown item yang baru
+        if (typeof Choices !== 'undefined') {
+            var newProductSelect = document.getElementById(`productName-${count}`);
+            if (newProductSelect) {
+                new Choices(newProductSelect, {
+                    searchEnabled: true,
+                    shouldSort: true,
+                    searchResultLimit: 50,
+                    position: 'bottom',
+                    fuseOptions: { threshold: 0.35, ignoreLocation: true }
+                });
+            }
+        }
 
         // Init Cleave.js untuk input harga yang baru
         if (typeof Cleave !== 'undefined') {

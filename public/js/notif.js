@@ -13,6 +13,7 @@ const firebaseConfig = {
 
 function initFirebaseNotif() {
   if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
 
   try {
     const app = initializeApp(firebaseConfig);
@@ -22,15 +23,13 @@ function initFirebaseNotif() {
       .then((currentToken) => {
         if (currentToken) {
           storeToken(currentToken);
-        } else if (Notification.permission !== 'denied') {
-          reqPermission();
         }
       })
-      .catch((err) => {
-        console.warn('FCM token retrieval skipped or failed:', err);
+      .catch(() => {
+        // Silently ignore FCM token errors when browser/network blocks push messaging
       });
   } catch (e) {
-    console.warn('Firebase init error:', e);
+    // Silently ignore Firebase initialization errors
   }
 }
 
