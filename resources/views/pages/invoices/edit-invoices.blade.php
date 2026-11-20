@@ -1132,8 +1132,7 @@
 <script src="{{asset('libs/choices.js/public/assets/scripts/choices.min.js')}}"></script>
 <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
 <script src="{{asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
-<script src="{{asset('js/halaman/update-invoice.js')}}?v={{ filemtime(public_path('js/halaman/update-invoice.js')) }}"></script>
-<script src="{{asset('js/halaman/update-invoice.js')}}?v={{ file_exists(public_path('js/halaman/update-invoice.js')) ? filemtime(public_path('js/halaman/update-invoice.js')) : '20261119' }}"></script>
+<script src="{{asset('js/halaman/update-invoice.js')}}?v=20261120"></script>
 <script src="{{asset('js/halaman/invoice.js')}}"></script>
 <script src="{{asset('js/halaman/draft-invoice-ibekami.js')}}"></script>
 

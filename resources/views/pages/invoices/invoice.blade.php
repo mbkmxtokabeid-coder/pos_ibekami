@@ -2317,8 +2317,7 @@ body.theme-light .btn-batal-custom:hover {
 <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
 
 <script src="{{asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
-<script src="{{asset('js/halaman/tabel-item.js')}}?v={{ filemtime(public_path('js/halaman/tabel-item.js')) }}"></script>
-<script src="{{asset('js/halaman/tabel-item.js')}}?v={{ file_exists(public_path('js/halaman/tabel-item.js')) ? filemtime(public_path('js/halaman/tabel-item.js')) : '20261119' }}"></script>
+<script src="{{asset('js/halaman/tabel-item.js')}}?v=20261120"></script>
 <script src="{{asset('js/halaman/invoice.js')}}"></script>
 <script src="{{asset('js/halaman/draft-invoice-ibekami.js')}}"></script>
 
