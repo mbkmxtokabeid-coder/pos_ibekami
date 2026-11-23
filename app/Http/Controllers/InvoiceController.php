@@ -15,7 +15,9 @@ use Illuminate\Support\Str;
 // use App\Models\Perusahaan;
 use App\Models\Order;
 use App\Models\Penjualan;
+use App\Models\ActivityLog;
 use App\Models\InvoiceUpdateLog;
+use App\Services\ActivityLogger;
 use App\Models\PenjualanBarang;
 use App\Models\Spk;
 use App\Models\User;
@@ -606,10 +608,10 @@ class InvoiceController extends Controller
             $waLinkDelete1 = '#';
             $waLinkDelete2 = '#';
             if ($isAdmin) {
-                $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}"));
+                $msg = urlencode("Halo, saya ingin meminta approval untuk membuka akses invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman approval:\n" . url("/invoice-approval/{$inv->id}?action=unlock"));
                 $msgLunas = urlencode("Halo, saya ingin Request perubahan status pelunasan untuk invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon untuk segera ditinjau 🙏 \n\nKlik link berikut untuk membuka halaman ubah status pelunasan:\n" . url("/invoice-pelunasan/{$inv->id}"));
-                $msgBatal = urlencode("Halo Owner, saya meminta persetujuan untuk membatalkan invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
-                $msgDelete = urlencode("Halo Owner, saya meminta persetujuan untuk MENGHAPUS invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}"));
+                $msgBatal = urlencode("Halo Owner, saya meminta persetujuan untuk membatalkan invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}?action=batal"));
+                $msgDelete = urlencode("Halo Owner, saya meminta persetujuan untuk MENGHAPUS invoice *#{$inv->nomor_invoice}* atas nama *{$inv->customer}*. Mohon ditinjau dan diproses 🙏\n\nBuka invoice: " . url("/invoice-approval/{$inv->id}?action=delete"));
                 $waLink = "https://wa.me/{$waNumber}?text={$msg}";
                 $waLink2 = "https://wa.me/{$waNumber2}?text={$msg}";
                 $waLinkLunas1 = "https://wa.me/{$waNumberLunas1}?text={$msgLunas}";
@@ -628,12 +630,12 @@ class InvoiceController extends Controller
             $htmlAksi .= '<ul class="dropdown-menu dropdown-menu-end shadow-lg tokabe-action-menu">';
             
             // Grup 1: Cetak & Dokumen
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (ASLI)</a></li>';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (COPY)</a></li>';
-            $htmlAksi .= '<li><a class="dropdown-item" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download me-2"></i>Download Invoice</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item dropdown-item-cetak-asli" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (ASLI)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item dropdown-item-cetak-copy" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (COPY)</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item dropdown-item-download" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download me-2"></i>Download Invoice</a></li>';
 
             if (!empty($no_hp_cust)) {
-                $htmlAksi .= '<li><a class="dropdown-item" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-wa" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</a></li>';
             }
 
             // Divider Grup 1 -> Grup 2
@@ -642,37 +644,37 @@ class InvoiceController extends Controller
             // Grup 2: Manajemen & Operasional
             if ($isOwner) {
                 if ($inv->approval === 'Unlock') {
-                    $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-lock me-2"></i>Lock Invoice</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item dropdown-item-unlock" href="' . url('ubah-status-lock/' . $inv->id) . '"><i class="las la-lock me-2"></i>Lock Invoice</a></li>';
                 } else {
-                    $htmlAksi .= '<li><a class="dropdown-item" href="' . url('ubah-status-unlock/' . $inv->id) . '"><i class="las la-lock-open me-2"></i>Unlock Invoice</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item dropdown-item-unlock" href="' . url('ubah-status-unlock/' . $inv->id) . '"><i class="las la-lock-open me-2"></i>Unlock Invoice</a></li>';
                 }
             }
 
             if ($isAdmin && $inv->approval !== 'Unlock') {
-                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLink . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Unlock (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLink2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Unlock (Owner 2)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-unlock fw-semibold" href="' . $waLink . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Unlock (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-unlock fw-semibold" href="' . $waLink2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Unlock (Owner 2)</a></li>';
             }
 
-            $htmlAksi .= '<li><a class="dropdown-item btn-buat-spk" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#buatSpkModal"><i class="las la-clipboard-list me-2"></i>Buat SPK Baru</a></li>';
+            $htmlAksi .= '<li><a class="dropdown-item dropdown-item-spk btn-buat-spk" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#buatSpkModal"><i class="las la-clipboard-list me-2"></i>Buat SPK Baru</a></li>';
 
             if ($isAdmin && $inv->status !== 'Lunas') {
-                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkLunas1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Pelunasan (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Pelunasan (Owner 2)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-lunas fw-semibold" href="' . $waLinkLunas1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Pelunasan (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-lunas fw-semibold" href="' . $waLinkLunas2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Pelunasan (Owner 2)</a></li>';
             }
 
             $canManage = !$isAdmin || $inv->approval === 'Unlock';
             if ($canManage) {
-                $htmlAksi .= '<li><a class="dropdown-item" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen me-2"></i>Edit Invoice</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-history me-2"></i>Riwayat Log</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-download" href="' . url('editInvoice/' . $inv->id . '/edit') . '"><i class="las la-pen me-2"></i>Edit Invoice</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-cetak-copy btn-update-log" href="#" data-id="' . $inv->id . '" data-bs-toggle="modal" data-bs-target="#updateLogModal"><i class="las la-history me-2"></i>Riwayat Log</a></li>';
             }
 
             if ($isAdmin) {
                 if ($inv->status !== 'Batal') {
-                    $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkBatal1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Batal (Owner 1)</a></li>';
-                    $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkBatal2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Batal (Owner 2)</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item dropdown-item-batal fw-semibold" href="' . $waLinkBatal1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Batal (Owner 1)</a></li>';
+                    $htmlAksi .= '<li><a class="dropdown-item dropdown-item-batal fw-semibold" href="' . $waLinkBatal2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Batal (Owner 2)</a></li>';
                 }
-                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkDelete1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Delete (Owner 1)</a></li>';
-                $htmlAksi .= '<li><a class="dropdown-item fw-semibold" href="' . $waLinkDelete2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Delete (Owner 2)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-hapus fw-semibold" href="' . $waLinkDelete1 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Delete (Owner 1)</a></li>';
+                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-hapus fw-semibold" href="' . $waLinkDelete2 . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Request Delete (Owner 2)</a></li>';
             }
 
             // Divider Grup 2 -> Grup 3
@@ -1324,6 +1326,21 @@ class InvoiceController extends Controller
         }
         
         $toko = "Ibekami.id";
+
+        if (Auth::check()) {
+            $logAction = isset($type) ? 'print' : 'download';
+            $logLabel = isset($type) ? ('Mencetak Invoice #' . $penjualan->nomor_invoice . ' (' . strtoupper($type) . ')') : ('Mengunduh Invoice #' . $penjualan->nomor_invoice);
+            ActivityLogger::log(
+                'invoice',
+                $logAction,
+                $logLabel,
+                $penjualan,
+                null,
+                isset($type) ? ['type' => strtoupper($type)] : null,
+                'info',
+                'Invoice #' . $penjualan->nomor_invoice
+            );
+        }
         
 
         foreach ($penjualan_barang as $item) {
@@ -1399,6 +1416,21 @@ class InvoiceController extends Controller
             $jumlahHarga[] = number_format($item->jumlah_harga, 0, ',', '.');
         }
         $toko = "Ibekami.id";
+
+        if (Auth::check()) {
+            $logAction = isset($type) ? 'print' : 'download';
+            $logLabel = isset($type) ? ('Mencetak Invoice #' . $penjualan->nomor_invoice . ' (' . strtoupper($type) . ')') : ('Mengunduh Invoice #' . $penjualan->nomor_invoice);
+            ActivityLogger::log(
+                'invoice',
+                $logAction,
+                $logLabel,
+                $penjualan,
+                null,
+                isset($type) ? ['type' => strtoupper($type)] : null,
+                'info',
+                'Invoice #' . $penjualan->nomor_invoice
+            );
+        }
         return view('pages.invoices.download', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod','totalHarga', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko'));
     }
     
@@ -1474,6 +1506,21 @@ class InvoiceController extends Controller
         }
         
         $toko = "Ibekami.id";
+
+        if (Auth::check()) {
+            $logAction = isset($type) ? 'print' : 'download';
+            $logLabel = isset($type) ? ('Mencetak Invoice #' . $penjualan->nomor_invoice . ' (' . strtoupper($type) . ')') : ('Mengunduh Invoice #' . $penjualan->nomor_invoice);
+            ActivityLogger::log(
+                'invoice',
+                $logAction,
+                $logLabel,
+                $penjualan,
+                null,
+                isset($type) ? ['type' => strtoupper($type)] : null,
+                'info',
+                'Invoice #' . $penjualan->nomor_invoice
+            );
+        }
         return view('pages.invoices.public-download-view', compact('invoice', 'penjualan', 'barang', 'penjualan_barang', 'hargaMod', 'jumlahHarga', 'norek', 'totHargaMod','totalHarga', 'dp', 'biayaLain', 'sisaBayarMod', 'formatTanggal', 'admin', 'persen','namaInv','toko'));
     }
     
@@ -1585,20 +1632,34 @@ class InvoiceController extends Controller
             Alert::error('Data tidak ditemukan');
             return redirect()->back();
         }
-        $inv->status = 'Lunas';
-        $inv->sisa_pembayaran = 0;
-        if (empty($inv->tanda_tangan) && $inv->admin) {
-            $creatorAdmin = User::find($inv->admin);
-            if ($creatorAdmin && $creatorAdmin->tanda_tangan) {
-                $inv->tanda_tangan = $creatorAdmin->tanda_tangan;
-            } elseif ($inv->admin == 8) {
-                $inv->tanda_tangan = 'ttd_namira.png';
+        $oldStatus = $inv->status;
+        $oldSisa = $inv->sisa_pembayaran;
+        ActivityLogger::withoutModelLogging(function () use ($inv) {
+            $inv->status = 'Lunas';
+            $inv->sisa_pembayaran = 0;
+            if (empty($inv->tanda_tangan) && $inv->admin) {
+                $creatorAdmin = User::find($inv->admin);
+                if ($creatorAdmin && $creatorAdmin->tanda_tangan) {
+                    $inv->tanda_tangan = $creatorAdmin->tanda_tangan;
+                } elseif ($inv->admin == 8) {
+                    $inv->tanda_tangan = 'ttd_namira.png';
+                }
             }
-        }
-        $inv->save();
+            $inv->save();
+        });
         InvoiceUpdateLog::create([
             'invoice_id' => $inv->id,
         ]);
+        ActivityLogger::log(
+            'invoice',
+            'mark_lunas',
+            "Menandai Invoice #{$inv->nomor_invoice} ({$inv->customer}) sebagai Lunas",
+            $inv,
+            ['status' => $oldStatus, 'sisa_pembayaran' => $oldSisa],
+            ['status' => 'Lunas', 'sisa_pembayaran' => 0],
+            'critical',
+            'Invoice #' . $inv->nomor_invoice
+        );
         Alert::success('Invoice Sudah Lunas');
         return redirect()->back();
     }
@@ -1615,9 +1676,22 @@ class InvoiceController extends Controller
             Alert::error('Data tidak ditemukan');
             return redirect()->back();
         }
-        $inv->approval = 'Unlock';
-        $inv->approved_at = now();
-        $inv->save();
+        $oldApproval = $inv->approval;
+        ActivityLogger::withoutModelLogging(function () use ($inv) {
+            $inv->approval = 'Unlock';
+            $inv->approved_at = now();
+            $inv->save();
+        });
+        ActivityLogger::log(
+            'invoice',
+            'approve_unlock',
+            "Menyetujui & membuka kunci (Unlock 30 menit) Invoice #{$inv->nomor_invoice}",
+            $inv,
+            ['approval' => $oldApproval],
+            ['approval' => 'Unlock'],
+            'warning',
+            'Invoice #' . $inv->nomor_invoice
+        );
         
         Alert::success('Invoice Sudah di-Unlock', 'Akses invoice #' . $inv->nomor_invoice . ' berhasil dibuka selama 30 menit. Setelah 30 menit, invoice akan otomatis terkunci kembali.');
         if (request()->headers->get('referer') && str_contains(request()->headers->get('referer'), 'invoice-approval')) {
@@ -1638,33 +1712,47 @@ class InvoiceController extends Controller
             Alert::error('Data tidak ditemukan');
             return redirect()->back();
         }
-        $inv->approval = 'Lock';
-        $inv->approved_at = null;
-        $inv->save();
+        $oldApproval = $inv->approval;
+        ActivityLogger::withoutModelLogging(function () use ($inv) {
+            $inv->approval = 'Lock';
+            $inv->approved_at = null;
+            $inv->save();
+        });
+        ActivityLogger::log(
+            'invoice',
+            'lock',
+            "Mengunci kembali (Lock) Invoice #{$inv->nomor_invoice}",
+            $inv,
+            ['approval' => $oldApproval],
+            ['approval' => 'Lock'],
+            'info',
+            'Invoice #' . $inv->nomor_invoice
+        );
         
         Alert::success('Invoice Sudah di-Lock');
         return redirect()->back();
     }
  
-    public function approvalPage($id)
+    public function approvalPage(Request $request, $id)
 {
     $invoice = Penjualan::where('id', $id)->firstOrFail();
     $penjualan_barang = PenjualanBarang::where('penjualan_id', $id)->get();
-    
-    $invoice->formatted_total_pembayaran = number_format($invoice->total_pembayaran, 0, ',', ',');
+
+    $invoice->formatted_total_pembayaran = number_format($invoice->total_pembayaran, 0, ',', '.');
     $barang = [];
     $hargaMod = [];
     $jumlahHarga = [];
-     foreach ($penjualan_barang as $item) {
-            $barangItem = Barang::where('id', $item->barang_id)->get();
-            $barang[] = $barangItem;
-            $hargaMod[] = number_format($item->hargaBarang, 0, ',', '.');
-            $jumlahHarga[] = number_format($item->jumlah_harga, 0, ',', '.');
-        }
+    foreach ($penjualan_barang as $item) {
+        $barangItem = Barang::where('id', $item->barang_id)->get();
+        $barang[] = $barangItem;
+        $hargaMod[] = number_format($item->hargaBarang, 0, ',', '.');
+        $jumlahHarga[] = number_format($item->jumlah_harga, 0, ',', '.');
+    }
 
+    $rawAction = strtolower(trim((string) $request->query('action', '')));
+    $requestedAction = in_array($rawAction, ['unlock', 'delete', 'batal'], true) ? $rawAction : 'all';
 
-
-    return view('pages.invoices.approval', compact('invoice','penjualan_barang','barang','hargaMod','jumlahHarga'));
+    return view('pages.invoices.approval', compact('invoice', 'penjualan_barang', 'barang', 'hargaMod', 'jumlahHarga', 'requestedAction'));
 }
     public function pelunasanPage($id)
 {
@@ -1701,19 +1789,32 @@ class InvoiceController extends Controller
                 return redirect()->back();
             }
 
-            DB::transaction(function () use ($invoice, $request) {
+            $oldStatus = $invoice->status;
+            DB::transaction(function () use ($invoice, $request, $oldStatus) {
                 if ($invoice->status !== 'Batal') {
                     $this->restoreInvoiceStock($invoice);
                 }
-                $invoice->status = 'Batal';
-                if ($request->has('alasan_batal') && !empty($request->alasan_batal)) {
-                    $invoice->alasan_batal = $request->alasan_batal; // Simpan alasan dari SweetAlert
-                }
-                $invoice->save();
-                
+                ActivityLogger::withoutModelLogging(function () use ($invoice, $request) {
+                    $invoice->status = 'Batal';
+                    if ($request->has('alasan_batal') && !empty($request->alasan_batal)) {
+                        $invoice->alasan_batal = $request->alasan_batal; // Simpan alasan dari SweetAlert
+                    }
+                    $invoice->save();
+                });
+
                 InvoiceUpdateLog::create([
                     'invoice_id' => $invoice->id,
                 ]);
+                ActivityLogger::log(
+                    'invoice',
+                    'cancel',
+                    "Membatalkan Invoice #{$invoice->nomor_invoice}" . (!empty($invoice->alasan_batal) ? " (Alasan: {$invoice->alasan_batal})" : ''),
+                    $invoice,
+                    ['status' => $oldStatus],
+                    ['status' => 'Batal', 'alasan_batal' => $invoice->alasan_batal],
+                    'critical',
+                    'Invoice #' . $invoice->nomor_invoice
+                );
             });
 
             Alert::warning('Invoice Dibatalkan', 'Invoice #' . $invoice->nomor_invoice . ' berhasil dibatalkan dan stok dikembalikan.');
@@ -1770,10 +1871,27 @@ class InvoiceController extends Controller
             InvoiceUpdateLog::create([
                 'invoice_id' => $invoice->id,
             ]);
+            ActivityLogger::log(
+                'invoice',
+                'delete',
+                "Menghapus Invoice #{$invoice->nomor_invoice} ({$invoice->customer})" . ($request->filled('alasan_hapus') ? " (Alasan: {$request->input('alasan_hapus')})" : ''),
+                $invoice,
+                [
+                    'nomor_invoice' => $invoice->nomor_invoice,
+                    'customer' => $invoice->customer,
+                    'total_pembayaran' => $invoice->total_pembayaran,
+                    'status' => $invoice->status,
+                ],
+                ['alasan_hapus' => $request->input('alasan_hapus')],
+                'critical',
+                'Invoice #' . $invoice->nomor_invoice
+            );
 
             // 5. Soft delete detail barang dan invoice utama
-            $invoice->penjualanBarang()->delete();
-            $invoice->delete();
+            ActivityLogger::withoutModelLogging(function () use ($invoice) {
+                $invoice->penjualanBarang()->delete();
+                $invoice->delete();
+            });
         });
 
         Alert::success('Berhasil', 'Invoice #' . $invoice->nomor_invoice . ' berhasil dihapus dan stok barang/material telah dikembalikan.');
@@ -1784,14 +1902,43 @@ class InvoiceController extends Controller
 {
     $penjualan = Penjualan::with('InvoiceUpdateLog')->findOrFail($id);
 
-    return response()->json([
-        'created_at' => $penjualan->created_at->format('d-m-Y H:i'), 
-        'logs' => $penjualan->InvoiceUpdateLog->map(function($log) {
+    $activityLogs = ActivityLog::visibleTo(auth()->user())
+        ->where('subject_type', Penjualan::class)
+        ->where('subject_id', $penjualan->id)
+        ->orderByDesc('created_at')
+        ->limit(50)
+        ->get()
+        ->map(function ($log) {
             return [
-                'tanggal' => $log->created_at->format('d-m-Y H:i'),
-                'keterangan' => $log->keterangan,
+                'tanggal' => $log->created_at ? $log->created_at->format('d-m-Y H:i') : '-',
+                'user_name' => $log->user_name,
+                'user_role' => $log->user_role,
+                'action' => $log->action,
+                'severity' => $log->severity,
+                'keterangan' => $log->description,
+                'old_values' => $log->old_values,
+                'new_values' => $log->new_values,
             ];
-        })
+        })->values();
+
+    if ($activityLogs->isEmpty()) {
+        $activityLogs = $penjualan->InvoiceUpdateLog->sortByDesc('created_at')->map(function ($log) {
+            return [
+                'tanggal' => $log->created_at ? $log->created_at->format('d-m-Y H:i') : '-',
+                'user_name' => 'Sistem (Log Lama)',
+                'user_role' => '-',
+                'action' => 'update',
+                'severity' => 'info',
+                'keterangan' => $log->keterangan ?: 'Invoice diperbarui',
+                'old_values' => null,
+                'new_values' => null,
+            ];
+        })->values();
+    }
+
+    return response()->json([
+        'created_at' => $penjualan->created_at ? $penjualan->created_at->format('d-m-Y H:i') : '-',
+        'logs' => $activityLogs,
     ]);
 }
 }

@@ -291,6 +291,14 @@
                     </a>
                 </li>
                 @endif
+
+                {{-- ===== LOG ACTIVITY (Semua Role — Cakupan dikontrol per Role) ===== --}}
+                <li class="nav-item mt-2">
+                    <a class="nav-link menu-link {{ (Request::is('activity-logs*') || Request::routeIs('activity-logs.*')) ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
+                        <span class="icon-box"><i class="ri-history-line menu-icon"></i></span>
+                        <span class="menu-text">Log Activity</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

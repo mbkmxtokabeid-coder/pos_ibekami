@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Spb extends Model
 {
+    use LogsActivity;
+
+    public function activityLogModule(): string
+    {
+        return 'spb';
+    }
+
     use HasFactory;
     protected $table = 'spb';
     protected $fillable = [

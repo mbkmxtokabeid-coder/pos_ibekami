@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Material extends Model
 {
+    use LogsActivity;
+
+    public function activityLogModule(): string
+    {
+        return 'material';
+    }
+
     use HasFactory;
     protected $table = "material";
     protected $guarded = [];

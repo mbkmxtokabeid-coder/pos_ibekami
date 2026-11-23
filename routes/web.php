@@ -288,6 +288,14 @@ Route::group(['middleware' => ['auth']], function () {
         });
         
         // ====================================================================
+        // ROUTE LOG ACTIVITY (Akses & Transparansi dikontrol server-side per Role)
+        // ====================================================================
+        Route::get('/activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('/activity-logs/data', [\App\Http\Controllers\ActivityLogController::class, 'data'])->name('activity-logs.data');
+        Route::get('/activity-logs/export/csv', [\App\Http\Controllers\ActivityLogController::class, 'exportCsv'])->middleware('role:Pemilik')->name('activity-logs.export');
+        Route::get('/activity-logs/{id}', [\App\Http\Controllers\ActivityLogController::class, 'show'])->whereNumber('id')->name('activity-logs.show');
+
+        // ====================================================================
         // ROUTE UMUM (PROFILE & JSON)
         // ====================================================================
         Route::get('/profile', [UserController::class, 'profiles'])->name('auth.profile');

@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Spj extends Model
 {
+    use LogsActivity;
+
+    public function activityLogModule(): string
+    {
+        return 'spj';
+    }
+
     protected $table = 'spj';
     protected $fillable = [
        'nomor_spj',

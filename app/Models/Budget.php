@@ -2,12 +2,21 @@
 
 namespace App\Models;
 
+
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Budget extends Model
 {
+    use LogsActivity;
+
+    public function activityLogModule(): string
+    {
+        return 'budget';
+    }
+
     use SoftDeletes;
     use HasFactory;
     protected $table = 'budget';

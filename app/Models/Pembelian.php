@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use App\Traits\LogsActivity;
 use App\Traits\UUIDAsPrimaryKey;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pembelian extends Model
 {
+    use LogsActivity;
+
+    public function activityLogModule(): string
+    {
+        return 'pembelian';
+    }
+
     use HasFactory, UUIDAsPrimaryKey;
     protected $table = 'pembelian';
     protected $fillable = [

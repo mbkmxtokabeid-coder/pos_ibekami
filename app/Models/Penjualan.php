@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +13,13 @@ use Illuminate\Support\Facades\Schema;
 
 class Penjualan extends Model
 {
+    use LogsActivity;
+
+    public function activityLogModule(): string
+    {
+        return 'invoice';
+    }
+
     use SoftDeletes;
     use HasFactory;
     protected $table = "penjualan";

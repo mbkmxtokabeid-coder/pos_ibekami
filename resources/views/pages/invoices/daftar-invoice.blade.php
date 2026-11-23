@@ -1071,6 +1071,69 @@ div.dataTables_processing {
     margin: 6px 4px !important;
     opacity: 1 !important;
 }
+.tokabe-action-menu .dropdown-item-cetak-asli,
+.tokabe-action-menu .dropdown-item-cetak-asli i {
+    color: #FB923C !important;
+}
+.tokabe-action-menu .dropdown-item-cetak-asli:hover,
+.tokabe-action-menu .dropdown-item-cetak-asli:hover i {
+    background: rgba(251, 146, 60, 0.14) !important;
+    color: #FDBA74 !important;
+}
+.tokabe-action-menu .dropdown-item-cetak-copy,
+.tokabe-action-menu .dropdown-item-cetak-copy i {
+    color: #A8A29E !important;
+}
+.tokabe-action-menu .dropdown-item-cetak-copy:hover,
+.tokabe-action-menu .dropdown-item-cetak-copy:hover i {
+    background: rgba(168, 162, 158, 0.14) !important;
+    color: #E7E5E4 !important;
+}
+.tokabe-action-menu .dropdown-item-download,
+.tokabe-action-menu .dropdown-item-download i {
+    color: #60A5FA !important;
+}
+.tokabe-action-menu .dropdown-item-download:hover,
+.tokabe-action-menu .dropdown-item-download:hover i {
+    background: rgba(96, 165, 250, 0.14) !important;
+    color: #93C5FD !important;
+}
+.tokabe-action-menu .dropdown-item-wa,
+.tokabe-action-menu .dropdown-item-wa i {
+    color: #4ADE80 !important;
+}
+.tokabe-action-menu .dropdown-item-wa:hover,
+.tokabe-action-menu .dropdown-item-wa:hover i {
+    background: rgba(74, 222, 128, 0.14) !important;
+    color: #86EFAC !important;
+}
+.tokabe-action-menu .dropdown-item-unlock,
+.tokabe-action-menu .dropdown-item-unlock i {
+    color: #A78BFA !important;
+}
+.tokabe-action-menu .dropdown-item-unlock:hover,
+.tokabe-action-menu .dropdown-item-unlock:hover i {
+    background: rgba(167, 139, 250, 0.14) !important;
+    color: #C4B5FD !important;
+}
+.tokabe-action-menu .dropdown-item-spk,
+.tokabe-action-menu .dropdown-item-spk i {
+    color: #2DD4BF !important;
+}
+.tokabe-action-menu .dropdown-item-spk:hover,
+.tokabe-action-menu .dropdown-item-spk:hover i {
+    background: rgba(45, 212, 191, 0.14) !important;
+    color: #5EEAD4 !important;
+}
+.tokabe-action-menu .dropdown-item-lunas,
+.tokabe-action-menu .dropdown-item-lunas i {
+    color: #34D399 !important;
+}
+.tokabe-action-menu .dropdown-item-lunas:hover,
+.tokabe-action-menu .dropdown-item-lunas:hover i {
+    background: rgba(52, 211, 153, 0.14) !important;
+    color: #6EE7B7 !important;
+}
 .tokabe-action-menu .dropdown-item-batal {
     color: #FBBF24 !important;
 }
@@ -1527,6 +1590,69 @@ body.theme-light .tokabe-action-menu .dropdown-item.active i {
 }
 body.theme-light .tokabe-action-menu .dropdown-divider {
     border-color: #E2E8F0 !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-asli,
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-asli i {
+    color: #EA580C !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-asli:hover,
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-asli:hover i {
+    background: #FFF7ED !important;
+    color: #C2410C !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-copy,
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-copy i {
+    color: #475569 !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-copy:hover,
+body.theme-light .tokabe-action-menu .dropdown-item-cetak-copy:hover i {
+    background: #F1F5F9 !important;
+    color: #1E293B !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-download,
+body.theme-light .tokabe-action-menu .dropdown-item-download i {
+    color: #2563EB !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-download:hover,
+body.theme-light .tokabe-action-menu .dropdown-item-download:hover i {
+    background: #EFF6FF !important;
+    color: #1D4ED8 !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-wa,
+body.theme-light .tokabe-action-menu .dropdown-item-wa i {
+    color: #16A34A !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-wa:hover,
+body.theme-light .tokabe-action-menu .dropdown-item-wa:hover i {
+    background: #F0FDF4 !important;
+    color: #15803D !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-unlock,
+body.theme-light .tokabe-action-menu .dropdown-item-unlock i {
+    color: #7C3AED !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-unlock:hover,
+body.theme-light .tokabe-action-menu .dropdown-item-unlock:hover i {
+    background: #F5F3FF !important;
+    color: #6D28D9 !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-spk,
+body.theme-light .tokabe-action-menu .dropdown-item-spk i {
+    color: #0D9488 !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-spk:hover,
+body.theme-light .tokabe-action-menu .dropdown-item-spk:hover i {
+    background: #F0FDFA !important;
+    color: #0F766E !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-lunas,
+body.theme-light .tokabe-action-menu .dropdown-item-lunas i {
+    color: #059669 !important;
+}
+body.theme-light .tokabe-action-menu .dropdown-item-lunas:hover,
+body.theme-light .tokabe-action-menu .dropdown-item-lunas:hover i {
+    background: #ECFDF5 !important;
+    color: #047857 !important;
 }
 body.theme-light .tokabe-action-menu .dropdown-item-batal {
     color: #D97706 !important;
@@ -2698,13 +2824,37 @@ body.theme-light .dataTables_paginate .paginate_button.disabled {
         $('#updateLogList').html('<li class="list-group-item bg-transparent text-muted">Memuat data log...</li>');
 
         $.ajax({
-            url: '/invoice/invoice/update-log/' + invoiceId,
+            url: '{{ url('/invoice/update-log') }}/' + invoiceId,
             method: 'GET',
             success: function (data) {
-                let html = `<li class="list-group-item bg-transparent" style="color: var(--ibk-text); border-color: var(--ibk-border-divider);">${data.created_at} - <strong style="color: var(--ibk-brand-text);">First Created</strong></li>`;
+                let html = `<li class="list-group-item bg-transparent" style="color: var(--ibk-text); border-color: var(--ibk-border-divider);"><span class="text-muted small">${data.created_at}</span> — <strong style="color: var(--ibk-brand-text);">Invoice Dibuat</strong></li>`;
                 if (data.logs && data.logs.length > 0) {
                     data.logs.forEach(function (log) {
-                        html += `<li class="list-group-item bg-transparent" style="color: var(--ibk-text); border-color: var(--ibk-border-divider);">${log.tanggal} - Invoice diperbarui oleh ${loggedInUser}</li>`;
+                        var badgeColor = log.severity === 'critical' ? '#EF4444' : (log.severity === 'warning' ? '#D97706' : '#0EA5E9');
+                        var diffHtml = '';
+                        if (log.old_values || log.new_values) {
+                            var keys = Array.from(new Set([
+                                ...Object.keys(log.old_values || {}),
+                                ...Object.keys(log.new_values || {})
+                            ]));
+                            if (keys.length > 0) {
+                                diffHtml += '<div class="mt-2 p-2 rounded small" style="background: rgba(148,163,184,0.08); border: 1px solid var(--ibk-border-divider);">';
+                                keys.slice(0, 6).forEach(function(k) {
+                                    var ov = log.old_values && log.old_values[k] !== undefined && log.old_values[k] !== null ? log.old_values[k] : '—';
+                                    var nv = log.new_values && log.new_values[k] !== undefined && log.new_values[k] !== null ? log.new_values[k] : '—';
+                                    diffHtml += `<div class="d-flex justify-content-between gap-2"><strong>${k}:</strong> <span><span class="text-muted text-decoration-line-through">${ov}</span> &rarr; <span style="color: var(--ibk-brand-text); font-weight:600;">${nv}</span></span></div>`;
+                                });
+                                diffHtml += '</div>';
+                            }
+                        }
+                        html += `<li class="list-group-item bg-transparent" style="color: var(--ibk-text); border-color: var(--ibk-border-divider);">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="small fw-semibold">${log.user_name || '-'} <span class="badge ms-1" style="background: ${badgeColor}22; color: ${badgeColor}; font-size:10px;">${log.user_role || '-'}</span></span>
+                                <span class="text-muted" style="font-size:11px;">${log.tanggal}</span>
+                            </div>
+                            <div class="small">${log.keterangan || 'Invoice diperbarui'}</div>
+                            ${diffHtml}
+                        </li>`;
                     });
                 }
                 $('#updateLogList').html(html);

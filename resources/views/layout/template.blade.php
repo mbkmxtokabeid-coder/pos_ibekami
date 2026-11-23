@@ -498,8 +498,63 @@
 
 
     /* =========================================================
-       HIDE DEFAULT NATIVE SCROLLBARS (CLEAN MODERN CANVAS)
+       GLOBAL DARK / LIGHT SCROLLBARS & COLOR-SCHEME (ALL PAGES)
        ========================================================= */
+    html:not(.theme-light) {
+        color-scheme: dark;
+    }
+    html.theme-light,
+    body.theme-light {
+        color-scheme: light;
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #3F3731 #161311;
+    }
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    *::-webkit-scrollbar-track {
+        background: #161311;
+        border-radius: 999px;
+    }
+    *::-webkit-scrollbar-thumb {
+        background: #3F3731;
+        border-radius: 999px;
+        border: 2px solid #161311;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+        background: #574C44;
+    }
+    *::-webkit-scrollbar-corner {
+        background: #161311;
+    }
+
+    body.theme-light *,
+    html.theme-light * {
+        scrollbar-color: #CBC5BC #F1EFEA;
+    }
+    body.theme-light *::-webkit-scrollbar-track,
+    html.theme-light *::-webkit-scrollbar-track {
+        background: #F1EFEA;
+    }
+    body.theme-light *::-webkit-scrollbar-thumb,
+    html.theme-light *::-webkit-scrollbar-thumb {
+        background: #CBC5BC;
+        border-color: #F1EFEA;
+    }
+    body.theme-light *::-webkit-scrollbar-thumb:hover,
+    html.theme-light *::-webkit-scrollbar-thumb:hover {
+        background: #A8A29E;
+    }
+    body.theme-light *::-webkit-scrollbar-corner,
+    html.theme-light *::-webkit-scrollbar-corner {
+        background: #F1EFEA;
+    }
+
+    /* HIDE OUTER CANVAS NATIVE SCROLLBARS */
     html,
     body,
     #layout-wrapper,
