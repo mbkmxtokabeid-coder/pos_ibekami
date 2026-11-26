@@ -1075,17 +1075,16 @@ body.theme-light .btn-batal-custom:hover {
     @endif
 
     function updateMaterialVisibility($select) {
-        var selectedBarangId = $select.val();
         var td = $select.closest('td');
         var materialContainers = td.find('.materials-container');
         var tambahBtn = td.find('.btn-tambah-material, .add-material');
-        var isNonMaterial = (isMaterialRequiredMap[selectedBarangId] == "1");
+        var isVendorLuar = ($('#lokasi_pengerjaan').val() === 'vendor');
 
-        if (isNonMaterial) {
-            materialContainers.slideUp(150);
-            tambahBtn.slideUp(150);
-            materialContainers.find('select.material-select').val('').removeClass('is-invalid');
-            materialContainers.find('input.material-panjang, input.material-lebar, input.material-qty').val('').removeClass('is-invalid');
+        if (isVendorLuar) {
+            materialContainers.hide();
+            tambahBtn.hide();
+            materialContainers.find('select.material-select').val('').removeAttr('required').removeClass('is-invalid');
+            materialContainers.find('input.material-panjang, input.material-lebar, input.material-qty').val('').removeAttr('required').removeClass('is-invalid');
         } else {
             materialContainers.slideDown(150);
             tambahBtn.slideDown(150);
@@ -1485,15 +1484,15 @@ body.theme-light .btn-batal-custom:hover {
                 qtyInput.removeClass('is-invalid');
             }
 
-            // Validasi Spesifikasi Material jika barang memerlukan material
-            var isNonMat = (typeof isMaterialRequiredMap !== 'undefined' && isMaterialRequiredMap[barangId] == "1");
-            if (!isNonMat) {
+            // Validasi Spesifikasi Material berdasarkan Lokasi Pengerjaan
+            var lokasiPengerjaan = $('#lokasi_pengerjaan').val() || 'internal';
+            if (lokasiPengerjaan === 'internal') {
                 var matContainer = row.find('.materials-container');
                 var matRows = matContainer.find('.material-row');
 
                 if (matRows.length === 0) {
                     itemValid = false;
-                    itemErrorMsg = 'Spesifikasi Material untuk item #' + itemNum + ' wajib diisi!';
+                    itemErrorMsg = 'Spesifikasi Material & Ukuran untuk item #' + itemNum + ' wajib diisi (Pengerjaan di Dalam Perusahaan)!';
                     firstInvalidEl = row.find('.btn-tambah-material');
                     return false;
                 }
@@ -1703,6 +1702,22 @@ body.theme-light .btn-batal-custom:hover {
         calcTotals();
     });
 
+    // Toggle Spesifikasi Material & Ukuran berdasarkan Lokasi Pengerjaan (Internal vs Vendor Luar)
+    window.syncLokasiPengerjaanUI = function() {
+        var lokasi = $('#lokasi_pengerjaan').val() || 'internal';
+        var hintEl = $('#lokasi-pengerjaan-hint');
+        if (lokasi === 'vendor') {
+            $('.materials-container, .btn-tambah-material, .add-material').hide();
+            $('.materials-container .material-select, .materials-container .material-panjang, .materials-container .material-lebar, .materials-container .material-qty').val('').removeAttr('required').removeClass('is-invalid');
+            hintEl.text('Vendor luar: input bahan/material & ukuran tidak wajib dan tidak akan ditampilkan pada hasil cetak invoice.');
+        } else {
+            $('.materials-container, .btn-tambah-material, .add-material').show();
+            hintEl.text('Pengerjaan internal: input bahan/material dan ukuran wajib diisi serta akan ditampilkan pada hasil cetak invoice.');
+        }
+    };
+    $('#lokasi_pengerjaan').on('change', window.syncLokasiPengerjaanUI);
+    window.syncLokasiPengerjaanUI();
+
     // Inisialisasi awal saat halaman dibuka
     var rawDp = $('#input-dp').val();
     if (rawDp && parseFloat(rawDp.toString().replace(/[.,]/g, '')) > 0) {
@@ -1891,6 +1906,22 @@ body.theme-light .btn-batal-custom:hover {
                                             @error('adm')
                                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
+                                        </div>
+                                    </div>
+
+                                    <!-- Lokasi Pengerjaan -->
+                                    <div class="row align-items-center mb-3">
+                                        <label for="lokasi_pengerjaan" class="col-sm-4 col-form-label inv-form-label">
+                                            Lokasi Pengerjaan <span class="inv-required-mark">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <select class="form-select inv-dark-control" id="lokasi_pengerjaan" name="lokasi_pengerjaan" required>
+                                                <option value="internal" {{ old('lokasi_pengerjaan', 'internal') === 'internal' ? 'selected' : '' }}>Dikerjakan di Dalam Perusahaan (Material &amp; Ukuran Wajib)</option>
+                                                <option value="vendor" {{ old('lokasi_pengerjaan') === 'vendor' ? 'selected' : '' }}>Dikerjakan Menggunakan Vendor Luar (Tanpa Bahan &amp; Ukuran)</option>
+                                            </select>
+                                            <small id="lokasi-pengerjaan-hint" class="text-muted d-block mt-1" style="font-size: 11.5px;">
+                                                Pengerjaan internal mewajibkan input bahan/material dan ukuran, serta akan ditampilkan pada cetak invoice.
+                                            </small>
                                         </div>
                                     </div>
 
@@ -2317,7 +2348,7 @@ body.theme-light .btn-batal-custom:hover {
 <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
 
 <script src="{{asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
-<script src="{{asset('js/halaman/tabel-item.js')}}?v=20261120"></script>
+<script src="{{asset('js/halaman/tabel-item.js')}}?v=20261125"></script>
 <script src="{{asset('js/halaman/invoice.js')}}"></script>
 <script src="{{asset('js/halaman/draft-invoice-ibekami.js')}}"></script>
 
@@ -2491,6 +2522,9 @@ body.theme-light .btn-batal-custom:hover {
         }
 
         window.resetRowNumbers();
+        if (typeof window.syncLokasiPengerjaanUI === 'function') {
+            window.syncLokasiPengerjaanUI();
+        }
     };
 
     function checkAdminSignature() {

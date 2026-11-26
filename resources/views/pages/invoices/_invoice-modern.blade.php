@@ -851,6 +851,7 @@
 <body>
 @php
   $isCopy = strtolower(trim($type ?? 'asli')) === 'copy';
+  $showMaterialCols = strtolower(trim((string) ($penjualan->lokasi_pengerjaan ?? 'internal'))) !== 'vendor';
   $norekRaw = $penjualan->norek_text ?? ($norek ?? 'BSI | A/N : Yusni Kurniasih | No. Rek : 2845999999');
   $norekParts = array_map('trim', explode('|', $norekRaw));
   $bankName = $norekParts[0] ?? 'BSI';
@@ -1002,7 +1003,7 @@
   <div class="inv-header">
     <div class="inv-brand-box">
       <img src="{{ asset('images/Ibekami.png') }}" alt="Ibekami" class="inv-brand-logo" onerror="this.src='{{ asset('images/Logo IBEKAMI.png') }}'">
-      <div class="inv-brand-text">IBEKAMI.ID</div>
+      <div class="inv-brand-text">IBEKAMI.COM</div>
     </div>
     <div class="inv-orange-banner">
       <h1>Invoice</h1>
@@ -1051,8 +1052,10 @@
           <th>No</th>
           <th>Item</th>
           <th>Deskripsi</th>
-          <th>Bahan</th>
-          <th>Ukuran</th>
+          @if($showMaterialCols)
+            <th>Bahan</th>
+            <th>Ukuran</th>
+          @endif
           <th class="col-center">Qty</th>
           <th class="col-num">Harga</th>
           <th class="col-num">Jumlah</th>
@@ -1070,17 +1073,19 @@
           <tr>
             <td>{{ $index + 1 }}</td>
             <td class="col-item">{{ $itemName }}</td>
-            <td>{{ $parsed['desc'] }}</td>
-            <td>
-              @foreach($parsed['bahanList'] as $bItem)
-                <div style="{{ !$loop->last ? 'margin-bottom: 3px;' : '' }}">{{ $bItem }}</div>
-              @endforeach
-            </td>
-            <td style="white-space: nowrap;">
-              @foreach($parsed['ukuranList'] as $uItem)
-                <div style="{{ !$loop->last ? 'margin-bottom: 3px;' : '' }}">{{ $uItem }}</div>
-              @endforeach
-            </td>
+            <td>{{ $showMaterialCols ? $parsed['desc'] : (trim((string) ($jual->deskripsi_item ?? '')) ?: '—') }}</td>
+            @if($showMaterialCols)
+              <td>
+                @foreach($parsed['bahanList'] as $bItem)
+                  <div style="{{ !$loop->last ? 'margin-bottom: 3px;' : '' }}">{{ $bItem }}</div>
+                @endforeach
+              </td>
+              <td style="white-space: nowrap;">
+                @foreach($parsed['ukuranList'] as $uItem)
+                  <div style="{{ !$loop->last ? 'margin-bottom: 3px;' : '' }}">{{ $uItem }}</div>
+                @endforeach
+              </td>
+            @endif
             <td class="col-center">{{ $jual->qty }} {{ $jual->satuan ?? '' }}</td>
             <td class="col-num">Rp {{ number_format($hargaNum, 0, ',', '.') }}</td>
             <td class="col-total">Rp {{ number_format($jumlahNum, 0, ',', '.') }}</td>

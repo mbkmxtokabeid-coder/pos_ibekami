@@ -33,6 +33,7 @@ class Penjualan extends Model
         'no_telepon',
         'admin',
         'order_by',
+        'lokasi_pengerjaan',
         'nama_sales',
         'tgl_selesai',
         'jumlah_item',

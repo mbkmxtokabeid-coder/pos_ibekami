@@ -747,6 +747,20 @@
 
                                       </div>
                                       {{-- End Admin --}}
+                                      {{-- Start Lokasi Pengerjaan --}}
+                                      <div class="row mb-3">
+                                       <div class="col-lg-5">
+                                          <label for="lokasi_pengerjaan" class="form-label col-form-label col-form-label-md">Lokasi Pengerjaan</label>
+                                       </div>
+                                       <div class="col-lg-7">
+                                        @php $currentLokasi = old('lokasi_pengerjaan', $inv->lokasi_pengerjaan ?? 'internal'); @endphp
+                                        <select class="form-select bg-light border-0" id="lokasi_pengerjaan" name="lokasi_pengerjaan" required>
+                                          <option value="internal" {{ $currentLokasi === 'internal' ? 'selected' : '' }}>Dikerjakan di Dalam Perusahaan (Material &amp; Ukuran Wajib)</option>
+                                          <option value="vendor" {{ $currentLokasi === 'vendor' ? 'selected' : '' }}>Dikerjakan Menggunakan Vendor Luar (Tanpa Bahan &amp; Ukuran)</option>
+                                        </select>
+                                       </div>
+                                      </div>
+                                      {{-- End Lokasi Pengerjaan --}}
                                       {{-- Start Order By --}}
                                       <div class="row mb-3">
                                        <div class="col-lg-5">
@@ -1132,7 +1146,7 @@
 <script src="{{asset('libs/choices.js/public/assets/scripts/choices.min.js')}}"></script>
 <script src="{{asset('libs/flatpickr/flatpickr.min.js')}}"></script>
 <script src="{{asset('vendor/jsvalidation/js/jsvalidation.js')}}"></script>
-<script src="{{asset('js/halaman/update-invoice.js')}}?v=20261120"></script>
+<script src="{{asset('js/halaman/update-invoice.js')}}?v=20261125"></script>
 <script src="{{asset('js/halaman/invoice.js')}}"></script>
 <script src="{{asset('js/halaman/draft-invoice-ibekami.js')}}"></script>
 
@@ -1227,17 +1241,16 @@
     @endif
 
     function updateMaterialVisibility($select) {
-        var selectedBarangId = $select.val();
         var td = $select.closest('td');
         var materialContainers = td.find('.materials-container, [class*="material-container-"], .material-row');
         var tambahBtn = td.find('.add-material, .btn-tambah-material');
-        var isNonMaterial = (isMaterialRequiredMap[selectedBarangId] == "1"); // ON = Non-Material
+        var isVendorLuar = ($('#lokasi_pengerjaan').val() === 'vendor');
 
-        if (isNonMaterial) {
+        if (isVendorLuar) {
             materialContainers.hide();
             tambahBtn.hide();
-            materialContainers.find('select.material-select').val('');
-            materialContainers.find('input.material-panjang, input.material-lebar, input.material-qty').val('');
+            materialContainers.find('select.material-select').val('').removeAttr('required');
+            materialContainers.find('input.material-panjang, input.material-lebar, input.material-qty').val('').removeAttr('required');
         } else {
             materialContainers.show();
             tambahBtn.show();
@@ -1432,7 +1445,21 @@
                 numeralThousandsGroupStyle: 'thousand'
             });
         }
+        if (typeof syncEditLokasiPengerjaan === 'function') {
+            syncEditLokasiPengerjaan();
+        }
     }
+
+    window.syncEditLokasiPengerjaan = function() {
+        var lokasi = $('#lokasi_pengerjaan').val() || 'internal';
+        if (lokasi === 'vendor') {
+            $('.materials-container, [class*="material-container-"], .add-material, .btn-tambah-material').hide();
+        } else {
+            $('.materials-container, [class*="material-container-"], .add-material, .btn-tambah-material').show();
+        }
+    };
+    $(document).on('change', '#lokasi_pengerjaan', window.syncEditLokasiPengerjaan);
+    $(document).ready(window.syncEditLokasiPengerjaan);
 
     document.addEventListener("DOMContentLoaded", function () {
         let dateField = document.getElementById("date-field");

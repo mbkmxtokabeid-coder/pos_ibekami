@@ -151,8 +151,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::delete('/delete-spb/{id}', [SpbController::class, 'destroySPB']);
             Route::get('/ubah-status/{id}', [SpbController::class, 'ubahStatus'])->name('spb.ubah-status');
 
-            // ROUTE SPK
-            Route::get('/daftar-spk', [SpkController::class, 'indexSPK'])->name('daftar-spk');
+            // ROUTE SPK (daftar-spk, lihat-spk, ubah-proses-spk aktif di grup karyawan di bawah)
             Route::get('/tambah-spk', [SpkController::class, 'addSPK']);
             Route::post('/store-spk', [SpkController::class, 'storeSPK']);
             Route::post('/invoice/store-spk', [SpkController::class, 'storeSPK']);
@@ -164,8 +163,6 @@ Route::group(['middleware' => ['auth']], function () {
             Route::delete('/invoice/delete-spk/{id}', [SpkController::class, 'destroySPK']);
             Route::get('/cetak-spk/{id}', [SpkController::class, 'cetakSPK']);
             Route::get('/ubah-status-spk/{id}', [SpkController::class, 'statusSPK']);
-            Route::get('/lihat-spk/{id}', [SpkController::class, 'lihatSPK']);
-            Route::get('/ubah-proses-spk/{id}', [SpkController::class, 'prosesSPK']);
 
             // ROUTE SPJ
             Route::get('/daftar-spj', [SpjController::class, 'index'])->name('spj.index');

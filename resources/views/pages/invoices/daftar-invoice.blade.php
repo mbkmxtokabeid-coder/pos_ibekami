@@ -1015,6 +1015,36 @@ div.dataTables_processing {
 }
 
 /* Action Dropdown Menu Popover */
+.btn-tokabe-wa-quick {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(22, 163, 74, 0.14);
+    border: 1px solid rgba(22, 163, 74, 0.30);
+    color: #22C55E;
+    font-size: 17px;
+    transition: all 0.15s ease;
+}
+.btn-tokabe-wa-quick:hover {
+    background: #16A34A;
+    border-color: #16A34A;
+    color: #FFFFFF;
+}
+body.theme-light .btn-tokabe-wa-quick {
+    background: #ECFDF5;
+    border-color: #BBF7D0;
+    color: #16A34A;
+}
+body.theme-light .btn-tokabe-wa-quick:hover {
+    background: #16A34A;
+    border-color: #16A34A;
+    color: #FFFFFF;
+}
+
 .tokabe-action-menu {
     background: #181411 !important; /* Solid opaque obsidian - prevents underlying table text bleed */
     border: 1px solid rgba(255, 255, 255, 0.14) !important;
@@ -1887,7 +1917,7 @@ body.theme-light .dataTables_paginate .paginate_button.disabled {
         <div class="ibk-header">
             <div class="ibk-page-title-box">
                 <h1>Invoice</h1>
-                <div class="ibk-page-subtitle">Invoice / Daftar Invoice</div>
+                <div class="ibk-page-subtitle">Invoice / Daftar Invoice IBEKAMI</div>
             </div>
 
             <div class="d-flex flex-wrap align-items-center gap-2">
@@ -2031,7 +2061,7 @@ body.theme-light .dataTables_paginate .paginate_button.disabled {
             <!-- Table Header -->
             <div class="ibk-table-header">
                 <div>
-                    <h5 class="ibk-table-title">Daftar invoice Tokabe</h5>
+                    <h5 class="ibk-table-title">Daftar Invoice IBEKAMI</h5>
                     <div class="ibk-table-subtitle">Klik panah di kiri ID untuk melihat rincian</div>
                 </div>
 
@@ -2818,6 +2848,59 @@ body.theme-light .dataTables_paginate .paginate_button.disabled {
     /* ==========================================================================
        9. UPDATE LOG & BUAT SPK MODAL HANDLERS
        ========================================================================== */
+    $(document).on('click', '.btn-kirim-wa-cust', function(e) {
+        e.preventDefault();
+        var phone = String($(this).attr('data-phone') || '').trim();
+        var customer = String($(this).attr('data-customer') || 'Pelanggan');
+        var invNo = String($(this).attr('data-invoice') || '');
+        var message = String($(this).attr('data-message') || '');
+
+        Swal.fire({
+            title: 'Kirim Invoice via WhatsApp',
+            html: `
+                <div class="text-start">
+                    <div class="mb-2 small text-muted">Invoice <strong>#${invNo}</strong> &mdash; ${customer}</div>
+                    <label class="form-label small fw-semibold mb-1">Nomor WhatsApp Pelanggan</label>
+                    <input type="text" id="swalWaPhone" class="form-control form-control-sm mb-3" value="${phone}" placeholder="Contoh: 081234567890 atau 6281234567890">
+                    <label class="form-label small fw-semibold mb-1">Pesan WhatsApp (bisa diedit)</label>
+                    <textarea id="swalWaMessage" class="form-control form-control-sm" rows="7" style="font-size: 12.5px;"></textarea>
+                </div>
+            `,
+            didOpen: function () {
+                var ta = document.getElementById('swalWaMessage');
+                if (ta) ta.value = message;
+            },
+            showCancelButton: true,
+            confirmButtonText: '<i class="lab la-whatsapp me-1"></i> Kirim ke WhatsApp',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#16A34A',
+            cancelButtonColor: '#64748B',
+            preConfirm: function () {
+                var rawPhone = (document.getElementById('swalWaPhone').value || '').replace(/[^0-9]/g, '');
+                var rawMsg = (document.getElementById('swalWaMessage').value || '').trim();
+                if (!rawPhone || rawPhone.length < 9) {
+                    Swal.showValidationMessage('Masukkan nomor WhatsApp pelanggan yang valid (minimal 9 digit).');
+                    return false;
+                }
+                if (rawPhone.startsWith('0')) {
+                    rawPhone = '62' + rawPhone.slice(1);
+                } else if (rawPhone.startsWith('8')) {
+                    rawPhone = '62' + rawPhone;
+                }
+                if (!rawMsg) {
+                    Swal.showValidationMessage('Isi pesan WhatsApp tidak boleh kosong.');
+                    return false;
+                }
+                return { phone: rawPhone, message: rawMsg };
+            }
+        }).then(function (res) {
+            if (res.isConfirmed && res.value) {
+                var url = 'https://wa.me/' + res.value.phone + '?text=' + encodeURIComponent(res.value.message);
+                window.open(url, '_blank', 'noopener');
+            }
+        });
+    });
+
     $(document).on('click', '.btn-update-log', function(e) {
         e.preventDefault();
         var invoiceId = $(this).data('id');

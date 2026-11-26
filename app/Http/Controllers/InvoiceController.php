@@ -582,21 +582,32 @@ class InvoiceController extends Controller
                 ['id' => $inv->id]
             );
 
-            $pesan_cust = "Invoice : " . $inv->nomor_invoice . "\n";
-            $pesan_cust .= "Link Download Invoice (Berlaku 7 Hari):\n";
-            $pesan_cust .= $link_khusus_customer . "\n\n";
-            $pesan_cust .= "Total Rp " . number_format($inv->total_harga ?? 0, 0, ',', '.') . "\n\n";
+            $totalTagihanWa = (float) ($inv->total_pembayaran ?: $inv->total_harga ?: 0);
+            $dpWa = (float) ($inv->dp ?? 0);
+            $sisaWa = (float) ($inv->sisa_pembayaran ?? max(0, $totalTagihanWa - $dpWa));
 
-            if ($inv->status !== 'Lunas' && $inv->sisa_pembayaran > 0) {
+            $pesan_cust = "Halo Kak *" . ($inv->customer ?: 'Pelanggan') . "*,\n\n";
+            $pesan_cust .= "Berikut kami kirimkan invoice pesanan Anda:\n";
+            $pesan_cust .= "• Nomor Invoice : *" . $inv->nomor_invoice . "*\n";
+            $pesan_cust .= "• Total Tagihan : *Rp " . number_format($totalTagihanWa, 0, ',', '.') . "*\n";
+            if ($inv->status !== 'Lunas' && $sisaWa > 0) {
+                if ($dpWa > 0) {
+                    $pesan_cust .= "• DP Terbayar : Rp " . number_format($dpWa, 0, ',', '.') . "\n";
+                }
+                $pesan_cust .= "• Sisa Bayar : *Rp " . number_format($sisaWa, 0, ',', '.') . "*\n";
+                $pesan_cust .= "• Status : *Belum Lunas*\n\n";
+                $pesan_cust .= "Link Lihat / Download Invoice (Berlaku 7 Hari):\n";
+                $pesan_cust .= $link_khusus_customer . "\n\n";
                 $pesan_cust .= "Mohon transfer ke:\n";
-                $pesan_cust .= $inv->norek_text . "\n";
-                $pesan_cust .= "**\n\n";
-                $pesan_cust .= "Apabila sudah melakukan transaksi pembayaran mohon dikirim bukti transfernya";
+                $pesan_cust .= $inv->norek_text . "\n\n";
+                $pesan_cust .= "Apabila sudah melakukan pembayaran, mohon kirimkan bukti transfernya ya Kak.\n";
+                $pesan_cust .= "Terima kasih — ibekami.com";
             } else {
-                $pesan_cust .= "Status : Lunas\n";
-                $pesan_cust .= "**\n\n";
-                $pesan_cust .= "Terima kasih,\n";
-                $pesan_cust .= "ibekami.id";
+                $pesan_cust .= "• Status : *Lunas*\n\n";
+                $pesan_cust .= "Link Lihat / Download Invoice (Berlaku 7 Hari):\n";
+                $pesan_cust .= $link_khusus_customer . "\n\n";
+                $pesan_cust .= "Terima kasih telah bertransaksi bersama kami.\n";
+                $pesan_cust .= "ibekami.com";
             }
 
             $waLink = '#';
@@ -622,8 +633,11 @@ class InvoiceController extends Controller
                 $waLinkDelete2 = "https://wa.me/{$waNumber2}?text={$msgDelete}";
             }
 
-            // 12. Col Aksi (Sleek 3-dots button ⋮)
-            $htmlAksi = '<div class="dropdown text-center tokabe-action-dropdown">';
+            // 12. Col Aksi (Quick WA button + Sleek 3-dots button ⋮)
+            $waBtnDataAttr = 'data-phone="' . e($no_hp_cust) . '" data-customer="' . e($inv->customer ?: 'Pelanggan') . '" data-invoice="' . e($inv->nomor_invoice) . '" data-message="' . e($pesan_cust) . '"';
+            $htmlAksi = '<div class="d-inline-flex align-items-center justify-content-center gap-1">';
+            $htmlAksi .= '<button type="button" class="btn btn-tokabe-wa-quick btn-kirim-wa-cust" ' . $waBtnDataAttr . ' title="Kirim Invoice via WhatsApp" aria-label="Kirim Invoice via WhatsApp"><i class="lab la-whatsapp"></i></button>';
+            $htmlAksi .= '<div class="dropdown text-center tokabe-action-dropdown">';
             $htmlAksi .= '<button class="btn btn-tokabe-action-dots" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Menu Aksi" aria-label="Menu Aksi Invoice">';
             $htmlAksi .= '<i class="las la-ellipsis-v"></i>';
             $htmlAksi .= '</button>';
@@ -633,10 +647,7 @@ class InvoiceController extends Controller
             $htmlAksi .= '<li><a class="dropdown-item dropdown-item-cetak-asli" href="' . url('cetak/' . $inv->id . '?type=asli') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (ASLI)</a></li>';
             $htmlAksi .= '<li><a class="dropdown-item dropdown-item-cetak-copy" href="' . url('cetak/' . $inv->id . '?type=copy') . '" target="_blank"><i class="las la-print me-2"></i>Cetak Nota (COPY)</a></li>';
             $htmlAksi .= '<li><a class="dropdown-item dropdown-item-download" href="' . url('view/download/' . $inv->id) . '" target="_blank"><i class="las la-file-download me-2"></i>Download Invoice</a></li>';
-
-            if (!empty($no_hp_cust)) {
-                $htmlAksi .= '<li><a class="dropdown-item dropdown-item-wa" href="https://wa.me/' . $no_hp_cust . '?text=' . urlencode($pesan_cust) . '" target="_blank"><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</a></li>';
-            }
+            $htmlAksi .= '<li><button type="button" class="dropdown-item dropdown-item-wa btn-kirim-wa-cust" ' . $waBtnDataAttr . '><i class="lab la-whatsapp me-2"></i>Kirim Invoice (WA)</button></li>';
 
             // Divider Grup 1 -> Grup 2
             $htmlAksi .= '<li><hr class="dropdown-divider"></li>';
@@ -685,7 +696,7 @@ class InvoiceController extends Controller
                 }
                 $htmlAksi .= '<li><button type="button" class="dropdown-item dropdown-item-hapus" onclick="confirmHapus(\'' . $inv->id . '\', \'' . addslashes(e($inv->nomor_invoice)) . '\')"><i class="las la-trash me-2"></i>Hapus Invoice</button></li>';
             }
-            $htmlAksi .= '</ul></div>';
+            $htmlAksi .= '</ul></div></div>';
 
             $data[] = [
                 'DT_RowId' => 'row_' . $inv->id,
@@ -1102,9 +1113,36 @@ class InvoiceController extends Controller
             $sisa_pemb = $cleanNominal($request->sisa_pem);
         }
        
+        $lokasiPengerjaan = in_array($request->lokasi_pengerjaan, ['internal', 'vendor'], true)
+            ? $request->lokasi_pengerjaan
+            : ($penjualan->lokasi_pengerjaan ?: 'internal');
+
+        if ($lokasiPengerjaan === 'internal' && !empty($request->barang_id)) {
+            foreach ($request->barang_id as $key => $value) {
+                $itemNo = is_numeric($key) ? ($key + 1) : 1;
+                $matIdsRow = isset($request->material_id[$key]) && is_array($request->material_id[$key]) ? $request->material_id[$key] : [];
+                $hasValidMat = false;
+                foreach ($matIdsRow as $matIndex => $matId) {
+                    if (!empty($matId)) {
+                        $hasValidMat = true;
+                        $pVal = floatval($request->material_panjang[$key][$matIndex] ?? 0);
+                        $lVal = floatval($request->material_lebar[$key][$matIndex] ?? 0);
+                        if ($pVal <= 0 || $lVal <= 0) {
+                            Alert::error('Data Belum Lengkap', "Ukuran (Panjang & Lebar) pada item #{$itemNo} wajib diisi lebih dari 0 untuk pengerjaan di dalam perusahaan.");
+                            return redirect()->back()->withInput();
+                        }
+                    }
+                }
+                if (!$hasValidMat) {
+                    Alert::error('Data Belum Lengkap', "Material/bahan dan ukuran pada item #{$itemNo} wajib diisi untuk pengerjaan di dalam perusahaan.");
+                    return redirect()->back()->withInput();
+                }
+            }
+        }
+
         $norek = $request->norek ?: 'BNI';
 
-        DB::transaction(function () use ($penjualan, $request, $nmr_inv, $status, $tanggalPenjualan, $item, $dp, $norek, $tot_harga, $tot_pem, $sisa_pemb, $cleanNominal, $id) {
+        DB::transaction(function () use ($penjualan, $request, $nmr_inv, $status, $tanggalPenjualan, $item, $dp, $norek, $tot_harga, $tot_pem, $sisa_pemb, $cleanNominal, $id, $lokasiPengerjaan) {
             // 1. KEMBALIKAN (RESTORE) STOK BARANG & MATERIAL SEBELUMNYA
             $this->restoreInvoiceStock($penjualan);
        
@@ -1118,6 +1156,7 @@ class InvoiceController extends Controller
         $adminUser = User::find($request->adm);
         $penjualan->tanda_tangan = ($adminUser && $adminUser->tanda_tangan) ? $adminUser->tanda_tangan : ($request->adm == 8 ? 'ttd_namira.png' : null);
         $penjualan->order_by = $request->order;
+        $penjualan->lokasi_pengerjaan = $lokasiPengerjaan;
         $penjualan->nama_sales = $request->sales;
         $penjualan->tgl_selesai = $request->tgl_selesai;
         $penjualan->jumlah_item = $item;
@@ -1190,7 +1229,7 @@ class InvoiceController extends Controller
         $sumItemTotal = 0;
         foreach ($request->barang_id as $key => $value) {
             $barangObj = Barang::find($value);
-            if ($barangObj && $barangObj->is_material_required == 1) {
+            if ($lokasiPengerjaan === 'vendor') {
                 $matIds = [];
                 $matQtys = [];
                 $matPanjangs = [];

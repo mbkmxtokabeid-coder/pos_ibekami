@@ -120,30 +120,45 @@ class PenjualanController extends Controller
         }
         // DP bersifat opsional (dapat bernilai 0 atau kosong jika belum dibayarkan)
 
-        // --- 1. VALIDASI & FILTERING STOK MULTI-MATERIAL ---
-        if (!empty($request->barang_id)) {
-            foreach ($request->barang_id as $key => $value) {
-                $barangObj = Barang::find($value);
-                // Jika is_material_required == 1 (ON), berarti barang Non-Material (tidak pakai material)
-                if ($barangObj && $barangObj->is_material_required == 1) {
-                    continue;
-                }
+        // --- 1. VALIDASI LOKASI PENGERJAAN & STOK MULTI-MATERIAL ---
+        $lokasiPengerjaan = in_array($request->lokasi_pengerjaan, ['internal', 'vendor'], true)
+            ? $request->lokasi_pengerjaan
+            : 'internal';
 
-                // Jika is_material_required == 0 (OFF), barang memakai material -> cek kelengkapan & stoknya
-                if (isset($request->material_id[$key]) && is_array($request->material_id[$key])) {
-                    foreach ($request->material_id[$key] as $matIndex => $matId) {
-                        if (!empty($matId)) {
-                            $material = Material::find($matId);
-                            $qtyMat = $request->material_qty[$key][$matIndex] ?? 0;
-                            
-                            if ($material && $material->stok < $qtyMat) {
-                                return response()->json([
-                                    'status' => 'error', 
-                                    'message' => "Stok material '{$material->jenis_material}' tidak mencukupi. Sisa: {$material->stok}"
-                                ], 400); // Set response code ke 400 Bad Request
-                            }
+        if ($lokasiPengerjaan === 'internal' && !empty($request->barang_id)) {
+            foreach ($request->barang_id as $key => $value) {
+                $itemNo = is_numeric($key) ? ($key + 1) : 1;
+                $matIdsRow = isset($request->material_id[$key]) && is_array($request->material_id[$key]) ? $request->material_id[$key] : [];
+                $hasValidMat = false;
+
+                foreach ($matIdsRow as $matIndex => $matId) {
+                    if (!empty($matId)) {
+                        $hasValidMat = true;
+                        $pVal = floatval($request->material_panjang[$key][$matIndex] ?? 0);
+                        $lVal = floatval($request->material_lebar[$key][$matIndex] ?? 0);
+                        if ($pVal <= 0 || $lVal <= 0) {
+                            return response()->json([
+                                'status' => 'error',
+                                'message' => "Ukuran (Panjang & Lebar) pada item #{$itemNo} wajib diisi lebih dari 0 untuk pengerjaan di dalam perusahaan."
+                            ], 422);
+                        }
+
+                        $material = Material::find($matId);
+                        $qtyMat = $request->material_qty[$key][$matIndex] ?? 0;
+                        if ($material && $material->stok < $qtyMat) {
+                            return response()->json([
+                                'status' => 'error',
+                                'message' => "Stok material '{$material->jenis_material}' tidak mencukupi. Sisa: {$material->stok}"
+                            ], 400);
                         }
                     }
+                }
+
+                if (!$hasValidMat) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => "Material/bahan dan ukuran pada item #{$itemNo} wajib diisi untuk pengerjaan di dalam perusahaan."
+                    ], 422);
                 }
             }
         }
@@ -211,6 +226,7 @@ class PenjualanController extends Controller
             $adminUser = User::find($request->adm);
             $existingPenjualan->tanda_tangan = ($adminUser && $adminUser->tanda_tangan) ? $adminUser->tanda_tangan : ($request->adm == 8 ? 'ttd_namira.png' : null);
             $existingPenjualan->order_by = $request->order;
+            $existingPenjualan->lokasi_pengerjaan = $lokasiPengerjaan;
             $existingPenjualan->nama_sales = $request->sales;
             $existingPenjualan->tgl_selesai = $request->tgl_selesai;
             $existingPenjualan->jumlah_item = $item;
@@ -326,6 +342,7 @@ class PenjualanController extends Controller
                 'admin' => $request->adm,
                 'tanda_tangan' => $sigSnapshot,
                 'order_by' => $request->order,
+                'lokasi_pengerjaan' => $lokasiPengerjaan,
                 'nama_sales' => $request->sales,
                 'tgl_selesai' => $request->tgl_selesai,
                 'jumlah_item' => $item,
@@ -350,8 +367,8 @@ class PenjualanController extends Controller
                     continue;
                 }
                     
-                    // Jika barang non-material (is_material_required == 1), kosongkan material
-                    if ($barang && $barang->is_material_required == 1) {
+                    // Jika pengerjaan menggunakan Vendor Luar, kosongkan material internal
+                    if ($lokasiPengerjaan === 'vendor') {
                         $matIds = [];
                         $matQtys = [];
                         $matPanjangs = [];

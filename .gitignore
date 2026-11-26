@@ -18,3 +18,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+*.zip
+error_log
+/scratch
+
