@@ -747,20 +747,20 @@
 
                                       </div>
                                       {{-- End Admin --}}
-                                      {{-- Start Lokasi Pengerjaan --}}
+                                      {{-- Start Pilihan Pengerjaan --}}
                                       <div class="row mb-3">
                                        <div class="col-lg-5">
-                                          <label for="lokasi_pengerjaan" class="form-label col-form-label col-form-label-md">Lokasi Pengerjaan</label>
+                                          <label for="lokasi_pengerjaan" class="form-label col-form-label col-form-label-md">Pilihan Pengerjaan</label>
                                        </div>
                                        <div class="col-lg-7">
                                         @php $currentLokasi = old('lokasi_pengerjaan', $inv->lokasi_pengerjaan ?? 'internal'); @endphp
                                         <select class="form-select bg-light border-0" id="lokasi_pengerjaan" name="lokasi_pengerjaan" required>
-                                          <option value="internal" {{ $currentLokasi === 'internal' ? 'selected' : '' }}>Dikerjakan di Dalam Perusahaan (Material &amp; Ukuran Wajib)</option>
-                                          <option value="vendor" {{ $currentLokasi === 'vendor' ? 'selected' : '' }}>Dikerjakan Menggunakan Vendor Luar (Tanpa Bahan &amp; Ukuran)</option>
+                                          <option value="internal" {{ $currentLokasi === 'internal' ? 'selected' : '' }}>Dengan Material</option>
+                                          <option value="vendor" {{ $currentLokasi === 'vendor' ? 'selected' : '' }}>Tanpa Material</option>
                                         </select>
                                        </div>
                                       </div>
-                                      {{-- End Lokasi Pengerjaan --}}
+                                      {{-- End Pilihan Pengerjaan --}}
                                       {{-- Start Order By --}}
                                       <div class="row mb-3">
                                        <div class="col-lg-5">

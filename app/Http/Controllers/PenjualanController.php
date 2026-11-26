@@ -139,7 +139,7 @@ class PenjualanController extends Controller
                         if ($pVal <= 0 || $lVal <= 0) {
                             return response()->json([
                                 'status' => 'error',
-                                'message' => "Ukuran (Panjang & Lebar) pada item #{$itemNo} wajib diisi lebih dari 0 untuk pengerjaan di dalam perusahaan."
+                                'message' => "Ukuran (Panjang & Lebar) pada item #{$itemNo} wajib diisi lebih dari 0 untuk pilihan pengerjaan Dengan Material."
                             ], 422);
                         }
 
@@ -157,7 +157,7 @@ class PenjualanController extends Controller
                 if (!$hasValidMat) {
                     return response()->json([
                         'status' => 'error',
-                        'message' => "Material/bahan dan ukuran pada item #{$itemNo} wajib diisi untuk pengerjaan di dalam perusahaan."
+                        'message' => "Material/bahan dan ukuran pada item #{$itemNo} wajib diisi untuk pilihan pengerjaan Dengan Material."
                     ], 422);
                 }
             }

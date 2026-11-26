@@ -1492,7 +1492,7 @@ body.theme-light .btn-batal-custom:hover {
 
                 if (matRows.length === 0) {
                     itemValid = false;
-                    itemErrorMsg = 'Spesifikasi Material & Ukuran untuk item #' + itemNum + ' wajib diisi (Pengerjaan di Dalam Perusahaan)!';
+                    itemErrorMsg = 'Spesifikasi Material & Ukuran untuk item #' + itemNum + ' wajib diisi (Pilihan Pengerjaan: Dengan Material)!';
                     firstInvalidEl = row.find('.btn-tambah-material');
                     return false;
                 }
@@ -1702,17 +1702,17 @@ body.theme-light .btn-batal-custom:hover {
         calcTotals();
     });
 
-    // Toggle Spesifikasi Material & Ukuran berdasarkan Lokasi Pengerjaan (Internal vs Vendor Luar)
+    // Toggle Spesifikasi Material & Ukuran berdasarkan Pilihan Pengerjaan (Dengan Material vs Tanpa Material)
     window.syncLokasiPengerjaanUI = function() {
         var lokasi = $('#lokasi_pengerjaan').val() || 'internal';
         var hintEl = $('#lokasi-pengerjaan-hint');
         if (lokasi === 'vendor') {
             $('.materials-container, .btn-tambah-material, .add-material').hide();
             $('.materials-container .material-select, .materials-container .material-panjang, .materials-container .material-lebar, .materials-container .material-qty').val('').removeAttr('required').removeClass('is-invalid');
-            hintEl.text('Vendor luar: input bahan/material & ukuran tidak wajib dan tidak akan ditampilkan pada hasil cetak invoice.');
+            hintEl.text('Tanpa material: input bahan/material & ukuran tidak wajib dan tidak akan ditampilkan pada hasil cetak invoice.');
         } else {
             $('.materials-container, .btn-tambah-material, .add-material').show();
-            hintEl.text('Pengerjaan internal: input bahan/material dan ukuran wajib diisi serta akan ditampilkan pada hasil cetak invoice.');
+            hintEl.text('Dengan material: input bahan/material dan ukuran wajib diisi serta akan ditampilkan pada hasil cetak invoice.');
         }
     };
     $('#lokasi_pengerjaan').on('change', window.syncLokasiPengerjaanUI);
@@ -1909,18 +1909,18 @@ body.theme-light .btn-batal-custom:hover {
                                         </div>
                                     </div>
 
-                                    <!-- Lokasi Pengerjaan -->
+                                    <!-- Pilihan Pengerjaan -->
                                     <div class="row align-items-center mb-3">
                                         <label for="lokasi_pengerjaan" class="col-sm-4 col-form-label inv-form-label">
-                                            Lokasi Pengerjaan <span class="inv-required-mark">*</span>
+                                            Pilihan Pengerjaan <span class="inv-required-mark">*</span>
                                         </label>
                                         <div class="col-sm-8">
                                             <select class="form-select inv-dark-control" id="lokasi_pengerjaan" name="lokasi_pengerjaan" required>
-                                                <option value="internal" {{ old('lokasi_pengerjaan', 'internal') === 'internal' ? 'selected' : '' }}>Dikerjakan di Dalam Perusahaan (Material &amp; Ukuran Wajib)</option>
-                                                <option value="vendor" {{ old('lokasi_pengerjaan') === 'vendor' ? 'selected' : '' }}>Dikerjakan Menggunakan Vendor Luar (Tanpa Bahan &amp; Ukuran)</option>
+                                                <option value="internal" {{ old('lokasi_pengerjaan', 'internal') === 'internal' ? 'selected' : '' }}>Dengan Material</option>
+                                                <option value="vendor" {{ old('lokasi_pengerjaan') === 'vendor' ? 'selected' : '' }}>Tanpa Material</option>
                                             </select>
                                             <small id="lokasi-pengerjaan-hint" class="text-muted d-block mt-1" style="font-size: 11.5px;">
-                                                Pengerjaan internal mewajibkan input bahan/material dan ukuran, serta akan ditampilkan pada cetak invoice.
+                                                Dengan material: input bahan/material dan ukuran wajib diisi serta akan ditampilkan pada hasil cetak invoice.
                                             </small>
                                         </div>
                                     </div>

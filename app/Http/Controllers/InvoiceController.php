@@ -1128,13 +1128,13 @@ class InvoiceController extends Controller
                         $pVal = floatval($request->material_panjang[$key][$matIndex] ?? 0);
                         $lVal = floatval($request->material_lebar[$key][$matIndex] ?? 0);
                         if ($pVal <= 0 || $lVal <= 0) {
-                            Alert::error('Data Belum Lengkap', "Ukuran (Panjang & Lebar) pada item #{$itemNo} wajib diisi lebih dari 0 untuk pengerjaan di dalam perusahaan.");
+                            Alert::error('Data Belum Lengkap', "Ukuran (Panjang & Lebar) pada item #{$itemNo} wajib diisi lebih dari 0 untuk pilihan pengerjaan Dengan Material.");
                             return redirect()->back()->withInput();
                         }
                     }
                 }
                 if (!$hasValidMat) {
-                    Alert::error('Data Belum Lengkap', "Material/bahan dan ukuran pada item #{$itemNo} wajib diisi untuk pengerjaan di dalam perusahaan.");
+                    Alert::error('Data Belum Lengkap', "Material/bahan dan ukuran pada item #{$itemNo} wajib diisi untuk pilihan pengerjaan Dengan Material.");
                     return redirect()->back()->withInput();
                 }
             }
